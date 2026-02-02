@@ -496,6 +496,7 @@
   background-size: 350px 200px;
   animation: twinkle 8s ease-in-out infinite alternate;
   opacity: 0.8;
+  pointer-events: none;
 }
 .scene::after {
   content: '';
@@ -508,6 +509,7 @@
   background-size: 400px 250px;
   animation: twinkle 12s ease-in-out infinite alternate-reverse;
   opacity: 0.6;
+  pointer-events: none;
 }
 @keyframes twinkle {
   0% {
@@ -531,6 +533,7 @@
   box-shadow: inset -10px -10px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 255, 255, 0.2), 0 0 80px rgba(200, 200, 255, 0.1);
   animation: moon-glow 10s ease-in-out infinite alternate;
   z-index: 1;
+  pointer-events: none;
 }
 @keyframes moon-glow {
   0% {
