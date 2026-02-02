@@ -2,9 +2,14 @@
 
 A stunning 3D tower defense game rendered entirely with CSS transforms and vanilla JavaScript. No Canvas, no WebGL - just pure CSS magic!
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Play%20Now-brightgreen?style=for-the-badge&logo=github)](https://chanmeng666.github.io/css-tower-defense/)
 ![CSS Tower Defense](https://img.shields.io/badge/CSS-3D%20Transforms-blue?style=for-the-badge&logo=css3)
 ![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla%20ES6-yellow?style=for-the-badge&logo=javascript)
 ![LESS](https://img.shields.io/badge/LESS-Preprocessor-1d365d?style=for-the-badge&logo=less)
+
+## Live Demo
+
+**[Play the game now!](https://chanmeng666.github.io/css-tower-defense/)**
 
 ## Features
 
