@@ -1,0 +1,578 @@
+// ===========================================
+// CSS Tower Defense - Enemy Styles
+// Enhanced 3D Models with Glow & Animation
+// ===========================================
+
+// Base Enemy Styles
+.enemy {
+    position: absolute;
+    .preserve-3d();
+    transform-origin: center bottom;
+    transition: opacity 0.3s ease;
+    // Counter-rotate to stand upright from viewer's perspective
+    transform: translate(-50%, -100%) rotateX(-@map-rotation);
+    
+    &.dying {
+        animation: enemyDeath 0.5s ease-out forwards;
+    }
+}
+
+// Health Bar with Glow
+.health-bar {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    width: 44px;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 4px;
+    transform: translateX(-50%) rotateX(-@map-rotation);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    
+    .health-fill {
+        height: 100%;
+        background: linear-gradient(90deg, 
+            @color-danger 0%, 
+            #ff9800 50%,
+            @color-success 100%);
+        border-radius: 3px;
+        transition: width 0.2s ease;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+}
+
+// ===========================================
+// Slime Enemy - Bouncy Glowing Blob
+// ===========================================
+.enemy-slime {
+    .enemy-body {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 40px;
+        height: 30px;
+        background: radial-gradient(ellipse at 30% 30%,
+            lighten(@color-enemy-slime, 30%) 0%,
+            @color-enemy-slime 40%,
+            darken(@color-enemy-slime, 15%) 100%);
+        transform: translateX(-50%);
+        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        border: 2px solid @color-enemy-slime;
+        .glow-effect(@color-enemy-slime-glow, 12px);
+        animation: slimeBounce 0.6s ease-in-out infinite;
+        
+        // Shine highlight
+        &::before {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 10px;
+            width: 10px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            filter: blur(1px);
+        }
+        
+        // Drip effect
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: @color-enemy-slime;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            opacity: 0.6;
+            animation: drip 1s ease-in-out infinite;
+        }
+    }
+    
+    .enemy-face {
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        
+        // Eyes
+        &::before, &::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 10px;
+            background: #000;
+            border-radius: 50%;
+            box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.5);
+        }
+        
+        &::before {
+            left: -12px;
+        }
+        
+        &::after {
+            left: 4px;
+        }
+    }
+}
+
+@keyframes slimeBounce {
+    0%, 100% {
+        transform: translateX(-50%) scaleY(1) scaleX(1);
+        box-shadow: inset 0 0 12px @color-enemy-slime-glow, 0 0 12px @color-enemy-slime-glow;
+    }
+    50% {
+        transform: translateX(-50%) scaleY(0.85) scaleX(1.15);
+        box-shadow: inset 0 0 20px @color-enemy-slime-glow, 0 0 20px @color-enemy-slime-glow;
+    }
+}
+
+@keyframes drip {
+    0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
+    50% { transform: translateX(-50%) translateY(5px); opacity: 0.3; }
+}
+
+// ===========================================
+// Goblin Enemy - Quick Sneaky Runner
+// ===========================================
+.enemy-goblin {
+    .enemy-body {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 28px;
+        height: 40px;
+        background: linear-gradient(180deg,
+            lighten(@color-enemy-goblin, 10%) 0%,
+            @color-enemy-goblin 50%,
+            darken(@color-enemy-goblin, 20%) 100%);
+        transform: translateX(-50%);
+        border-radius: 10px 10px 8px 8px;
+        border: 2px solid @color-enemy-goblin;
+        .glow-effect(@color-enemy-goblin-glow, 10px);
+        animation: goblinRun 0.3s ease-in-out infinite;
+        
+        // Body shading
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                rgba(255, 255, 255, 0.15) 0%,
+                transparent 100%);
+            border-radius: 10px 0 0 8px;
+        }
+        
+        // Dagger
+        &::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: -8px;
+            width: 4px;
+            height: 15px;
+            background: linear-gradient(180deg, silver 0%, #666 100%);
+            border-radius: 2px;
+            transform: rotate(20deg);
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+    }
+    
+    .enemy-face {
+        position: absolute;
+        bottom: 28px;
+        left: 50%;
+        width: 24px;
+        height: 18px;
+        transform: translateX(-50%);
+        
+        // Pointy ears
+        &::before, &::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            width: 10px;
+            height: 14px;
+            background: @color-enemy-goblin;
+            border-radius: 50% 50% 0 0;
+            border: 2px solid lighten(@color-enemy-goblin, 10%);
+        }
+        
+        &::before {
+            left: -8px;
+            transform: rotate(-25deg);
+        }
+        
+        &::after {
+            right: -8px;
+            transform: rotate(25deg);
+        }
+    }
+    
+    // Glowing eyes
+    .enemy-eyes {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        
+        &::before, &::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, 
+                #fff 0%,
+                #ffff00 50%,
+                @color-enemy-goblin 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 8px #ffff00;
+            animation: eyeGlow 1s ease-in-out infinite alternate;
+        }
+        
+        &::before {
+            left: -10px;
+        }
+        
+        &::after {
+            left: 4px;
+        }
+    }
+}
+
+@keyframes goblinRun {
+    0%, 100% { transform: translateX(-50%) skewX(0deg); }
+    25% { transform: translateX(-50%) skewX(3deg); }
+    75% { transform: translateX(-50%) skewX(-3deg); }
+}
+
+@keyframes eyeGlow {
+    0% { box-shadow: 0 0 5px #ffff00; }
+    100% { box-shadow: 0 0 12px #ffff00, 0 0 20px rgba(255, 255, 0, 0.5); }
+}
+
+// ===========================================
+// Knight Enemy - Armored Warrior
+// ===========================================
+.enemy-knight {
+    .enemy-body {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 34px;
+        height: 50px;
+        background: linear-gradient(135deg,
+            lighten(@color-enemy-knight, 20%) 0%,
+            @color-enemy-knight 30%,
+            darken(@color-enemy-knight, 10%) 70%,
+            darken(@color-enemy-knight, 20%) 100%);
+        transform: translateX(-50%);
+        border-radius: 6px;
+        border: 2px solid lighten(@color-enemy-knight, 10%);
+        .glow-effect(@color-enemy-knight-glow, 12px);
+        
+        // Armor shine
+        &::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 4px;
+            width: 10px;
+            height: 80%;
+            background: linear-gradient(90deg,
+                rgba(255, 255, 255, 0.3) 0%,
+                transparent 100%);
+            border-radius: 4px;
+        }
+        
+        // Shield with emblem
+        &::after {
+            content: '⚜';
+            position: absolute;
+            top: 18px;
+            left: -12px;
+            width: 16px;
+            height: 22px;
+            background: linear-gradient(135deg,
+                lighten(@color-enemy-knight, 30%) 0%,
+                @color-enemy-knight 50%,
+                darken(@color-enemy-knight, 20%) 100%);
+            border-radius: 4px 4px 50% 50%;
+            border: 2px solid @color-gold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: @color-gold;
+            box-shadow: 0 0 8px @color-enemy-knight-glow;
+        }
+    }
+    
+    .enemy-face {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        width: 26px;
+        height: 22px;
+        background: linear-gradient(180deg,
+            #b0bec5 0%,
+            #78909c 50%,
+            #546e7a 100%);
+        transform: translateX(-50%);
+        border-radius: 6px 6px 4px 4px;
+        border: 2px solid #90a4ae;
+        .glow-effect(rgba(255, 255, 255, 0.2), 5px);
+        
+        // Helmet visor
+        &::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 4px;
+            right: 4px;
+            height: 5px;
+            background: #1a1a1a;
+            border-radius: 3px;
+            box-shadow: inset 0 0 3px rgba(68, 138, 255, 0.5);
+        }
+        
+        // Helmet plume
+        &::after {
+            content: '';
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            width: 8px;
+            height: 16px;
+            background: linear-gradient(180deg, 
+                @color-danger 0%, 
+                darken(@color-danger, 20%) 100%);
+            transform: translateX(-50%);
+            border-radius: 4px 4px 0 0;
+            animation: plumeSway 2s ease-in-out infinite;
+        }
+    }
+    
+    // Sword glow
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 25px;
+        right: -5px;
+        width: 5px;
+        height: 30px;
+        background: linear-gradient(180deg, 
+            #fff 0%, 
+            #ccc 50%,
+            #999 100%);
+        border-radius: 2px;
+        transform: rotate(15deg);
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    }
+}
+
+@keyframes plumeSway {
+    0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+    50% { transform: translateX(-50%) rotate(5deg); }
+}
+
+// ===========================================
+// Boss Enemy - Giant Monster with Aura
+// ===========================================
+.enemy-boss {
+    transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.4);
+    
+    .enemy-body {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 50px;
+        height: 60px;
+        background: radial-gradient(ellipse at 30% 30%,
+            lighten(@color-enemy-boss, 20%) 0%,
+            @color-enemy-boss 40%,
+            darken(@color-enemy-boss, 25%) 100%);
+        transform: translateX(-50%);
+        border-radius: 20px 20px 15px 15px;
+        border: 3px solid @color-enemy-boss;
+        .glow-effect(@color-enemy-boss-glow, 20px);
+        animation: bossPulse 2s ease-in-out infinite;
+        
+        // Menacing aura
+        &::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
+            background: radial-gradient(ellipse,
+                @color-enemy-boss-glow 0%,
+                transparent 70%);
+            animation: bossAura 1.5s ease-in-out infinite;
+            z-index: -1;
+        }
+        
+        // Dark core
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle,
+                #000 0%,
+                darken(@color-enemy-boss, 30%) 100%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: darkCore 3s ease-in-out infinite;
+        }
+    }
+    
+    .enemy-face {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        
+        // Horns
+        &::before, &::after {
+            content: '';
+            position: absolute;
+            top: -25px;
+            width: 10px;
+            height: 25px;
+            background: linear-gradient(180deg,
+                darken(@color-enemy-boss, 30%) 0%,
+                @color-enemy-boss 100%);
+            border-radius: 5px 5px 0 0;
+            border: 2px solid @color-enemy-boss;
+        }
+        
+        &::before {
+            left: -20px;
+            transform: rotate(-20deg);
+        }
+        
+        &::after {
+            right: -20px;
+            transform: rotate(20deg);
+        }
+    }
+    
+    // Evil glowing eyes
+    .enemy-eyes {
+        position: absolute;
+        bottom: 45px;
+        left: 50%;
+        transform: translateX(-50%);
+        
+        &::before, &::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle,
+                #fff 0%,
+                @color-danger 50%,
+                darken(@color-danger, 20%) 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 15px @color-danger, 0 0 30px rgba(255, 0, 0, 0.5);
+            animation: evilEyes 0.5s ease-in-out infinite alternate;
+        }
+        
+        &::before {
+            left: -18px;
+        }
+        
+        &::after {
+            left: 6px;
+        }
+    }
+    
+    .health-bar {
+        width: 70px;
+        height: 10px;
+        top: -25px;
+    }
+}
+
+@keyframes bossPulse {
+    0%, 100% {
+        transform: translateX(-50%) scale(1);
+        box-shadow: inset 0 0 20px @color-enemy-boss-glow, 0 0 20px @color-enemy-boss-glow;
+    }
+    50% {
+        transform: translateX(-50%) scale(1.05);
+        box-shadow: inset 0 0 30px @color-enemy-boss-glow, 0 0 40px @color-enemy-boss-glow;
+    }
+}
+
+@keyframes bossAura {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes darkCore {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.2); }
+}
+
+@keyframes evilEyes {
+    0% { box-shadow: 0 0 10px @color-danger; }
+    100% { box-shadow: 0 0 20px @color-danger, 0 0 40px rgba(255, 0, 0, 0.7); }
+}
+
+// ===========================================
+// Death Animation
+// ===========================================
+@keyframes enemyDeath {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1);
+        filter: brightness(1);
+    }
+    30% {
+        filter: brightness(3);
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.3);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(0) rotate(360deg);
+        filter: brightness(5);
+    }
+}
+
+// ===========================================
+// Slow Effect (from Ice Tower)
+// ===========================================
+.enemy.slowed {
+    .enemy-body {
+        filter: hue-rotate(180deg) brightness(1.3);
+        animation-duration: 2s !important;
+    }
+    
+    &::before {
+        content: '❄';
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 16px;
+        color: @color-tower-ice;
+        text-shadow: 0 0 10px @color-tower-ice;
+        animation: slowIcon 0.5s ease-in-out infinite;
+    }
+}
+
+@keyframes slowIcon {
+    0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+    50% { opacity: 0.6; transform: translateX(-50%) scale(1.2); }
+}

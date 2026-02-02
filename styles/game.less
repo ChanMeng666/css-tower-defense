@@ -1,0 +1,514 @@
+// ===========================================
+// CSS Tower Defense - Game UI Styles
+// Enhanced with Glow Effects & Modern Design
+// ===========================================
+
+// Start Screen with Animated Background
+.start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+        @color-darker 0%, 
+        darken(@color-dark, 5%) 50%,
+        #0a1628 100%);
+    .flex-center();
+    flex-direction: column;
+    z-index: 1000;
+    
+    // Animated gradient overlay
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 40%),
+            radial-gradient(circle at 80% 20%, rgba(224, 64, 251, 0.1) 0%, transparent 40%);
+        animation: bg-shift 10s ease-in-out infinite alternate;
+    }
+    
+    &.hidden {
+        display: none;
+    }
+}
+
+@keyframes bg-shift {
+    0% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.title-container {
+    text-align: center;
+    margin-bottom: 50px;
+    position: relative;
+    z-index: 1;
+}
+
+.game-title {
+    font-family: @font-title;
+    font-size: 4.5rem;
+    color: @color-gold;
+    margin: 0;
+    letter-spacing: 6px;
+    .text-glow(@color-gold);
+    animation: titlePulse 3s ease-in-out infinite;
+    text-transform: uppercase;
+    
+    // Metallic text effect
+    background: linear-gradient(180deg, 
+        #fff 0%,
+        @color-gold 30%,
+        darken(@color-gold, 20%) 70%,
+        @color-gold 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px @color-gold);
+}
+
+.subtitle {
+    font-family: @font-main;
+    font-size: 1.8rem;
+    color: @color-primary;
+    margin-top: 15px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    .text-glow(@color-primary);
+    opacity: 0.9;
+}
+
+.start-btn, .restart-btn {
+    font-family: @font-main;
+    font-size: 1.6rem;
+    font-weight: bold;
+    padding: 18px 60px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, 
+        @color-primary 0%, 
+        darken(@color-primary, 15%) 100%);
+    color: #fff;
+    cursor: pointer;
+    transition: all @transition-normal ease;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    position: relative;
+    z-index: 1;
+    .glow-effect(@color-primary, 15px);
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 50px;
+        background: linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.2) 0%, 
+            transparent 50%);
+        pointer-events: none;
+    }
+    
+    &:hover {
+        transform: scale(1.08) translateY(-3px);
+        .glow-effect(@color-primary, 25px);
+    }
+    
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+.wave-btn {
+    font-family: @font-main;
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 12px 35px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(135deg, 
+        @color-success 0%, 
+        darken(@color-success, 20%) 100%);
+    color: #fff;
+    cursor: pointer;
+    transition: all @transition-normal ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    .glow-effect(@color-success, 10px);
+    
+    &:hover:not(:disabled) {
+        transform: scale(1.05);
+        .glow-effect(@color-success, 18px);
+    }
+    
+    &:disabled {
+        background: linear-gradient(135deg, #555 0%, #333 100%);
+        box-shadow: none;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+}
+
+.instructions {
+    margin-top: 50px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    
+    p {
+        margin: 12px 0;
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.7);
+        letter-spacing: 1px;
+    }
+}
+
+// Game Over Screen
+.game-over-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(10px);
+    .flex-center();
+    flex-direction: column;
+    z-index: 1000;
+    
+    &.hidden {
+        display: none;
+    }
+}
+
+.game-over-title {
+    font-family: @font-title;
+    font-size: 5rem;
+    color: @color-danger;
+    margin: 0 0 30px 0;
+    text-transform: uppercase;
+    letter-spacing: 8px;
+    .text-glow(@color-danger);
+    animation: shake 0.5s ease-in-out;
+    
+    &.victory {
+        color: @color-gold;
+        .text-glow(@color-gold);
+        animation: victory-glow 2s ease-in-out infinite;
+    }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+@keyframes victory-glow {
+    0%, 100% { filter: drop-shadow(0 0 20px @color-gold); }
+    50% { filter: drop-shadow(0 0 40px @color-gold) brightness(1.2); }
+}
+
+.final-score {
+    font-size: 2.5rem;
+    color: #fff;
+    margin-bottom: 50px;
+    font-weight: bold;
+    
+    span {
+        color: @color-gold;
+        font-size: 3rem;
+        .text-glow(@color-gold);
+    }
+}
+
+// Game UI Overlay
+.game-ui {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+    
+    &.hidden {
+        display: none;
+    }
+}
+
+// Top Status Bar
+.top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 18px 40px;
+    background: linear-gradient(180deg, 
+        rgba(0, 0, 0, 0.85) 0%, 
+        rgba(0, 0, 0, 0.5) 70%,
+        transparent 100%);
+    display: flex;
+    justify-content: space-around;
+    pointer-events: auto;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    font-family: @font-main;
+    font-size: 1.3rem;
+    padding: 8px 20px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    
+    .stat-icon {
+        font-size: 1.6rem;
+        filter: drop-shadow(0 0 5px currentColor);
+    }
+    
+    .stat-value {
+        font-weight: bold;
+        min-width: 50px;
+        color: @color-gold;
+        .text-glow(fade(@color-gold, 50%));
+        transition: transform 0.15s ease;
+    }
+}
+
+// Animated stat change
+.stat-value.changed {
+    animation: stat-pop 0.3s ease-out;
+}
+
+@keyframes stat-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+// Shop Panel
+.shop-panel {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg,
+        rgba(0, 0, 0, 0.9) 0%,
+        rgba(10, 10, 30, 0.95) 100%);
+    border-radius: 20px;
+    padding: 18px 25px;
+    pointer-events: auto;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.shop-title {
+    color: @color-gold;
+    font-family: @font-main;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    .text-glow(fade(@color-gold, 50%));
+}
+
+.tower-options {
+    display: flex;
+    gap: 18px;
+}
+
+.tower-option {
+    width: 90px;
+    padding: 12px;
+    background: linear-gradient(180deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0.03) 100%);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all @transition-fast ease;
+    border: 2px solid transparent;
+    
+    &:hover:not(.disabled) {
+        background: linear-gradient(180deg,
+            rgba(255, 255, 255, 0.15) 0%,
+            rgba(255, 255, 255, 0.08) 100%);
+        transform: translateY(-8px);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    &.selected {
+        border-color: @color-gold;
+        background: linear-gradient(180deg,
+            rgba(255, 215, 0, 0.15) 0%,
+            rgba(255, 215, 0, 0.05) 100%);
+        .glow-effect(@color-gold, 8px);
+    }
+    
+    &.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        filter: grayscale(0.5);
+        
+        &:hover {
+            transform: none;
+        }
+    }
+}
+
+.tower-preview {
+    width: 55px;
+    height: 55px;
+    margin: 0 auto 10px;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.tower-arrow-preview {
+    background: linear-gradient(135deg, 
+        lighten(@color-tower-arrow, 10%) 0%,
+        @color-tower-arrow 50%,
+        darken(@color-tower-arrow, 15%) 100%);
+    .glow-effect(@color-tower-arrow-glow, 5px);
+    
+    &::after {
+        content: '🏹';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+    }
+}
+
+.tower-cannon-preview {
+    background: linear-gradient(135deg, 
+        lighten(@color-tower-cannon, 15%) 0%,
+        @color-tower-cannon 50%,
+        darken(@color-tower-cannon, 15%) 100%);
+    .glow-effect(@color-tower-cannon-glow, 5px);
+    
+    &::after {
+        content: '💣';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+    }
+}
+
+.tower-ice-preview {
+    background: linear-gradient(135deg, 
+        lighten(@color-tower-ice, 15%) 0%,
+        @color-tower-ice 50%,
+        darken(@color-tower-ice, 15%) 100%);
+    .glow-effect(@color-tower-ice-glow, 8px);
+    
+    &::after {
+        content: '❄️';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+    }
+}
+
+.tower-magic-preview {
+    background: linear-gradient(135deg, 
+        lighten(@color-tower-magic, 15%) 0%,
+        @color-tower-magic 50%,
+        darken(@color-tower-magic, 15%) 100%);
+    .glow-effect(@color-tower-magic-glow, 8px);
+    
+    &::after {
+        content: '✨';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+    }
+}
+
+.tower-info {
+    text-align: center;
+    
+    .tower-name {
+        display: block;
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .tower-cost {
+        display: block;
+        color: @color-gold;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+}
+
+// Wave Control
+.wave-control {
+    position: absolute;
+    bottom: 130px;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: auto;
+}
+
+// Game Message Toast
+.game-message {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg,
+        rgba(0, 0, 0, 0.9) 0%,
+        rgba(20, 20, 40, 0.95) 100%);
+    color: @color-gold;
+    padding: 18px 40px;
+    border-radius: 15px;
+    font-size: 1.6rem;
+    font-weight: bold;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    text-align: center;
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    .glow-effect(@color-gold, 10px);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+// Title Animation
+@keyframes titlePulse {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 20px @color-gold);
+    }
+    50% {
+        transform: scale(1.02);
+        filter: drop-shadow(0 0 30px @color-gold) brightness(1.1);
+    }
+}

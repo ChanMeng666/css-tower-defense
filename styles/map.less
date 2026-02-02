@@ -1,0 +1,393 @@
+// ===========================================
+// CSS Tower Defense - Map & Environment Styles
+// Enhanced with Atmospheric Effects
+// ===========================================
+
+// 3D Scene Container with Starry Background
+.scene {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    perspective: @perspective;
+    overflow: hidden;
+    background: linear-gradient(180deg, 
+        #0a0a1a 0%,
+        #0f1629 30%,
+        #162447 60%,
+        #1f4068 100%);
+    
+    // Star field layer 1
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+            radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 200, 0.8), transparent),
+            radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+            radial-gradient(2px 2px at 130px 80px, rgba(200, 200, 255, 0.9), transparent),
+            radial-gradient(1px 1px at 160px 120px, #fff, transparent),
+            radial-gradient(2px 2px at 200px 50px, rgba(255, 200, 200, 0.8), transparent),
+            radial-gradient(1px 1px at 250px 90px, #fff, transparent),
+            radial-gradient(2px 2px at 300px 150px, rgba(200, 255, 255, 0.9), transparent);
+        background-size: 350px 200px;
+        animation: twinkle 8s ease-in-out infinite alternate;
+        opacity: 0.8;
+    }
+    
+    // Star field layer 2
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            radial-gradient(1px 1px at 50px 100px, #fff, transparent),
+            radial-gradient(2px 2px at 100px 150px, rgba(255, 220, 180, 0.7), transparent),
+            radial-gradient(1px 1px at 150px 50px, #fff, transparent),
+            radial-gradient(1px 1px at 200px 200px, rgba(180, 220, 255, 0.8), transparent),
+            radial-gradient(2px 2px at 280px 100px, #fff, transparent),
+            radial-gradient(1px 1px at 320px 180px, rgba(255, 180, 220, 0.7), transparent);
+        background-size: 400px 250px;
+        animation: twinkle 12s ease-in-out infinite alternate-reverse;
+        opacity: 0.6;
+    }
+}
+
+@keyframes twinkle {
+    0% { opacity: 0.6; }
+    50% { opacity: 0.9; }
+    100% { opacity: 0.7; }
+}
+
+// Moon/Planet decoration
+.moon {
+    position: absolute;
+    top: 5%;
+    right: 10%;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%,
+        #f5f5f5 0%,
+        #e0e0e0 40%,
+        #a0a0a0 100%);
+    box-shadow: 
+        inset -10px -10px 20px rgba(0, 0, 0, 0.3),
+        0 0 40px rgba(255, 255, 255, 0.2),
+        0 0 80px rgba(200, 200, 255, 0.1);
+    animation: moon-glow 10s ease-in-out infinite alternate;
+    z-index: 1;
+}
+
+@keyframes moon-glow {
+    0% { box-shadow: inset -10px -10px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 255, 255, 0.2); }
+    100% { box-shadow: inset -10px -10px 20px rgba(0, 0, 0, 0.3), 0 0 60px rgba(255, 255, 255, 0.3); }
+}
+
+// Map Container (3D transformed)
+.map {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: (@cell-size * @grid-cols);
+    height: (@cell-size * @grid-rows);
+    transform: translate(-50%, -40%) rotateX(@map-rotation);
+    .preserve-3d();
+    background: @color-grass;
+    border-radius: 12px;
+    border: 3px solid darken(@color-grass, 10%);
+    box-shadow: 
+        0 60px 120px rgba(0, 0, 0, 0.6),
+        0 0 50px rgba(0, 0, 0, 0.3),
+        inset 0 0 60px rgba(0, 0, 0, 0.3);
+}
+
+// Grid Cell with Enhanced Textures
+.cell {
+    position: absolute;
+    width: @cell-size;
+    height: @cell-size;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-sizing: border-box;
+    transition: all @transition-fast ease;
+    .preserve-3d();
+    
+    &.grass {
+        background: linear-gradient(135deg, 
+            @color-grass-light 0%,
+            @color-grass 30%,
+            darken(@color-grass, 5%) 70%,
+            @color-grass-dark 100%);
+        
+        // Grass texture pattern
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(100, 200, 100, 0.15) 0%, transparent 30%),
+                radial-gradient(circle at 70% 60%, rgba(50, 100, 50, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 40% 80%, rgba(80, 150, 80, 0.12) 0%, transparent 20%);
+            pointer-events: none;
+        }
+        
+        // Alternating pattern for visual variety
+        &:nth-child(even) {
+            background: linear-gradient(135deg, 
+                lighten(@color-grass, 5%) 0%,
+                @color-grass-light 30%,
+                @color-grass 70%,
+                darken(@color-grass, 3%) 100%);
+        }
+    }
+    
+    &.path {
+        background: linear-gradient(135deg, 
+            @color-path-light 0%,
+            @color-path 40%,
+            @color-path-dark 100%);
+        border-color: @color-path-dark;
+        
+        // Cobblestone texture
+        &::before {
+            content: '';
+            position: absolute;
+            top: 5%;
+            left: 5%;
+            right: 5%;
+            bottom: 5%;
+            background-image:
+                radial-gradient(ellipse at 15% 20%, rgba(0, 0, 0, 0.12) 0%, transparent 40%),
+                radial-gradient(ellipse at 55% 35%, rgba(0, 0, 0, 0.1) 0%, transparent 35%),
+                radial-gradient(ellipse at 80% 70%, rgba(0, 0, 0, 0.12) 0%, transparent 30%),
+                radial-gradient(ellipse at 30% 80%, rgba(0, 0, 0, 0.08) 0%, transparent 35%),
+                radial-gradient(ellipse at 70% 15%, rgba(255, 255, 255, 0.05) 0%, transparent 30%);
+            pointer-events: none;
+        }
+        
+        // Path direction markers
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+    }
+    
+    &.buildable {
+        cursor: pointer;
+        
+        &:hover {
+            background: linear-gradient(135deg,
+                lighten(@color-grass-light, 10%) 0%,
+                lighten(@color-grass, 8%) 50%,
+                @color-grass-light 100%);
+            transform: translateZ(8px);
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.3),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        &.valid-placement {
+            background: linear-gradient(135deg,
+                rgba(100, 255, 100, 0.4) 0%,
+                @color-grid-valid 100%);
+            box-shadow: 
+                0 0 15px rgba(100, 255, 100, 0.4),
+                inset 0 0 10px rgba(100, 255, 100, 0.3);
+        }
+        
+        &.invalid-placement {
+            background: linear-gradient(135deg,
+                rgba(255, 100, 100, 0.4) 0%,
+                @color-grid-invalid 100%);
+            box-shadow: 
+                0 0 15px rgba(255, 100, 100, 0.4),
+                inset 0 0 10px rgba(255, 100, 100, 0.3);
+        }
+    }
+    
+    &.occupied {
+        cursor: default;
+        
+        &:hover {
+            transform: none;
+        }
+    }
+    
+    &.start {
+        background: linear-gradient(135deg, 
+            darken(@color-path, 5%) 0%, 
+            @color-path-dark 50%,
+            darken(@color-path-dark, 10%) 100%);
+        
+        &::after {
+            content: '▶';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 22px;
+            color: @color-success;
+            text-shadow: 0 0 10px @color-success;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+    }
+    
+    &.end {
+        background: linear-gradient(135deg, 
+            lighten(@color-danger, 10%) 0%,
+            @color-danger 50%, 
+            darken(@color-danger, 25%) 100%);
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+        
+        &::after {
+            content: '🏰';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 28px;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+            animation: castle-glow 3s ease-in-out infinite;
+        }
+    }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { text-shadow: 0 0 10px @color-success; }
+    50% { text-shadow: 0 0 20px @color-success, 0 0 30px @color-success; }
+}
+
+@keyframes castle-glow {
+    0%, 100% { filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); }
+    50% { filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8)); }
+}
+
+// Container layers (inside map, above cells)
+.enemies, .towers, .projectiles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    .preserve-3d();
+    pointer-events: none;
+    z-index: 10;
+}
+
+// Range indicator with glow
+.range-indicator {
+    position: absolute;
+    border-radius: 50%;
+    border: 3px dashed rgba(255, 215, 0, 0.5);
+    background: radial-gradient(circle, 
+        rgba(255, 215, 0, 0.1) 0%, 
+        rgba(255, 215, 0, 0.05) 50%,
+        transparent 70%);
+    pointer-events: none;
+    transform: rotateX(-@map-rotation);
+    animation: range-pulse 2s ease-in-out infinite;
+}
+
+@keyframes range-pulse {
+    0%, 100% { 
+        border-color: rgba(255, 215, 0, 0.5);
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    }
+    50% { 
+        border-color: rgba(255, 215, 0, 0.8);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+}
+
+// Environment Decorations
+.environment {
+    position: absolute;
+    .preserve-3d();
+    pointer-events: none;
+    z-index: 5;
+}
+
+// Floating particles over the map
+.particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 20;
+    
+    &::before {
+        content: '✦';
+        position: absolute;
+        top: 20%;
+        left: 30%;
+        font-size: 8px;
+        color: rgba(255, 255, 200, 0.6);
+        animation: float-particle 8s ease-in-out infinite;
+    }
+    
+    &::after {
+        content: '✧';
+        position: absolute;
+        top: 60%;
+        left: 70%;
+        font-size: 6px;
+        color: rgba(200, 255, 255, 0.5);
+        animation: float-particle 10s ease-in-out infinite 2s;
+    }
+}
+
+@keyframes float-particle {
+    0%, 100% { 
+        transform: translateY(0) translateX(0) rotate(0deg); 
+        opacity: 0.6;
+    }
+    25% { 
+        transform: translateY(-30px) translateX(15px) rotate(90deg); 
+        opacity: 0.9;
+    }
+    50% { 
+        transform: translateY(-10px) translateX(-10px) rotate(180deg); 
+        opacity: 0.5;
+    }
+    75% { 
+        transform: translateY(-40px) translateX(5px) rotate(270deg); 
+        opacity: 0.8;
+    }
+}
+
+// Ground shadow under the map
+.ground-shadow {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    width: 130%;
+    height: 60px;
+    background: radial-gradient(ellipse, 
+        rgba(0, 0, 0, 0.5) 0%, 
+        rgba(0, 0, 0, 0.2) 40%,
+        transparent 70%);
+    transform: translateX(-50%) rotateX(90deg);
+    z-index: -1;
+}

@@ -1,0 +1,138 @@
+// ===========================================
+// CSS Tower Defense - Variables & Mixins
+// Enhanced Visual Design
+// ===========================================
+
+// Grid Configuration
+@grid-cols: 12;
+@grid-rows: 8;
+@cell-size: 60px;
+@scale: 1vw;
+
+// Colors - Game Theme (Neon Style inspired by css-space-shooter)
+@color-grass: #2d5a27;
+@color-grass-light: #3d7a37;
+@color-grass-dark: #1d3a17;
+@color-path: #5d4037;
+@color-path-dark: #3e2723;
+@color-path-light: #795548;
+@color-grid-hover: rgba(255, 255, 255, 0.3);
+@color-grid-valid: rgba(76, 175, 80, 0.5);
+@color-grid-invalid: rgba(244, 67, 54, 0.5);
+
+// Colors - UI (Vibrant)
+@color-primary: #00d4ff;
+@color-secondary: #ff6b00;
+@color-danger: #ff2e53;
+@color-success: #00ff88;
+@color-gold: #ffd700;
+@color-dark: #0a0a1a;
+@color-darker: #050510;
+
+// Colors - Towers (Neon Glow)
+@color-tower-arrow: #ff8c00;
+@color-tower-arrow-glow: rgba(255, 140, 0, 0.6);
+@color-tower-cannon: #8b8b8b;
+@color-tower-cannon-glow: rgba(255, 100, 50, 0.6);
+@color-tower-ice: #00e5ff;
+@color-tower-ice-glow: rgba(0, 229, 255, 0.6);
+@color-tower-magic: #e040fb;
+@color-tower-magic-glow: rgba(224, 64, 251, 0.6);
+
+// Colors - Enemies (Vibrant with Glow)
+@color-enemy-slime: #76ff03;
+@color-enemy-slime-glow: rgba(118, 255, 3, 0.5);
+@color-enemy-goblin: #ff5722;
+@color-enemy-goblin-glow: rgba(255, 87, 34, 0.5);
+@color-enemy-knight: #448aff;
+@color-enemy-knight-glow: rgba(68, 138, 255, 0.5);
+@color-enemy-boss: #ea80fc;
+@color-enemy-boss-glow: rgba(234, 128, 252, 0.5);
+
+// Typography
+@font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+@font-title: 'Impact', 'Arial Black', sans-serif;
+
+// Timing
+@transition-fast: 0.15s;
+@transition-normal: 0.3s;
+@transition-slow: 0.5s;
+
+// 3D Scene
+@perspective: 1000px;
+@map-rotation: 55deg;
+@border-width: 2px;
+
+// Glow Effect Mixin (like css-space-shooter)
+.glow-effect(@color, @intensity: 10px) {
+    box-shadow: 
+        inset 0 0 @intensity @color,
+        0 0 @intensity @color,
+        0 0 (@intensity * 2) fade(@color, 50%);
+}
+
+.glow-border(@color, @width: @border-width) {
+    border: @width solid @color;
+    .glow-effect(@color);
+}
+
+.text-glow(@color) {
+    text-shadow: 
+        0 0 10px @color,
+        0 0 20px @color,
+        0 0 30px fade(@color, 70%),
+        0 0 40px fade(@color, 50%);
+}
+
+// Common Mixins
+.center-absolute() {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.flex-center() {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.preserve-3d() {
+    transform-style: preserve-3d;
+}
+
+.no-select() {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+// Animation Keyframes
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+@keyframes glow-pulse {
+    0%, 100% { 
+        box-shadow: inset 0 0 10px currentColor, 0 0 10px currentColor;
+    }
+    50% { 
+        box-shadow: inset 0 0 20px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+    }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes spin {
+    0% { transform: rotateZ(0deg); }
+    100% { transform: rotateZ(360deg); }
+}
+
+@keyframes spin-reverse {
+    0% { transform: rotateZ(360deg); }
+    100% { transform: rotateZ(0deg); }
+}

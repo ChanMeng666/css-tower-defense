@@ -1,0 +1,22 @@
+{
+  "name": "css-tower-defense",
+  "version": "1.0.0",
+  "description": "A 3D tower defense game rendered with CSS transforms",
+  "main": "index.html",
+  "scripts": {
+    "watch": "gulp watch",
+    "build": "gulp build",
+    "compile": "gulp compile"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-less": "^5.0.0",
+    "gulp-uglify": "^3.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-inject": "^5.0.5",
+    "gulp-rename": "^2.0.0"
+  }
+}
