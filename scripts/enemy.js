@@ -43,6 +43,41 @@ var Enemy = (function() {
             className: 'enemy-boss'
         }
     };
+
+    // Enemy variant modifiers (elite, armored, speedy, toxic)
+    var ENEMY_VARIANTS = {
+        elite: {
+            name: 'Elite',
+            healthMultiplier: 2.0,
+            speedMultiplier: 1.3,
+            rewardMultiplier: 2.5,
+            damageMultiplier: 1.5,
+            className: 'elite'
+        },
+        armored: {
+            name: 'Armored',
+            healthMultiplier: 1.5,
+            speedMultiplier: 0.8,
+            rewardMultiplier: 1.8,
+            armorBonus: 10,
+            className: 'armored'
+        },
+        speedy: {
+            name: 'Speedy',
+            healthMultiplier: 0.7,
+            speedMultiplier: 2.0,
+            rewardMultiplier: 1.5,
+            className: 'speedy'
+        },
+        toxic: {
+            name: 'Toxic',
+            healthMultiplier: 1.2,
+            speedMultiplier: 1.0,
+            rewardMultiplier: 2.0,
+            damageMultiplier: 2.0,
+            className: 'toxic'
+        }
+    };
     
     // Active enemies list
     var enemies = [];
@@ -61,23 +96,32 @@ var Enemy = (function() {
     }
     
     /**
-     * Enemy constructor
+     * Enemy constructor with optional variant support
      */
-    function EnemyEntity(type, path) {
+    function EnemyEntity(type, path, variant) {
         var config = ENEMY_TYPES[type];
+        var variantConfig = variant ? ENEMY_VARIANTS[variant] : null;
         
         this.id = ++enemyIdCounter;
         this.type = type;
+        this.variant = variant || null;
         this.config = config;
         
-        // Stats
-        this.health = config.health;
-        this.maxHealth = config.health;
-        this.speed = config.speed;
-        this.baseSpeed = config.speed;
-        this.reward = config.reward;
-        this.damage = config.damage;
-        this.armor = config.armor || 0;
+        // Base stats
+        var healthMult = variantConfig ? variantConfig.healthMultiplier : 1;
+        var speedMult = variantConfig ? variantConfig.speedMultiplier : 1;
+        var rewardMult = variantConfig ? variantConfig.rewardMultiplier : 1;
+        var damageMult = variantConfig ? (variantConfig.damageMultiplier || 1) : 1;
+        var armorBonus = variantConfig ? (variantConfig.armorBonus || 0) : 0;
+        
+        // Stats with variant modifiers
+        this.health = Math.round(config.health * healthMult);
+        this.maxHealth = this.health;
+        this.speed = config.speed * speedMult;
+        this.baseSpeed = this.speed;
+        this.reward = Math.round(config.reward * rewardMult);
+        this.damage = Math.round(config.damage * damageMult);
+        this.armor = (config.armor || 0) + armorBonus;
         
         // Path following
         this.path = path;
@@ -106,30 +150,33 @@ var Enemy = (function() {
     
     /**
      * Create the DOM element for this enemy
+     * Enhanced with animated parts for each enemy type
      */
     EnemyEntity.prototype.createElement = function() {
         var el = document.createElement('div');
-        el.className = 'enemy ' + this.config.className;
+        var variantClass = this.variant ? ENEMY_VARIANTS[this.variant].className : '';
+        el.className = 'enemy ' + this.config.className + (variantClass ? ' ' + variantClass : '');
         el.dataset.id = this.id;
         
-        // Add body
-        var body = document.createElement('div');
-        body.className = 'enemy-body';
-        el.appendChild(body);
-        
-        // Add face
-        var face = document.createElement('div');
-        face.className = 'enemy-face';
-        el.appendChild(face);
-        
-        // Add eyes for some enemy types
-        if (this.type === 'goblin' || this.type === 'boss') {
-            var eyes = document.createElement('div');
-            eyes.className = 'enemy-eyes';
-            el.appendChild(eyes);
+        // Type-specific elements
+        switch(this.type) {
+            case 'slime':
+                this.createSlimeElements(el);
+                break;
+            case 'goblin':
+                this.createGoblinElements(el);
+                break;
+            case 'knight':
+                this.createKnightElements(el);
+                break;
+            case 'boss':
+                this.createBossElements(el);
+                break;
+            default:
+                this.createDefaultElements(el);
         }
         
-        // Add health bar
+        // Add health bar (common to all)
         var healthBar = document.createElement('div');
         healthBar.className = 'health-bar';
         var healthFill = document.createElement('div');
@@ -139,6 +186,157 @@ var Enemy = (function() {
         el.appendChild(healthBar);
         
         return el;
+    };
+
+    /**
+     * Create Slime enemy elements with animated tentacles
+     */
+    EnemyEntity.prototype.createSlimeElements = function(el) {
+        var body = document.createElement('div');
+        body.className = 'enemy-body';
+        el.appendChild(body);
+        
+        var face = document.createElement('div');
+        face.className = 'enemy-face';
+        el.appendChild(face);
+        
+        // Animated tentacles
+        var tentacles = document.createElement('div');
+        tentacles.className = 'tentacles';
+        for (var i = 1; i <= 4; i++) {
+            var tentacle = document.createElement('div');
+            tentacle.className = 'tentacle t' + i;
+            tentacles.appendChild(tentacle);
+        }
+        el.appendChild(tentacles);
+    };
+
+    /**
+     * Create Goblin enemy elements with animated arms
+     */
+    EnemyEntity.prototype.createGoblinElements = function(el) {
+        var body = document.createElement('div');
+        body.className = 'enemy-body';
+        el.appendChild(body);
+        
+        var face = document.createElement('div');
+        face.className = 'enemy-face';
+        el.appendChild(face);
+        
+        var eyes = document.createElement('div');
+        eyes.className = 'enemy-eyes';
+        el.appendChild(eyes);
+        
+        // Animated arms with dagger
+        var arms = document.createElement('div');
+        arms.className = 'arms';
+        
+        var leftArm = document.createElement('div');
+        leftArm.className = 'arm left';
+        arms.appendChild(leftArm);
+        
+        var rightArm = document.createElement('div');
+        rightArm.className = 'arm right';
+        arms.appendChild(rightArm);
+        
+        el.appendChild(arms);
+    };
+
+    /**
+     * Create Knight enemy elements with animated cape and sword
+     */
+    EnemyEntity.prototype.createKnightElements = function(el) {
+        // Cape (behind body)
+        var cape = document.createElement('div');
+        cape.className = 'cape';
+        var capeMain = document.createElement('div');
+        capeMain.className = 'cape-main';
+        cape.appendChild(capeMain);
+        el.appendChild(cape);
+        
+        var body = document.createElement('div');
+        body.className = 'enemy-body';
+        el.appendChild(body);
+        
+        var face = document.createElement('div');
+        face.className = 'enemy-face';
+        el.appendChild(face);
+        
+        // Animated sword
+        var sword = document.createElement('div');
+        sword.className = 'sword';
+        el.appendChild(sword);
+    };
+
+    /**
+     * Create Boss enemy elements with rotating energy rings
+     */
+    EnemyEntity.prototype.createBossElements = function(el) {
+        // Rotating energy rings (behind body)
+        var energyRings = document.createElement('div');
+        energyRings.className = 'energy-rings';
+        
+        // Create 3 ring containers
+        for (var i = 1; i <= 3; i++) {
+            var ringContainer = document.createElement('div');
+            ringContainer.className = 'ring-container ring-' + i;
+            
+            var ring = document.createElement('div');
+            ring.className = 'ring';
+            ringContainer.appendChild(ring);
+            
+            // Add orbs to first two rings
+            if (i <= 2) {
+                var orbPositions = i === 1 ? ['1', '2'] : ['3', '4'];
+                orbPositions.forEach(function(pos) {
+                    var orb = document.createElement('div');
+                    orb.className = 'orb orb-' + pos;
+                    ringContainer.appendChild(orb);
+                });
+            }
+            
+            energyRings.appendChild(ringContainer);
+        }
+        el.appendChild(energyRings);
+        
+        var body = document.createElement('div');
+        body.className = 'enemy-body';
+        el.appendChild(body);
+        
+        var face = document.createElement('div');
+        face.className = 'enemy-face';
+        el.appendChild(face);
+        
+        var eyes = document.createElement('div');
+        eyes.className = 'enemy-eyes';
+        el.appendChild(eyes);
+        
+        // Shoulder spikes
+        var spikes = document.createElement('div');
+        spikes.className = 'spikes';
+        
+        var leftSpike = document.createElement('div');
+        leftSpike.className = 'spike left';
+        spikes.appendChild(leftSpike);
+        
+        var rightSpike = document.createElement('div');
+        rightSpike.className = 'spike right';
+        spikes.appendChild(rightSpike);
+        
+        el.appendChild(spikes);
+    };
+
+    /**
+     * Create default enemy elements (fallback)
+     */
+    EnemyEntity.prototype.createDefaultElements = function(el) {
+        var body = document.createElement('div');
+        body.className = 'enemy-body';
+        el.appendChild(body);
+        
+        var face = document.createElement('div');
+        face.className = 'enemy-face';
+        el.appendChild(face);
     };
     
     /**
@@ -249,11 +447,14 @@ var Enemy = (function() {
     };
     
     /**
-     * Kill the enemy
+     * Kill the enemy with enhanced death effects
      */
     EnemyEntity.prototype.die = function() {
         this.alive = false;
         this.element.classList.add('dying');
+        
+        // Create death particles
+        this.createDeathParticles();
         
         // Dispatch event
         var event = new CustomEvent('enemyKilled', {
@@ -264,10 +465,27 @@ var Enemy = (function() {
         });
         document.dispatchEvent(event);
         
-        // Remove element after animation
+        // Remove element after animation (boss takes longer)
         var self = this;
+        var deathDuration = this.type === 'boss' ? 1000 : 600;
         setTimeout(function() {
             self.destroy();
+        }, deathDuration);
+    };
+
+    /**
+     * Create death particle effect using box-shadow technique
+     */
+    EnemyEntity.prototype.createDeathParticles = function() {
+        var particles = document.createElement('div');
+        particles.className = 'death-particles ' + this.type;
+        this.element.appendChild(particles);
+        
+        // Remove particles after animation
+        setTimeout(function() {
+            if (particles.parentNode) {
+                particles.parentNode.removeChild(particles);
+            }
         }, 500);
     };
     
@@ -288,11 +506,13 @@ var Enemy = (function() {
     };
     
     /**
-     * Spawn a new enemy
+     * Spawn a new enemy with optional variant
+     * @param {string} type - Enemy type (slime, goblin, knight, boss)
+     * @param {string} variant - Optional variant (elite, armored, speedy, toxic)
      */
-    function spawn(type) {
+    function spawn(type, variant) {
         var path = Path.getPathWaypoints();
-        var enemy = new EnemyEntity(type, path);
+        var enemy = new EnemyEntity(type, path, variant);
         enemies.push(enemy);
         return enemy;
     }
@@ -369,6 +589,7 @@ var Enemy = (function() {
         getById: getById,
         clear: clear,
         count: count,
-        TYPES: ENEMY_TYPES
+        TYPES: ENEMY_TYPES,
+        VARIANTS: ENEMY_VARIANTS
     };
 })();

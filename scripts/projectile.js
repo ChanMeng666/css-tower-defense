@@ -233,7 +233,7 @@ var Projectile = (function() {
     };
     
     /**
-     * Create impact visual effect
+     * Create enhanced impact visual effect with multi-stage elements
      */
     ProjectileEntity.prototype.createImpact = function() {
         var impact = document.createElement('div');
@@ -249,15 +249,88 @@ var Projectile = (function() {
         impact.style.top = localY + 'px';
         impact.style.transform = 'translate(-50%, -50%) rotateX(-55deg)';
         
+        // Add type-specific enhanced elements
+        switch (this.type) {
+            case 'arrow':
+                // Add spark particles
+                var sparks = document.createElement('div');
+                sparks.className = 'impact-sparks';
+                impact.appendChild(sparks);
+                break;
+                
+            case 'cannon':
+                // Add debris particles
+                var debris = document.createElement('div');
+                debris.className = 'impact-debris';
+                impact.appendChild(debris);
+                
+                // Add smoke cloud
+                var smoke = document.createElement('div');
+                smoke.className = 'impact-smoke';
+                impact.appendChild(smoke);
+                
+                // Apply screen shake for cannon impacts
+                triggerScreenShake('heavy');
+                break;
+                
+            case 'ice':
+                // Add crystal particles
+                var crystals = document.createElement('div');
+                crystals.className = 'impact-crystals';
+                impact.appendChild(crystals);
+                
+                // Add secondary frost ring
+                var frostRing = document.createElement('div');
+                frostRing.className = 'impact-frost-ring';
+                impact.appendChild(frostRing);
+                break;
+                
+            case 'magic':
+                // Add magic particles
+                var magicParticles = document.createElement('div');
+                magicParticles.className = 'impact-magic-particles';
+                impact.appendChild(magicParticles);
+                
+                // Add magic glow
+                var magicGlow = document.createElement('div');
+                magicGlow.className = 'impact-magic-glow';
+                impact.appendChild(magicGlow);
+                
+                // Slight screen shake for magic
+                triggerScreenShake('light');
+                break;
+        }
+        
         container.appendChild(impact);
         
-        // Remove after animation
+        // Remove after animation (longer for cannon)
+        var duration = this.type === 'cannon' ? 800 : 
+                       this.type === 'magic' ? 700 : 
+                       this.type === 'ice' ? 700 : 500;
         setTimeout(function() {
             if (impact.parentNode) {
                 impact.parentNode.removeChild(impact);
             }
-        }, 500);
+        }, duration);
     };
+
+    /**
+     * Trigger screen shake effect
+     * @param {string} intensity - 'light', 'heavy'
+     */
+    function triggerScreenShake(intensity) {
+        var scene = document.getElementById('scene');
+        if (!scene) return;
+        
+        var shakeClass = intensity === 'heavy' ? 'screen-shake-heavy' : 'screen-shake';
+        var duration = intensity === 'heavy' ? 400 : 300;
+        
+        scene.classList.add(shakeClass);
+        
+        setTimeout(function() {
+            scene.classList.remove(shakeClass);
+        }, duration);
+    }
     
     /**
      * Handle missing the target

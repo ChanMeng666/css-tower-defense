@@ -121,13 +121,14 @@ var Tower = (function() {
     
     /**
      * Create the DOM element for this tower
+     * Enhanced with idle animation particle elements
      */
     TowerEntity.prototype.createElement = function() {
         var el = document.createElement('div');
         el.className = 'tower ' + this.config.className;
         el.dataset.id = this.id;
         
-        // Create tower parts based on type
+        // Create tower parts based on type (with new particle elements)
         switch (this.type) {
             case 'arrow':
                 el.innerHTML = '<div class="tower-base"></div>' +
@@ -143,12 +144,14 @@ var Tower = (function() {
             case 'ice':
                 el.innerHTML = '<div class="tower-base"></div>' +
                                '<div class="tower-crystal"></div>' +
-                               '<div class="tower-glow"></div>';
+                               '<div class="tower-glow"></div>' +
+                               '<div class="ice-particles"></div>';
                 break;
             case 'magic':
                 el.innerHTML = '<div class="tower-base"></div>' +
                                '<div class="tower-orb"></div>' +
-                               '<div class="tower-ring"></div>';
+                               '<div class="tower-ring"></div>' +
+                               '<div class="magic-energy"></div>';
                 break;
         }
         
@@ -226,12 +229,24 @@ var Tower = (function() {
     };
     
     /**
-     * Fire at target
+     * Fire at target with visual feedback
      */
     TowerEntity.prototype.fire = function(currentTime) {
         if (!this.target) return;
         
         this.lastFireTime = currentTime;
+        
+        // Add firing visual feedback
+        this.element.classList.add('firing');
+        var self = this;
+        
+        // Remove firing class after animation completes
+        var animationDuration = this.type === 'magic' ? 400 : 
+                                this.type === 'ice' ? 500 : 
+                                this.type === 'cannon' ? 400 : 200;
+        setTimeout(function() {
+            self.element.classList.remove('firing');
+        }, animationDuration);
         
         // Create projectile
         Projectile.spawn(this, this.target);

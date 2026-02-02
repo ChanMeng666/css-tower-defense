@@ -1,6 +1,6 @@
 // ===========================================
 // CSS Tower Defense - Tower Styles
-// Enhanced 3D Models with Glow Effects
+// Enhanced 3D Models with Glow Effects & Idle Animations
 // ===========================================
 
 // Base Tower Styles
@@ -11,6 +11,21 @@
     pointer-events: none;
     // Counter-rotate to stand upright from viewer's perspective
     transform: translate(-50%, -100%) rotateX(-@map-rotation);
+    
+    // Subtle idle breathing animation for all towers
+    &:not(.firing) {
+        animation: towerIdle 4s ease-in-out infinite;
+    }
+}
+
+// Base tower idle animation (subtle breathing)
+@keyframes towerIdle {
+    0%, 100% { 
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1);
+    }
+    50% { 
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.02);
+    }
 }
 
 // ===========================================
@@ -182,6 +197,18 @@
     100% { opacity: 0.7; height: 15px; }
 }
 
+// Arrow tower idle - scanning motion
+.tower-arrow {
+    .tower-turret {
+        animation: arrowScan 4s ease-in-out infinite;
+    }
+}
+
+@keyframes arrowScan {
+    0%, 100% { transform: translateX(-50%) rotateZ(-15deg); }
+    50% { transform: translateX(-50%) rotateZ(15deg); }
+}
+
 // ===========================================
 // Cannon Tower - Heavy Fortified with Smoke
 // ===========================================
@@ -304,6 +331,57 @@
     50% { box-shadow: inset 0 0 10px rgba(255, 100, 0, 0.8), 0 0 5px rgba(255, 100, 0, 0.5); }
 }
 
+// Cannon tower idle - barrel sway and heat shimmer
+.tower-cannon {
+    .tower-barrel {
+        animation: cannonBarrelSway 6s ease-in-out infinite;
+    }
+    
+    // Heat shimmer effect
+    &::before {
+        content: '';
+        position: absolute;
+        bottom: 75px;
+        left: 50%;
+        width: 20px;
+        height: 25px;
+        background: linear-gradient(180deg,
+            transparent 0%,
+            rgba(255, 150, 50, 0.1) 30%,
+            rgba(255, 100, 0, 0.15) 50%,
+            rgba(255, 150, 50, 0.1) 70%,
+            transparent 100%);
+        transform: translateX(-50%);
+        animation: heatShimmer 2s ease-in-out infinite;
+        filter: blur(2px);
+        pointer-events: none;
+    }
+}
+
+@keyframes cannonBarrelSway {
+    0%, 100% { transform: translateX(-50%) rotateZ(-8deg); }
+    50% { transform: translateX(-50%) rotateZ(8deg); }
+}
+
+@keyframes heatShimmer {
+    0%, 100% { 
+        opacity: 0.3;
+        transform: translateX(-50%) scaleY(1) translateY(0);
+    }
+    25% { 
+        opacity: 0.6;
+        transform: translateX(-50%) scaleY(1.2) translateY(-5px);
+    }
+    50% { 
+        opacity: 0.4;
+        transform: translateX(-50%) scaleY(0.9) translateY(-10px);
+    }
+    75% { 
+        opacity: 0.5;
+        transform: translateX(-50%) scaleY(1.1) translateY(-3px);
+    }
+}
+
 // ===========================================
 // Ice Tower - Crystal Structure with Frost
 // ===========================================
@@ -417,6 +495,52 @@
 @keyframes frost-float {
     0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
     50% { transform: translateY(-15px) rotate(180deg); opacity: 0.4; }
+}
+
+// Ice tower idle - crystal shimmer and orbiting particles
+.tower-ice {
+    .tower-crystal {
+        animation: crystalShimmer 3s ease-in-out infinite;
+    }
+    
+    // Orbiting ice particles using box-shadow technique
+    .ice-particles {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        width: 3px;
+        height: 3px;
+        background: transparent;
+        transform: translateX(-50%);
+        animation: iceOrbit 4s linear infinite;
+        box-shadow:
+            25px 0 @color-tower-ice,
+            -25px 0 rgba(200, 255, 255, 0.8),
+            0 25px rgba(150, 230, 255, 0.7),
+            0 -25px @color-tower-ice,
+            18px 18px rgba(200, 255, 255, 0.6),
+            -18px -18px rgba(150, 230, 255, 0.7);
+    }
+}
+
+@keyframes crystalShimmer {
+    0%, 100% { 
+        filter: drop-shadow(0 0 15px @color-tower-ice-glow) brightness(1);
+    }
+    25% { 
+        filter: drop-shadow(0 0 20px @color-tower-ice-glow) brightness(1.1);
+    }
+    50% { 
+        filter: drop-shadow(0 0 25px @color-tower-ice-glow) brightness(1.2);
+    }
+    75% { 
+        filter: drop-shadow(0 0 20px @color-tower-ice-glow) brightness(1.1);
+    }
+}
+
+@keyframes iceOrbit {
+    0% { transform: translateX(-50%) rotate(0deg); }
+    100% { transform: translateX(-50%) rotate(360deg); }
 }
 
 // ===========================================
@@ -573,6 +697,65 @@
     50% { transform: translateY(-20px) scale(0.5); opacity: 0.3; }
 }
 
+// Magic tower idle - enhanced energy pattern with floating orbs
+.tower-magic {
+    .tower-orb {
+        animation: magicOrbIdle 3s ease-in-out infinite;
+    }
+    
+    // Floating energy orbs using box-shadow technique
+    .magic-energy {
+        position: absolute;
+        bottom: 55px;
+        left: 50%;
+        width: 4px;
+        height: 4px;
+        background: #fff;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        animation: magicEnergyOrbit 5s linear infinite;
+        box-shadow:
+            30px 0 @color-tower-magic,
+            -30px 0 lighten(@color-tower-magic, 20%),
+            0 30px fade(@color-tower-magic, 80%),
+            0 -30px @color-tower-magic,
+            21px 21px fade(@color-tower-magic, 70%),
+            -21px -21px lighten(@color-tower-magic, 15%),
+            21px -21px fade(@color-tower-magic, 60%),
+            -21px 21px @color-tower-magic;
+    }
+    
+    // Pulsing runes on base
+    .tower-base {
+        animation: runeGlow 4s ease-in-out infinite;
+    }
+}
+
+@keyframes magicOrbIdle {
+    0%, 100% { 
+        transform: translateX(-50%) translateY(0);
+        box-shadow: inset 0 0 20px @color-tower-magic-glow, 0 0 20px @color-tower-magic-glow;
+    }
+    50% { 
+        transform: translateX(-50%) translateY(-5px);
+        box-shadow: inset 0 0 30px @color-tower-magic-glow, 0 0 40px @color-tower-magic-glow;
+    }
+}
+
+@keyframes magicEnergyOrbit {
+    0% { transform: translateX(-50%) rotate(0deg); }
+    100% { transform: translateX(-50%) rotate(360deg); }
+}
+
+@keyframes runeGlow {
+    0%, 100% { 
+        box-shadow: inset 0 0 12px @color-tower-magic-glow, 0 0 12px @color-tower-magic-glow;
+    }
+    50% { 
+        box-shadow: inset 0 0 20px @color-tower-magic-glow, 0 0 25px @color-tower-magic-glow;
+    }
+}
+
 // ===========================================
 // Tower Level Indicators (Stars)
 // ===========================================
@@ -621,4 +804,228 @@
 @keyframes selection-pulse {
     0%, 100% { opacity: 1; transform: translateX(-50%) rotateX(-90deg) scale(1); }
     50% { opacity: 0.5; transform: translateX(-50%) rotateX(-90deg) scale(1.15); }
+}
+
+// ===========================================
+// Tower Firing State Visual Feedback
+// ===========================================
+
+// Base firing state - override idle animation
+.tower.firing {
+    animation: none;
+}
+
+// Arrow Tower - Bow draw and release
+.tower-arrow.firing {
+    .tower-turret {
+        animation: arrowFire 0.2s ease-out forwards;
+    }
+    
+    // Muzzle flash
+    &::after {
+        animation: arrowMuzzleFlash 0.15s ease-out forwards;
+    }
+}
+
+@keyframes arrowFire {
+    0% { transform: translateX(-50%) rotateZ(var(--angle, 0deg)) scaleY(0.9); }
+    30% { transform: translateX(-50%) rotateZ(var(--angle, 0deg)) scaleY(1.1); }
+    100% { transform: translateX(-50%) rotateZ(var(--angle, 0deg)) scaleY(1); }
+}
+
+@keyframes arrowMuzzleFlash {
+    0% { 
+        opacity: 1;
+        height: 20px;
+        filter: blur(1px) brightness(2);
+    }
+    100% { 
+        opacity: 0.7;
+        height: 12px;
+        filter: blur(1px);
+    }
+}
+
+// Cannon Tower - Recoil and smoke
+.tower-cannon.firing {
+    .tower-barrel {
+        animation: cannonRecoil 0.3s ease-out forwards;
+    }
+    
+    // Muzzle flash and smoke
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 80px;
+        left: 50%;
+        width: 30px;
+        height: 30px;
+        background: radial-gradient(circle,
+            rgba(255, 200, 100, 0.9) 0%,
+            rgba(255, 150, 50, 0.6) 30%,
+            rgba(100, 100, 100, 0.4) 60%,
+            transparent 100%);
+        transform: translateX(-50%);
+        animation: cannonMuzzleFlash 0.4s ease-out forwards;
+        border-radius: 50%;
+        pointer-events: none;
+    }
+}
+
+@keyframes cannonRecoil {
+    0% { transform: translateX(-50%) rotateZ(var(--angle, 0deg)) translateY(0); }
+    20% { transform: translateX(-50%) rotateZ(var(--angle, 0deg)) translateY(8px); }
+    100% { transform: translateX(-50%) rotateZ(var(--angle, 0deg)) translateY(0); }
+}
+
+@keyframes cannonMuzzleFlash {
+    0% { 
+        opacity: 1;
+        transform: translateX(-50%) scale(0.5);
+    }
+    30% { 
+        opacity: 1;
+        transform: translateX(-50%) scale(1.5);
+    }
+    100% { 
+        opacity: 0;
+        transform: translateX(-50%) scale(2) translateY(-20px);
+    }
+}
+
+// Ice Tower - Crystal pulse and frost burst
+.tower-ice.firing {
+    .tower-crystal {
+        animation: iceCrystalFire 0.3s ease-out forwards;
+    }
+    
+    .tower-glow {
+        animation: iceFrostBurst 0.4s ease-out forwards;
+    }
+    
+    // Frost ring burst
+    &::before {
+        content: '';
+        position: absolute;
+        bottom: 35px;
+        left: 50%;
+        width: 60px;
+        height: 60px;
+        border: 2px solid @color-tower-ice;
+        border-radius: 50%;
+        transform: translateX(-50%) scale(0);
+        animation: iceRingBurst 0.5s ease-out forwards;
+        pointer-events: none;
+    }
+}
+
+@keyframes iceCrystalFire {
+    0% { 
+        filter: drop-shadow(0 0 15px @color-tower-ice-glow) brightness(1);
+    }
+    30% { 
+        filter: drop-shadow(0 0 40px @color-tower-ice-glow) brightness(2);
+    }
+    100% { 
+        filter: drop-shadow(0 0 15px @color-tower-ice-glow) brightness(1);
+    }
+}
+
+@keyframes iceFrostBurst {
+    0% { 
+        opacity: 0.5;
+        transform: translateX(-50%) scale(1);
+    }
+    30% { 
+        opacity: 1;
+        transform: translateX(-50%) scale(1.8);
+    }
+    100% { 
+        opacity: 0.5;
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+@keyframes iceRingBurst {
+    0% { 
+        transform: translateX(-50%) scale(0);
+        opacity: 1;
+        border-width: 4px;
+    }
+    100% { 
+        transform: translateX(-50%) scale(2);
+        opacity: 0;
+        border-width: 1px;
+    }
+}
+
+// Magic Tower - Charging glow and energy release
+.tower-magic.firing {
+    .tower-orb {
+        animation: magicOrbFire 0.4s ease-out forwards;
+    }
+    
+    .tower-ring {
+        animation: magicRingFire 0.3s ease-out forwards;
+    }
+    
+    // Energy release burst
+    &::before {
+        content: '✦';
+        position: absolute;
+        bottom: 55px;
+        left: 50%;
+        font-size: 30px;
+        color: @color-tower-magic;
+        transform: translateX(-50%) scale(0);
+        animation: magicEnergyBurst 0.4s ease-out forwards;
+        text-shadow: 0 0 20px @color-tower-magic, 0 0 40px @color-tower-magic;
+        pointer-events: none;
+    }
+}
+
+@keyframes magicOrbFire {
+    0% { 
+        transform: translateX(-50%) scale(1);
+        box-shadow: inset 0 0 20px @color-tower-magic-glow, 0 0 20px @color-tower-magic-glow;
+    }
+    20% { 
+        transform: translateX(-50%) scale(0.8);
+        box-shadow: inset 0 0 40px @color-tower-magic-glow, 0 0 60px @color-tower-magic-glow;
+    }
+    40% { 
+        transform: translateX(-50%) scale(1.3);
+        box-shadow: inset 0 0 50px @color-tower-magic-glow, 0 0 80px @color-tower-magic-glow;
+    }
+    100% { 
+        transform: translateX(-50%) scale(1);
+        box-shadow: inset 0 0 20px @color-tower-magic-glow, 0 0 20px @color-tower-magic-glow;
+    }
+}
+
+@keyframes magicRingFire {
+    0% { 
+        transform: translateX(-50%) rotateX(75deg) rotateZ(0deg) scale(1);
+    }
+    50% { 
+        transform: translateX(-50%) rotateX(75deg) rotateZ(180deg) scale(1.5);
+    }
+    100% { 
+        transform: translateX(-50%) rotateX(75deg) rotateZ(360deg) scale(1);
+    }
+}
+
+@keyframes magicEnergyBurst {
+    0% { 
+        transform: translateX(-50%) scale(0) rotate(0deg);
+        opacity: 1;
+    }
+    50% { 
+        transform: translateX(-50%) scale(1.5) rotate(180deg);
+        opacity: 1;
+    }
+    100% { 
+        transform: translateX(-50%) scale(0) rotate(360deg);
+        opacity: 0;
+    }
 }

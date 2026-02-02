@@ -241,7 +241,7 @@
 }
 
 // ===========================================
-// Impact Effects - Spectacular Explosions
+// Enhanced Impact Effects - Multi-Stage Explosions
 // ===========================================
 .impact {
     position: absolute;
@@ -250,11 +250,12 @@
     transform: translate(-50%, -50%) rotateX(-@map-rotation);
 }
 
-// Arrow Impact
+// Arrow Impact - Enhanced with spark particles
 .impact-arrow {
     width: 30px;
     height: 30px;
     
+    // Core flash
     &::before {
         content: '';
         position: absolute;
@@ -263,30 +264,55 @@
         width: 100%;
         height: 100%;
         background: radial-gradient(circle,
-            rgba(255, 255, 255, 0.8) 0%,
-            @color-tower-arrow-glow 40%,
+            rgba(255, 255, 255, 0.9) 0%,
+            @color-tower-arrow 30%,
+            @color-tower-arrow-glow 50%,
             transparent 70%);
         transform: translate(-50%, -50%);
         animation: impact-expand 0.3s ease-out forwards;
     }
     
+    // Star burst
     &::after {
         content: '✦';
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        font-size: 20px;
+        font-size: 24px;
         color: @color-tower-arrow;
-        animation: impact-star 0.3s ease-out forwards;
+        text-shadow: 0 0 15px @color-tower-arrow;
+        animation: impact-star 0.35s ease-out forwards;
+    }
+    
+    // Spark particles using additional element
+    .impact-sparks {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 2px;
+        height: 2px;
+        background: transparent;
+        transform: translate(-50%, -50%);
+        animation: sparkBurst 0.4s ease-out forwards;
+        box-shadow:
+            15px -15px @color-tower-arrow,
+            -15px -15px lighten(@color-tower-arrow, 20%),
+            15px 15px @color-tower-arrow,
+            -15px 15px lighten(@color-tower-arrow, 20%),
+            0 -20px @color-tower-arrow,
+            0 20px @color-tower-arrow,
+            20px 0 lighten(@color-tower-arrow, 20%),
+            -20px 0 @color-tower-arrow;
     }
 }
 
-// Cannon Impact - Explosion
+// Cannon Impact - Multi-stage explosion with debris
 .impact-cannon {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     
+    // Stage 1: Initial flash
     &::before {
         content: '';
         position: absolute;
@@ -296,16 +322,165 @@
         height: 100%;
         background: radial-gradient(circle,
             #fff 0%,
-            #ffcc00 20%,
-            #ff6600 40%,
-            #ff3300 60%,
-            transparent 80%);
+            #ffffaa 15%,
+            #ffcc00 30%,
+            #ff6600 50%,
+            #ff3300 70%,
+            transparent 90%);
         transform: translate(-50%, -50%);
-        animation: explosion 0.5s ease-out forwards;
+        animation: cannonExplosion 0.6s ease-out forwards;
         filter: blur(2px);
     }
     
-    // Shockwave ring
+    // Stage 2: Shockwave ring
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100px;
+        height: 100px;
+        border: 5px solid rgba(255, 150, 0, 0.7);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        animation: cannonShockwave 0.6s ease-out forwards;
+        box-shadow: 0 0 20px rgba(255, 100, 0, 0.5);
+    }
+    
+    // Debris particles
+    .impact-debris {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 3px;
+        height: 3px;
+        background: transparent;
+        transform: translate(-50%, -50%);
+        animation: debrisBurst 0.7s ease-out forwards;
+        box-shadow:
+            // Inner debris
+            20px -25px #666,
+            -25px -20px #888,
+            25px 20px #777,
+            -20px 25px #999,
+            // Fire particles
+            30px -10px #ff6600,
+            -30px 10px #ff9900,
+            10px -35px #ffcc00,
+            -10px 35px #ff6600,
+            // Outer debris
+            35px -35px #555,
+            -35px 35px #666,
+            40px 15px #777,
+            -40px -15px #888;
+    }
+    
+    // Smoke cloud
+    .impact-smoke {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 60px;
+        height: 60px;
+        background: radial-gradient(circle,
+            rgba(80, 80, 80, 0.6) 0%,
+            rgba(60, 60, 60, 0.4) 40%,
+            transparent 70%);
+        transform: translate(-50%, -50%);
+        animation: smokeRise 0.8s ease-out forwards;
+        filter: blur(4px);
+    }
+}
+
+// Ice Impact - Frost burst with crystal shatter
+.impact-ice {
+    width: 50px;
+    height: 50px;
+    
+    // Central frost burst
+    &::before {
+        content: '❄';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        font-size: 40px;
+        color: @color-tower-ice;
+        transform: translate(-50%, -50%);
+        text-shadow: 0 0 25px @color-tower-ice, 0 0 50px @color-tower-ice-glow;
+        animation: iceBurstEnhanced 0.5s ease-out forwards;
+    }
+    
+    // Frost ring expansion
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 70px;
+        height: 70px;
+        background: radial-gradient(circle,
+            rgba(200, 255, 255, 0.6) 0%,
+            @color-tower-ice-glow 30%,
+            transparent 70%);
+        transform: translate(-50%, -50%);
+        animation: frostRingEnhanced 0.6s ease-out forwards;
+    }
+    
+    // Ice crystal particles
+    .impact-crystals {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 2px;
+        height: 2px;
+        background: transparent;
+        transform: translate(-50%, -50%);
+        animation: crystalShatter 0.5s ease-out forwards;
+        box-shadow:
+            20px -20px @color-tower-ice,
+            -20px -20px lighten(@color-tower-ice, 20%),
+            20px 20px @color-tower-ice,
+            -20px 20px lighten(@color-tower-ice, 20%),
+            0 -28px #fff,
+            0 28px @color-tower-ice,
+            28px 0 lighten(@color-tower-ice, 15%),
+            -28px 0 #fff;
+    }
+    
+    // Secondary frost ring
+    .impact-frost-ring {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 60px;
+        height: 60px;
+        border: 3px solid @color-tower-ice;
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        animation: frostRingSecondary 0.7s ease-out forwards 0.1s;
+        box-shadow: 0 0 15px @color-tower-ice-glow;
+    }
+}
+
+// Magic Impact - Arcane multi-burst
+.impact-magic {
+    width: 50px;
+    height: 50px;
+    
+    // Central arcane symbol
+    &::before {
+        content: '✦';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        font-size: 45px;
+        color: @color-tower-magic;
+        transform: translate(-50%, -50%);
+        text-shadow: 0 0 25px @color-tower-magic, 0 0 50px @color-tower-magic-glow;
+        animation: magicBurstEnhanced 0.6s ease-out forwards;
+    }
+    
+    // Outer magic ring
     &::after {
         content: '';
         position: absolute;
@@ -313,117 +488,177 @@
         left: 50%;
         width: 80px;
         height: 80px;
-        border: 4px solid rgba(255, 150, 0, 0.6);
+        border: 4px solid @color-tower-magic;
         border-radius: 50%;
-        transform: translate(-50%, -50%) scale(0);
-        animation: shockwave 0.5s ease-out forwards;
+        transform: translate(-50%, -50%) scale(0) rotate(0deg);
+        animation: magicRingEnhanced 0.6s ease-out forwards;
+        box-shadow: 0 0 20px @color-tower-magic-glow, inset 0 0 20px @color-tower-magic-glow;
     }
-}
-
-// Ice Impact - Frost Burst
-.impact-ice {
-    width: 40px;
-    height: 40px;
     
-    &::before {
-        content: '❄';
+    // Magic particle burst
+    .impact-magic-particles {
         position: absolute;
         top: 50%;
         left: 50%;
-        font-size: 36px;
-        color: @color-tower-ice;
+        width: 2px;
+        height: 2px;
+        background: transparent;
         transform: translate(-50%, -50%);
-        text-shadow: 0 0 20px @color-tower-ice;
-        animation: ice-burst 0.5s ease-out forwards;
+        animation: magicParticleBurst 0.7s ease-out forwards;
+        box-shadow:
+            25px -25px @color-tower-magic,
+            -25px -25px lighten(@color-tower-magic, 25%),
+            25px 25px @color-tower-magic,
+            -25px 25px lighten(@color-tower-magic, 25%),
+            0 -35px #fff,
+            0 35px @color-tower-magic,
+            35px 0 lighten(@color-tower-magic, 20%),
+            -35px 0 #fff,
+            18px -30px @color-tower-magic,
+            -18px 30px lighten(@color-tower-magic, 15%);
     }
     
-    &::after {
-        content: '';
+    // Inner pulsing glow
+    .impact-magic-glow {
         position: absolute;
         top: 50%;
         left: 50%;
         width: 50px;
         height: 50px;
         background: radial-gradient(circle,
-            @color-tower-ice-glow 0%,
+            rgba(255, 255, 255, 0.8) 0%,
+            @color-tower-magic-glow 30%,
             transparent 70%);
         transform: translate(-50%, -50%);
-        animation: frost-ring 0.5s ease-out forwards;
+        animation: magicGlowPulse 0.5s ease-out forwards;
     }
 }
 
-// Magic Impact - Arcane Burst
-.impact-magic {
-    width: 40px;
-    height: 40px;
-    
-    &::before {
-        content: '✦';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        font-size: 40px;
-        color: @color-tower-magic;
-        transform: translate(-50%, -50%);
-        text-shadow: 0 0 20px @color-tower-magic;
-        animation: magic-burst 0.5s ease-out forwards;
-    }
-    
-    &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 60px;
-        height: 60px;
-        border: 3px solid @color-tower-magic;
-        border-radius: 50%;
-        transform: translate(-50%, -50%) scale(0) rotate(0deg);
-        animation: magic-ring-impact 0.5s ease-out forwards;
-        box-shadow: 0 0 15px @color-tower-magic;
-    }
-}
-
-// Impact Animations
+// ===========================================
+// Enhanced Impact Animations
+// ===========================================
 @keyframes impact-expand {
-    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.3); }
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
-}
-
-@keyframes impact-star {
-    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5) rotate(0deg); }
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(2) rotate(180deg); }
-}
-
-@keyframes explosion {
     0% { opacity: 1; transform: translate(-50%, -50%) scale(0.2); }
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.5); }
+    50% { opacity: 1; }
     100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5); }
 }
 
-@keyframes shockwave {
-    0% { opacity: 1; transform: translate(-50%, -50%) scale(0); }
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
+@keyframes impact-star {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.3) rotate(0deg); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.5) rotate(90deg); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5) rotate(180deg); }
 }
 
-@keyframes ice-burst {
-    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5) rotate(0deg); }
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(2) rotate(180deg); }
+@keyframes sparkBurst {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
 }
 
-@keyframes frost-ring {
-    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(3); }
+@keyframes cannonExplosion {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.1); }
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+    40% { opacity: 1; transform: translate(-50%, -50%) scale(0.9); }
+    60% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.5); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5); }
 }
 
-@keyframes magic-burst {
-    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5) rotate(0deg); }
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.5) rotate(180deg); }
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(0) rotate(360deg); }
+@keyframes cannonShockwave {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0); border-width: 8px; }
+    50% { opacity: 0.8; border-width: 4px; }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5); border-width: 1px; }
 }
 
-@keyframes magic-ring-impact {
+@keyframes debrisBurst {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+    30% { opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+}
+
+@keyframes smokeRise {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.6; }
+    50% { transform: translate(-50%, -70%) scale(1.2); opacity: 0.4; }
+    100% { transform: translate(-50%, -100%) scale(1.8); opacity: 0; }
+}
+
+@keyframes iceBurstEnhanced {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.3) rotate(0deg); }
+    30% { opacity: 1; transform: translate(-50%, -50%) scale(1.3) rotate(60deg); }
+    60% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.8) rotate(120deg); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5) rotate(180deg); }
+}
+
+@keyframes frostRingEnhanced {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.3); }
+    50% { opacity: 0.8; }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(3.5); }
+}
+
+@keyframes crystalShatter {
+    0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
+    30% { opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2.5) rotate(45deg); opacity: 0; }
+}
+
+@keyframes frostRingSecondary {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+}
+
+@keyframes magicBurstEnhanced {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.2) rotate(0deg); }
+    25% { opacity: 1; transform: translate(-50%, -50%) scale(1.5) rotate(90deg); }
+    50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.2) rotate(180deg); }
+    75% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.8) rotate(270deg); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5) rotate(360deg); }
+}
+
+@keyframes magicRingEnhanced {
     0% { opacity: 1; transform: translate(-50%, -50%) scale(0) rotate(0deg); }
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2) rotate(180deg); }
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(2) rotate(360deg); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.5) rotate(180deg); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5) rotate(360deg); }
+}
+
+@keyframes magicParticleBurst {
+    0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(2.5) rotate(90deg); opacity: 0; }
+}
+
+@keyframes magicGlowPulse {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+    50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+}
+
+// ===========================================
+// Screen Shake Effect
+// ===========================================
+.scene.screen-shake {
+    animation: screenShake 0.3s ease-out;
+}
+
+.scene.screen-shake-heavy {
+    animation: screenShakeHeavy 0.4s ease-out;
+}
+
+@keyframes screenShake {
+    0%, 100% { transform: translateX(0); }
+    10% { transform: translateX(-3px); }
+    20% { transform: translateX(3px); }
+    30% { transform: translateX(-2px); }
+    40% { transform: translateX(2px); }
+    50% { transform: translateX(-1px); }
+    60% { transform: translateX(1px); }
+}
+
+@keyframes screenShakeHeavy {
+    0%, 100% { transform: translateX(0) translateY(0); }
+    10% { transform: translateX(-5px) translateY(2px); }
+    20% { transform: translateX(5px) translateY(-2px); }
+    30% { transform: translateX(-4px) translateY(3px); }
+    40% { transform: translateX(4px) translateY(-3px); }
+    50% { transform: translateX(-3px) translateY(2px); }
+    60% { transform: translateX(3px) translateY(-1px); }
+    70% { transform: translateX(-2px) translateY(1px); }
+    80% { transform: translateX(1px) translateY(0); }
 }

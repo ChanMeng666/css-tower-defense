@@ -1,6 +1,7 @@
 // ===========================================
 // CSS Tower Defense - Enemy Styles
 // Enhanced 3D Models with Glow & Animation
+// Inspired by css-space-shooter techniques
 // ===========================================
 
 // Base Enemy Styles
@@ -8,12 +9,12 @@
     position: absolute;
     .preserve-3d();
     transform-origin: center bottom;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, border-width 0.5s ease;
     // Counter-rotate to stand upright from viewer's perspective
     transform: translate(-50%, -100%) rotateX(-@map-rotation);
     
     &.dying {
-        animation: enemyDeath 0.5s ease-out forwards;
+        animation: enemyDeath 0.6s ease-out forwards;
     }
 }
 
@@ -44,7 +45,7 @@
 }
 
 // ===========================================
-// Slime Enemy - Bouncy Glowing Blob
+// Slime Enemy - Bouncy Glowing Blob with Tentacles
 // ===========================================
 .enemy-slime {
     .enemy-body {
@@ -76,7 +77,7 @@
             filter: blur(1px);
         }
         
-        // Drip effect
+        // Main drip effect
         &::after {
             content: '';
             position: absolute;
@@ -117,6 +118,43 @@
             left: 4px;
         }
     }
+    
+    // Animated tentacles container
+    .tentacles {
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: tentacleContainer 4s linear infinite;
+        
+        .tentacle {
+            position: absolute;
+            width: 4px;
+            height: 12px;
+            background: linear-gradient(180deg,
+                @color-enemy-slime 0%,
+                fade(@color-enemy-slime, 40%) 100%);
+            border-radius: 0 0 50% 50%;
+            transform-origin: top center;
+            
+            &.t1 {
+                left: -12px;
+                animation: tentacleWave 0.8s ease-in-out infinite;
+            }
+            &.t2 {
+                left: -4px;
+                animation: tentacleWave 0.8s ease-in-out infinite 0.2s;
+            }
+            &.t3 {
+                left: 4px;
+                animation: tentacleWave 0.8s ease-in-out infinite 0.4s;
+            }
+            &.t4 {
+                left: 12px;
+                animation: tentacleWave 0.8s ease-in-out infinite 0.6s;
+            }
+        }
+    }
 }
 
 @keyframes slimeBounce {
@@ -135,8 +173,18 @@
     50% { transform: translateX(-50%) translateY(5px); opacity: 0.3; }
 }
 
+@keyframes tentacleWave {
+    0%, 100% { transform: rotate(-15deg) scaleY(1); }
+    50% { transform: rotate(15deg) scaleY(1.2); }
+}
+
+@keyframes tentacleContainer {
+    0% { transform: translateX(-50%) rotate(0deg); }
+    100% { transform: translateX(-50%) rotate(360deg); }
+}
+
 // ===========================================
-// Goblin Enemy - Quick Sneaky Runner
+// Goblin Enemy - Quick Sneaky Runner with Arms
 // ===========================================
 .enemy-goblin {
     .enemy-body {
@@ -167,20 +215,6 @@
                 rgba(255, 255, 255, 0.15) 0%,
                 transparent 100%);
             border-radius: 10px 0 0 8px;
-        }
-        
-        // Dagger
-        &::after {
-            content: '';
-            position: absolute;
-            top: 20px;
-            right: -8px;
-            width: 4px;
-            height: 15px;
-            background: linear-gradient(180deg, silver 0%, #666 100%);
-            border-radius: 2px;
-            transform: rotate(20deg);
-            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
         }
     }
     
@@ -244,6 +278,54 @@
             left: 4px;
         }
     }
+    
+    // Animated arms with dagger
+    .arms {
+        position: absolute;
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        .preserve-3d();
+        
+        .arm {
+            position: absolute;
+            width: 6px;
+            height: 18px;
+            background: linear-gradient(180deg,
+                @color-enemy-goblin 0%,
+                darken(@color-enemy-goblin, 15%) 100%);
+            border-radius: 3px;
+            border: 1px solid lighten(@color-enemy-goblin, 10%);
+            transform-origin: top center;
+            
+            &.left {
+                left: -18px;
+                animation: armSwingLeft 0.4s ease-in-out infinite;
+            }
+            
+            &.right {
+                right: -18px;
+                animation: armSwingRight 0.4s ease-in-out infinite;
+                
+                // Dagger on right arm
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: -12px;
+                    left: 50%;
+                    width: 3px;
+                    height: 14px;
+                    background: linear-gradient(180deg, 
+                        #fff 0%,
+                        silver 30%,
+                        #666 100%);
+                    border-radius: 1px 1px 50% 50%;
+                    transform: translateX(-50%);
+                    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+                }
+            }
+        }
+    }
 }
 
 @keyframes goblinRun {
@@ -252,13 +334,23 @@
     75% { transform: translateX(-50%) skewX(-3deg); }
 }
 
+@keyframes armSwingLeft {
+    0%, 100% { transform: rotate(-30deg); }
+    50% { transform: rotate(30deg); }
+}
+
+@keyframes armSwingRight {
+    0%, 100% { transform: rotate(30deg); }
+    50% { transform: rotate(-30deg); }
+}
+
 @keyframes eyeGlow {
     0% { box-shadow: 0 0 5px #ffff00; }
     100% { box-shadow: 0 0 12px #ffff00, 0 0 20px rgba(255, 255, 0, 0.5); }
 }
 
 // ===========================================
-// Knight Enemy - Armored Warrior
+// Knight Enemy - Armored Warrior with Cape
 // ===========================================
 .enemy-knight {
     .enemy-body {
@@ -359,21 +451,106 @@
         }
     }
     
-    // Sword glow
-    &::after {
-        content: '';
+    // Animated cape
+    .cape {
         position: absolute;
-        bottom: 25px;
-        right: -5px;
-        width: 5px;
-        height: 30px;
+        bottom: 5px;
+        left: 50%;
+        width: 30px;
+        height: 35px;
+        transform: translateX(-50%);
+        z-index: -1;
+        .preserve-3d();
+        
+        .cape-main {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg,
+                darken(@color-enemy-knight, 10%) 0%,
+                darken(@color-enemy-knight, 25%) 50%,
+                darken(@color-enemy-knight, 35%) 100%);
+            border-radius: 0 0 40% 40%;
+            animation: capeFlow 1.5s ease-in-out infinite;
+            transform-origin: top center;
+            
+            // Cape inner shadow
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(90deg,
+                    rgba(0, 0, 0, 0.3) 0%,
+                    transparent 30%,
+                    transparent 70%,
+                    rgba(0, 0, 0, 0.2) 100%);
+                border-radius: 0 0 40% 40%;
+            }
+            
+            // Cape edge highlight
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 5%;
+                right: 5%;
+                height: 3px;
+                background: linear-gradient(90deg,
+                    transparent 0%,
+                    rgba(100, 150, 255, 0.3) 50%,
+                    transparent 100%);
+                border-radius: 50%;
+            }
+        }
+    }
+    
+    // Sword with glow effect
+    .sword {
+        position: absolute;
+        bottom: 20px;
+        right: -8px;
+        width: 6px;
+        height: 35px;
         background: linear-gradient(180deg, 
             #fff 0%, 
-            #ccc 50%,
-            #999 100%);
-        border-radius: 2px;
+            #e0e0e0 20%,
+            #c0c0c0 50%,
+            #a0a0a0 100%);
+        border-radius: 2px 2px 50% 50%;
         transform: rotate(15deg);
-        box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.6),
+                    0 0 20px rgba(100, 150, 255, 0.3);
+        animation: swordGlow 2s ease-in-out infinite alternate;
+        
+        // Sword hilt
+        &::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            width: 14px;
+            height: 4px;
+            background: linear-gradient(180deg, #a08040 0%, #705020 100%);
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        // Sword pommel
+        &::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, @color-gold 0%, darken(@color-gold, 30%) 100%);
+            transform: translateX(-50%);
+            border-radius: 50%;
+            box-shadow: 0 0 5px @color-gold;
+        }
     }
 }
 
@@ -382,8 +559,23 @@
     50% { transform: translateX(-50%) rotate(5deg); }
 }
 
+@keyframes capeFlow {
+    0%, 100% { 
+        transform: translateX(-50%) skewX(-3deg) scaleY(1);
+    }
+    50% { 
+        transform: translateX(-50%) skewX(3deg) scaleY(1.05);
+    }
+}
+
+@keyframes swordGlow {
+    0% { box-shadow: 0 0 8px rgba(255, 255, 255, 0.5), 0 0 15px rgba(100, 150, 255, 0.2); }
+    100% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(100, 150, 255, 0.4); }
+}
+
 // ===========================================
-// Boss Enemy - Giant Monster with Aura
+// Boss Enemy - Giant Monster with Energy Rings
+// Inspired by css-space-shooter rotating arms
 // ===========================================
 .enemy-boss {
     transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.4);
@@ -497,6 +689,116 @@
         }
     }
     
+    // Rotating energy rings (inspired by space-shooter alien arms)
+    .energy-rings {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        .preserve-3d();
+        
+        .ring-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: ringRotate 6s linear infinite;
+            
+            &.ring-1 {
+                animation-duration: 6s;
+            }
+            
+            &.ring-2 {
+                animation-duration: 8s;
+                animation-direction: reverse;
+            }
+            
+            &.ring-3 {
+                animation-duration: 4s;
+            }
+            
+            .ring {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                border-radius: 50%;
+                border: 2px solid @color-enemy-boss;
+                background: transparent;
+                transform: translate(-50%, -50%);
+                .glow-effect(@color-enemy-boss-glow, 8px);
+            }
+            
+            &.ring-1 .ring {
+                width: 70px;
+                height: 70px;
+                border-color: fade(@color-enemy-boss, 70%);
+            }
+            
+            &.ring-2 .ring {
+                width: 85px;
+                height: 85px;
+                border-color: fade(@color-enemy-boss, 50%);
+                border-style: dashed;
+            }
+            
+            &.ring-3 .ring {
+                width: 55px;
+                height: 55px;
+                border-color: @color-danger;
+                border-width: 3px;
+            }
+            
+            // Energy orbs on rings
+            .orb {
+                position: absolute;
+                width: 8px;
+                height: 8px;
+                background: radial-gradient(circle,
+                    #fff 0%,
+                    @color-enemy-boss 50%,
+                    transparent 100%);
+                border-radius: 50%;
+                box-shadow: 0 0 10px @color-enemy-boss, 0 0 20px @color-enemy-boss-glow;
+                
+                &.orb-1 { top: -4px; left: 50%; transform: translateX(-50%); }
+                &.orb-2 { bottom: -4px; left: 50%; transform: translateX(-50%); }
+                &.orb-3 { left: -4px; top: 50%; transform: translateY(-50%); }
+                &.orb-4 { right: -4px; top: 50%; transform: translateY(-50%); }
+            }
+        }
+    }
+    
+    // Shoulder spikes
+    .spikes {
+        position: absolute;
+        bottom: 45px;
+        left: 50%;
+        transform: translateX(-50%);
+        
+        .spike {
+            position: absolute;
+            width: 6px;
+            height: 20px;
+            background: linear-gradient(180deg,
+                lighten(@color-enemy-boss, 20%) 0%,
+                @color-enemy-boss 50%,
+                darken(@color-enemy-boss, 20%) 100%);
+            border-radius: 50% 50% 0 0;
+            
+            &.left {
+                left: -30px;
+                transform: rotate(-30deg);
+                animation: spikePulse 1s ease-in-out infinite;
+            }
+            
+            &.right {
+                right: -30px;
+                transform: rotate(30deg);
+                animation: spikePulse 1s ease-in-out infinite 0.5s;
+            }
+        }
+    }
+    
     .health-bar {
         width: 70px;
         height: 10px;
@@ -530,23 +832,334 @@
     100% { box-shadow: 0 0 20px @color-danger, 0 0 40px rgba(255, 0, 0, 0.7); }
 }
 
+@keyframes ringRotate {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes spikePulse {
+    0%, 100% { 
+        transform: rotate(-30deg) scale(1);
+        box-shadow: 0 0 5px @color-enemy-boss-glow;
+    }
+    50% { 
+        transform: rotate(-30deg) scale(1.1);
+        box-shadow: 0 0 15px @color-enemy-boss-glow;
+    }
+}
+
+.enemy-boss .spikes .spike.right {
+    @keyframes spikePulseRight {
+        0%, 100% { 
+            transform: rotate(30deg) scale(1);
+            box-shadow: 0 0 5px @color-enemy-boss-glow;
+        }
+        50% { 
+            transform: rotate(30deg) scale(1.1);
+            box-shadow: 0 0 15px @color-enemy-boss-glow;
+        }
+    }
+    animation: spikePulseRight 1s ease-in-out infinite 0.5s;
+}
+
 // ===========================================
-// Death Animation
+// Enhanced Death Animation System
+// Inspired by css-space-shooter dramatic effects
 // ===========================================
+
+// Base death animation for all enemies
 @keyframes enemyDeath {
     0% {
         opacity: 1;
         transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1);
         filter: brightness(1);
     }
-    30% {
+    15% {
         filter: brightness(3);
-        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.3);
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.2);
+    }
+    30% {
+        filter: brightness(4);
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.4);
+    }
+    60% {
+        opacity: 0.8;
+        filter: brightness(2);
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.1) rotate(180deg);
     }
     100% {
         opacity: 0;
-        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(0) rotate(360deg);
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(0) rotate(720deg);
         filter: brightness(5);
+    }
+}
+
+// Enhanced dying state with border expansion (like space-shooter)
+.enemy.dying {
+    animation: enemyDeath 0.6s ease-out forwards;
+    pointer-events: none;
+    
+    .enemy-body {
+        animation: deathBodyExpand 0.6s ease-out forwards;
+    }
+    
+    // Hide health bar during death
+    .health-bar {
+        opacity: 0;
+        transition: opacity 0.1s;
+    }
+    
+    // Slime death - splatter effect
+    &.enemy-slime {
+        .tentacles {
+            animation: tentacleDeath 0.4s ease-out forwards;
+        }
+    }
+    
+    // Goblin death - arms fly outward
+    &.enemy-goblin {
+        .arms .arm {
+            animation: armFlyOut 0.5s ease-out forwards;
+            
+            &.left {
+                animation-name: armFlyOutLeft;
+            }
+            &.right {
+                animation-name: armFlyOutRight;
+            }
+        }
+    }
+    
+    // Knight death - cape flies off
+    &.enemy-knight {
+        .cape {
+            animation: capeFlyOff 0.5s ease-out forwards;
+        }
+        .sword {
+            animation: swordFlyOff 0.5s ease-out forwards;
+        }
+    }
+    
+    // Boss death - extra dramatic with energy burst
+    &.enemy-boss {
+        animation: bossDeath 1s ease-out forwards;
+        
+        .energy-rings .ring-container {
+            animation: ringExplode 0.8s ease-out forwards;
+        }
+        
+        .spikes .spike {
+            animation: spikeExplode 0.6s ease-out forwards;
+        }
+    }
+}
+
+// Body border expansion effect (inspired by space-shooter alien death)
+@keyframes deathBodyExpand {
+    0% {
+        border-width: 2px;
+        opacity: 1;
+    }
+    30% {
+        border-width: 8px;
+        border-color: white;
+        opacity: 1;
+    }
+    100% {
+        border-width: 20px;
+        border-color: white;
+        opacity: 0;
+    }
+}
+
+// Slime tentacle death
+@keyframes tentacleDeath {
+    0% {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translateX(-50%) scale(1.5);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateX(-50%) scale(2) translateY(20px);
+        opacity: 0;
+    }
+}
+
+// Goblin arm fly out animations
+@keyframes armFlyOutLeft {
+    0% {
+        transform: rotate(-30deg);
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(-30deg) translateX(-50px) translateY(-30px) rotate(-180deg);
+        opacity: 0;
+    }
+}
+
+@keyframes armFlyOutRight {
+    0% {
+        transform: rotate(30deg);
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(30deg) translateX(50px) translateY(-30px) rotate(180deg);
+        opacity: 0;
+    }
+}
+
+// Knight cape and sword fly off
+@keyframes capeFlyOff {
+    0% {
+        transform: translateX(-50%) skewX(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50%) translateY(30px) translateX(-40px) rotate(-45deg);
+        opacity: 0;
+    }
+}
+
+@keyframes swordFlyOff {
+    0% {
+        transform: rotate(15deg);
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(15deg) translateX(60px) translateY(-40px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+// Boss-specific dramatic death
+@keyframes bossDeath {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.4);
+        filter: brightness(1);
+    }
+    10% {
+        filter: brightness(2);
+    }
+    20% {
+        filter: brightness(4);
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.5);
+    }
+    40% {
+        filter: brightness(2);
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.3) rotate(90deg);
+    }
+    60% {
+        filter: brightness(3);
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.6) rotate(180deg);
+    }
+    80% {
+        filter: brightness(5);
+        opacity: 0.6;
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.2) rotate(360deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(0) rotate(720deg);
+        filter: brightness(10);
+    }
+}
+
+// Boss energy rings explode outward
+@keyframes ringExplode {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg) scale(1);
+        opacity: 1;
+    }
+    30% {
+        transform: translate(-50%, -50%) rotate(90deg) scale(1.5);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(180deg) scale(3);
+        opacity: 0;
+    }
+}
+
+// Boss spikes explode
+@keyframes spikeExplode {
+    0% {
+        transform: rotate(-30deg) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(-30deg) translateY(-60px) scale(1.5);
+        opacity: 0;
+    }
+}
+
+// Death particles (box-shadow technique for efficiency)
+.death-particles {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 2px;
+    pointer-events: none;
+    animation: deathParticles 0.5s ease-out forwards;
+    
+    &.slime {
+        box-shadow:
+            -15px -20px @color-enemy-slime,
+            15px -15px @color-enemy-slime,
+            -20px 10px @color-enemy-slime,
+            20px 15px @color-enemy-slime,
+            0 -25px @color-enemy-slime,
+            -10px 20px @color-enemy-slime;
+    }
+    
+    &.goblin {
+        box-shadow:
+            -15px -20px @color-enemy-goblin,
+            15px -15px @color-enemy-goblin,
+            -20px 10px @color-enemy-goblin,
+            20px 15px @color-enemy-goblin,
+            0 -25px #ffd700,
+            -10px 20px silver;
+    }
+    
+    &.knight {
+        box-shadow:
+            -15px -20px @color-enemy-knight,
+            15px -15px @color-enemy-knight,
+            -20px 10px silver,
+            20px 15px @color-gold,
+            0 -25px @color-danger,
+            -10px 20px @color-enemy-knight;
+    }
+    
+    &.boss {
+        box-shadow:
+            -25px -30px @color-enemy-boss,
+            25px -25px @color-enemy-boss,
+            -30px 15px @color-danger,
+            30px 20px @color-enemy-boss,
+            0 -35px @color-enemy-boss,
+            -15px 30px @color-danger,
+            15px -35px @color-enemy-boss,
+            -35px -10px @color-enemy-boss;
+    }
+}
+
+@keyframes deathParticles {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(3);
+        opacity: 0;
     }
 }
 
@@ -575,4 +1188,279 @@
 @keyframes slowIcon {
     0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
     50% { opacity: 0.6; transform: translateX(-50%) scale(1.2); }
+}
+
+// ===========================================
+// Color Variant System for Elite/Special Enemies
+// Inspired by css-space-shooter color variants
+// ===========================================
+
+// Mixin for enemy color variants
+.enemy-variant-glow(@color) {
+    box-shadow: inset 0 0 15px fade(@color, 60%), 
+                0 0 15px fade(@color, 60%),
+                0 0 25px fade(@color, 40%);
+}
+
+// Elite variant - Red (Stronger, faster)
+.enemy.elite {
+    &.enemy-slime {
+        .enemy-body {
+            background: radial-gradient(ellipse at 30% 30%,
+                lighten(#ff4444, 20%) 0%,
+                #ff4444 40%,
+                darken(#ff4444, 20%) 100%);
+            border-color: #ff6666;
+            .enemy-variant-glow(#ff4444);
+        }
+        .tentacles .tentacle {
+            background: linear-gradient(180deg, #ff4444 0%, fade(#ff4444, 40%) 100%);
+        }
+    }
+    
+    &.enemy-goblin {
+        .enemy-body {
+            background: linear-gradient(180deg,
+                lighten(#ff3333, 10%) 0%,
+                #ff3333 50%,
+                darken(#ff3333, 25%) 100%);
+            border-color: #ff5555;
+            .enemy-variant-glow(#ff3333);
+        }
+        .enemy-face::before, .enemy-face::after {
+            background: #ff3333;
+            border-color: lighten(#ff3333, 15%);
+        }
+        .arms .arm {
+            background: linear-gradient(180deg, #ff3333 0%, darken(#ff3333, 20%) 100%);
+        }
+    }
+    
+    &.enemy-knight {
+        .enemy-body {
+            background: linear-gradient(135deg,
+                lighten(#cc2222, 20%) 0%,
+                #cc2222 30%,
+                darken(#cc2222, 15%) 70%,
+                darken(#cc2222, 25%) 100%);
+            border-color: lighten(#cc2222, 10%);
+            .enemy-variant-glow(#cc2222);
+        }
+        .cape .cape-main {
+            background: linear-gradient(180deg,
+                darken(#cc2222, 10%) 0%,
+                darken(#cc2222, 30%) 50%,
+                darken(#cc2222, 40%) 100%);
+        }
+    }
+    
+    // Elite indicator - pulsing crown
+    &::after {
+        content: '👑';
+        position: absolute;
+        top: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 14px;
+        animation: crownBounce 1s ease-in-out infinite;
+        filter: drop-shadow(0 0 5px gold);
+    }
+}
+
+// Armored variant - Silver/Steel (High defense)
+.enemy.armored {
+    &.enemy-slime {
+        .enemy-body {
+            background: radial-gradient(ellipse at 30% 30%,
+                #d0d0d0 0%,
+                #a0a0a0 40%,
+                #606060 100%);
+            border-color: #c0c0c0;
+            border-width: 3px;
+            .enemy-variant-glow(#a0a0a0);
+        }
+    }
+    
+    &.enemy-goblin {
+        .enemy-body {
+            background: linear-gradient(180deg,
+                #c0c0c0 0%,
+                #909090 50%,
+                #505050 100%);
+            border-color: #d0d0d0;
+            border-width: 3px;
+            .enemy-variant-glow(#909090);
+        }
+    }
+    
+    &.enemy-knight {
+        .enemy-body {
+            background: linear-gradient(135deg,
+                #e0e0e0 0%,
+                #c0c0c0 30%,
+                #808080 70%,
+                #505050 100%);
+            border-color: #d0d0d0;
+            border-width: 4px;
+            .enemy-variant-glow(#c0c0c0);
+        }
+        .enemy-face {
+            background: linear-gradient(180deg,
+                #f0f0f0 0%,
+                #c0c0c0 50%,
+                #808080 100%);
+        }
+    }
+    
+    // Armored indicator - shield icon
+    &::after {
+        content: '🛡️';
+        position: absolute;
+        top: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        animation: shieldPulse 1.5s ease-in-out infinite;
+    }
+}
+
+// Speed variant - Cyan/Electric (Fast movement)
+.enemy.speedy {
+    &.enemy-slime {
+        .enemy-body {
+            background: radial-gradient(ellipse at 30% 30%,
+                lighten(@color-tower-ice, 20%) 0%,
+                @color-tower-ice 40%,
+                darken(@color-tower-ice, 20%) 100%);
+            border-color: lighten(@color-tower-ice, 10%);
+            .enemy-variant-glow(@color-tower-ice);
+            animation: slimeBounce 0.35s ease-in-out infinite;
+        }
+    }
+    
+    &.enemy-goblin {
+        .enemy-body {
+            background: linear-gradient(180deg,
+                lighten(@color-tower-ice, 10%) 0%,
+                @color-tower-ice 50%,
+                darken(@color-tower-ice, 25%) 100%);
+            border-color: lighten(@color-tower-ice, 15%);
+            .enemy-variant-glow(@color-tower-ice);
+            animation: goblinRun 0.15s ease-in-out infinite;
+        }
+        .enemy-eyes::before, .enemy-eyes::after {
+            background: radial-gradient(circle, #fff 0%, @color-tower-ice 50%, darken(@color-tower-ice, 20%) 100%);
+            box-shadow: 0 0 8px @color-tower-ice;
+        }
+    }
+    
+    // Speed lines effect
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: -30px;
+        width: 25px;
+        height: 3px;
+        background: linear-gradient(90deg, transparent 0%, @color-tower-ice 100%);
+        transform: translateY(-50%);
+        animation: speedLines 0.3s linear infinite;
+        opacity: 0.7;
+    }
+    
+    // Speed indicator
+    &::after {
+        content: '⚡';
+        position: absolute;
+        top: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 14px;
+        animation: lightningFlash 0.5s ease-in-out infinite;
+        filter: drop-shadow(0 0 5px @color-tower-ice);
+    }
+}
+
+// Poison variant - Purple/Toxic (Leaves trail)
+.enemy.toxic {
+    &.enemy-slime {
+        .enemy-body {
+            background: radial-gradient(ellipse at 30% 30%,
+                lighten(@color-tower-magic, 20%) 0%,
+                @color-tower-magic 40%,
+                darken(@color-tower-magic, 25%) 100%);
+            border-color: lighten(@color-tower-magic, 10%);
+            .enemy-variant-glow(@color-tower-magic);
+        }
+        .tentacles .tentacle {
+            background: linear-gradient(180deg, @color-tower-magic 0%, fade(@color-tower-magic, 40%) 100%);
+        }
+    }
+    
+    &.enemy-goblin {
+        .enemy-body {
+            background: linear-gradient(180deg,
+                lighten(@color-tower-magic, 10%) 0%,
+                @color-tower-magic 50%,
+                darken(@color-tower-magic, 30%) 100%);
+            border-color: lighten(@color-tower-magic, 15%);
+            .enemy-variant-glow(@color-tower-magic);
+        }
+    }
+    
+    // Toxic aura
+    &::before {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        right: -5px;
+        bottom: -5px;
+        background: radial-gradient(ellipse, fade(@color-tower-magic, 30%) 0%, transparent 70%);
+        animation: toxicAura 2s ease-in-out infinite;
+        z-index: -1;
+    }
+    
+    // Toxic indicator
+    &::after {
+        content: '☠️';
+        position: absolute;
+        top: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        animation: toxicPulse 1s ease-in-out infinite;
+    }
+}
+
+// Variant indicator animations
+@keyframes crownBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+@keyframes shieldPulse {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+    50% { transform: translateX(-50%) scale(1.15); opacity: 1; }
+}
+
+@keyframes lightningFlash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+@keyframes speedLines {
+    0% { transform: translateY(-50%) translateX(0); opacity: 0; }
+    50% { opacity: 0.7; }
+    100% { transform: translateY(-50%) translateX(-15px); opacity: 0; }
+}
+
+@keyframes toxicAura {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+@keyframes toxicPulse {
+    0%, 100% { transform: translateX(-50%) scale(1); filter: hue-rotate(0deg); }
+    50% { transform: translateX(-50%) scale(1.1); filter: hue-rotate(20deg); }
 }

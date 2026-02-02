@@ -136,3 +136,154 @@
     0% { transform: rotateZ(360deg); }
     100% { transform: rotateZ(0deg); }
 }
+
+// ===========================================
+// Box-Shadow Particle System Mixins
+// Efficient technique inspired by css-space-shooter
+// ===========================================
+
+// Generate particle field with varying positions and colors
+.particle-field(@color, @size: 2px) {
+    width: @size;
+    height: @size;
+    background: transparent;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+// Ambient floating particles mixin
+.floating-particles(@color) {
+    .particle-field(@color);
+    box-shadow:
+        // Random scatter of particles
+        10px -20px @color,
+        -15px -30px fade(@color, 80%),
+        25px -15px fade(@color, 60%),
+        -20px -40px @color,
+        30px -35px fade(@color, 70%),
+        -10px -25px fade(@color, 90%),
+        15px -45px @color,
+        -25px -10px fade(@color, 50%),
+        5px -50px fade(@color, 80%),
+        -30px -30px @color;
+}
+
+// Explosion particle burst mixin
+.explosion-particles(@color) {
+    .particle-field(@color, 3px);
+    box-shadow:
+        // Radial burst pattern
+        0 -30px @color,
+        21px -21px @color,
+        30px 0 @color,
+        21px 21px @color,
+        0 30px @color,
+        -21px 21px @color,
+        -30px 0 @color,
+        -21px -21px @color,
+        // Secondary layer
+        0 -45px fade(@color, 60%),
+        32px -32px fade(@color, 60%),
+        45px 0 fade(@color, 60%),
+        32px 32px fade(@color, 60%),
+        0 45px fade(@color, 60%),
+        -32px 32px fade(@color, 60%),
+        -45px 0 fade(@color, 60%),
+        -32px -32px fade(@color, 60%);
+}
+
+// Sparkle particle effect
+.sparkle-particles(@color) {
+    .particle-field(@color, 1px);
+    box-shadow:
+        5px -8px @color,
+        -8px -12px fade(@color, 70%),
+        12px -5px @color,
+        -5px -18px fade(@color, 80%),
+        18px -15px @color,
+        -15px -3px fade(@color, 60%),
+        3px -22px @color,
+        -12px -20px fade(@color, 90%);
+}
+
+// Trail particle effect
+.trail-particles(@color) {
+    .particle-field(@color, 2px);
+    box-shadow:
+        -5px 0 @color,
+        -12px 2px fade(@color, 80%),
+        -20px -1px fade(@color, 60%),
+        -28px 3px fade(@color, 40%),
+        -36px -2px fade(@color, 20%);
+}
+
+// Ambient glow particles for map atmosphere
+.ambient-glow(@color1, @color2) {
+    width: 1px;
+    height: 1px;
+    background: transparent;
+    box-shadow:
+        // Layer 1 - Primary color
+        15vw 10vh @color1,
+        35vw 25vh fade(@color1, 70%),
+        55vw 15vh @color1,
+        75vw 35vh fade(@color1, 60%),
+        25vw 45vh @color1,
+        // Layer 2 - Secondary color  
+        10vw 30vh @color2,
+        45vw 40vh fade(@color2, 70%),
+        65vw 20vh @color2,
+        85vw 45vh fade(@color2, 60%),
+        30vw 10vh @color2;
+}
+
+// Common particle animation keyframes
+@keyframes particle-rise {
+    0% { 
+        transform: translateY(0) scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% { 
+        transform: translateY(-60px) scale(0.5);
+        opacity: 0;
+    }
+}
+
+@keyframes particle-burst {
+    0% { 
+        transform: scale(0);
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% { 
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+@keyframes particle-spiral {
+    0% { 
+        transform: rotate(0deg) translateX(0);
+        opacity: 0.8;
+    }
+    100% { 
+        transform: rotate(360deg) translateX(30px);
+        opacity: 0;
+    }
+}
+
+@keyframes particle-scatter {
+    0% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% { 
+        transform: scale(3);
+        opacity: 0;
+    }
+}
