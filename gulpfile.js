@@ -15,6 +15,7 @@ const scriptFiles = [
     './scripts/utils.js',     // Utility functions (must load first)
     './scripts/pool.js',      // Object pool for performance
     './scripts/noise.js',     // Perlin noise generator
+    './scripts/effects.js',   // Visual Effects Manager
     './scripts/path.js',
     './scripts/weather.js',   // Weather System
     './scripts/seasons.js',   // Seasonal System
