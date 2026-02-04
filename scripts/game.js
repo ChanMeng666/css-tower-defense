@@ -159,7 +159,6 @@ var Game = (function () {
         // Wave started
         document.addEventListener('waveStarted', function (e) {
             Display.updateWave(e.detail.wave, e.detail.totalWaves);
-            Display.showMessage('Wave ' + e.detail.wave + ' incoming!');
             Sfx.play('waveStart');
         });
 
@@ -303,7 +302,6 @@ var Game = (function () {
                 if (comboCount >= COMBO_MIN_FOR_BONUS) {
                     var endBonus = comboCount * 5;
                     addGold(endBonus);
-                    Display.showMessage(comboCount + 'x Combo! +' + endBonus + ' gold!');
                 }
                 comboCount = 0;
                 Display.hideCombo();

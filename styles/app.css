@@ -910,33 +910,29 @@
   position: fixed;
   top: 30%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(-5deg);
-  background: #F2D864;
-  padding: 20px 40px;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  padding: 12px 30px;
   font-family: 'Bangers', 'Impact', cursive;
-  font-size: 3rem;
-  color: #E8635A;
-  -webkit-text-stroke: 1px #1A1614;
-  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
-  border: 4px solid #1A1614;
-  box-shadow: 15px 15px 0 #1A1614;
+  font-size: 2rem;
+  color: #FFF8F0;
+  border-radius: 6px;
   z-index: 2000;
   opacity: 0;
   transition: opacity 0.2s;
 }
 .game-message.show {
   opacity: 1;
-  animation: message-pop 0.5s;
+  animation: message-pop 0.3s ease-out;
 }
 @keyframes message-pop {
   0% {
-    transform: translate(-50%, -50%) scale(0) rotate(-45deg);
-  }
-  80% {
-    transform: translate(-50%, -50%) scale(1.2) rotate(5deg);
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
   }
   100% {
-    transform: translate(-50%, -50%) scale(1) rotate(-5deg);
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
   }
 }
 .floating-number {
@@ -1156,7 +1152,6 @@
   text-transform: uppercase;
   -webkit-text-stroke: 5px #1A1614;
   text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
-  box-shadow: 12px 12px 0 #1A1614;
   animation: announcement-pulse 0.5s ease-out;
   transform: rotate(-3deg);
 }
@@ -1170,7 +1165,6 @@
   display: inline-block;
   transform: rotate(2deg);
   border: 3px solid #1A1614;
-  box-shadow: 6px 6px 0 #1A1614;
   animation: announcement-slide 0.4s ease-out 0.1s backwards;
 }
 @keyframes announcement-pulse {

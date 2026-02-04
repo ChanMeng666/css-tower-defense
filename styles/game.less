@@ -496,36 +496,32 @@
     position: fixed;
     top: 30%;
     left: 50%;
-    transform: translate(-50%, -50%) rotate(-5deg);
-    background: @color-yellow;
-    padding: 20px 40px;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.7);
+    padding: 12px 30px;
     font-family: @font-title;
-    font-size: 3rem;
-    color: @color-danger;
-    .text-outline();
-    .comic-border(4px);
-    .pop-shadow(15px, 15px);
+    font-size: 2rem;
+    color: @color-white;
+    border-radius: 6px;
     z-index: 2000;
     opacity: 0;
     transition: opacity 0.2s;
 
     &.show {
         opacity: 1;
-        animation: message-pop 0.5s;
+        animation: message-pop 0.3s ease-out;
     }
 }
 
 @keyframes message-pop {
     0% {
-        transform: translate(-50%, -50%) scale(0) rotate(-45deg);
-    }
-
-    80% {
-        transform: translate(-50%, -50%) scale(1.2) rotate(5deg);
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
     }
 
     100% {
-        transform: translate(-50%, -50%) scale(1) rotate(-5deg);
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
     }
 }
 
@@ -780,7 +776,6 @@
     line-height: 1.1;
     text-transform: uppercase;
     .text-outline(@color-black, 5px);
-    .pop-shadow(12px, 12px, @color-black);
     animation: announcement-pulse 0.5s ease-out;
     transform: rotate(-3deg);
 }
@@ -795,7 +790,6 @@
     display: inline-block;
     transform: rotate(2deg);
     .comic-border(3px);
-    .pop-shadow(6px, 6px);
     animation: announcement-slide 0.4s ease-out 0.1s backwards;
 }
 

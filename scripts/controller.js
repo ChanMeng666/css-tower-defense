@@ -226,7 +226,6 @@
                         Display.showMessage('Paused - Press P to resume');
                     } else if (Game.getState() === Game.STATES.PAUSED) {
                         Game.resume();
-                        Display.showMessage('Resumed');
                     }
                     break;
                     
@@ -263,7 +262,6 @@
     window.addEventListener('focus', function() {
         if (Game.getState() === Game.STATES.PAUSED) {
             Game.resume();
-            Display.showMessage('Resumed');
         }
     });
     
