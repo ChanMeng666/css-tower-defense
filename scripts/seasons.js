@@ -22,7 +22,8 @@ var Seasons = (function () {
                 '--color-path-light': '#ffff66',
                 '--color-path-dark': '#cca300'
             },
-            weatherWeights: { clear: 0.4, rain: 0.5, wind: 0.1, snow: 0.0 }
+            weatherWeights: { clear: 0.4, rain: 0.5, wind: 0.1, snow: 0.0 },
+            sceneClass: null
         },
         summer: {
             name: 'Summer',
@@ -35,7 +36,8 @@ var Seasons = (function () {
                 '--color-path-light': '#ffeb3b',
                 '--color-path-dark': '#ffc107'
             },
-            weatherWeights: { clear: 0.8, rain: 0.1, wind: 0.1, snow: 0.0 }
+            weatherWeights: { clear: 0.8, rain: 0.1, wind: 0.1, snow: 0.0 },
+            sceneClass: null
         },
         autumn: {
             name: 'Autumn',
@@ -48,7 +50,8 @@ var Seasons = (function () {
                 '--color-path-light': '#a1887f',
                 '--color-path-dark': '#5d4037'
             },
-            weatherWeights: { clear: 0.4, rain: 0.2, wind: 0.4, snow: 0.0 }
+            weatherWeights: { clear: 0.4, rain: 0.2, wind: 0.4, snow: 0.0 },
+            sceneClass: null
         },
         winter: {
             name: 'Winter',
@@ -61,7 +64,8 @@ var Seasons = (function () {
                 '--color-path-light': '#cfd8dc',
                 '--color-path-dark': '#90a4ae'
             },
-            weatherWeights: { clear: 0.3, rain: 0.0, wind: 0.2, snow: 0.5 }
+            weatherWeights: { clear: 0.3, rain: 0.0, wind: 0.2, snow: 0.5 },
+            sceneClass: 'aurora-active' // Enable aurora effect for winter
         }
     };
 
@@ -97,14 +101,47 @@ var Seasons = (function () {
             }
         }
 
-        // 2. Notify Weather System (if possible)
-        // We'll update a global or expose a getter, 
-        // but for now Weather.js might need an update to ask Seasons.js
-        // Or we just rely on random for now, and implement weighted random next.
-        // Let's stick to update CSS for visually distinct seasons first.
+        // 2. Update scene class for special effects (aurora, etc.)
+        var scene = document.querySelector('.scene');
+        if (scene) {
+            // Remove all season-specific scene classes
+            scene.classList.remove('aurora-active');
+
+            // Add new season's scene class if defined
+            if (config.sceneClass) {
+                scene.classList.add(config.sceneClass);
+
+                // Create aurora elements if needed for winter
+                if (config.sceneClass === 'aurora-active') {
+                    createAuroraElements(scene);
+                }
+            }
+        }
+
+        // 3. Notify Weather System (if possible)
+        // Weather.js can call Seasons.getWeatherWeights() to get probabilities
 
         // Console log for debug
         console.log("Season set to: " + config.name);
+    }
+
+    /**
+     * Create aurora effect DOM elements
+     */
+    function createAuroraElements(scene) {
+        // Create aurora sky element if it doesn't exist
+        if (!scene.querySelector('.aurora-sky')) {
+            var auroraSky = document.createElement('div');
+            auroraSky.className = 'aurora-sky';
+            scene.insertBefore(auroraSky, scene.firstChild);
+        }
+
+        // Create aurora particles element if it doesn't exist
+        if (!scene.querySelector('.aurora-particles')) {
+            var auroraParticles = document.createElement('div');
+            auroraParticles.className = 'aurora-particles';
+            scene.insertBefore(auroraParticles, scene.firstChild);
+        }
     }
 
     function nextSeason() {

@@ -1,0 +1,446 @@
+// ===========================================
+// CSS Tower Defense - Visual Effects Main Entry
+// Integrates all effect modules
+// ===========================================
+
+// Import sub-modules
+@import "effects-fire.less";
+@import "effects-weather.less";
+
+// ===========================================
+// BOSS ENTRANCE EFFECT
+// Neon Grid Tunnel inspired by design-pages
+// ===========================================
+
+.boss-entrance-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 500;
+    perspective: 800px;
+    overflow: hidden;
+    opacity: 0;
+    .gpu-accelerate();
+
+    &.active {
+        animation: boss-overlay-fade 3s ease-out forwards;
+    }
+
+    // Neon grid floor
+    &::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: -50%;
+        width: 200%;
+        height: 60%;
+        background:
+            linear-gradient(90deg,
+                transparent 49.5%,
+                @boss-grid-primary 49.5%,
+                @boss-grid-primary 50.5%,
+                transparent 50.5%
+            ),
+            linear-gradient(0deg,
+                transparent 49.5%,
+                @boss-grid-secondary 49.5%,
+                @boss-grid-secondary 50.5%,
+                transparent 50.5%
+            );
+        background-size: 60px 60px;
+        transform: rotateX(75deg);
+        transform-origin: center bottom;
+        animation: boss-grid-approach 3s ease-out forwards;
+        filter: drop-shadow(0 0 10px @boss-grid-primary);
+    }
+
+    // Radial glow at center
+    &::after {
+        content: '';
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        width: 300px;
+        height: 300px;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(
+            circle,
+            @boss-glow 0%,
+            rgba(255, 0, 255, 0.4) 30%,
+            transparent 70%
+        );
+        animation: boss-glow-pulse 0.5s ease-in-out infinite alternate;
+        filter: blur(20px);
+    }
+}
+
+@keyframes boss-overlay-fade {
+    0% {
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes boss-grid-approach {
+    0% {
+        background-size: 200px 200px;
+        opacity: 0;
+    }
+    30% {
+        opacity: 1;
+    }
+    100% {
+        background-size: 60px 60px;
+        opacity: 0;
+    }
+}
+
+@keyframes boss-glow-pulse {
+    from {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.6;
+    }
+    to {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+    }
+}
+
+// Boss warning text effect
+.boss-warning-text {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: @font-title;
+    font-size: 5rem;
+    color: @boss-grid-primary;
+    text-shadow:
+        0 0 20px @boss-grid-primary,
+        0 0 40px @boss-grid-secondary,
+        4px 4px 0 @color-black;
+    z-index: 501;
+    pointer-events: none;
+    opacity: 0;
+    .text-outline(@color-black, 2px);
+
+    &.active {
+        animation: boss-text-appear 3s ease-out forwards;
+    }
+}
+
+@keyframes boss-text-appear {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+        letter-spacing: 20px;
+    }
+    30% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+        letter-spacing: 5px;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+}
+
+// ===========================================
+// HYPNOTIC SPIRAL - Enemy Portal Effect
+// ===========================================
+
+.enemy-portal {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    .gpu-accelerate();
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: conic-gradient(
+            from 0deg,
+            @color-boss 0deg,
+            @color-magenta 90deg,
+            @color-boss 180deg,
+            @color-magenta 270deg,
+            @color-boss 360deg
+        );
+        border-radius: 50%;
+        animation: portal-spin 2s linear infinite;
+        mask-image: radial-gradient(
+            circle,
+            transparent 20%,
+            black 25%,
+            black 45%,
+            transparent 50%,
+            black 55%,
+            black 75%,
+            transparent 80%
+        );
+        -webkit-mask-image: radial-gradient(
+            circle,
+            transparent 20%,
+            black 25%,
+            black 45%,
+            transparent 50%,
+            black 55%,
+            black 75%,
+            transparent 80%
+        );
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 30%;
+        height: 30%;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(
+            circle,
+            @color-white 0%,
+            @color-magenta 50%,
+            transparent 100%
+        );
+        border-radius: 50%;
+        animation: portal-core-pulse 1s ease-in-out infinite alternate;
+    }
+}
+
+@keyframes portal-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes portal-core-pulse {
+    from {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
+    to {
+        transform: translate(-50%, -50%) scale(1.3);
+        opacity: 1;
+    }
+}
+
+// ===========================================
+// LIQUID METAL - Boss Shield Effect
+// ===========================================
+
+.boss-shield {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    height: 120%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: linear-gradient(
+        135deg,
+        rgba(200, 200, 220, 0.3) 0%,
+        rgba(150, 150, 180, 0.5) 25%,
+        rgba(100, 100, 140, 0.4) 50%,
+        rgba(150, 150, 180, 0.5) 75%,
+        rgba(200, 200, 220, 0.3) 100%
+    );
+    filter: blur(2px);
+    animation: shield-morph 3s ease-in-out infinite;
+    pointer-events: none;
+    .gpu-accelerate();
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 10%;
+        left: 10%;
+        width: 30%;
+        height: 20%;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 50%;
+        filter: blur(5px);
+        animation: shield-highlight 2s ease-in-out infinite alternate;
+    }
+}
+
+@keyframes shield-morph {
+    0%, 100% {
+        border-radius: 50% 45% 55% 50% / 50% 55% 45% 50%;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    33% {
+        border-radius: 45% 50% 50% 55% / 55% 50% 50% 45%;
+        transform: translate(-50%, -50%) scale(1.02);
+    }
+    66% {
+        border-radius: 55% 50% 45% 50% / 50% 45% 55% 50%;
+        transform: translate(-50%, -50%) scale(0.98);
+    }
+}
+
+@keyframes shield-highlight {
+    from {
+        transform: translateX(0) translateY(0);
+        opacity: 0.4;
+    }
+    to {
+        transform: translateX(10px) translateY(5px);
+        opacity: 0.7;
+    }
+}
+
+// ===========================================
+// PERFORMANCE & ACCESSIBILITY
+// ===========================================
+
+// Low performance mode - simplified effects
+.performance-low {
+    .aurora-sky,
+    .aurora-particles,
+    .palette-aura,
+    .boss-shield {
+        display: none !important;
+    }
+
+    .flame-effect,
+    .smoke-effect {
+        &::before,
+        &::after {
+            animation: none !important;
+        }
+    }
+
+    .boss-entrance-overlay {
+        &::before {
+            animation: none !important;
+            opacity: 0.5;
+        }
+    }
+
+    // Simplified burning effect
+    .burning {
+        animation: none !important;
+        filter: drop-shadow(0 0 5px @fire-outer);
+
+        &::after {
+            display: none;
+        }
+    }
+}
+
+// Respect user motion preferences
+@media (prefers-reduced-motion: reduce) {
+    // Disable all complex animations
+    .aurora-sky,
+    .aurora-particles,
+    .boss-entrance-overlay,
+    .enemy-portal,
+    .boss-shield,
+    .palette-aura,
+    .starfield-warp {
+        &,
+        &::before,
+        &::after {
+            animation: none !important;
+        }
+    }
+
+    // Keep static versions visible but remove motion
+    .flame-effect {
+        &::before,
+        &::after {
+            animation: none !important;
+        }
+    }
+
+    .burning {
+        animation: none !important;
+
+        &::after {
+            animation: none !important;
+        }
+    }
+
+    // Static boss entrance
+    .boss-entrance-overlay.active {
+        opacity: 0.8;
+        animation: none !important;
+
+        &::before {
+            animation: none !important;
+            background-size: 60px 60px;
+            opacity: 0.5;
+        }
+    }
+
+    .boss-warning-text.active {
+        animation: none !important;
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+// ===========================================
+// UTILITY CLASSES
+// ===========================================
+
+// Screen flash effect (damage, power-up, etc.)
+.screen-flash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+
+    &.flash-damage {
+        background: @color-danger;
+        animation: screen-flash-anim 0.2s ease-out;
+    }
+
+    &.flash-gold {
+        background: @color-yellow;
+        animation: screen-flash-anim 0.3s ease-out;
+    }
+
+    &.flash-heal {
+        background: @color-success;
+        animation: screen-flash-anim 0.25s ease-out;
+    }
+}
+
+@keyframes screen-flash-anim {
+    0% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 0;
+    }
+}

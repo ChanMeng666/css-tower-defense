@@ -201,6 +201,52 @@
     filter: brightness(1.1);
 }
 
+// ===========================================
+// AURORA EFFECT - Winter Season
+// ===========================================
+.scene.aurora-active {
+    // Dark night sky for aurora visibility
+    background: linear-gradient(
+        180deg,
+        #0a1628 0%,
+        #1a2a4a 30%,
+        #2a3a5a 60%,
+        var(--color-bg) 100%
+    );
+
+    // Add aurora sky element
+    .aurora-sky {
+        display: block;
+    }
+
+    // Add star particles
+    .aurora-particles {
+        display: block;
+    }
+
+    // Slightly dim the halftone pattern
+    &::before {
+        opacity: 0.03;
+    }
+
+    // Night mode adjustments
+    &.night {
+        background: linear-gradient(
+            180deg,
+            #050a14 0%,
+            #0a1428 30%,
+            #152238 60%,
+            darken(#1a2a4a, 20%) 100%
+        );
+    }
+}
+
+// Default hidden state for aurora elements
+.aurora-sky,
+.aurora-particles {
+    display: none;
+}
+
 // WIND
 .wind-container {
     width: 100%;

@@ -8,6 +8,7 @@ var EVENTS = {
     BOSS_SPAWNED: 'bossSpawned',
     BOSS_PHASE_CHANGE: 'bossPhaseChange',
     BOSS_SKILL_USED: 'bossSkillUsed',
+    BOSS_ENTRANCE: 'bossEntrance',
     COMBO_KILL: 'comboKill',
     TOWER_UPGRADED: 'towerUpgraded',
     SPECIAL_EVENT: 'specialEvent',
@@ -71,6 +72,9 @@ var Game = (function () {
         Weather.init(); // Init Weather
         Seasons.init(); // Init Seasons
         Progression.init(); // Init Progression
+        if (typeof Effects !== 'undefined') {
+            Effects.init(); // Init Visual Effects Manager
+        }
         Enemy.init();
         Tower.init();
         Projectile.init();

@@ -1,0 +1,335 @@
+// ===========================================
+// CSS Tower Defense - Weather & Atmosphere Effects
+// Aurora Borealis inspired by design-pages
+// ===========================================
+
+// Aurora Borealis Effect - Winter sky
+.aurora-sky {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+    .gpu-accelerate();
+    .contain-paint();
+
+    // Multiple aurora curtain layers
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        width: 200%;
+        height: 100%;
+        .gpu-accelerate();
+    }
+
+    // Primary aurora curtain (green-cyan)
+    &::before {
+        top: 10%;
+        left: -50%;
+        background: linear-gradient(
+            180deg,
+            transparent 0%,
+            @aurora-green 20%,
+            @aurora-cyan 50%,
+            transparent 80%
+        );
+        mask-image: linear-gradient(
+            90deg,
+            transparent 0%,
+            black 20%,
+            black 80%,
+            transparent 100%
+        );
+        -webkit-mask-image: linear-gradient(
+            90deg,
+            transparent 0%,
+            black 20%,
+            black 80%,
+            transparent 100%
+        );
+        animation: aurora-wave-1 8s ease-in-out infinite;
+        filter: blur(20px);
+        opacity: 0.7;
+    }
+
+    // Secondary aurora curtain (purple)
+    &::after {
+        top: 15%;
+        left: -30%;
+        background: linear-gradient(
+            180deg,
+            transparent 0%,
+            @aurora-purple 30%,
+            @aurora-cyan 60%,
+            transparent 90%
+        );
+        mask-image: linear-gradient(
+            90deg,
+            transparent 10%,
+            black 30%,
+            black 70%,
+            transparent 90%
+        );
+        -webkit-mask-image: linear-gradient(
+            90deg,
+            transparent 10%,
+            black 30%,
+            black 70%,
+            transparent 90%
+        );
+        animation: aurora-wave-2 12s ease-in-out infinite;
+        filter: blur(25px);
+        opacity: 0.5;
+    }
+}
+
+// Aurora wave animation - Layer 1
+@keyframes aurora-wave-1 {
+    0% {
+        transform: translateX(0) scaleY(1);
+        opacity: 0.6;
+    }
+    25% {
+        transform: translateX(5%) scaleY(1.1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translateX(10%) scaleY(0.9);
+        opacity: 0.7;
+    }
+    75% {
+        transform: translateX(5%) scaleY(1.05);
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateX(0) scaleY(1);
+        opacity: 0.6;
+    }
+}
+
+// Aurora wave animation - Layer 2
+@keyframes aurora-wave-2 {
+    0% {
+        transform: translateX(0) scaleY(1) skewX(0deg);
+        opacity: 0.4;
+    }
+    33% {
+        transform: translateX(-5%) scaleY(1.15) skewX(2deg);
+        opacity: 0.6;
+    }
+    66% {
+        transform: translateX(5%) scaleY(0.85) skewX(-2deg);
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateX(0) scaleY(1) skewX(0deg);
+        opacity: 0.4;
+    }
+}
+
+// Aurora shimmer particles overlay
+.aurora-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+
+    // Create multiple sparkle points using box-shadow
+    &::before {
+        content: '';
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        background: @color-white;
+        border-radius: 50%;
+        box-shadow:
+            100px 50px 0 rgba(255, 255, 255, 0.8),
+            200px 80px 0 rgba(200, 255, 220, 0.6),
+            350px 40px 0 rgba(150, 255, 200, 0.7),
+            500px 100px 0 rgba(100, 200, 255, 0.5),
+            650px 60px 0 rgba(180, 150, 255, 0.6),
+            800px 90px 0 rgba(255, 255, 255, 0.7),
+            950px 45px 0 rgba(150, 255, 230, 0.5),
+            1100px 85px 0 rgba(200, 200, 255, 0.6);
+        animation: aurora-sparkle 4s ease-in-out infinite;
+        .gpu-accelerate();
+    }
+}
+
+@keyframes aurora-sparkle {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.5);
+    }
+}
+
+// Winter Stars Effect - Enhanced night sky
+.winter-stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -2;
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image: radial-gradient(
+            1px 1px at 20% 30%,
+            white 50%,
+            transparent 100%
+        ),
+        radial-gradient(
+            1px 1px at 40% 70%,
+            rgba(255, 255, 255, 0.8) 50%,
+            transparent 100%
+        ),
+        radial-gradient(
+            1px 1px at 50% 20%,
+            rgba(200, 230, 255, 0.9) 50%,
+            transparent 100%
+        ),
+        radial-gradient(
+            1px 1px at 60% 50%,
+            white 50%,
+            transparent 100%
+        ),
+        radial-gradient(
+            2px 2px at 70% 80%,
+            rgba(255, 255, 255, 0.7) 50%,
+            transparent 100%
+        ),
+        radial-gradient(
+            1px 1px at 80% 10%,
+            rgba(200, 200, 255, 0.8) 50%,
+            transparent 100%
+        ),
+        radial-gradient(
+            1px 1px at 90% 40%,
+            white 50%,
+            transparent 100%
+        ),
+        radial-gradient(
+            1px 1px at 10% 60%,
+            rgba(255, 255, 255, 0.6) 50%,
+            transparent 100%
+        ),
+        radial-gradient(
+            2px 2px at 30% 90%,
+            rgba(200, 220, 255, 0.7) 50%,
+            transparent 100%
+        );
+        background-size: 200px 200px;
+        animation: star-twinkle 5s ease-in-out infinite;
+    }
+}
+
+@keyframes star-twinkle {
+    0%, 100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+// Palette Flow Aura - Magic tower ambient effect
+.palette-aura {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    .gpu-accelerate();
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: conic-gradient(
+            from 0deg,
+            @color-magenta,
+            @color-cyan,
+            @color-tower-magic,
+            @color-magenta
+        );
+        border-radius: 50%;
+        filter: blur(15px);
+        opacity: 0.4;
+        animation: aura-rotate 4s linear infinite;
+    }
+}
+
+@keyframes aura-rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Starfield Warp Effect - Level complete
+.starfield-warp {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+    background: radial-gradient(
+        circle at center,
+        transparent 0%,
+        rgba(0, 0, 0, 0.3) 50%,
+        rgba(0, 0, 0, 0.8) 100%
+    );
+    .gpu-accelerate();
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image:
+            radial-gradient(2px 100px, white, transparent),
+            radial-gradient(2px 100px, rgba(255, 255, 255, 0.8), transparent),
+            radial-gradient(2px 100px, rgba(200, 220, 255, 0.6), transparent);
+        background-size: 100px 100px, 150px 150px, 200px 200px;
+        background-position: center;
+        animation: warp-speed 0.5s ease-in forwards;
+    }
+}
+
+@keyframes warp-speed {
+    0% {
+        transform: scale(1);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: scale(3);
+        opacity: 0;
+    }
+}

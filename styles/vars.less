@@ -130,3 +130,36 @@
     user-select: none;
     -webkit-user-select: none;
 }
+
+// ===========================================
+// VISUAL EFFECTS VARIABLES
+// ===========================================
+
+// Fire Effect Colors
+@fire-core: #ffffff;
+@fire-inner: #ffff00;
+@fire-mid: #ff6600;
+@fire-outer: #ff0000;
+@fire-edge: #330000;
+@smoke-color: rgba(50, 50, 50, 0.6);
+
+// Aurora Effect Colors
+@aurora-green: rgba(100, 255, 150, 0.6);
+@aurora-cyan: rgba(100, 200, 255, 0.5);
+@aurora-purple: rgba(180, 100, 255, 0.4);
+
+// Boss Effect Colors
+@boss-grid-primary: #ff00ff;
+@boss-grid-secondary: #00ffff;
+@boss-glow: rgba(255, 0, 255, 0.8);
+
+// Effect Performance Mixins
+.gpu-accelerate() {
+    transform: translateZ(0);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+.contain-paint() {
+    contain: layout style paint;
+}

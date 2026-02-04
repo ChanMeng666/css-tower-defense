@@ -346,18 +346,61 @@ var Wave = (function() {
      * Handle boss spawn event
      */
     function handleBossSpawn(data) {
+        // Trigger boss entrance visual effect
+        triggerBossEntranceEffect();
+
         // Show boss warning
         if (typeof Display !== 'undefined' && Display.showAnnouncement) {
             Display.showAnnouncement('BOSS', 'The Dark Lord has arrived!');
         }
 
-        // Spawn the boss
-        Enemy.spawn(data.type);
-        totalEnemiesSpawned++;
+        // Spawn the boss after entrance effect delay
+        setTimeout(function() {
+            Enemy.spawn(data.type);
+            totalEnemiesSpawned++;
+        }, 1500);
 
         // Play boss music/sound
         if (typeof Sfx !== 'undefined') {
             Sfx.play('bossSpawn');
+        }
+    }
+
+    /**
+     * Trigger the boss entrance visual effect
+     * Creates neon grid tunnel overlay
+     */
+    function triggerBossEntranceEffect() {
+        // Create overlay element if it doesn't exist
+        var overlay = document.querySelector('.boss-entrance-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'boss-entrance-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        // Create warning text element if it doesn't exist
+        var warningText = document.querySelector('.boss-warning-text');
+        if (!warningText) {
+            warningText = document.createElement('div');
+            warningText.className = 'boss-warning-text';
+            warningText.textContent = 'BOSS!';
+            document.body.appendChild(warningText);
+        }
+
+        // Trigger the animations
+        overlay.classList.add('active');
+        warningText.classList.add('active');
+
+        // Remove active classes after animation completes
+        setTimeout(function() {
+            overlay.classList.remove('active');
+            warningText.classList.remove('active');
+        }, 3000);
+
+        // Emit boss entrance event for other systems (audio, screen shake, etc.)
+        if (typeof emitGameEvent === 'function') {
+            emitGameEvent(EVENTS.BOSS_ENTRANCE, { type: 'boss' });
         }
     }
 

@@ -10,10 +10,75 @@
     transform-origin: center bottom;
     pointer-events: none;
     transform: translate(-50%, -100%) rotateX(-@map-rotation);
+    .gpu-accelerate();
 
     // Idle Bob
-    &:not(.firing) {
+    &:not(.firing):not(.targeting) {
         animation: comic-idle 1s infinite alternate;
+    }
+
+    // Targeting State - Tower has locked onto an enemy
+    &.targeting {
+        animation: tower-targeting 0.5s ease-in-out infinite alternate;
+
+        // Subtle glow when targeting
+        &::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: radial-gradient(
+                ellipse at center,
+                rgba(255, 255, 0, 0.2) 0%,
+                transparent 70%
+            );
+            border-radius: 50%;
+            pointer-events: none;
+            animation: target-glow 0.8s ease-in-out infinite alternate;
+            .gpu-accelerate();
+        }
+    }
+
+    // Firing State - Tower is actively shooting
+    &.firing {
+        animation: tower-recoil 0.15s ease-out;
+    }
+}
+
+// Targeting micro-movement
+@keyframes tower-targeting {
+    0% {
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1);
+    }
+    100% {
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.02);
+    }
+}
+
+// Target acquisition glow
+@keyframes target-glow {
+    0% {
+        opacity: 0.3;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 0.6;
+        transform: scale(1.1);
+    }
+}
+
+// Firing recoil animation
+@keyframes tower-recoil {
+    0% {
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1);
+    }
+    30% {
+        transform: translate(-50%, -98%) rotateX(-@map-rotation) scale(0.95);
+    }
+    100% {
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1);
     }
 }
 
@@ -342,13 +407,69 @@
     .tower-nozzle {
         position: absolute;
         bottom: 25px;
-        left: 50%; // Offset to side? No, keep centered for 2D generic feel
+        left: 50%;
         width: 10px;
         height: 30px;
         background: #444;
-        transform: translateX(-50%) rotate(45deg); // Angled up
+        transform: translateX(-50%) rotate(45deg);
         transform-origin: bottom center;
         .comic-border(2px);
+
+        // Idle flame at nozzle tip
+        &::after {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            width: 12px;
+            height: 18px;
+            transform: translateX(-50%) rotate(-45deg);
+            background: radial-gradient(
+                ellipse at bottom,
+                @fire-core 0%,
+                @fire-inner 30%,
+                @fire-mid 60%,
+                @fire-outer 80%,
+                transparent 100%
+            );
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: nozzle-flame 0.15s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 3px @fire-mid);
+            .gpu-accelerate();
+        }
+    }
+
+    // Enhanced flame when firing
+    &.firing .tower-nozzle::after {
+        width: 20px;
+        height: 30px;
+        animation: nozzle-flame-burst 0.2s ease-out;
+    }
+}
+
+@keyframes nozzle-flame {
+    0% {
+        transform: translateX(-50%) rotate(-45deg) scaleY(1) scaleX(1);
+        opacity: 0.9;
+    }
+    100% {
+        transform: translateX(-48%) rotate(-45deg) scaleY(1.15) scaleX(0.85);
+        opacity: 1;
+    }
+}
+
+@keyframes nozzle-flame-burst {
+    0% {
+        transform: translateX(-50%) rotate(-45deg) scale(1);
+        filter: drop-shadow(0 0 3px @fire-mid);
+    }
+    50% {
+        transform: translateX(-50%) rotate(-45deg) scale(1.8);
+        filter: drop-shadow(0 0 10px @fire-outer) drop-shadow(0 0 20px @fire-mid);
+    }
+    100% {
+        transform: translateX(-50%) rotate(-45deg) scale(1);
+        filter: drop-shadow(0 0 3px @fire-mid);
     }
 }
 
@@ -407,17 +528,52 @@
         box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
     }
 
-    // Add glow animation for max level
+    // Add enhanced glow animation for max level
     &::before {
         content: '';
         position: absolute;
-        top: -5px;
-        left: -5px;
-        right: -5px;
-        bottom: -5px;
-        background: radial-gradient(ellipse, rgba(255, 215, 0, 0.2) 0%, transparent 70%);
+        top: -15px;
+        left: -15px;
+        right: -15px;
+        bottom: -15px;
+        background: radial-gradient(
+            ellipse at center bottom,
+            rgba(255, 215, 0, 0.4) 0%,
+            rgba(255, 180, 0, 0.2) 40%,
+            transparent 70%
+        );
         animation: max-level-glow 2s ease-in-out infinite;
         pointer-events: none;
+        .gpu-accelerate();
+    }
+
+    // Additional particle ring effect
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 80px;
+        height: 80px;
+        transform: translate(-50%, -50%);
+        border: 2px solid rgba(255, 215, 0, 0.3);
+        border-radius: 50%;
+        animation: level3-ring-pulse 3s ease-in-out infinite;
+        pointer-events: none;
+        .gpu-accelerate();
+    }
+}
+
+@keyframes level3-ring-pulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0.5;
+        border-width: 2px;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0;
+        border-width: 1px;
     }
 }
 

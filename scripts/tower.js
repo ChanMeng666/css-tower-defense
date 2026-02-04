@@ -243,7 +243,19 @@ var Tower = (function () {
             }
         }
 
+        var hadTarget = this.target !== null;
+        var hasNewTarget = nearestEnemy !== null;
+
         this.target = nearestEnemy;
+
+        // Update targeting state class for visual feedback
+        if (hasNewTarget && !hadTarget) {
+            // Acquired new target
+            this.element.classList.add('targeting');
+        } else if (!hasNewTarget && hadTarget) {
+            // Lost target
+            this.element.classList.remove('targeting');
+        }
     };
 
     /**
