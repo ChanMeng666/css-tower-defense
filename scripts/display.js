@@ -366,15 +366,13 @@ var Display = (function() {
         indicator.style.left = (tower.x + mapWidth / 2) + 'px';
         indicator.style.top = (tower.y + mapHeight / 2) + 'px';
 
-        // Apply 3D perspective transform to match the map rotation
-        // The map is rotated 55deg on X-axis, so we need to counter-rotate the indicator
-        // to make it appear flat on the ground
-        indicator.style.transform = 'translate(-50%, -50%) rotateX(55deg)';
+        // Apply 3D perspective transform to match the map rotation (45deg)
+        indicator.style.transform = 'translate(-50%, -50%) rotateX(45deg)';
         indicator.style.transformOrigin = 'center center';
 
         document.getElementById('map').appendChild(indicator);
     }
-    
+
     /**
      * Hide range indicator
      */
@@ -416,8 +414,8 @@ var Display = (function() {
         indicator.style.left = (worldPos.x + mapWidth / 2) + 'px';
         indicator.style.top = (worldPos.y + mapHeight / 2) + 'px';
 
-        // Apply 3D perspective transform to match the map rotation
-        indicator.style.transform = 'translate(-50%, -50%) rotateX(55deg)';
+        // Apply 3D perspective transform to match the map rotation (45deg)
+        indicator.style.transform = 'translate(-50%, -50%) rotateX(45deg)';
         indicator.style.transformOrigin = 'center center';
 
         document.getElementById('map').appendChild(indicator);

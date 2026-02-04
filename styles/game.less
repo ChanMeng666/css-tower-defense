@@ -760,7 +760,7 @@
     border: 3px dashed fade(@color-cyan, 60%);
     background: radial-gradient(circle, fade(@color-cyan, 10%) 0%, transparent 70%);
     pointer-events: none;
-    animation: range-fade-in 0.2s ease-out;
+    animation: range-fade-in 0.2s ease-out forwards;
 
     // Type-specific colors
     &.range-arrow {
@@ -797,17 +797,18 @@
 @keyframes range-fade-in {
     0% {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(0.8);
+        transform: translate(-50%, -50%) rotateX(45deg) scale(0.8);
     }
     100% {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -50%) rotateX(45deg) scale(1);
     }
 }
 
 // Placement Range Preview (follows mouse)
 .placement-range {
-    animation: placement-pulse 1s infinite ease-in-out;
+    // Override the fade-in animation with pulse (opacity only)
+    animation: placement-pulse 1s infinite ease-in-out !important;
 }
 
 @keyframes placement-pulse {

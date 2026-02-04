@@ -1177,7 +1177,7 @@
   border: 3px dashed rgba(0, 255, 255, 0.6);
   background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
   pointer-events: none;
-  animation: range-fade-in 0.2s ease-out;
+  animation: range-fade-in 0.2s ease-out forwards;
 }
 .range-indicator.range-arrow {
   border-color: rgba(255, 153, 51, 0.6);
@@ -1206,15 +1206,15 @@
 @keyframes range-fade-in {
   0% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
+    transform: translate(-50%, -50%) rotateX(45deg) scale(0.8);
   }
   100% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%) rotateX(45deg) scale(1);
   }
 }
 .placement-range {
-  animation: placement-pulse 1s infinite ease-in-out;
+  animation: placement-pulse 1s infinite ease-in-out !important;
 }
 @keyframes placement-pulse {
   0%,
