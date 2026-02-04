@@ -1,6 +1,7 @@
 // ===========================================
 // CSS Tower Defense - Loading Screen
-// POP-ART themed loading animation
+// REDESIGNED: Modern Geometric Fortress Animation
+// Inspired by design-pages 3D effects
 // ===========================================
 
 // Loading Screen Container
@@ -10,11 +11,12 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: @color-darker;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f0f1a 100%);
     .flex-center();
     flex-direction: column;
     z-index: 100000;
     transition: opacity 0.5s ease, visibility 0.5s ease;
+    overflow: hidden;
 
     &.hidden {
         opacity: 0;
@@ -23,268 +25,645 @@
     }
 }
 
-// Background pattern (halftone dots)
+// Background Effects
 .loading-bg {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    .halftone-bg(rgba(255, 255, 255, 0.03), 3px);
     pointer-events: none;
+
+    // Animated grid pattern
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200%;
+        height: 200%;
+        background-image:
+            linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 50px 50px;
+        animation: grid-scroll 20s linear infinite;
+        transform: perspective(500px) rotateX(60deg);
+        transform-origin: center top;
+    }
+
+    // Radial glow
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 800px;
+        height: 800px;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(
+            circle,
+            rgba(0, 255, 255, 0.1) 0%,
+            rgba(255, 0, 255, 0.05) 30%,
+            transparent 70%
+        );
+        animation: bg-pulse 4s ease-in-out infinite;
+    }
 }
 
-// Tower Building Animation Container
+@keyframes grid-scroll {
+    0% {
+        transform: perspective(500px) rotateX(60deg) translateY(0);
+    }
+    100% {
+        transform: perspective(500px) rotateX(60deg) translateY(50px);
+    }
+}
+
+@keyframes bg-pulse {
+    0%, 100% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+// Main Fortress Container
 .loading-tower {
     position: relative;
-    width: 120px;
+    width: 200px;
     height: 200px;
     .preserve-3d();
+    .flex-center();
 }
 
-// Tower Base (always visible)
+// Central Hexagon Fortress
 .loading-tower-base {
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
     width: 80px;
-    height: 30px;
-    background: linear-gradient(135deg, #666 0%, #444 100%);
-    .comic-border(3px, @color-black);
-    .pop-shadow(4px, 4px, @color-black);
-    border-radius: 4px;
+    height: 92px;
+    background: linear-gradient(180deg,
+        @color-cyan 0%,
+        darken(@color-cyan, 20%) 50%,
+        darken(@color-cyan, 40%) 100%
+    );
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    animation: fortress-pulse 2s ease-in-out infinite;
+    z-index: 3;
+
+    // Inner glow
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 50px;
+        height: 50px;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(
+            circle,
+            @color-white 0%,
+            @color-cyan 30%,
+            transparent 70%
+        );
+        animation: inner-glow 1.5s ease-in-out infinite alternate;
+    }
+
+    // Tower icon in center
+    &::after {
+        content: '🏰';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 28px;
+        filter: drop-shadow(0 0 10px @color-cyan);
+        animation: icon-float 2s ease-in-out infinite;
+    }
 }
 
-// Tower Body (builds up)
+@keyframes fortress-pulse {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 20px @color-cyan);
+    }
+    50% {
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 40px @color-cyan) drop-shadow(0 0 60px rgba(0, 255, 255, 0.5));
+    }
+}
+
+@keyframes inner-glow {
+    0% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+}
+
+@keyframes icon-float {
+    0%, 100% {
+        transform: translate(-50%, -50%) translateY(0);
+    }
+    50% {
+        transform: translate(-50%, -50%) translateY(-5px);
+    }
+}
+
+// Rotating Shield Ring 1 (Outer)
 .loading-tower-body {
     position: absolute;
-    bottom: 25px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50px;
-    height: 0;
-    background: linear-gradient(135deg, @color-tower-arrow 0%, darken(@color-tower-arrow, 15%) 100%);
-    .comic-border(3px, @color-black);
-    border-bottom: none;
-    animation: tower-build 2s ease-in-out infinite;
-}
+    width: 160px;
+    height: 160px;
+    border: 3px solid transparent;
+    border-top-color: @color-magenta;
+    border-right-color: @color-magenta;
+    border-radius: 50%;
+    animation: ring-rotate 3s linear infinite;
+    z-index: 2;
 
-// Tower Top (appears after body)
-.loading-tower-top {
-    position: absolute;
-    bottom: 25px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 35px solid transparent;
-    border-right: 35px solid transparent;
-    border-bottom: 40px solid @color-cyan;
-    filter: drop-shadow(3px 3px 0 @color-black);
-    opacity: 0;
-    animation: tower-top-appear 2s ease-in-out infinite;
-}
-
-// Tower Turret (final piece)
-.loading-tower-turret {
-    position: absolute;
-    bottom: 60px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 15px;
-    height: 40px;
-    background: @color-magenta;
-    .comic-border(2px, @color-black);
-    border-radius: 3px;
-    opacity: 0;
-    animation: turret-appear 2s ease-in-out infinite;
-
+    // Second ring layer
     &::before {
         content: '';
         position: absolute;
         top: -8px;
+        left: -8px;
+        right: -8px;
+        bottom: -8px;
+        border: 2px dashed rgba(255, 0, 255, 0.3);
+        border-radius: 50%;
+        animation: ring-rotate-reverse 4s linear infinite;
+    }
+
+    // Glow trail
+    &::after {
+        content: '';
+        position: absolute;
+        top: -3px;
         left: 50%;
-        transform: translateX(-50%);
-        width: 8px;
-        height: 8px;
+        width: 20px;
+        height: 6px;
+        background: @color-magenta;
+        border-radius: 3px;
+        filter: blur(2px);
+        box-shadow: 0 0 15px @color-magenta, 0 0 30px @color-magenta;
+    }
+}
+
+// Rotating Shield Ring 2 (Middle)
+.loading-tower-top {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border: 3px solid transparent;
+    border-bottom-color: @color-yellow;
+    border-left-color: @color-yellow;
+    border-radius: 50%;
+    animation: ring-rotate-reverse 2.5s linear infinite;
+    z-index: 2;
+
+    // Inner dashed ring
+    &::before {
+        content: '';
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        right: 6px;
+        bottom: 6px;
+        border: 2px dotted rgba(255, 255, 0, 0.4);
+        border-radius: 50%;
+        animation: ring-rotate 5s linear infinite;
+    }
+
+    // Glow orb
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 50%;
+        width: 12px;
+        height: 12px;
         background: @color-yellow;
         border-radius: 50%;
-        .comic-border(2px, @color-black);
+        filter: blur(1px);
+        box-shadow: 0 0 10px @color-yellow, 0 0 20px @color-yellow;
     }
 }
 
-// Build animation keyframes
-@keyframes tower-build {
-    0%, 10% {
-        height: 0;
+// Energy Particles Ring
+.loading-tower-turret {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    animation: ring-rotate 8s linear infinite;
+    z-index: 1;
+
+    // Particle 1
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 8px;
+        height: 8px;
+        background: @color-cyan;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        box-shadow:
+            0 0 10px @color-cyan,
+            90px 90px 0 @color-magenta,
+            0 180px 0 @color-yellow,
+            -90px 90px 0 @color-cyan;
+        animation: particle-pulse 1s ease-in-out infinite alternate;
     }
-    40%, 100% {
-        height: 80px;
+
+    // Particle 2 (offset)
+    &::after {
+        content: '';
+        position: absolute;
+        top: 25px;
+        right: 25px;
+        width: 6px;
+        height: 6px;
+        background: @color-white;
+        border-radius: 50%;
+        box-shadow:
+            0 0 8px @color-white,
+            -130px 0 0 rgba(255, 255, 255, 0.6),
+            -65px 112px 0 rgba(255, 255, 255, 0.6),
+            65px 112px 0 rgba(255, 255, 255, 0.6);
+        animation: particle-pulse 1.5s ease-in-out infinite alternate-reverse;
     }
 }
 
-@keyframes tower-top-appear {
-    0%, 35% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(20px);
+@keyframes ring-rotate {
+    from {
+        transform: rotate(0deg);
     }
-    50%, 100% {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes ring-rotate-reverse {
+    from {
+        transform: rotate(360deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes particle-pulse {
+    0% {
+        opacity: 0.5;
+        filter: blur(0px);
+    }
+    100% {
         opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        filter: blur(1px);
     }
 }
 
-@keyframes turret-appear {
-    0%, 45% {
-        opacity: 0;
-        transform: translateX(-50%) scale(0);
-    }
-    60%, 100% {
-        opacity: 1;
-        transform: translateX(-50%) scale(1);
-    }
-}
-
-// Loading Text
+// Loading Title
 .loading-text {
-    margin-top: 40px;
+    margin-top: 60px;
     font-family: @font-title;
-    font-size: 2.5rem;
+    font-size: 3rem;
     color: @color-white;
-    .text-outline(@color-black, 2px);
-    letter-spacing: 4px;
-    animation: text-pulse 1.5s ease-in-out infinite;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    position: relative;
+    .gpu-accelerate();
+
+    // Gradient text effect
+    background: linear-gradient(
+        90deg,
+        @color-cyan 0%,
+        @color-white 25%,
+        @color-magenta 50%,
+        @color-white 75%,
+        @color-yellow 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-shift 3s linear infinite;
+
+    // Glow effect
+    &::before {
+        content: 'LOADING';
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        color: @color-cyan;
+        filter: blur(10px);
+        opacity: 0.5;
+        animation: text-glow 2s ease-in-out infinite alternate;
+    }
 }
 
-@keyframes text-pulse {
-    0%, 100% {
-        opacity: 1;
-        transform: scale(1);
+@keyframes gradient-shift {
+    0% {
+        background-position: 0% center;
     }
-    50% {
-        opacity: 0.7;
-        transform: scale(1.02);
+    100% {
+        background-position: 200% center;
     }
 }
 
-// Loading Dots
+@keyframes text-glow {
+    0% {
+        filter: blur(10px);
+        opacity: 0.3;
+    }
+    100% {
+        filter: blur(20px);
+        opacity: 0.6;
+    }
+}
+
+// Loading Dots (Bouncing Orbs)
 .loading-dots {
     display: flex;
-    gap: 8px;
-    margin-top: 20px;
+    gap: 15px;
+    margin-top: 25px;
 }
 
 .loading-dot {
-    width: 12px;
-    height: 12px;
-    background: @color-cyan;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
-    .comic-border(2px, @color-black);
-    animation: dot-bounce 1.2s ease-in-out infinite;
+    animation: dot-orbit 1.5s ease-in-out infinite;
+    .gpu-accelerate();
+
+    &:nth-child(1) {
+        background: @color-cyan;
+        box-shadow: 0 0 10px @color-cyan, 0 0 20px @color-cyan;
+        animation-delay: 0s;
+    }
 
     &:nth-child(2) {
-        animation-delay: 0.2s;
         background: @color-magenta;
+        box-shadow: 0 0 10px @color-magenta, 0 0 20px @color-magenta;
+        animation-delay: 0.2s;
     }
 
     &:nth-child(3) {
-        animation-delay: 0.4s;
         background: @color-yellow;
+        box-shadow: 0 0 10px @color-yellow, 0 0 20px @color-yellow;
+        animation-delay: 0.4s;
     }
 }
 
-@keyframes dot-bounce {
-    0%, 80%, 100% {
-        transform: translateY(0);
-    }
-    40% {
-        transform: translateY(-15px);
-    }
-}
-
-// Click to Start prompt
-.loading-start {
-    position: absolute;
-    bottom: 15%;
-    font-family: @font-title;
-    font-size: 1.8rem;
-    color: @color-yellow;
-    .text-outline(@color-black, 2px);
-    cursor: pointer;
-    opacity: 0;
-    animation: start-appear 0.5s ease forwards;
-    animation-delay: 2s;
-    transition: transform 0.2s ease, color 0.2s ease;
-
-    &:hover {
-        transform: scale(1.1);
-        color: @color-cyan;
-    }
-
-    &::before,
-    &::after {
-        content: '>';
-        margin: 0 10px;
-        animation: arrow-blink 0.8s ease-in-out infinite alternate;
-    }
-
-    &::before {
-        content: '<';
-    }
-}
-
-@keyframes start-appear {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes arrow-blink {
-    from {
-        opacity: 0.5;
-    }
-    to {
+@keyframes dot-orbit {
+    0%, 100% {
+        transform: translateY(0) scale(1);
         opacity: 1;
     }
+    50% {
+        transform: translateY(-20px) scale(1.2);
+        opacity: 0.7;
+    }
 }
 
-// Progress bar (optional)
+// Progress Bar
 .loading-progress {
     position: absolute;
-    bottom: 25%;
-    width: 200px;
-    height: 16px;
+    bottom: 20%;
+    width: 280px;
+    height: 6px;
     background: rgba(255, 255, 255, 0.1);
-    .comic-border(2px, @color-black);
-    border-radius: 8px;
+    border-radius: 3px;
     overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    // Outer glow
+    &::before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+        border: 1px solid rgba(0, 255, 255, 0.2);
+        border-radius: 8px;
+    }
 }
 
 .loading-progress-fill {
     height: 100%;
     width: 0;
-    background: linear-gradient(90deg, @color-cyan, @color-magenta, @color-yellow);
-    background-size: 200% 100%;
-    animation: progress-fill 2.5s ease forwards, progress-shine 1s linear infinite;
+    background: linear-gradient(
+        90deg,
+        @color-cyan 0%,
+        @color-magenta 50%,
+        @color-yellow 100%
+    );
+    border-radius: 3px;
+    animation: progress-fill 2.5s ease-out forwards;
+    position: relative;
+
+    // Shine effect
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.4) 50%,
+            transparent 100%
+        );
+        animation: progress-shine 1s ease-in-out infinite;
+    }
 }
 
 @keyframes progress-fill {
-    to {
+    0% {
+        width: 0;
+    }
+    100% {
         width: 100%;
     }
 }
 
 @keyframes progress-shine {
-    from {
-        background-position: 200% 0;
+    0% {
+        transform: translateX(-100%);
     }
-    to {
-        background-position: -200% 0;
+    100% {
+        transform: translateX(200%);
+    }
+}
+
+// Click to Start Button
+.loading-start {
+    position: absolute;
+    bottom: 12%;
+    font-family: @font-title;
+    font-size: 1.6rem;
+    color: @color-white;
+    letter-spacing: 4px;
+    cursor: pointer;
+    opacity: 0;
+    animation: start-appear 0.8s ease forwards;
+    animation-delay: 2.5s;
+    padding: 15px 40px;
+    border: 2px solid @color-cyan;
+    background: rgba(0, 255, 255, 0.1);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    .gpu-accelerate();
+
+    &:hover {
+        background: rgba(0, 255, 255, 0.2);
+        border-color: @color-white;
+        transform: scale(1.05);
+        box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+    }
+
+    // Animated border
+    &::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(90deg, @color-cyan, @color-magenta, @color-yellow, @color-cyan);
+        background-size: 300% 100%;
+        border-radius: 6px;
+        z-index: -1;
+        animation: border-flow 3s linear infinite;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    &:hover::before {
+        opacity: 1;
+    }
+
+    // Pulsing arrows
+    &::after {
+        content: '▶';
+        margin-left: 15px;
+        display: inline-block;
+        animation: arrow-pulse 1s ease-in-out infinite;
+    }
+}
+
+@keyframes start-appear {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes border-flow {
+    0% {
+        background-position: 0% center;
+    }
+    100% {
+        background-position: 300% center;
+    }
+}
+
+@keyframes arrow-pulse {
+    0%, 100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    50% {
+        transform: translateX(5px);
+        opacity: 0.5;
+    }
+}
+
+// Corner Decorations
+.loading-screen::before,
+.loading-screen::after {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    pointer-events: none;
+}
+
+.loading-screen::before {
+    top: 30px;
+    left: 30px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.loading-screen::after {
+    bottom: 30px;
+    right: 30px;
+    border-left: none;
+    border-top: none;
+}
+
+// Responsive Design
+@media (max-width: 480px) {
+    .loading-tower {
+        transform: scale(0.8);
+    }
+
+    .loading-text {
+        font-size: 2rem;
+        letter-spacing: 4px;
+    }
+
+    .loading-start {
+        font-size: 1.2rem;
+        padding: 12px 30px;
+    }
+
+    .loading-progress {
+        width: 200px;
+    }
+}
+
+// Reduced Motion Support
+@media (prefers-reduced-motion: reduce) {
+    .loading-tower-body,
+    .loading-tower-top,
+    .loading-tower-turret,
+    .loading-bg::before {
+        animation: none !important;
+    }
+
+    .loading-tower-base {
+        animation: fortress-pulse 4s ease-in-out infinite;
+    }
+
+    .loading-dot {
+        animation: dot-simple 2s ease-in-out infinite;
+    }
+
+    @keyframes dot-simple {
+        0%, 100% {
+            opacity: 0.5;
+        }
+        50% {
+            opacity: 1;
+        }
     }
 }
