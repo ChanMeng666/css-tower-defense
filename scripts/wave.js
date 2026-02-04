@@ -134,10 +134,9 @@ var Wave = (function() {
     // Current state
     var currentWave = 0;
     var waveInProgress = false;
-    var waveElapsedTime = 0;  // Accumulated elapsed time (not wall clock)
+    var waveElapsedTime = 0;  // Accumulated elapsed time (not wall clock) - used for both events and spawning
     var eventIndex = 0;
     var spawnQueue = [];
-    var spawnTimer = 0;
     var totalEnemiesSpawned = 0;
     var totalEnemiesInWave = 0;
 
@@ -150,7 +149,6 @@ var Wave = (function() {
         waveElapsedTime = 0;
         eventIndex = 0;
         spawnQueue = [];
-        spawnTimer = 0;
         totalEnemiesSpawned = 0;
         totalEnemiesInWave = 0;
 
@@ -181,7 +179,6 @@ var Wave = (function() {
         waveElapsedTime = 0;  // Reset accumulated time
         eventIndex = 0;
         spawnQueue = [];
-        spawnTimer = 0;
         totalEnemiesSpawned = 0;
         totalEnemiesInWave = calculateTotalEnemies(currentWave);
 
@@ -240,9 +237,8 @@ var Wave = (function() {
             }
         }
 
-        // Update spawn queue
-        spawnTimer += dt * 1000;
-        while (spawnQueue.length > 0 && spawnQueue[0].delay <= spawnTimer) {
+        // Process spawn queue using the same timing source as events
+        while (spawnQueue.length > 0 && spawnQueue[0].spawnTime <= waveElapsedTime) {
             var spawn = spawnQueue.shift();
             Enemy.spawn(spawn.type, spawn.variant);
             totalEnemiesSpawned++;
@@ -302,9 +298,11 @@ var Wave = (function() {
 
     /**
      * Handle spawn event - add enemies to spawn queue
+     * Uses waveElapsedTime as the base time for consistent timing
      */
     function handleSpawn(groups) {
-        var queueBaseTime = spawnTimer;
+        // Use waveElapsedTime as base - this is the same timer used for event processing
+        var queueBaseTime = waveElapsedTime;
 
         for (var i = 0; i < groups.length; i++) {
             var group = groups[i];
@@ -312,14 +310,15 @@ var Wave = (function() {
                 spawnQueue.push({
                     type: group.type,
                     variant: group.variant || null,
-                    delay: queueBaseTime + (j * group.interval) + (i * 500)
+                    // spawnTime is when this enemy should spawn (absolute time since wave start)
+                    spawnTime: queueBaseTime + (j * group.interval) + (i * 500)
                 });
             }
         }
 
-        // Sort by delay
+        // Sort by spawn time
         spawnQueue.sort(function(a, b) {
-            return a.delay - b.delay;
+            return a.spawnTime - b.spawnTime;
         });
     }
 
@@ -365,11 +364,12 @@ var Wave = (function() {
             Display.showAnnouncement('BOSS', 'The Dark Lord has arrived!');
         }
 
-        // Spawn the boss after entrance effect delay
-        setTimeout(function() {
-            Enemy.spawn(data.type);
-            totalEnemiesSpawned++;
-        }, 1500);
+        // Add boss to spawn queue with delay (respects pause, unlike setTimeout)
+        spawnQueue.push({
+            type: data.type,
+            variant: null,
+            spawnTime: waveElapsedTime + 1500  // 1.5 second delay for entrance effect
+        });
 
         // Play boss music/sound
         if (typeof Sfx !== 'undefined') {
