@@ -1,6 +1,7 @@
 /**
  * CSS Tower Defense - Sound Effects System
  * Uses Web Audio API for game sounds with spatial audio support
+ * Uses Howler.js for background music playback
  */
 
 var Sfx = (function() {
@@ -11,6 +12,29 @@ var Sfx = (function() {
     var masterGain = null;
     var muted = false;
     var volume = 0.5;
+    var musicVolume = 0.3;
+
+    // Howler.js music instances
+    var music = {
+        menu: null,      // Hall/menu music
+        playing: null,   // In-game music
+        victory: null,   // Victory music
+        defeat: null     // Defeat music
+    };
+
+    // Howler.js sound effect instances
+    var howlEffects = {
+        button: null,    // UI click
+        ready: null,     // Wave start
+        place: null,     // Tower placement (reset.mp3)
+        upgrade: null,   // Upgrade/buff
+        warning: null,   // Boss warning
+        death: null,     // Enemy death
+        blasts: []       // Explosion sounds
+    };
+
+    // Current playing music track
+    var currentMusic = null;
 
     // Spatial audio listener
     var listener = null;
@@ -38,8 +62,96 @@ var Sfx = (function() {
 
             // Pre-generate sounds
             generateSounds();
+
+            // Initialize Howler.js music and effects
+            initHowlerAudio();
         } catch (e) {
             console.warn('Web Audio API not supported:', e);
+        }
+    }
+
+    /**
+     * Initialize Howler.js music and sound effects
+     */
+    function initHowlerAudio() {
+        if (typeof Howl === 'undefined') {
+            console.warn('Howler.js not loaded, music disabled');
+            return;
+        }
+
+        // Background music tracks
+        music.menu = new Howl({
+            src: ['assets/sfx/musics/hall.mp3'],
+            loop: true,
+            volume: musicVolume,
+            preload: true
+        });
+
+        music.playing = new Howl({
+            src: ['assets/sfx/musics/gameing.mp3'],
+            loop: true,
+            volume: musicVolume,
+            preload: true
+        });
+
+        music.victory = new Howl({
+            src: ['assets/sfx/musics/win.mp3'],
+            loop: false,
+            volume: musicVolume,
+            preload: true
+        });
+
+        music.defeat = new Howl({
+            src: ['assets/sfx/musics/fail.mp3'],
+            loop: false,
+            volume: musicVolume,
+            preload: true
+        });
+
+        // Sound effects using Howler
+        howlEffects.button = new Howl({
+            src: ['assets/sfx/effects/button.mp3'],
+            volume: volume,
+            preload: true
+        });
+
+        howlEffects.ready = new Howl({
+            src: ['assets/sfx/effects/ready.mp3'],
+            volume: volume,
+            preload: true
+        });
+
+        howlEffects.place = new Howl({
+            src: ['assets/sfx/effects/reset.mp3'],
+            volume: volume,
+            preload: true
+        });
+
+        howlEffects.upgrade = new Howl({
+            src: ['assets/sfx/effects/buff.mp3'],
+            volume: volume,
+            preload: true
+        });
+
+        howlEffects.warning = new Howl({
+            src: ['assets/sfx/effects/warn.mp3'],
+            volume: volume,
+            preload: true
+        });
+
+        howlEffects.death = new Howl({
+            src: ['assets/sfx/effects/death.wav'],
+            volume: volume * 0.5,
+            preload: true
+        });
+
+        // Load blast sounds
+        for (var i = 1; i <= 5; i++) {
+            howlEffects.blasts.push(new Howl({
+                src: ['assets/sfx/blasts/blast' + i + '.mp3'],
+                volume: volume * 0.6,
+                preload: true
+            }));
         }
     }
 
@@ -458,13 +570,135 @@ var Sfx = (function() {
         mapHeight = height;
     }
 
+    // =========================================
+    // MUSIC CONTROL (Howler.js)
+    // =========================================
+
+    /**
+     * Play background music for a specific game state
+     * @param {string} track - 'menu', 'playing', 'victory', or 'defeat'
+     */
+    function playMusic(track) {
+        if (!music[track]) return;
+        if (muted) return;
+
+        // Stop current music with fade
+        stopMusic(function() {
+            currentMusic = track;
+            music[track].play();
+            music[track].fade(0, musicVolume, 500);
+        });
+    }
+
+    /**
+     * Stop current music with optional fade
+     * @param {function} callback - Called after music stops
+     */
+    function stopMusic(callback) {
+        if (currentMusic && music[currentMusic]) {
+            var current = music[currentMusic];
+            current.fade(musicVolume, 0, 300);
+            current.once('fade', function() {
+                current.stop();
+                if (callback) callback();
+            });
+        } else {
+            if (callback) callback();
+        }
+    }
+
+    /**
+     * Pause current music
+     */
+    function pauseMusic() {
+        if (currentMusic && music[currentMusic]) {
+            music[currentMusic].pause();
+        }
+    }
+
+    /**
+     * Resume current music
+     */
+    function resumeMusic() {
+        if (currentMusic && music[currentMusic] && !muted) {
+            music[currentMusic].play();
+        }
+    }
+
+    /**
+     * Set music volume (0-1)
+     */
+    function setMusicVolume(value) {
+        musicVolume = Math.max(0, Math.min(1, value));
+        // Update volume on all music tracks
+        Object.keys(music).forEach(function(key) {
+            if (music[key]) {
+                music[key].volume(musicVolume);
+            }
+        });
+    }
+
+    /**
+     * Get music volume
+     */
+    function getMusicVolume() {
+        return musicVolume;
+    }
+
+    // =========================================
+    // HOWLER SOUND EFFECTS
+    // =========================================
+
+    /**
+     * Play a Howler.js sound effect
+     * @param {string} name - Effect name: 'button', 'ready', 'place', 'upgrade', 'warning', 'death', 'blast'
+     */
+    function playEffect(name) {
+        if (muted) return;
+
+        if (name === 'blast') {
+            // Play random blast sound
+            if (howlEffects.blasts.length > 0) {
+                var idx = Math.floor(Math.random() * howlEffects.blasts.length);
+                howlEffects.blasts[idx].play();
+            }
+        } else if (howlEffects[name]) {
+            howlEffects[name].play();
+        }
+    }
+
+    /**
+     * Updated toggleMute to also affect music
+     */
+    var originalToggleMute = toggleMute;
+    toggleMute = function() {
+        muted = !muted;
+        if (masterGain) {
+            masterGain.gain.value = muted ? 0 : volume;
+        }
+        // Also control music
+        if (muted) {
+            pauseMusic();
+        } else {
+            resumeMusic();
+        }
+        return muted;
+    };
+
     // Public API
     return {
         init: init,
         play: play,
         playSpatial: playSpatial,
+        playEffect: playEffect,
+        playMusic: playMusic,
+        stopMusic: stopMusic,
+        pauseMusic: pauseMusic,
+        resumeMusic: resumeMusic,
         setVolume: setVolume,
         getVolume: getVolume,
+        setMusicVolume: setMusicVolume,
+        getMusicVolume: getMusicVolume,
         toggleMute: toggleMute,
         isMuted: isMuted,
         setMapDimensions: setMapDimensions

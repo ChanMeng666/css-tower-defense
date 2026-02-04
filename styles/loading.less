@@ -1,0 +1,290 @@
+// ===========================================
+// CSS Tower Defense - Loading Screen
+// POP-ART themed loading animation
+// ===========================================
+
+// Loading Screen Container
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: @color-darker;
+    .flex-center();
+    flex-direction: column;
+    z-index: 100000;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+
+    &.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+}
+
+// Background pattern (halftone dots)
+.loading-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    .halftone-bg(rgba(255, 255, 255, 0.03), 3px);
+    pointer-events: none;
+}
+
+// Tower Building Animation Container
+.loading-tower {
+    position: relative;
+    width: 120px;
+    height: 200px;
+    .preserve-3d();
+}
+
+// Tower Base (always visible)
+.loading-tower-base {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 30px;
+    background: linear-gradient(135deg, #666 0%, #444 100%);
+    .comic-border(3px, @color-black);
+    .pop-shadow(4px, 4px, @color-black);
+    border-radius: 4px;
+}
+
+// Tower Body (builds up)
+.loading-tower-body {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 0;
+    background: linear-gradient(135deg, @color-tower-arrow 0%, darken(@color-tower-arrow, 15%) 100%);
+    .comic-border(3px, @color-black);
+    border-bottom: none;
+    animation: tower-build 2s ease-in-out infinite;
+}
+
+// Tower Top (appears after body)
+.loading-tower-top {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 35px solid transparent;
+    border-right: 35px solid transparent;
+    border-bottom: 40px solid @color-cyan;
+    filter: drop-shadow(3px 3px 0 @color-black);
+    opacity: 0;
+    animation: tower-top-appear 2s ease-in-out infinite;
+}
+
+// Tower Turret (final piece)
+.loading-tower-turret {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 15px;
+    height: 40px;
+    background: @color-magenta;
+    .comic-border(2px, @color-black);
+    border-radius: 3px;
+    opacity: 0;
+    animation: turret-appear 2s ease-in-out infinite;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 8px;
+        height: 8px;
+        background: @color-yellow;
+        border-radius: 50%;
+        .comic-border(2px, @color-black);
+    }
+}
+
+// Build animation keyframes
+@keyframes tower-build {
+    0%, 10% {
+        height: 0;
+    }
+    40%, 100% {
+        height: 80px;
+    }
+}
+
+@keyframes tower-top-appear {
+    0%, 35% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    50%, 100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes turret-appear {
+    0%, 45% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0);
+    }
+    60%, 100% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+// Loading Text
+.loading-text {
+    margin-top: 40px;
+    font-family: @font-title;
+    font-size: 2.5rem;
+    color: @color-white;
+    .text-outline(@color-black, 2px);
+    letter-spacing: 4px;
+    animation: text-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes text-pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.02);
+    }
+}
+
+// Loading Dots
+.loading-dots {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.loading-dot {
+    width: 12px;
+    height: 12px;
+    background: @color-cyan;
+    border-radius: 50%;
+    .comic-border(2px, @color-black);
+    animation: dot-bounce 1.2s ease-in-out infinite;
+
+    &:nth-child(2) {
+        animation-delay: 0.2s;
+        background: @color-magenta;
+    }
+
+    &:nth-child(3) {
+        animation-delay: 0.4s;
+        background: @color-yellow;
+    }
+}
+
+@keyframes dot-bounce {
+    0%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-15px);
+    }
+}
+
+// Click to Start prompt
+.loading-start {
+    position: absolute;
+    bottom: 15%;
+    font-family: @font-title;
+    font-size: 1.8rem;
+    color: @color-yellow;
+    .text-outline(@color-black, 2px);
+    cursor: pointer;
+    opacity: 0;
+    animation: start-appear 0.5s ease forwards;
+    animation-delay: 2s;
+    transition: transform 0.2s ease, color 0.2s ease;
+
+    &:hover {
+        transform: scale(1.1);
+        color: @color-cyan;
+    }
+
+    &::before,
+    &::after {
+        content: '>';
+        margin: 0 10px;
+        animation: arrow-blink 0.8s ease-in-out infinite alternate;
+    }
+
+    &::before {
+        content: '<';
+    }
+}
+
+@keyframes start-appear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes arrow-blink {
+    from {
+        opacity: 0.5;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+// Progress bar (optional)
+.loading-progress {
+    position: absolute;
+    bottom: 25%;
+    width: 200px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    .comic-border(2px, @color-black);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.loading-progress-fill {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, @color-cyan, @color-magenta, @color-yellow);
+    background-size: 200% 100%;
+    animation: progress-fill 2.5s ease forwards, progress-shine 1s linear infinite;
+}
+
+@keyframes progress-fill {
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes progress-shine {
+    from {
+        background-position: 200% 0;
+    }
+    to {
+        background-position: -200% 0;
+    }
+}

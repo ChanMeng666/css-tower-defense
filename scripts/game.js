@@ -84,6 +84,14 @@ var Game = (function () {
         Display.updateLives(lives);
         Display.updateScore(score);
         Display.updateWave(Wave.getCurrentWave(), Wave.getTotalWaves());
+
+        // Start menu music after user interaction (for autoplay policy)
+        document.addEventListener('click', function startMenuMusic() {
+            if (state === STATES.MENU) {
+                Sfx.playMusic('menu');
+            }
+            document.removeEventListener('click', startMenuMusic);
+        }, { once: true });
     }
 
     /**
@@ -195,6 +203,13 @@ var Game = (function () {
         gameLoop();
 
         Sfx.play('start');
+        Sfx.playMusic('playing');
+
+        // Hide loading screen if present
+        var loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+        }
     }
 
     /**
@@ -246,6 +261,7 @@ var Game = (function () {
             cancelAnimationFrame(animationFrameId);
             animationFrameId = null;
         }
+        Sfx.pauseMusic();
     }
 
     /**
@@ -257,6 +273,7 @@ var Game = (function () {
         state = STATES.PLAYING;
         lastFrameTime = performance.now();
         gameLoop();
+        Sfx.resumeMusic();
     }
 
     /**
@@ -278,6 +295,7 @@ var Game = (function () {
 
         Display.showGameOverScreen(false, score);
         Sfx.play('gameOver');
+        Sfx.playMusic('defeat');
     }
 
     /**
@@ -303,6 +321,7 @@ var Game = (function () {
 
         Display.showGameOverScreen(true, score);
         Sfx.play('victory');
+        Sfx.playMusic('victory');
     }
 
     /**

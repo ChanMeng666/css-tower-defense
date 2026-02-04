@@ -12,10 +12,13 @@ const rename = require('gulp-rename');
 
 // Script files in order
 const scriptFiles = [
+    './scripts/utils.js',     // Utility functions (must load first)
+    './scripts/pool.js',      // Object pool for performance
+    './scripts/noise.js',     // Perlin noise generator
     './scripts/path.js',
-    './scripts/weather.js', // Add Weather System
-    './scripts/seasons.js', // Add Seasonal System
-    './scripts/progression.js', // Add Progression System
+    './scripts/weather.js',   // Weather System
+    './scripts/seasons.js',   // Seasonal System
+    './scripts/progression.js', // Progression System
     './scripts/enemy.js',
     './scripts/tower.js',
     './scripts/projectile.js',

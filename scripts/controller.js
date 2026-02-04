@@ -20,16 +20,50 @@
         Display.init();
         Shop.init();
         Game.init();
-        
+
         // Setup event listeners
+        setupLoadingScreen();
         setupStartButton();
         setupRestartButton();
         setupWaveButton();
         setupMapInteraction();
         setupKeyboardControls();
-        
+
         console.log('CSS Tower Defense initialized!');
     });
+
+    /**
+     * Setup loading screen click-to-start
+     */
+    function setupLoadingScreen() {
+        var loadingScreen = document.getElementById('loadingScreen');
+        var loadingStart = document.getElementById('loadingStart');
+
+        if (!loadingScreen) return;
+
+        // Hide loading screen and show start screen on click
+        function dismissLoading() {
+            loadingScreen.classList.add('hidden');
+            // Play button click sound and start menu music
+            Sfx.playEffect('button');
+            Sfx.playMusic('menu');
+        }
+
+        // Click on "CLICK TO START" text
+        if (loadingStart) {
+            loadingStart.addEventListener('click', dismissLoading);
+        }
+
+        // Also allow clicking anywhere on loading screen after a delay
+        setTimeout(function() {
+            loadingScreen.addEventListener('click', function(e) {
+                // Prevent double trigger if clicking on loadingStart
+                if (e.target !== loadingStart) {
+                    dismissLoading();
+                }
+            });
+        }, 2500); // Match the animation delay for the start prompt
+    }
     
     /**
      * Setup start button
@@ -38,6 +72,7 @@
         var startBtn = document.getElementById('startBtn');
         if (startBtn) {
             startBtn.addEventListener('click', function() {
+                Sfx.playEffect('button');
                 Game.start();
             });
         }
@@ -50,6 +85,7 @@
         var restartBtn = document.getElementById('restartBtn');
         if (restartBtn) {
             restartBtn.addEventListener('click', function() {
+                Sfx.playEffect('button');
                 Game.start();
             });
         }
@@ -62,6 +98,7 @@
         var waveBtn = document.getElementById('startWaveBtn');
         if (waveBtn) {
             waveBtn.addEventListener('click', function() {
+                Sfx.playEffect('ready');
                 Game.startNextWave();
             });
         }

@@ -12,9 +12,31 @@
     <!-- inject:css -->
     <!-- endinject -->
     <script src="vendor/prefixfree.min.js"></script>
+    <script src="vendor/howler.min.js"></script>
 </head>
 
 <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-bg"></div>
+        <div class="loading-tower">
+            <div class="loading-tower-base"></div>
+            <div class="loading-tower-body"></div>
+            <div class="loading-tower-top"></div>
+            <div class="loading-tower-turret"></div>
+        </div>
+        <div class="loading-text">LOADING</div>
+        <div class="loading-dots">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+        </div>
+        <div class="loading-progress">
+            <div class="loading-progress-fill"></div>
+        </div>
+        <div class="loading-start" id="loadingStart">CLICK TO START</div>
+    </div>
+
     <!-- Start Screen -->
     <div class="start-screen" id="startScreen">
         <div class="title-container">
