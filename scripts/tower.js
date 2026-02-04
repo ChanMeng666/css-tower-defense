@@ -28,7 +28,8 @@ var Tower = (function () {
             projectileType: 'cannon',
             projectileSpeed: 300,
             className: 'tower-cannon',
-            description: 'Splash damage area attack'
+            description: 'Splash damage area attack',
+            splashRadius: 60
         },
         ice: {
             name: 'Ice Tower',
@@ -39,7 +40,9 @@ var Tower = (function () {
             projectileType: 'ice',
             projectileSpeed: 350,
             className: 'tower-ice',
-            description: 'Slows enemies'
+            description: 'Slows enemies',
+            slowEffect: 0.5,
+            slowDuration: 2
         },
         magic: {
             name: 'Magic Tower',
@@ -50,7 +53,8 @@ var Tower = (function () {
             projectileType: 'magic',
             projectileSpeed: 250,
             className: 'tower-magic',
-            description: 'High damage long range'
+            description: 'High damage long range',
+            ignoreArmor: true
         },
         tesla: {
             name: 'Tesla Tower',
@@ -61,7 +65,9 @@ var Tower = (function () {
             projectileType: 'tesla',
             projectileSpeed: 1000,
             className: 'tower-tesla',
-            description: 'Zaps enemies instantly'
+            description: 'Zaps enemies instantly',
+            chainTargets: 3,
+            chainDamageFalloff: 0.7
         },
         flame: {
             name: 'Flame Tower',
@@ -72,13 +78,41 @@ var Tower = (function () {
             projectileType: 'flame',
             projectileSpeed: 400,
             className: 'tower-flame',
-            description: 'Burns enemies rapidly'
+            description: 'Burns enemies rapidly',
+            burnDamage: 3,
+            burnDuration: 3,
+            burnInterval: 0.5
         }
     };
 
     // Active towers list
     var towers = [];
     var towerIdCounter = 0;
+
+    // Tower prefix/modifier system (Terraria-inspired reforging)
+    var PREFIXES = {
+        // Common prefixes
+        swift: { name: 'Swift', rarity: 'common', fireRateMult: 1.15, color: '#AAAAAA' },
+        deadly: { name: 'Deadly', rarity: 'common', damageMult: 1.20, color: '#AAAAAA' },
+        keen: { name: 'Keen', rarity: 'common', rangeMult: 1.10, color: '#AAAAAA' },
+        // Rare prefixes
+        arcane: { name: 'Arcane', rarity: 'rare', rangeMult: 1.25, color: '#0088FF' },
+        fierce: { name: 'Fierce', rarity: 'rare', damageMult: 1.25, fireRateMult: 1.05, color: '#0088FF' },
+        rapid: { name: 'Rapid', rarity: 'rare', fireRateMult: 1.25, color: '#0088FF' },
+        // Epic prefixes
+        mythical: { name: 'Mythical', rarity: 'epic', damageMult: 1.15, fireRateMult: 1.10, rangeMult: 1.10, color: '#AA00FF' },
+        godly: { name: 'Godly', rarity: 'epic', damageMult: 1.30, rangeMult: 1.15, color: '#AA00FF' },
+        // Legendary prefix
+        legendary: { name: 'Legendary', rarity: 'legendary', damageMult: 1.25, fireRateMult: 1.25, rangeMult: 1.25, color: '#FF8800' }
+    };
+
+    // Prefix roll weights (common more likely)
+    var PREFIX_WEIGHTS = {
+        common: 60,
+        rare: 25,
+        epic: 12,
+        legendary: 3
+    };
 
     // Tower cost/stats helpers
     function getType(type) {
@@ -89,10 +123,24 @@ var Tower = (function () {
         // Make a copy to not mutate base config permanently for this session
         var upgraded = Object.assign({}, config);
 
-        // Cost Reduction
-        if (Progression) {
+        // Apply progression upgrades
+        if (typeof Progression !== 'undefined') {
             upgraded.cost = Math.floor(upgraded.cost * Progression.getTowerCostMultiplier());
             upgraded.damage = Math.floor(upgraded.damage * Progression.getDamageMultiplier());
+            upgraded.range = Math.floor(upgraded.range * Progression.getRangeMultiplier());
+
+            // Attack speed affects fire rate
+            upgraded.fireRate = upgraded.fireRate * Progression.getAttackSpeedMultiplier();
+
+            // Splash radius boost
+            if (upgraded.splashRadius) {
+                upgraded.splashRadius = Math.floor(upgraded.splashRadius * Progression.getSplashRadiusMultiplier());
+            }
+
+            // Slow duration boost
+            if (upgraded.slowDuration) {
+                upgraded.slowDuration = upgraded.slowDuration * Progression.getSlowDurationMultiplier();
+            }
         }
 
         return upgraded;
@@ -129,11 +177,19 @@ var Tower = (function () {
         this.y = worldPos.y;
         this.z = 0;
 
-        // Stats
+        // Stats (base values)
+        this.baseDamage = config.damage;
+        this.baseRange = config.range;
+        this.baseFireRate = config.fireRate;
+        this.level = 1;
+
+        // Prefix/modifier (Terraria-style reforging)
+        this.prefix = null;
+
+        // Calculated stats (updated by applyPrefix)
         this.damage = config.damage;
         this.range = config.range;
         this.fireRate = config.fireRate;
-        this.level = 1;
 
         // Targeting
         this.target = null;
@@ -355,9 +411,9 @@ var Tower = (function () {
         if (this.level >= 3) return false;
 
         this.level++;
-        this.damage = Math.floor(this.config.damage * (1 + (this.level - 1) * 0.5));
-        this.range = this.config.range * (1 + (this.level - 1) * 0.1);
-        this.fireCooldown = (1000 / this.config.fireRate) * (1 - (this.level - 1) * 0.1);
+
+        // Recalculate stats (includes prefix if any)
+        this.applyPrefix();
 
         // Update level CSS class for visual differences
         this.element.classList.remove('level-1', 'level-2', 'level-3');
@@ -441,6 +497,100 @@ var Tower = (function () {
             totalCost += Math.floor(this.config.cost * 0.75 * (i - 1));
         }
         return Math.floor(totalCost * 0.6);
+    };
+
+    /**
+     * Get reforge cost (50% of base cost)
+     */
+    TowerEntity.prototype.getReforgeCost = function () {
+        return Math.floor(this.config.cost * 0.5);
+    };
+
+    /**
+     * Reforge tower with random prefix
+     */
+    TowerEntity.prototype.reforge = function () {
+        // Roll for prefix rarity
+        var roll = Math.random() * 100;
+        var cumulative = 0;
+        var targetRarity = 'common';
+
+        for (var rarity in PREFIX_WEIGHTS) {
+            cumulative += PREFIX_WEIGHTS[rarity];
+            if (roll < cumulative) {
+                targetRarity = rarity;
+                break;
+            }
+        }
+
+        // Get all prefixes of that rarity
+        var candidates = [];
+        for (var prefixId in PREFIXES) {
+            if (PREFIXES[prefixId].rarity === targetRarity) {
+                candidates.push(prefixId);
+            }
+        }
+
+        // Pick random prefix (ensure different from current if possible)
+        if (candidates.length > 1 && this.prefix) {
+            var currentIndex = candidates.indexOf(this.prefix);
+            if (currentIndex > -1) {
+                candidates.splice(currentIndex, 1);
+            }
+        }
+
+        var newPrefixId = candidates[Math.floor(Math.random() * candidates.length)];
+        this.prefix = newPrefixId;
+        this.applyPrefix();
+
+        return PREFIXES[newPrefixId];
+    };
+
+    /**
+     * Apply prefix modifiers to tower stats
+     */
+    TowerEntity.prototype.applyPrefix = function () {
+        // Reset to base stats with level scaling
+        var levelDamageMult = 1 + (this.level - 1) * 0.5;
+        var levelRangeMult = 1 + (this.level - 1) * 0.1;
+        var levelFireRateMult = 1 - (this.level - 1) * 0.1;
+
+        this.damage = Math.floor(this.baseDamage * levelDamageMult);
+        this.range = this.baseRange * levelRangeMult;
+        this.fireCooldown = (1000 / this.baseFireRate) * levelFireRateMult;
+
+        // Apply prefix if exists
+        if (this.prefix && PREFIXES[this.prefix]) {
+            var p = PREFIXES[this.prefix];
+            if (p.damageMult) this.damage = Math.floor(this.damage * p.damageMult);
+            if (p.rangeMult) this.range *= p.rangeMult;
+            if (p.fireRateMult) this.fireCooldown /= p.fireRateMult;
+        }
+
+        // Update visual
+        this.updatePrefixVisual();
+    };
+
+    /**
+     * Update tower visual to show prefix
+     */
+    TowerEntity.prototype.updatePrefixVisual = function () {
+        // Remove old prefix indicator
+        var existing = this.element.querySelector('.tower-prefix');
+        if (existing) existing.parentNode.removeChild(existing);
+
+        if (this.prefix && PREFIXES[this.prefix]) {
+            var p = PREFIXES[this.prefix];
+            var prefixEl = document.createElement('div');
+            prefixEl.className = 'tower-prefix prefix-' + p.rarity;
+            prefixEl.textContent = p.name;
+            prefixEl.style.color = p.color;
+            this.element.appendChild(prefixEl);
+
+            // Add rarity glow
+            this.element.classList.remove('prefix-common', 'prefix-rare', 'prefix-epic', 'prefix-legendary');
+            this.element.classList.add('prefix-' + p.rarity);
+        }
     };
 
     /**
@@ -541,13 +691,6 @@ var Tower = (function () {
         towers = [];
     }
 
-    /**
-     * Get tower type config
-     */
-    function getType(type) {
-        return TOWER_TYPES[type];
-    }
-
     // Public API
     return {
         init: init,
@@ -558,6 +701,7 @@ var Tower = (function () {
         sell: sell,
         clear: clear,
         getType: getType,
-        TYPES: TOWER_TYPES
+        TYPES: TOWER_TYPES,
+        PREFIXES: PREFIXES
     };
 })();

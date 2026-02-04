@@ -34,6 +34,12 @@
         <div class="loading-progress">
             <div class="loading-progress-fill"></div>
         </div>
+        <div class="difficulty-select" id="difficultySelect">
+            <span class="difficulty-label">Difficulty:</span>
+            <button class="difficulty-btn selected" data-difficulty="normal">Normal</button>
+            <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+            <button class="difficulty-btn" data-difficulty="expert">Expert</button>
+        </div>
         <button class="loading-start" id="startBtn">START GAME</button>
         <div class="loading-instructions">
             <p>🎯 Click grid cells to place towers</p>
@@ -66,6 +72,14 @@
             <div class="stat">
                 <span class="stat-icon">🎯</span>
                 <span class="stat-value" id="score">0</span>
+            </div>
+            <div class="stat inventory-stat">
+                <span class="stat-icon">🔩</span>
+                <span class="stat-value" id="invScrap">0</span>
+                <span class="stat-icon">⚡</span>
+                <span class="stat-value" id="invCore">0</span>
+                <span class="stat-icon">💎</span>
+                <span class="stat-value" id="invCrystal">0</span>
             </div>
         </div>
 

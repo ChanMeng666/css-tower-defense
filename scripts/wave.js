@@ -69,7 +69,7 @@ var Wave = (function() {
             ],
             reward: 75
         },
-        // Wave 6
+        // Wave 6 - Can trigger repair if low on lives
         {
             events: [
                 { time: 0, type: 'announcement', data: { title: 'Wave 6', subtitle: 'The assault continues' } },
@@ -181,6 +181,9 @@ var Wave = (function() {
         spawnQueue = [];
         totalEnemiesSpawned = 0;
         totalEnemiesInWave = calculateTotalEnemies(currentWave);
+
+        // Roll for random events (Terraria-style)
+        rollRandomEvents(currentWave + 1);
 
         // Dispatch event
         var event = new CustomEvent('waveStarted', {
@@ -322,6 +325,10 @@ var Wave = (function() {
         });
     }
 
+    // Random event state
+    var activeEvent = null;
+    var eventTimer = 0;
+
     /**
      * Handle special event (gold rush, etc.)
      */
@@ -338,11 +345,51 @@ var Wave = (function() {
                 break;
 
             case 'speedBoost':
-                // Future: temporary tower fire rate boost
+                // Temporary tower fire rate boost
+                activeEvent = { type: 'speedBoost', duration: 10 };
+                eventTimer = 10;
+                if (typeof Display !== 'undefined') {
+                    Display.showAnnouncement('SPEED BOOST!', 'All towers fire 50% faster!');
+                }
                 break;
 
             case 'repair':
-                // Future: restore lives
+                // Restore lives
+                if (typeof Game !== 'undefined') {
+                    Game.addLives(5);
+                }
+                if (typeof Display !== 'undefined') {
+                    Display.showMessage('Repair Drone! +5 lives!');
+                }
+                break;
+
+            case 'bloodMoon':
+                // Blood Moon - enemies stronger but more gold
+                activeEvent = { type: 'bloodMoon' };
+                if (typeof Display !== 'undefined') {
+                    Display.showAnnouncement('BLOOD MOON!', 'Enemies +30% HP, +50% gold!');
+                }
+                // Apply to map visual
+                document.body.classList.add('blood-moon');
+                break;
+
+            case 'eliteSwarm':
+                // All enemies in this wave are elite
+                activeEvent = { type: 'eliteSwarm' };
+                if (typeof Display !== 'undefined') {
+                    Display.showAnnouncement('ELITE SWARM!', 'All enemies are Elite!');
+                }
+                break;
+
+            case 'luckyStar':
+                // Double drop rate for next wave
+                if (typeof Inventory !== 'undefined') {
+                    Inventory.setDropMultiplier(2.0);
+                }
+                activeEvent = { type: 'luckyStar' };
+                if (typeof Display !== 'undefined') {
+                    Display.showMessage('Lucky Star! Double drop rate!');
+                }
                 break;
         }
 
@@ -350,6 +397,55 @@ var Wave = (function() {
         if (typeof emitGameEvent === 'function') {
             emitGameEvent(EVENTS.SPECIAL_EVENT, data);
         }
+    }
+
+    /**
+     * Roll for random events at wave start
+     */
+    function rollRandomEvents(waveNum) {
+        // Clear previous event
+        if (activeEvent && activeEvent.type === 'bloodMoon') {
+            document.body.classList.remove('blood-moon');
+        }
+        if (activeEvent && activeEvent.type === 'luckyStar' && typeof Inventory !== 'undefined') {
+            Inventory.setDropMultiplier(1.0);
+        }
+        activeEvent = null;
+
+        // Blood Moon - wave 3+, 15% chance
+        if (waveNum >= 3 && Math.random() < 0.15) {
+            handleSpecialEvent({ type: 'bloodMoon' });
+            return;
+        }
+
+        // Elite Swarm - wave 5+, 10% chance
+        if (waveNum >= 5 && Math.random() < 0.10) {
+            handleSpecialEvent({ type: 'eliteSwarm' });
+            return;
+        }
+
+        // Lucky Star - 10% chance after wave 4
+        if (waveNum >= 4 && Math.random() < 0.10) {
+            handleSpecialEvent({ type: 'luckyStar' });
+            return;
+        }
+    }
+
+    /**
+     * Roll for post-wave events (called at wave completion)
+     */
+    function rollPostWaveEvents(waveNum) {
+        // Repair Drone - wave 6+, 20% chance if lives < 10
+        if (typeof Game !== 'undefined' && waveNum >= 6) {
+            // We'll check this from game.js where we have access to lives
+        }
+    }
+
+    /**
+     * Get active event (for other systems to check)
+     */
+    function getActiveEvent() {
+        return activeEvent;
     }
 
     /**
@@ -545,6 +641,7 @@ var Wave = (function() {
         isWaveInProgress: isWaveInProgress,
         getProgress: getProgress,
         getNextWaveInfo: getNextWaveInfo,
+        getActiveEvent: getActiveEvent,
         EVENT_TYPES: EVENT_TYPES
     };
 })();

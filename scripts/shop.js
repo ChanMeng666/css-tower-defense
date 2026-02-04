@@ -121,7 +121,17 @@ var Shop = (function() {
         var info = document.createElement('div');
         info.className = 'tower-action-info';
         info.style.cssText = 'color: #fff; text-align: center; min-width: 100px;';
-        info.innerHTML = '<div style="font-weight: bold; color: #FFD700;">' + tower.config.name + '</div>' +
+
+        // Build tower name with prefix if present
+        var towerName = tower.config.name;
+        var prefixColor = '#FFD700';
+        if (tower.prefix && Tower.PREFIXES[tower.prefix]) {
+            var p = Tower.PREFIXES[tower.prefix];
+            towerName = p.name + ' ' + tower.config.name;
+            prefixColor = p.color;
+        }
+
+        info.innerHTML = '<div style="font-weight: bold; color: ' + prefixColor + ';">' + towerName + '</div>' +
                         '<div style="font-size: 0.8rem; margin-top: 5px;">Level ' + tower.level + '</div>' +
                         '<div style="font-size: 0.8rem;">Damage: ' + tower.damage + '</div>' +
                         '<div style="font-size: 0.8rem;">Range: ' + Math.round(tower.range) + '</div>';
@@ -149,6 +159,25 @@ var Shop = (function() {
             panel.appendChild(upgradeBtn);
         }
         
+        // Reforge button (Terraria-style)
+        var reforgeCost = tower.getReforgeCost();
+        var reforgeBtn = document.createElement('button');
+        reforgeBtn.className = 'action-btn reforge-btn';
+        reforgeBtn.style.cssText = 'padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; ' +
+                                   'background: linear-gradient(135deg, #9C27B0 0%, #6A1B9A 100%); color: #fff; ' +
+                                   'font-size: 0.9rem;';
+        reforgeBtn.innerHTML = 'Reforge<br><span style="font-size: 0.75rem;">💰 ' + reforgeCost + '</span>';
+
+        if (Game.getGold() < reforgeCost) {
+            reforgeBtn.style.opacity = '0.5';
+            reforgeBtn.style.cursor = 'not-allowed';
+        } else {
+            reforgeBtn.addEventListener('click', function() {
+                reforgeTower(tower);
+            });
+        }
+        panel.appendChild(reforgeBtn);
+
         // Sell button
         var sellValue = tower.getSellValue();
         var sellBtn = document.createElement('button');
@@ -202,6 +231,38 @@ var Shop = (function() {
         return false;
     }
     
+    /**
+     * Reforge the selected tower (Terraria-style)
+     */
+    function reforgeTower(tower) {
+        var cost = tower.getReforgeCost();
+
+        if (Game.getGold() < cost) {
+            Display.showMessage('Not enough gold!');
+            Sfx.play('error');
+            return false;
+        }
+
+        Game.spendGold(cost);
+        var prefix = tower.reforge();
+
+        // Show result with rarity color
+        var rarityText = prefix.rarity.charAt(0).toUpperCase() + prefix.rarity.slice(1);
+        Display.showMessage(prefix.name + ' ' + tower.config.name + '! (' + rarityText + ')');
+        Sfx.play('upgrade');
+
+        // Check achievement
+        if (typeof Achievements !== 'undefined') {
+            Achievements.checkReforgeAchievement(prefix);
+        }
+
+        // Refresh the action panel
+        showTowerActions(tower);
+        Display.showRangeIndicator(tower);
+
+        return true;
+    }
+
     /**
      * Sell the selected tower
      */

@@ -573,6 +573,61 @@
     }
 }
 
+// Difficulty Selector
+.difficulty-select {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 0;
+    z-index: 2;
+    opacity: 0;
+    animation: instructions-appear 0.5s ease forwards;
+    animation-delay: 2s;
+}
+
+.difficulty-label {
+    font-family: @font-comic;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: @color-black;
+}
+
+.difficulty-btn {
+    font-family: @font-comic;
+    font-size: 1rem;
+    padding: 8px 16px;
+    border: none;
+    .comic-border(2px);
+    cursor: pointer;
+    transition: all 0.1s;
+    background: @color-white;
+    color: @color-black;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 4px 4px 0 @color-black;
+    }
+
+    &.selected {
+        background: @color-yellow;
+        box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    &[data-difficulty="hard"] {
+        &.selected {
+            background: @color-magenta;
+            color: @color-white;
+        }
+    }
+
+    &[data-difficulty="expert"] {
+        &.selected {
+            background: @color-danger;
+            color: @color-white;
+        }
+    }
+}
+
 // Reduced Motion Support
 @media (prefers-reduced-motion: reduce) {
     .loading-tower-turret,
@@ -591,5 +646,10 @@
     .loading-progress-fill {
         animation: none !important;
         width: 100%;
+    }
+
+    .difficulty-select {
+        opacity: 1;
+        animation: none !important;
     }
 }

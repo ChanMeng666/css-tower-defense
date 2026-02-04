@@ -37,12 +37,26 @@ var Game = (function () {
         VICTORY: 'victory'
     };
 
+    // Difficulty modes (Terraria-inspired)
+    var DIFFICULTIES = {
+        normal: { name: 'Normal', healthMult: 1.0, damageMult: 1.0, goldMult: 1.0, xpMult: 1.0 },
+        hard: { name: 'Hard', healthMult: 1.5, damageMult: 1.5, goldMult: 1.3, xpMult: 1.5 },
+        expert: { name: 'Expert', healthMult: 2.0, damageMult: 2.0, goldMult: 1.5, xpMult: 2.0 }
+    };
+
     // Game state
     var state = STATES.MENU;
+    var difficulty = 'normal';
     var gold = 100;
     var lives = 20;
     var score = 0;
     var highScore = 0;
+
+    // Combo system
+    var comboCount = 0;
+    var comboTimer = 0;
+    var COMBO_TIMEOUT = 1.5; // seconds
+    var COMBO_MIN_FOR_BONUS = 3; // Minimum kills for combo bonus
 
     // Timing
     var lastFrameTime = 0;
@@ -72,6 +86,12 @@ var Game = (function () {
         Weather.init(); // Init Weather
         Seasons.init(); // Init Seasons
         Progression.init(); // Init Progression
+        if (typeof Inventory !== 'undefined') {
+            Inventory.init(); // Init Inventory/Loot System
+        }
+        if (typeof Achievements !== 'undefined') {
+            Achievements.init(); // Init Achievement System
+        }
         if (typeof Effects !== 'undefined') {
             Effects.init(); // Init Visual Effects Manager
         }
@@ -104,10 +124,29 @@ var Game = (function () {
     function setupEventListeners() {
         // Enemy killed
         document.addEventListener('enemyKilled', function (e) {
-            var reward = e.detail.reward;
+            var baseReward = e.detail.reward;
+            // Apply difficulty gold multiplier and progression gold bonus
+            var reward = Math.floor(baseReward * DIFFICULTIES[difficulty].goldMult * Progression.getGoldMultiplier());
+
+            // Combo system
+            comboCount++;
+            comboTimer = COMBO_TIMEOUT;
+
+            // Apply combo bonus (10% extra per kill in combo, starting at 3 kills)
+            if (comboCount >= COMBO_MIN_FOR_BONUS) {
+                var comboBonus = Math.floor(reward * 0.1 * (comboCount - COMBO_MIN_FOR_BONUS + 1));
+                reward += comboBonus;
+                Display.showCombo(comboCount, comboBonus);
+            }
+
             addGold(reward);
             addScore(reward * 10);
             Sfx.play('kill');
+
+            // Emit combo event
+            if (typeof emitGameEvent === 'function') {
+                emitGameEvent(EVENTS.COMBO_KILL, { count: comboCount, reward: reward });
+            }
         });
 
         // Enemy reached end
@@ -133,6 +172,13 @@ var Game = (function () {
 
             // Always update wave display and button
             Display.updateWave(Wave.getCurrentWave(), Wave.getTotalWaves());
+
+            // Repair Drone event - wave 6+, 20% chance if lives < 10
+            if (e.detail.wave >= 6 && lives < 10 && Math.random() < 0.20) {
+                addLives(5);
+                Display.showMessage('Repair Drone! +5 lives!');
+                Sfx.play('powerup');
+            }
 
             // Check for victory
             if (e.detail.isLastWave) {
@@ -175,8 +221,8 @@ var Game = (function () {
         }
 
         // Reset game state
-        gold = 100;
-        lives = 20;
+        gold = 100 + Progression.getStartingGoldBonus();
+        lives = 20 + Progression.getExtraLives();
         score = 0;
         selectedTowerType = null;
 
@@ -232,6 +278,21 @@ var Game = (function () {
         Enemy.update(dt);
         Tower.update(dt, currentTime);
         Projectile.update(dt);
+
+        // Update combo timer
+        if (comboCount > 0) {
+            comboTimer -= dt;
+            if (comboTimer <= 0) {
+                // Combo ended - award bonus if it was significant
+                if (comboCount >= COMBO_MIN_FOR_BONUS) {
+                    var endBonus = comboCount * 5;
+                    addGold(endBonus);
+                    Display.showMessage(comboCount + 'x Combo! +' + endBonus + ' gold!');
+                }
+                comboCount = 0;
+                Display.hideCombo();
+            }
+        }
 
         // Check for game over
         if (lives <= 0) {
@@ -329,6 +390,11 @@ var Game = (function () {
     function addGold(amount) {
         gold += amount;
         Display.updateGold(gold);
+
+        // Check gold achievements
+        if (typeof Achievements !== 'undefined') {
+            Achievements.checkGoldAchievements(gold);
+        }
     }
 
     /**
@@ -357,6 +423,14 @@ var Game = (function () {
     function takeDamage(amount) {
         lives -= amount;
         if (lives < 0) lives = 0;
+        Display.updateLives(lives);
+    }
+
+    /**
+     * Add lives (for repair events)
+     */
+    function addLives(amount) {
+        lives += amount;
         Display.updateLives(lives);
     }
 
@@ -453,6 +527,29 @@ var Game = (function () {
         return config && gold >= config.cost;
     }
 
+    /**
+     * Set game difficulty
+     */
+    function setDifficulty(diff) {
+        if (DIFFICULTIES[diff]) {
+            difficulty = diff;
+        }
+    }
+
+    /**
+     * Get current difficulty settings
+     */
+    function getDifficulty() {
+        return DIFFICULTIES[difficulty];
+    }
+
+    /**
+     * Get difficulty name
+     */
+    function getDifficultyName() {
+        return DIFFICULTIES[difficulty].name;
+    }
+
     // Public API
     return {
         init: init,
@@ -468,6 +565,11 @@ var Game = (function () {
         canAfford: canAfford,
         addGold: addGold,
         spendGold: spendGold,
-        STATES: STATES
+        addLives: addLives,
+        setDifficulty: setDifficulty,
+        getDifficulty: getDifficulty,
+        getDifficultyName: getDifficultyName,
+        STATES: STATES,
+        DIFFICULTIES: DIFFICULTIES
     };
 })();

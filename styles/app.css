@@ -468,6 +468,49 @@
     display: none;
   }
 }
+.difficulty-select {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+  z-index: 2;
+  opacity: 0;
+  animation: instructions-appear 0.5s ease forwards;
+  animation-delay: 2s;
+}
+.difficulty-label {
+  font-family: 'Comic Neue', cursive;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #000000;
+}
+.difficulty-btn {
+  font-family: 'Comic Neue', cursive;
+  font-size: 1rem;
+  padding: 8px 16px;
+  border: none;
+  border: 2px solid #000000;
+  cursor: pointer;
+  transition: all 0.1s;
+  background: #ffffff;
+  color: #000000;
+}
+.difficulty-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0 #000000;
+}
+.difficulty-btn.selected {
+  background: #ffff00;
+  box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.2);
+}
+.difficulty-btn[data-difficulty="hard"].selected {
+  background: #ff00ff;
+  color: #ffffff;
+}
+.difficulty-btn[data-difficulty="expert"].selected {
+  background: #ff3333;
+  color: #ffffff;
+}
 @media (prefers-reduced-motion: reduce) {
   .loading-tower-turret,
   .loading-dot,
@@ -483,6 +526,10 @@
   .loading-progress-fill {
     animation: none !important;
     width: 100%;
+  }
+  .difficulty-select {
+    opacity: 1;
+    animation: none !important;
   }
 }
 .start-screen {
@@ -949,6 +996,10 @@
   background: #33cc33;
   cursor: default;
 }
+.tech-card.unavailable {
+  opacity: 0.6;
+  background: #d0d0d0;
+}
 .tech-card h3 {
   font-family: 'Bangers', 'Impact', cursive;
   margin: 5px 0;
@@ -1161,6 +1212,164 @@
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
+}
+.placement-range {
+  animation: placement-pulse 1s infinite ease-in-out;
+}
+@keyframes placement-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+body.blood-moon .scene {
+  filter: sepia(0.3) hue-rotate(-20deg) saturate(1.5);
+}
+body.blood-moon .sky-cycle {
+  background: linear-gradient(to bottom, #4a0000 0%, #8b0000 50%, #2d0000 100%) !important;
+}
+.loot-drop {
+  font-family: 'Bangers', 'Impact', cursive;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 1000;
+}
+@keyframes loot-float {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) scale(1.2);
+  }
+}
+.tower-prefix {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.7rem;
+  font-weight: bold;
+  white-space: nowrap;
+  text-shadow: 1px 1px 0 #000000;
+  z-index: 10;
+}
+.tower.prefix-rare {
+  filter: drop-shadow(0 0 3px #0088FF);
+}
+.tower.prefix-epic {
+  filter: drop-shadow(0 0 5px #AA00FF);
+}
+.tower.prefix-legendary {
+  filter: drop-shadow(0 0 8px #FF8800);
+  animation: legendary-glow 2s infinite ease-in-out;
+}
+@keyframes legendary-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 8px #FF8800);
+  }
+  50% {
+    filter: drop-shadow(0 0 15px #FFAA00);
+  }
+}
+.combo-display {
+  position: fixed;
+  top: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 1500;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.combo-display.active {
+  opacity: 1;
+}
+.combo-count {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 4rem;
+  color: #ffff00;
+  -webkit-text-stroke: 4px #000000;
+  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  box-shadow: 6px 6px 0 #000000;
+  animation: combo-pulse 0.3s ease-out;
+}
+.combo-label {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 2rem;
+  color: #ff00ff;
+  -webkit-text-stroke: 2px #000000;
+  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  margin-top: -10px;
+}
+.combo-bonus {
+  font-family: 'Comic Neue', cursive;
+  font-size: 1.2rem;
+  color: #33cc33;
+  font-weight: bold;
+  margin-top: 5px;
+}
+@keyframes combo-pulse {
+  0% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.achievement-notification {
+  position: fixed;
+  top: 100px;
+  right: -400px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: #ffffff;
+  padding: 15px 25px;
+  border: 3px solid #000000;
+  box-shadow: 6px 6px 0 #000000;
+  z-index: 2000;
+  transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.achievement-notification.show {
+  right: 20px;
+}
+.achievement-icon {
+  font-size: 2.5rem;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffff00;
+  border: 2px solid #000000;
+  border-radius: 50%;
+}
+.achievement-info {
+  text-align: left;
+}
+.achievement-title {
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.9rem;
+  color: #000000;
+}
+.achievement-name {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 1.5rem;
+  color: #ff00ff;
+}
+.achievement-reward {
+  font-family: 'Comic Neue', cursive;
+  font-size: 1rem;
+  color: #33cc33;
+  font-weight: bold;
 }
 .scene {
   position: fixed;
@@ -2331,6 +2540,67 @@
 @keyframes spin-slow {
   to {
     transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+.enemy.slowed {
+  filter: hue-rotate(180deg) brightness(1.2);
+}
+.enemy.slowed::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, rgba(0, 255, 255, 0.6) 0%, transparent 70%);
+  transform: translateX(-50%);
+  animation: slow-pulse 0.5s infinite;
+  pointer-events: none;
+}
+.enemy.burning {
+  animation: burn-shake 0.1s infinite alternate;
+}
+.enemy.burning::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 30px;
+  height: 40px;
+  background: linear-gradient(to top, #FF6600, #FF9900, transparent);
+  transform: translateX(-50%);
+  animation: burn-flicker 0.15s infinite alternate;
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 10;
+}
+@keyframes slow-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.2);
+  }
+}
+@keyframes burn-shake {
+  0% {
+    transform: translate(-50%, -100%) rotateX(-55deg) translateX(-1px);
+  }
+  100% {
+    transform: translate(-50%, -100%) rotateX(-55deg) translateX(1px);
+  }
+}
+@keyframes burn-flicker {
+  0% {
+    opacity: 0.6;
+    height: 35px;
+  }
+  100% {
+    opacity: 1;
+    height: 45px;
   }
 }
 .projectile {

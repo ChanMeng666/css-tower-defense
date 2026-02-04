@@ -542,6 +542,11 @@
         cursor: default;
     }
 
+    &.unavailable {
+        opacity: 0.6;
+        background: #d0d0d0;
+    }
+
     h3 {
         font-family: @font-title;
         margin: 5px 0;
@@ -798,4 +803,190 @@
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
     }
+}
+
+// Placement Range Preview (follows mouse)
+.placement-range {
+    animation: placement-pulse 1s infinite ease-in-out;
+}
+
+@keyframes placement-pulse {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 0.9;
+    }
+}
+
+// ===========================================
+// Terraria-Inspired Effects
+// ===========================================
+
+// Blood Moon event
+body.blood-moon {
+    .scene {
+        filter: sepia(0.3) hue-rotate(-20deg) saturate(1.5);
+    }
+
+    .sky-cycle {
+        background: linear-gradient(to bottom, #4a0000 0%, #8b0000 50%, #2d0000 100%) !important;
+    }
+}
+
+// Loot drops floating text
+.loot-drop {
+    font-family: @font-title;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+@keyframes loot-float {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-40px) scale(1.2);
+    }
+}
+
+// Tower prefix styles
+.tower-prefix {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: @font-comic;
+    font-size: 0.7rem;
+    font-weight: bold;
+    white-space: nowrap;
+    text-shadow: 1px 1px 0 @color-black;
+    z-index: 10;
+}
+
+.tower.prefix-rare {
+    filter: drop-shadow(0 0 3px #0088FF);
+}
+
+.tower.prefix-epic {
+    filter: drop-shadow(0 0 5px #AA00FF);
+}
+
+.tower.prefix-legendary {
+    filter: drop-shadow(0 0 8px #FF8800);
+    animation: legendary-glow 2s infinite ease-in-out;
+}
+
+@keyframes legendary-glow {
+    0%, 100% { filter: drop-shadow(0 0 8px #FF8800); }
+    50% { filter: drop-shadow(0 0 15px #FFAA00); }
+}
+
+// ===========================================
+// Combo System
+// ===========================================
+.combo-display {
+    position: fixed;
+    top: 150px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 1500;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+
+    &.active {
+        opacity: 1;
+    }
+}
+
+.combo-count {
+    font-family: @font-title;
+    font-size: 4rem;
+    color: @color-yellow;
+    .text-outline(@color-black, 4px);
+    .pop-shadow(6px, 6px);
+    animation: combo-pulse 0.3s ease-out;
+}
+
+.combo-label {
+    font-family: @font-title;
+    font-size: 2rem;
+    color: @color-magenta;
+    .text-outline(@color-black, 2px);
+    margin-top: -10px;
+}
+
+.combo-bonus {
+    font-family: @font-comic;
+    font-size: 1.2rem;
+    color: @color-success;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+@keyframes combo-pulse {
+    0% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+// ===========================================
+// Achievement Notifications
+// ===========================================
+.achievement-notification {
+    position: fixed;
+    top: 100px;
+    right: -400px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: @color-white;
+    padding: 15px 25px;
+    .comic-border(3px);
+    .pop-shadow(6px, 6px);
+    z-index: 2000;
+    transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    &.show {
+        right: 20px;
+    }
+}
+
+.achievement-icon {
+    font-size: 2.5rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: @color-yellow;
+    .comic-border(2px);
+    border-radius: 50%;
+}
+
+.achievement-info {
+    text-align: left;
+}
+
+.achievement-title {
+    font-family: @font-comic;
+    font-size: 0.9rem;
+    color: @color-dark;
+}
+
+.achievement-name {
+    font-family: @font-title;
+    font-size: 1.5rem;
+    color: @color-magenta;
+}
+
+.achievement-reward {
+    font-family: @font-comic;
+    font-size: 1rem;
+    color: @color-success;
+    font-weight: bold;
 }

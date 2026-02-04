@@ -49,6 +49,15 @@ var Projectile = (function() {
         this.slowEffect = tower.config.slowEffect || 0;
         this.slowDuration = tower.config.slowDuration || 0;
         this.ignoreArmor = tower.config.ignoreArmor || false;
+
+        // Chain lightning (Tesla)
+        this.chainTargets = tower.config.chainTargets || 0;
+        this.chainDamageFalloff = tower.config.chainDamageFalloff || 0.7;
+
+        // Burn DOT (Flame)
+        this.burnDamage = tower.config.burnDamage || 0;
+        this.burnDuration = tower.config.burnDuration || 0;
+        this.burnInterval = tower.config.burnInterval || 0.5;
         
         // Calculate direction
         var dx = this.targetX - this.x;
@@ -163,10 +172,10 @@ var Projectile = (function() {
      */
     ProjectileEntity.prototype.hit = function() {
         this.alive = false;
-        
+
         // Create impact effect
         this.createImpact();
-        
+
         // Apply damage
         if (this.splashRadius > 0) {
             // Area damage
@@ -174,7 +183,6 @@ var Projectile = (function() {
         } else {
             // Single target damage
             if (this.target && this.target.alive) {
-                var actualDamage = this.ignoreArmor ? this.damage : this.damage;
                 if (this.ignoreArmor) {
                     // Bypass armor - deal full damage
                     this.target.health -= this.damage;
@@ -189,16 +197,111 @@ var Projectile = (function() {
                 } else {
                     this.target.takeDamage(this.damage);
                 }
-                
+
                 // Apply slow effect
                 if (this.slowEffect > 0) {
                     this.target.applySlow(this.slowEffect, this.slowDuration);
                 }
+
+                // Apply burn DOT effect (Flame tower)
+                if (this.burnDamage > 0 && this.target.alive) {
+                    this.target.applyBurn(this.burnDamage, this.burnDuration, this.burnInterval);
+                }
             }
         }
-        
+
+        // Chain lightning (Tesla tower)
+        if (this.chainTargets > 0 && this.target && this.target.alive) {
+            this.applyChainLightning();
+        }
+
         // Remove projectile
         this.destroy();
+    };
+
+    /**
+     * Apply chain lightning to nearby enemies (Tesla tower)
+     */
+    ProjectileEntity.prototype.applyChainLightning = function() {
+        var enemies = Enemy.getAll();
+        var hitEnemies = [this.target];
+        var currentTarget = this.target;
+        var chainDamage = this.damage;
+        var chainRange = 100; // Chain jump range
+
+        for (var chain = 0; chain < this.chainTargets; chain++) {
+            chainDamage = Math.floor(chainDamage * this.chainDamageFalloff);
+            if (chainDamage < 1) break;
+
+            var nearestEnemy = null;
+            var nearestDistance = Infinity;
+
+            // Find nearest enemy not yet hit
+            for (var i = 0; i < enemies.length; i++) {
+                var enemy = enemies[i];
+                if (!enemy.alive || hitEnemies.indexOf(enemy) !== -1) continue;
+
+                var dx = enemy.x - currentTarget.x;
+                var dy = enemy.y - currentTarget.y;
+                var distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance <= chainRange && distance < nearestDistance) {
+                    nearestEnemy = enemy;
+                    nearestDistance = distance;
+                }
+            }
+
+            if (nearestEnemy) {
+                // Apply chain damage
+                nearestEnemy.takeDamage(chainDamage);
+                hitEnemies.push(nearestEnemy);
+
+                // Create chain lightning visual
+                this.createChainLightningEffect(currentTarget, nearestEnemy);
+
+                currentTarget = nearestEnemy;
+            } else {
+                break; // No more valid targets
+            }
+        }
+    };
+
+    /**
+     * Create visual chain lightning effect between two enemies
+     */
+    ProjectileEntity.prototype.createChainLightningEffect = function(fromEnemy, toEnemy) {
+        var lightning = document.createElement('div');
+        lightning.className = 'chain-lightning';
+
+        var mapWidth = Path.GRID_COLS * Path.CELL_SIZE;
+        var mapHeight = Path.GRID_ROWS * Path.CELL_SIZE;
+
+        var fromX = fromEnemy.x + (mapWidth / 2);
+        var fromY = fromEnemy.y + (mapHeight / 2);
+        var toX = toEnemy.x + (mapWidth / 2);
+        var toY = toEnemy.y + (mapHeight / 2);
+
+        var dx = toX - fromX;
+        var dy = toY - fromY;
+        var distance = Math.sqrt(dx * dx + dy * dy);
+        var angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+        lightning.style.cssText =
+            'position: absolute; left: ' + fromX + 'px; top: ' + fromY + 'px; ' +
+            'width: ' + distance + 'px; height: 3px; ' +
+            'background: linear-gradient(90deg, #00FFFF, #FFFFFF, #00FFFF); ' +
+            'transform-origin: left center; transform: rotateX(55deg) rotateZ(' + angle + 'deg); ' +
+            'box-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF; ' +
+            'pointer-events: none; z-index: 100;';
+
+        container.appendChild(lightning);
+
+        // Remove after animation
+        setTimeout(function() {
+            if (lightning.parentNode) {
+                lightning.parentNode.removeChild(lightning);
+            }
+        }, 150);
     };
     
     /**

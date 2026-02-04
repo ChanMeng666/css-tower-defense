@@ -392,6 +392,30 @@ var Enemy = (function() {
             }
         }
 
+        // Update burn effect
+        if (this.burning) {
+            this.burnTimer += dt;
+            if (this.burnTimer >= this.burnInterval) {
+                this.burnTimer -= this.burnInterval;
+                // Apply burn damage (bypasses armor)
+                this.health -= this.burnDamage;
+                var healthPercent = Math.max(0, (this.health / this.maxHealth) * 100);
+                var healthFill = this.element.querySelector('.health-fill');
+                if (healthFill) {
+                    healthFill.style.width = healthPercent + '%';
+                }
+                if (this.health <= 0) {
+                    this.die();
+                    return;
+                }
+            }
+            this.burnDuration -= dt;
+            if (this.burnDuration <= 0) {
+                this.burning = false;
+                this.element.classList.remove('burning');
+            }
+        }
+
         // Get current target waypoint
         var target = this.path[this.pathIndex];
         if (!target) {
@@ -603,6 +627,19 @@ var Enemy = (function() {
         this.slowTimer = duration;
         this.speed = this.baseSpeed * (1 - percentage);
         this.element.classList.add('slowed');
+    };
+
+    /**
+     * Apply burn DOT effect (Flame tower)
+     */
+    EnemyEntity.prototype.applyBurn = function(damagePerTick, duration, interval) {
+        // Don't stack burns, just refresh
+        this.burning = true;
+        this.burnDamage = damagePerTick;
+        this.burnDuration = duration;
+        this.burnInterval = interval;
+        this.burnTimer = 0;
+        this.element.classList.add('burning');
     };
     
     /**

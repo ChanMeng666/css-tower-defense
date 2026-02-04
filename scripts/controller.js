@@ -52,6 +52,21 @@
         // Start music on any click
         loadingScreen.addEventListener('click', startMenuMusic, { once: true });
 
+        // Difficulty selection
+        var difficultyBtns = document.querySelectorAll('.difficulty-btn');
+        difficultyBtns.forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                // Remove selected from all
+                difficultyBtns.forEach(function(b) { b.classList.remove('selected'); });
+                // Add selected to clicked
+                btn.classList.add('selected');
+                // Set difficulty in game
+                Game.setDifficulty(btn.dataset.difficulty);
+                Sfx.playEffect('button');
+            });
+        });
+
         // Start game when clicking the button
         startBtn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -123,17 +138,24 @@
         // Mousemove for hover effects
         map.addEventListener('mousemove', function(e) {
             var cell = e.target.closest('.cell');
-            
+
             if (cell !== hoveredCell) {
                 // Clear previous highlight
                 Display.clearHighlights();
+                Display.hidePlacementRange();
                 hoveredCell = cell;
-                
+
                 if (cell && Game.getSelectedTowerType()) {
                     var gridX = parseInt(cell.dataset.x);
                     var gridY = parseInt(cell.dataset.y);
                     var canBuild = Path.canBuild(gridX, gridY);
                     Display.highlightCell(gridX, gridY, canBuild);
+
+                    // Show range preview
+                    var towerType = Tower.getType(Game.getSelectedTowerType());
+                    if (towerType) {
+                        Display.showPlacementRange(gridX, gridY, towerType.range, Game.getSelectedTowerType());
+                    }
                 }
             }
         });
@@ -141,6 +163,7 @@
         // Mouseleave to clear highlights
         map.addEventListener('mouseleave', function() {
             Display.clearHighlights();
+            Display.hidePlacementRange();
             hoveredCell = null;
         });
         

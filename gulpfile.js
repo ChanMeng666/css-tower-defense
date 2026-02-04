@@ -20,6 +20,7 @@ const scriptFiles = [
     './scripts/weather.js',   // Weather System
     './scripts/seasons.js',   // Seasonal System
     './scripts/progression.js', // Progression System
+    './scripts/inventory.js', // Inventory/Loot System (Terraria-inspired)
     './scripts/enemy.js',
     './scripts/tower.js',
     './scripts/projectile.js',
@@ -28,6 +29,7 @@ const scriptFiles = [
     './scripts/shop.js',
     './scripts/sfx.js',
     './scripts/game.js',
+    './scripts/achievements.js', // Achievement System
     './scripts/controller.js'
 ];
 

@@ -386,6 +386,54 @@ var Display = (function() {
     }
 
     /**
+     * Show range preview when placing a tower
+     * @param {number} gridX - Grid X position
+     * @param {number} gridY - Grid Y position
+     * @param {number} range - Tower range in pixels
+     * @param {string} towerType - Tower type for color styling
+     */
+    function showPlacementRange(gridX, gridY, range, towerType) {
+        hidePlacementRange();
+
+        var indicator = document.createElement('div');
+        indicator.className = 'range-indicator placement-range';
+        indicator.id = 'placementRange';
+
+        // Add tower type class for color styling
+        if (towerType) {
+            indicator.classList.add('range-' + towerType);
+        }
+
+        var size = range * 2;
+        indicator.style.width = size + 'px';
+        indicator.style.height = size + 'px';
+
+        // Convert grid to world position
+        var worldPos = Path.gridToWorld(gridX, gridY);
+        var mapWidth = Path.GRID_COLS * Path.CELL_SIZE;
+        var mapHeight = Path.GRID_ROWS * Path.CELL_SIZE;
+
+        indicator.style.left = (worldPos.x + mapWidth / 2) + 'px';
+        indicator.style.top = (worldPos.y + mapHeight / 2) + 'px';
+
+        // Apply 3D perspective transform to match the map rotation
+        indicator.style.transform = 'translate(-50%, -50%) rotateX(55deg)';
+        indicator.style.transformOrigin = 'center center';
+
+        document.getElementById('map').appendChild(indicator);
+    }
+
+    /**
+     * Hide placement range preview
+     */
+    function hidePlacementRange() {
+        var indicator = document.getElementById('placementRange');
+        if (indicator) {
+            indicator.parentNode.removeChild(indicator);
+        }
+    }
+
+    /**
      * Show a stage-style announcement
      * @param {string} title - Main title text
      * @param {string} subtitle - Subtitle text
@@ -412,6 +460,38 @@ var Display = (function() {
         }
     }
 
+    /**
+     * Show combo display
+     */
+    function showCombo(count, bonus) {
+        var comboEl = document.getElementById('comboDisplay');
+        if (!comboEl) {
+            comboEl = document.createElement('div');
+            comboEl.id = 'comboDisplay';
+            comboEl.className = 'combo-display';
+            document.body.appendChild(comboEl);
+        }
+
+        comboEl.innerHTML = '<div class="combo-count">' + count + 'x</div>' +
+                           '<div class="combo-label">COMBO!</div>' +
+                           '<div class="combo-bonus">+' + bonus + ' gold</div>';
+        comboEl.classList.add('active');
+
+        // Scale animation based on combo size
+        var scale = Math.min(1 + (count - 3) * 0.1, 1.5);
+        comboEl.style.transform = 'translateX(-50%) scale(' + scale + ')';
+    }
+
+    /**
+     * Hide combo display
+     */
+    function hideCombo() {
+        var comboEl = document.getElementById('comboDisplay');
+        if (comboEl) {
+            comboEl.classList.remove('active');
+        }
+    }
+
     // Public API
     return {
         init: init,
@@ -433,7 +513,11 @@ var Display = (function() {
         clearHighlights: clearHighlights,
         showRangeIndicator: showRangeIndicator,
         hideRangeIndicator: hideRangeIndicator,
+        showPlacementRange: showPlacementRange,
+        hidePlacementRange: hidePlacementRange,
         showAnnouncement: showAnnouncement,
-        hideAnnouncement: hideAnnouncement
+        hideAnnouncement: hideAnnouncement,
+        showCombo: showCombo,
+        hideCombo: hideCombo
     };
 })();
