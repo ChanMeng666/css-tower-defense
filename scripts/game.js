@@ -131,11 +131,12 @@ var Game = (function () {
             Display.showMessage('Wave Complete! +' + e.detail.reward + ' gold');
             Sfx.play('waveComplete');
 
+            // Always update wave display and button
+            Display.updateWave(Wave.getCurrentWave(), Wave.getTotalWaves());
+
             // Check for victory
             if (e.detail.isLastWave) {
                 victory();
-            } else {
-                Display.updateWave(Wave.getCurrentWave(), Wave.getTotalWaves());
             }
         });
 

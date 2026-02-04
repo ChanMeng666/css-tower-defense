@@ -437,24 +437,27 @@ var Wave = (function() {
 
         waveInProgress = false;
         var wave = waveData[currentWave];
+        var completedWaveNum = currentWave + 1;
+        var isLastWave = currentWave >= waveData.length - 1;
 
-        // Dispatch event with reward
+        // Advance to next wave BEFORE dispatching event
+        // so getCurrentWave() returns the correct next wave number
+        currentWave++;
+
+        // Advance season (every 2 waves)
+        if (typeof Seasons !== 'undefined' && Seasons.nextSeason && completedWaveNum % 2 === 0) {
+            Seasons.nextSeason();
+        }
+
+        // Dispatch event with reward (uses completedWaveNum for the wave that just finished)
         var event = new CustomEvent('waveComplete', {
             detail: {
-                wave: currentWave + 1,
+                wave: completedWaveNum,
                 reward: wave.reward,
-                isLastWave: currentWave >= waveData.length - 1
+                isLastWave: isLastWave
             }
         });
         document.dispatchEvent(event);
-
-        // Advance season (every 2 waves)
-        if (typeof Seasons !== 'undefined' && (currentWave + 1) % 2 === 0) {
-            Seasons.advanceSeason();
-        }
-
-        // Advance to next wave
-        currentWave++;
     }
 
     /**

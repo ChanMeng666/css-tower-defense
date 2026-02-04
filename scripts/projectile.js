@@ -379,17 +379,26 @@ var Projectile = (function() {
 
     /**
      * Trigger screen shake effect
+     * Disabled for normal gameplay - the rotation in shake animation
+     * conflicts with map perspective and causes visual issues.
+     * Only enable for special events like boss spawns.
      * @param {string} intensity - 'light', 'heavy'
+     * @param {boolean} force - Force shake even for light intensity
      */
-    function triggerScreenShake(intensity) {
+    function triggerScreenShake(intensity, force) {
+        // Disabled for normal hits - causes map tilt issues
+        // Only allow heavy + forced shakes (boss events)
+        if (!force && intensity !== 'heavy') return;
+        if (!force) return; // Disable all shakes for now until CSS is fixed
+
         var scene = document.getElementById('scene');
         if (!scene) return;
-        
+
         var shakeClass = intensity === 'heavy' ? 'screen-shake-heavy' : 'screen-shake';
         var duration = intensity === 'heavy' ? 400 : 300;
-        
+
         scene.classList.add(shakeClass);
-        
+
         setTimeout(function() {
             scene.classList.remove(shakeClass);
         }, duration);
