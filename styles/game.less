@@ -497,12 +497,12 @@
     top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.7);
+    background: none;
     padding: 12px 30px;
     font-family: @font-title;
     font-size: 2rem;
     color: @color-white;
-    border-radius: 6px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
     z-index: 2000;
     opacity: 0;
     transition: opacity 0.2s;
@@ -1056,8 +1056,6 @@ body.blood-moon {
     font-family: @font-title;
     font-size: 4rem;
     color: @color-yellow;
-    .text-outline(@color-black, 4px);
-    .pop-shadow(6px, 6px);
     animation: combo-pulse 0.3s ease-out;
 }
 
@@ -1065,7 +1063,6 @@ body.blood-moon {
     font-family: @font-title;
     font-size: 2rem;
     color: @color-magenta;
-    .text-outline(@color-black, 2px);
     margin-top: -10px;
 }
 
