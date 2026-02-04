@@ -567,7 +567,7 @@ var Wave = (function() {
      * Get current wave number (1-indexed)
      */
     function getCurrentWave() {
-        return currentWave + 1;
+        return Math.min(currentWave + 1, waveData.length);
     }
 
     /**

@@ -87,25 +87,9 @@
     }
 }
 
-// Title Area
+// Title Area - Hidden (redundant with progress bar)
 .loading-text {
-    font-family: @font-title;
-    font-size: 5rem;
-    color: @color-yellow;
-    margin: 0;
-    line-height: 1;
-    text-transform: uppercase;
-    .text-outline(@color-black, 4px);
-    .pop-shadow(10px, 10px, @color-black);
-    animation: title-wobble 2s infinite ease-in-out;
-    transform: rotate(-3deg);
-    z-index: 2;
-    text-align: center;
-
-    // Hidden when ready
-    .ready & {
-        display: none;
-    }
+    display: none;
 }
 
 // Subtitle (shows when loading complete)
@@ -243,32 +227,9 @@
     }
 }
 
-// Turret - Animated Arrow Shooter
+// Turret - Hidden (removed from HTML)
 .loading-tower-turret {
-    position: absolute;
-    bottom: 145px;
-    width: 40px;
-    height: 50px;
-    background: @color-dark;
-    .comic-border();
-    border-radius: 5px;
-    animation: turret-scan 2s ease-in-out infinite;
-    transform-origin: center bottom;
-
-    // Arrow icon
-    &::after {
-        content: '';
-        position: absolute;
-        top: -25px;
-        left: 50%;
-        width: 20px;
-        height: 20px;
-        border: 3px solid @color-white;
-        border-radius: 0 50% 50% 0;
-        border-left: none;
-        transform: translateX(-50%);
-        animation: arrow-ready 1s ease-in-out infinite;
-    }
+    display: none;
 }
 
 @keyframes turret-scan {
@@ -450,30 +411,9 @@
     }
 }
 
-// Instructions Panel - Comic Callout
+// Instructions Panel - Hidden (removed from HTML)
 .loading-instructions {
-    background: @color-white;
-    padding: 15px 25px;
-    .comic-border();
-    .pop-shadow();
-    transform: rotate(1deg);
-    margin-top: 25px;
-    z-index: 2;
-    opacity: 0;
-    animation: instructions-appear 0.5s ease forwards;
-    animation-delay: 2.5s;
-
-    p {
-        margin: 5px 0;
-        font-family: @font-comic;
-        font-size: 1.1rem;
-        color: @color-black;
-    }
-
-    // Ready state
-    .ready & {
-        opacity: 1;
-    }
+    display: none;
 }
 
 @keyframes instructions-appear {

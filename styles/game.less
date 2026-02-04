@@ -195,33 +195,39 @@
 
 .top-bar {
     position: absolute;
-    top: 10px;
+    top: 8px;
     left: 10px;
     right: 10px;
-    height: 60px;
-    background: @color-white;
-    .comic-border();
-    .pop-shadow();
+    height: auto;
+    background: none;
+    border: none;
+    box-shadow: none;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 0 20px;
+    padding: 4px 20px;
     pointer-events: auto;
 }
 
 .stat {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
     font-family: @font-comic;
     font-weight: bold;
-    font-size: 1.2rem;
-    color: @color-black;
+    font-size: 1.1rem;
+    color: @color-white;
+    text-shadow:
+        1px 1px 2px rgba(0, 0, 0, 0.8),
+        -1px -1px 2px rgba(0, 0, 0, 0.5);
 
     .stat-value {
         font-family: @font-title;
-        font-size: 1.5rem;
-        color: @color-magenta;
+        font-size: 1.4rem;
+        color: @color-yellow;
+        text-shadow:
+            1px 1px 2px rgba(0, 0, 0, 0.8),
+            0 0 6px rgba(0, 0, 0, 0.4);
 
         &.changed {
             animation: pop-scale 0.2s;
@@ -752,10 +758,14 @@
     background: @color-white;
     padding: 30px;
     width: 600px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
     .comic-border(5px);
     .pop-shadow(20px, 20px);
     transform: rotate(1deg);
     text-align: center;
+    box-sizing: border-box;
 }
 
 .tech-title {
@@ -1102,7 +1112,15 @@
 // Blood Moon event
 body.blood-moon {
     .scene {
+        background: linear-gradient(to bottom, #4a0000 0%, #8b0000 50%, #2d0000 100%) !important;
         filter: sepia(0.3) hue-rotate(-20deg) saturate(1.5);
+
+        // Override the halftone and radial burst colors
+        &::before {
+            background: repeating-conic-gradient(from 0deg,
+                    rgba(139, 0, 0, 0.3) 0deg 10deg,
+                    transparent 10deg 20deg);
+        }
     }
 
     .sky-cycle {
