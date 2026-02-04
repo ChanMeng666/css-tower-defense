@@ -3,6 +3,27 @@
  * Main game loop, state management, and event coordination
  */
 
+// Global event constants for decoupled module communication
+var EVENTS = {
+    BOSS_SPAWNED: 'bossSpawned',
+    BOSS_PHASE_CHANGE: 'bossPhaseChange',
+    BOSS_SKILL_USED: 'bossSkillUsed',
+    COMBO_KILL: 'comboKill',
+    TOWER_UPGRADED: 'towerUpgraded',
+    SPECIAL_EVENT: 'specialEvent',
+    WAVE_ANNOUNCEMENT: 'waveAnnouncement',
+    WARNING: 'warning'
+};
+
+/**
+ * Emit a game event for decoupled communication
+ * @param {string} eventName - Event name from EVENTS constant
+ * @param {object} detail - Event details
+ */
+function emitGameEvent(eventName, detail) {
+    document.dispatchEvent(new CustomEvent(eventName, { detail: detail || {} }));
+}
+
 var Game = (function () {
     'use strict';
 
@@ -35,6 +56,14 @@ var Game = (function () {
     function init() {
         // Load high score from localStorage
         highScore = parseInt(localStorage.getItem('towerDefenseHighScore')) || 0;
+
+        // Initialize utilities and object pool
+        if (typeof Utils !== 'undefined') {
+            Utils.resetThrottles();
+        }
+        if (typeof Pool !== 'undefined') {
+            Pool.init();
+        }
 
         // Initialize subsystems
         Path.init();
@@ -103,10 +132,18 @@ var Game = (function () {
             Sfx.play('place');
         });
 
-        // Tower fired
+        // Tower fired - use spatial audio
         document.addEventListener('towerFired', function (e) {
             var type = e.detail.tower.type;
-            Sfx.play('shoot_' + type);
+            var x = e.detail.x || 0;
+            var y = e.detail.y || 0;
+
+            // Use spatial audio if available
+            if (Sfx.playSpatial) {
+                Sfx.playSpatial('shoot_' + type, x, y);
+            } else {
+                Sfx.play('shoot_' + type);
+            }
         });
 
         // Tower sold
@@ -137,6 +174,11 @@ var Game = (function () {
         Path.init();
         Path.render();
         Wave.init();
+
+        // Clear object pool in-use items
+        if (typeof Pool !== 'undefined') {
+            Pool.clear();
+        }
 
         // Update display
         Display.updateGold(gold);

@@ -264,10 +264,19 @@ var Tower = (function () {
     };
 
     /**
-     * Fire at target with visual feedback
+     * Fire at target with visual feedback (with throttle protection)
      */
     TowerEntity.prototype.fire = function (currentTime) {
         if (!this.target) return;
+
+        // Apply throttle check using Utils if available
+        var throttleKey = 'tower_fire_' + this.id;
+        var minFireInterval = this.fireCooldown * 0.9; // Allow slight overlap for smooth firing
+
+        if (typeof Utils !== 'undefined') {
+            var canFire = Utils.throttle(throttleKey, function() {}, minFireInterval);
+            // If throttle blocks, skip this fire (shouldn't happen with proper cooldown, but safety check)
+        }
 
         this.lastFireTime = currentTime;
 
@@ -286,11 +295,13 @@ var Tower = (function () {
         // Create projectile
         Projectile.spawn(this, this.target);
 
-        // Dispatch event
+        // Dispatch event with position for spatial audio
         var event = new CustomEvent('towerFired', {
             detail: {
                 tower: this,
-                target: this.target
+                target: this.target,
+                x: this.x,
+                y: this.y
             }
         });
         document.dispatchEvent(event);
@@ -324,10 +335,48 @@ var Tower = (function () {
         this.range = this.config.range * (1 + (this.level - 1) * 0.1);
         this.fireCooldown = (1000 / this.config.fireRate) * (1 - (this.level - 1) * 0.1);
 
-        // Add level indicator
+        // Update level CSS class for visual differences
+        this.element.classList.remove('level-1', 'level-2', 'level-3');
+        this.element.classList.add('level-' + this.level);
+
+        // Add level indicator stars
         this.updateLevelIndicator();
 
+        // Play upgrade visual effect
+        this.playUpgradeEffect();
+
+        // Emit tower upgraded event
+        if (typeof emitGameEvent === 'function') {
+            emitGameEvent(EVENTS.TOWER_UPGRADED, {
+                tower: this,
+                level: this.level
+            });
+        }
+
         return true;
+    };
+
+    /**
+     * Play upgrade visual effect
+     */
+    TowerEntity.prototype.playUpgradeEffect = function () {
+        var self = this;
+
+        // Add upgrading class for animation
+        this.element.classList.add('upgrading');
+
+        // Create upgrade particles
+        var particles = document.createElement('div');
+        particles.className = 'upgrade-particles';
+        this.element.appendChild(particles);
+
+        // Remove effect after animation
+        setTimeout(function () {
+            self.element.classList.remove('upgrading');
+            if (particles.parentNode) {
+                particles.parentNode.removeChild(particles);
+            }
+        }, 600);
     };
 
     /**

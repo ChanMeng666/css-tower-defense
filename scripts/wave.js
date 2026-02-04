@@ -1,150 +1,180 @@
 /**
  * CSS Tower Defense - Wave Management System
- * Manages enemy waves, spawning, and progression
+ * Data-driven wave system with events, announcements, and special mechanics
  */
 
 var Wave = (function() {
     'use strict';
-    
-    // Wave definitions
+
+    // Event types for wave system
+    var EVENT_TYPES = {
+        ANNOUNCEMENT: 'announcement',
+        SPAWN: 'spawn',
+        SPECIAL_EVENT: 'specialEvent',
+        BOSS_SPAWN: 'bossSpawn',
+        WARNING: 'warning',
+        DELAY: 'delay'
+    };
+
+    // Wave definitions with event-based structure
     var waveData = [
         // Wave 1 - Tutorial wave
         {
-            enemies: [
-                { type: 'slime', count: 5, interval: 1500 }
+            events: [
+                { time: 0, type: 'announcement', data: { title: 'Wave 1', subtitle: 'The slimes approach...' } },
+                { time: 2000, type: 'spawn', data: [{ type: 'slime', count: 5, interval: 1500 }] }
             ],
             reward: 25
         },
         // Wave 2
         {
-            enemies: [
-                { type: 'slime', count: 8, interval: 1200 }
+            events: [
+                { time: 0, type: 'announcement', data: { title: 'Wave 2', subtitle: 'More slimes incoming!' } },
+                { time: 2000, type: 'spawn', data: [{ type: 'slime', count: 8, interval: 1200 }] }
             ],
             reward: 30
         },
         // Wave 3 - Introduce goblins
         {
-            enemies: [
-                { type: 'slime', count: 5, interval: 1500 },
-                { type: 'goblin', count: 3, interval: 2000 }
+            events: [
+                { time: 0, type: 'announcement', data: { title: 'Wave 3', subtitle: 'Goblins join the fray!' } },
+                { time: 2000, type: 'spawn', data: [
+                    { type: 'slime', count: 5, interval: 1500 },
+                    { type: 'goblin', count: 3, interval: 2000 }
+                ] }
             ],
             reward: 40
         },
         // Wave 4
         {
-            enemies: [
-                { type: 'goblin', count: 6, interval: 1200 },
-                { type: 'slime', count: 4, interval: 1000 }
+            events: [
+                { time: 0, type: 'announcement', data: { title: 'Wave 4', subtitle: 'Goblin raiders!' } },
+                { time: 2000, type: 'spawn', data: [
+                    { type: 'goblin', count: 6, interval: 1200 },
+                    { type: 'slime', count: 4, interval: 1000 }
+                ] }
             ],
             reward: 50
         },
         // Wave 5 - Introduce knights
         {
-            enemies: [
-                { type: 'slime', count: 8, interval: 1000 },
-                { type: 'goblin', count: 5, interval: 1500 },
-                { type: 'knight', count: 2, interval: 3000 }
+            events: [
+                { time: 0, type: 'announcement', data: { title: 'Wave 5', subtitle: 'Armored knights approach!' } },
+                { time: 1500, type: 'warning', data: { message: 'Knights have high armor!' } },
+                { time: 3000, type: 'spawn', data: [
+                    { type: 'slime', count: 8, interval: 1000 },
+                    { type: 'goblin', count: 5, interval: 1500 },
+                    { type: 'knight', count: 2, interval: 3000 }
+                ] }
             ],
             reward: 75
         },
         // Wave 6
         {
-            enemies: [
-                { type: 'goblin', count: 8, interval: 1000 },
-                { type: 'knight', count: 4, interval: 2500 }
+            events: [
+                { time: 0, type: 'announcement', data: { title: 'Wave 6', subtitle: 'The assault continues' } },
+                { time: 2000, type: 'spawn', data: [
+                    { type: 'goblin', count: 8, interval: 1000 },
+                    { type: 'knight', count: 4, interval: 2500 }
+                ] }
             ],
             reward: 80
         },
-        // Wave 7
+        // Wave 7 - Special event
         {
-            enemies: [
-                { type: 'slime', count: 10, interval: 800 },
-                { type: 'goblin', count: 6, interval: 1200 },
-                { type: 'knight', count: 5, interval: 2000 }
+            events: [
+                { time: 0, type: 'announcement', data: { title: 'Wave 7', subtitle: 'Gold rush!' } },
+                { time: 1000, type: 'specialEvent', data: { type: 'goldRush', bonus: 50 } },
+                { time: 2500, type: 'spawn', data: [
+                    { type: 'slime', count: 10, interval: 800, variant: 'speedy' },
+                    { type: 'goblin', count: 6, interval: 1200 },
+                    { type: 'knight', count: 5, interval: 2000 }
+                ] }
             ],
             reward: 100
         },
         // Wave 8 - Heavy wave
         {
-            enemies: [
-                { type: 'knight', count: 8, interval: 1500 },
-                { type: 'goblin', count: 10, interval: 1000 }
+            events: [
+                { time: 0, type: 'announcement', data: { title: 'Wave 8', subtitle: 'Elite forces!' } },
+                { time: 2000, type: 'spawn', data: [
+                    { type: 'knight', count: 8, interval: 1500 },
+                    { type: 'goblin', count: 10, interval: 1000, variant: 'elite' }
+                ] }
             ],
             reward: 120
         },
         // Wave 9 - Pre-boss
         {
-            enemies: [
-                { type: 'slime', count: 15, interval: 600 },
-                { type: 'goblin', count: 10, interval: 800 },
-                { type: 'knight', count: 6, interval: 1800 }
+            events: [
+                { time: 0, type: 'announcement', data: { title: 'Wave 9', subtitle: 'The horde approaches!' } },
+                { time: 1500, type: 'warning', data: { message: 'Prepare for the boss!' } },
+                { time: 3000, type: 'spawn', data: [
+                    { type: 'slime', count: 15, interval: 600 },
+                    { type: 'goblin', count: 10, interval: 800 },
+                    { type: 'knight', count: 6, interval: 1800 }
+                ] }
             ],
             reward: 150
         },
         // Wave 10 - Boss wave
         {
-            enemies: [
-                { type: 'knight', count: 4, interval: 2000 },
-                { type: 'boss', count: 1, interval: 5000 }
+            events: [
+                { time: 0, type: 'announcement', data: { title: 'FINAL WAVE', subtitle: 'The Dark Lord awakens!' } },
+                { time: 2500, type: 'warning', data: { message: 'BOSS INCOMING!' } },
+                { time: 4000, type: 'spawn', data: [
+                    { type: 'knight', count: 4, interval: 2000 }
+                ] },
+                { time: 10000, type: 'bossSpawn', data: { type: 'boss' } }
             ],
             reward: 200
         }
     ];
-    
+
     // Current state
     var currentWave = 0;
     var waveInProgress = false;
+    var waveStartTime = 0;
+    var eventIndex = 0;
     var spawnQueue = [];
     var spawnTimer = 0;
     var totalEnemiesSpawned = 0;
     var totalEnemiesInWave = 0;
-    
+
     /**
      * Initialize the wave system
      */
     function init() {
         currentWave = 0;
         waveInProgress = false;
+        waveStartTime = 0;
+        eventIndex = 0;
         spawnQueue = [];
         spawnTimer = 0;
         totalEnemiesSpawned = 0;
         totalEnemiesInWave = 0;
+
+        // Initialize Noise system if available
+        if (typeof Noise !== 'undefined') {
+            Noise.init();
+        }
     }
-    
+
     /**
      * Start the next wave
      */
     function startWave() {
         if (waveInProgress) return false;
         if (currentWave >= waveData.length) return false;
-        
+
         waveInProgress = true;
-        var wave = waveData[currentWave];
-        
-        // Build spawn queue
+        waveStartTime = performance.now();
+        eventIndex = 0;
         spawnQueue = [];
-        totalEnemiesInWave = 0;
-        totalEnemiesSpawned = 0;
-        
-        for (var i = 0; i < wave.enemies.length; i++) {
-            var enemyGroup = wave.enemies[i];
-            for (var j = 0; j < enemyGroup.count; j++) {
-                spawnQueue.push({
-                    type: enemyGroup.type,
-                    delay: j * enemyGroup.interval + (i * 500) // Stagger groups
-                });
-                totalEnemiesInWave++;
-            }
-        }
-        
-        // Sort by delay
-        spawnQueue.sort(function(a, b) {
-            return a.delay - b.delay;
-        });
-        
-        // Reset timer
         spawnTimer = 0;
-        
+        totalEnemiesSpawned = 0;
+        totalEnemiesInWave = calculateTotalEnemies(currentWave);
+
         // Dispatch event
         var event = new CustomEvent('waveStarted', {
             detail: {
@@ -153,40 +183,207 @@ var Wave = (function() {
             }
         });
         document.dispatchEvent(event);
-        
+
         return true;
     }
-    
+
     /**
-     * Update wave spawning
+     * Calculate total enemies in a wave
+     */
+    function calculateTotalEnemies(waveIndex) {
+        var wave = waveData[waveIndex];
+        var total = 0;
+
+        for (var i = 0; i < wave.events.length; i++) {
+            var evt = wave.events[i];
+            if (evt.type === 'spawn') {
+                for (var j = 0; j < evt.data.length; j++) {
+                    total += evt.data[j].count;
+                }
+            } else if (evt.type === 'bossSpawn') {
+                total += 1;
+            }
+        }
+
+        return total;
+    }
+
+    /**
+     * Update wave spawning and events
      */
     function update(dt) {
         if (!waveInProgress) return;
-        
-        spawnTimer += dt * 1000; // Convert to milliseconds
-        
-        // Spawn enemies whose delay has passed
+
+        var currentTime = performance.now();
+        var elapsedTime = currentTime - waveStartTime;
+        var wave = waveData[currentWave];
+
+        // Process events that should trigger
+        while (eventIndex < wave.events.length) {
+            var evt = wave.events[eventIndex];
+            if (evt.time <= elapsedTime) {
+                processEvent(evt);
+                eventIndex++;
+            } else {
+                break;
+            }
+        }
+
+        // Update spawn queue
+        spawnTimer += dt * 1000;
         while (spawnQueue.length > 0 && spawnQueue[0].delay <= spawnTimer) {
             var spawn = spawnQueue.shift();
-            Enemy.spawn(spawn.type);
+            Enemy.spawn(spawn.type, spawn.variant);
             totalEnemiesSpawned++;
         }
-        
+
         // Check if wave is complete
-        if (spawnQueue.length === 0 && Enemy.count() === 0) {
+        if (eventIndex >= wave.events.length && spawnQueue.length === 0 && Enemy.count() === 0) {
             completeWave();
         }
     }
-    
+
+    /**
+     * Process a wave event
+     */
+    function processEvent(evt) {
+        switch (evt.type) {
+            case EVENT_TYPES.ANNOUNCEMENT:
+                handleAnnouncement(evt.data);
+                break;
+
+            case EVENT_TYPES.SPAWN:
+                handleSpawn(evt.data);
+                break;
+
+            case EVENT_TYPES.SPECIAL_EVENT:
+                handleSpecialEvent(evt.data);
+                break;
+
+            case EVENT_TYPES.BOSS_SPAWN:
+                handleBossSpawn(evt.data);
+                break;
+
+            case EVENT_TYPES.WARNING:
+                handleWarning(evt.data);
+                break;
+
+            case EVENT_TYPES.DELAY:
+                // Just a timing marker, no action needed
+                break;
+        }
+    }
+
+    /**
+     * Handle announcement event
+     */
+    function handleAnnouncement(data) {
+        // Use Display announcer if available
+        if (typeof Display !== 'undefined' && Display.showAnnouncement) {
+            Display.showAnnouncement(data.title, data.subtitle);
+        }
+
+        // Emit event for other systems
+        if (typeof emitGameEvent === 'function') {
+            emitGameEvent(EVENTS.WAVE_ANNOUNCEMENT, data);
+        }
+    }
+
+    /**
+     * Handle spawn event - add enemies to spawn queue
+     */
+    function handleSpawn(groups) {
+        var queueBaseTime = spawnTimer;
+
+        for (var i = 0; i < groups.length; i++) {
+            var group = groups[i];
+            for (var j = 0; j < group.count; j++) {
+                spawnQueue.push({
+                    type: group.type,
+                    variant: group.variant || null,
+                    delay: queueBaseTime + (j * group.interval) + (i * 500)
+                });
+            }
+        }
+
+        // Sort by delay
+        spawnQueue.sort(function(a, b) {
+            return a.delay - b.delay;
+        });
+    }
+
+    /**
+     * Handle special event (gold rush, etc.)
+     */
+    function handleSpecialEvent(data) {
+        switch (data.type) {
+            case 'goldRush':
+                // Award bonus gold
+                if (typeof Game !== 'undefined' && Game.addGold) {
+                    Game.addGold(data.bonus);
+                }
+                if (typeof Display !== 'undefined') {
+                    Display.showMessage('Gold Rush! +' + data.bonus + ' gold!');
+                }
+                break;
+
+            case 'speedBoost':
+                // Future: temporary tower fire rate boost
+                break;
+
+            case 'repair':
+                // Future: restore lives
+                break;
+        }
+
+        // Emit event
+        if (typeof emitGameEvent === 'function') {
+            emitGameEvent(EVENTS.SPECIAL_EVENT, data);
+        }
+    }
+
+    /**
+     * Handle boss spawn event
+     */
+    function handleBossSpawn(data) {
+        // Show boss warning
+        if (typeof Display !== 'undefined' && Display.showAnnouncement) {
+            Display.showAnnouncement('BOSS', 'The Dark Lord has arrived!');
+        }
+
+        // Spawn the boss
+        Enemy.spawn(data.type);
+        totalEnemiesSpawned++;
+
+        // Play boss music/sound
+        if (typeof Sfx !== 'undefined') {
+            Sfx.play('bossSpawn');
+        }
+    }
+
+    /**
+     * Handle warning event
+     */
+    function handleWarning(data) {
+        if (typeof Display !== 'undefined') {
+            Display.showMessage(data.message, 2500);
+        }
+
+        // Emit event
+        if (typeof emitGameEvent === 'function') {
+            emitGameEvent(EVENTS.WARNING, data);
+        }
+    }
+
     /**
      * Complete the current wave
      */
     function completeWave() {
         if (!waveInProgress) return;
-        
+
         waveInProgress = false;
         var wave = waveData[currentWave];
-        
+
         // Dispatch event with reward
         var event = new CustomEvent('waveComplete', {
             detail: {
@@ -196,69 +393,82 @@ var Wave = (function() {
             }
         });
         document.dispatchEvent(event);
-        
+
+        // Advance season (every 2 waves)
+        if (typeof Seasons !== 'undefined' && (currentWave + 1) % 2 === 0) {
+            Seasons.advanceSeason();
+        }
+
         // Advance to next wave
         currentWave++;
     }
-    
+
     /**
      * Check if all waves are complete
      */
     function isGameComplete() {
         return currentWave >= waveData.length && !waveInProgress && Enemy.count() === 0;
     }
-    
+
     /**
      * Get current wave number (1-indexed)
      */
     function getCurrentWave() {
         return currentWave + 1;
     }
-    
+
     /**
      * Get total number of waves
      */
     function getTotalWaves() {
         return waveData.length;
     }
-    
+
     /**
      * Check if wave is in progress
      */
     function isWaveInProgress() {
         return waveInProgress;
     }
-    
+
     /**
      * Get wave progress (0-1)
      */
     function getProgress() {
         if (!waveInProgress) return 1;
         if (totalEnemiesInWave === 0) return 0;
-        
+
         var spawned = totalEnemiesSpawned;
         var remaining = Enemy.count();
         var killed = spawned - remaining;
-        
+
         return killed / totalEnemiesInWave;
     }
-    
+
     /**
      * Get info about upcoming wave
      */
     function getNextWaveInfo() {
         if (currentWave >= waveData.length) return null;
-        
+
         var wave = waveData[currentWave];
         var enemies = {};
         var total = 0;
-        
-        for (var i = 0; i < wave.enemies.length; i++) {
-            var group = wave.enemies[i];
-            enemies[group.type] = (enemies[group.type] || 0) + group.count;
-            total += group.count;
+
+        for (var i = 0; i < wave.events.length; i++) {
+            var evt = wave.events[i];
+            if (evt.type === 'spawn') {
+                for (var j = 0; j < evt.data.length; j++) {
+                    var group = evt.data[j];
+                    enemies[group.type] = (enemies[group.type] || 0) + group.count;
+                    total += group.count;
+                }
+            } else if (evt.type === 'bossSpawn') {
+                enemies['boss'] = 1;
+                total += 1;
+            }
         }
-        
+
         return {
             wave: currentWave + 1,
             enemies: enemies,
@@ -266,7 +476,7 @@ var Wave = (function() {
             reward: wave.reward
         };
     }
-    
+
     // Public API
     return {
         init: init,
@@ -277,6 +487,7 @@ var Wave = (function() {
         getTotalWaves: getTotalWaves,
         isWaveInProgress: isWaveInProgress,
         getProgress: getProgress,
-        getNextWaveInfo: getNextWaveInfo
+        getNextWaveInfo: getNextWaveInfo,
+        EVENT_TYPES: EVENT_TYPES
     };
 })();

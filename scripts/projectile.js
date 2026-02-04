@@ -77,8 +77,16 @@ var Projectile = (function() {
      * Create the DOM element for this projectile
      */
     ProjectileEntity.prototype.createElement = function() {
-        var el = document.createElement('div');
-        el.className = 'projectile projectile-' + this.type;
+        var el;
+
+        // Use pool if available
+        if (typeof Pool !== 'undefined') {
+            el = Pool.acquire('projectile', 'projectile-' + this.type);
+        } else {
+            el = document.createElement('div');
+            el.className = 'projectile projectile-' + this.type;
+        }
+
         el.dataset.id = this.id;
         return el;
     };
@@ -236,8 +244,15 @@ var Projectile = (function() {
      * Create enhanced impact visual effect with multi-stage elements
      */
     ProjectileEntity.prototype.createImpact = function() {
-        var impact = document.createElement('div');
-        impact.className = 'impact impact-' + this.type;
+        var impact;
+
+        // Use pool if available
+        if (typeof Pool !== 'undefined') {
+            impact = Pool.acquire('impact', 'impact-' + this.type);
+        } else {
+            impact = document.createElement('div');
+            impact.className = 'impact impact-' + this.type;
+        }
         
         var mapWidth = Path.GRID_COLS * Path.CELL_SIZE;
         var mapHeight = Path.GRID_ROWS * Path.CELL_SIZE;
@@ -302,13 +317,19 @@ var Projectile = (function() {
         }
         
         container.appendChild(impact);
-        
+
         // Remove after animation (longer for cannon)
-        var duration = this.type === 'cannon' ? 800 : 
-                       this.type === 'magic' ? 700 : 
+        var duration = this.type === 'cannon' ? 800 :
+                       this.type === 'magic' ? 700 :
                        this.type === 'ice' ? 700 : 500;
+
         setTimeout(function() {
-            if (impact.parentNode) {
+            // Release to pool if available
+            if (typeof Pool !== 'undefined' && impact.dataset.poolType) {
+                // Clear child elements before releasing
+                impact.innerHTML = '';
+                Pool.release(impact);
+            } else if (impact.parentNode) {
                 impact.parentNode.removeChild(impact);
             }
         }, duration);
@@ -344,11 +365,16 @@ var Projectile = (function() {
      * Remove projectile from DOM and array
      */
     ProjectileEntity.prototype.destroy = function() {
-        if (this.element && this.element.parentNode) {
-            this.element.parentNode.removeChild(this.element);
+        if (this.element) {
+            // Release to pool if pool system is available
+            if (typeof Pool !== 'undefined' && this.element.dataset.poolType) {
+                Pool.release(this.element);
+            } else if (this.element.parentNode) {
+                this.element.parentNode.removeChild(this.element);
+            }
         }
         this.element = null;
-        
+
         // Remove from projectiles array
         var index = projectiles.indexOf(this);
         if (index > -1) {

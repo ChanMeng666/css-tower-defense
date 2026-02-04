@@ -573,3 +573,229 @@
         transform: scale(1.1);
     }
 }
+
+// Tesla Tower Preview
+.tower-tesla-preview {
+    background: @color-tower-tesla;
+
+    &::after {
+        content: '⚡';
+    }
+}
+
+// Flame Tower Preview
+.tower-flame-preview {
+    background: @color-tower-flame;
+
+    &::after {
+        content: '🔥';
+    }
+}
+
+// ===========================================
+// Announcement Overlay (Stage-style)
+// ===========================================
+.announcement-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1500;
+    pointer-events: none;
+    .flex-center();
+    opacity: 0;
+    transition: opacity 0.3s ease;
+
+    &.visible {
+        opacity: 1;
+    }
+}
+
+.announcement-content {
+    text-align: center;
+    transform: scale(0.8);
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    .visible & {
+        transform: scale(1);
+    }
+}
+
+.announcement-title {
+    font-family: @font-title;
+    font-size: 5rem;
+    color: @color-yellow;
+    margin: 0;
+    line-height: 1.1;
+    text-transform: uppercase;
+    .text-outline(@color-black, 5px);
+    .pop-shadow(12px, 12px, @color-black);
+    animation: announcement-pulse 0.5s ease-out;
+    transform: rotate(-3deg);
+}
+
+.announcement-subtitle {
+    font-family: @font-comic;
+    font-size: 2rem;
+    color: @color-white;
+    background: @color-magenta;
+    padding: 10px 30px;
+    margin-top: 15px;
+    display: inline-block;
+    transform: rotate(2deg);
+    .comic-border(3px);
+    .pop-shadow(6px, 6px);
+    animation: announcement-slide 0.4s ease-out 0.1s backwards;
+}
+
+@keyframes announcement-pulse {
+    0% {
+        transform: rotate(-3deg) scale(0);
+        opacity: 0;
+    }
+    60% {
+        transform: rotate(-3deg) scale(1.2);
+    }
+    100% {
+        transform: rotate(-3deg) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes announcement-slide {
+    0% {
+        transform: rotate(2deg) translateY(30px);
+        opacity: 0;
+    }
+    100% {
+        transform: rotate(2deg) translateY(0);
+        opacity: 1;
+    }
+}
+
+// ===========================================
+// Boss Enemy Styles (Enhancements)
+// ===========================================
+.enemy-boss.shielded {
+    &::after {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+        border: 4px solid @color-cyan;
+        border-radius: 50%;
+        animation: shield-pulse 1s infinite;
+        pointer-events: none;
+    }
+}
+
+.enemy-boss.enraged {
+    filter: hue-rotate(-30deg) saturate(1.5);
+    animation: boss-rage 0.2s infinite alternate !important;
+
+    .enemy-body {
+        background: darken(@color-danger, 10%) !important;
+    }
+}
+
+.enemy-boss.summoning {
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 80px;
+        height: 80px;
+        background: radial-gradient(circle, fade(@color-magenta, 60%) 0%, transparent 70%);
+        transform: translate(-50%, -50%);
+        animation: summon-pulse 0.5s ease-out;
+    }
+}
+
+@keyframes shield-pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+}
+
+@keyframes boss-rage {
+    0% {
+        transform: translate(-50%, -100%) rotateX(-55deg) translateX(-2px);
+    }
+    100% {
+        transform: translate(-50%, -100%) rotateX(-55deg) translateX(2px);
+    }
+}
+
+@keyframes summon-pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+    }
+}
+
+// ===========================================
+// Range Indicator Improvements
+// ===========================================
+.range-indicator {
+    position: absolute;
+    border-radius: 50%;
+    border: 3px dashed fade(@color-cyan, 60%);
+    background: radial-gradient(circle, fade(@color-cyan, 10%) 0%, transparent 70%);
+    pointer-events: none;
+    animation: range-fade-in 0.2s ease-out;
+
+    // Type-specific colors
+    &.range-arrow {
+        border-color: fade(@color-tower-arrow, 60%);
+        background: radial-gradient(circle, fade(@color-tower-arrow, 10%) 0%, transparent 70%);
+    }
+
+    &.range-cannon {
+        border-color: fade(@color-tower-cannon, 60%);
+        background: radial-gradient(circle, fade(@color-tower-cannon, 10%) 0%, transparent 70%);
+    }
+
+    &.range-ice {
+        border-color: fade(@color-tower-ice, 60%);
+        background: radial-gradient(circle, fade(@color-tower-ice, 10%) 0%, transparent 70%);
+    }
+
+    &.range-magic {
+        border-color: fade(@color-tower-magic, 60%);
+        background: radial-gradient(circle, fade(@color-tower-magic, 10%) 0%, transparent 70%);
+    }
+
+    &.range-tesla {
+        border-color: fade(@color-tower-tesla, 60%);
+        background: radial-gradient(circle, fade(@color-tower-tesla, 10%) 0%, transparent 70%);
+    }
+
+    &.range-flame {
+        border-color: fade(@color-tower-flame, 60%);
+        background: radial-gradient(circle, fade(@color-tower-flame, 10%) 0%, transparent 70%);
+    }
+}
+
+@keyframes range-fade-in {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}

@@ -3,12 +3,74 @@
  * Manages UI updates and visual feedback
  */
 
+/**
+ * Announcer class for stage-style announcements
+ */
+function Announcer(el) {
+    var self = this;
+    self.container = el;
+    self.hideTimeout = null;
+
+    /**
+     * Show an announcement message
+     * @param {object} message - { title, subtitle }
+     * @param {boolean} autoHide - Auto-hide after delay
+     * @param {number} duration - Auto-hide duration in ms
+     */
+    self.showMessage = function(message, autoHide, duration) {
+        autoHide = autoHide !== false; // Default to true
+        duration = duration || 3000;
+
+        // Clear any pending hide
+        if (self.hideTimeout) {
+            clearTimeout(self.hideTimeout);
+            self.hideTimeout = null;
+        }
+
+        setTitle(message.title);
+        setSubtitle(message.subtitle);
+        self.container.classList.add('visible');
+
+        if (autoHide) {
+            self.hideTimeout = setTimeout(function() {
+                self.hideMessage();
+            }, duration);
+        }
+    };
+
+    /**
+     * Hide the announcement
+     */
+    self.hideMessage = function() {
+        self.container.classList.remove('visible');
+        if (self.hideTimeout) {
+            clearTimeout(self.hideTimeout);
+            self.hideTimeout = null;
+        }
+    };
+
+    function setTitle(title) {
+        var titleEl = self.container.querySelector('.announcement-title');
+        if (titleEl) {
+            titleEl.innerHTML = (typeof title === 'undefined') ? '' : title;
+        }
+    }
+
+    function setSubtitle(subtitle) {
+        var subtitleEl = self.container.querySelector('.announcement-subtitle');
+        if (subtitleEl) {
+            subtitleEl.innerHTML = (typeof subtitle === 'undefined') ? '' : subtitle;
+        }
+    }
+}
+
 var Display = (function() {
     'use strict';
-    
+
     // DOM elements cache
     var elements = {};
     var messageTimeout = null;
+    var announcer = null;
     
     /**
      * Initialize the display system
@@ -28,7 +90,13 @@ var Display = (function() {
         elements.startWaveBtn = document.getElementById('startWaveBtn');
         elements.shopPanel = document.getElementById('shopPanel');
         elements.towerOptions = document.querySelectorAll('.tower-option');
-        
+        elements.announcer = document.getElementById('announcer');
+
+        // Initialize announcer
+        if (elements.announcer) {
+            announcer = new Announcer(elements.announcer);
+        }
+
         // Create message element
         createMessageElement();
     }
@@ -277,22 +345,33 @@ var Display = (function() {
      */
     function showRangeIndicator(tower) {
         hideRangeIndicator();
-        
+
         var indicator = document.createElement('div');
         indicator.className = 'range-indicator';
+
+        // Add tower type class for color styling
+        if (tower.type) {
+            indicator.classList.add('range-' + tower.type);
+        }
+
         indicator.id = 'rangeIndicator';
-        
+
         var size = tower.range * 2;
         indicator.style.width = size + 'px';
         indicator.style.height = size + 'px';
-        
+
         var mapWidth = Path.GRID_COLS * Path.CELL_SIZE;
         var mapHeight = Path.GRID_ROWS * Path.CELL_SIZE;
-        
+
         indicator.style.left = (tower.x + mapWidth / 2) + 'px';
         indicator.style.top = (tower.y + mapHeight / 2) + 'px';
-        indicator.style.transform = 'translate(-50%, -50%)';
-        
+
+        // Apply 3D perspective transform to match the map rotation
+        // The map is rotated 55deg on X-axis, so we need to counter-rotate the indicator
+        // to make it appear flat on the ground
+        indicator.style.transform = 'translate(-50%, -50%) rotateX(55deg)';
+        indicator.style.transformOrigin = 'center center';
+
         document.getElementById('map').appendChild(indicator);
     }
     
@@ -305,7 +384,34 @@ var Display = (function() {
             indicator.parentNode.removeChild(indicator);
         }
     }
-    
+
+    /**
+     * Show a stage-style announcement
+     * @param {string} title - Main title text
+     * @param {string} subtitle - Subtitle text
+     * @param {number} duration - Display duration in ms (default 3000)
+     */
+    function showAnnouncement(title, subtitle, duration) {
+        if (announcer) {
+            announcer.showMessage({
+                title: title,
+                subtitle: subtitle
+            }, true, duration || 3000);
+        } else {
+            // Fallback to regular message if announcer not available
+            showMessage(title + (subtitle ? ' - ' + subtitle : ''), duration || 3000);
+        }
+    }
+
+    /**
+     * Hide the current announcement
+     */
+    function hideAnnouncement() {
+        if (announcer) {
+            announcer.hideMessage();
+        }
+    }
+
     // Public API
     return {
         init: init,
@@ -326,6 +432,8 @@ var Display = (function() {
         highlightCell: highlightCell,
         clearHighlights: clearHighlights,
         showRangeIndicator: showRangeIndicator,
-        hideRangeIndicator: hideRangeIndicator
+        hideRangeIndicator: hideRangeIndicator,
+        showAnnouncement: showAnnouncement,
+        hideAnnouncement: hideAnnouncement
     };
 })();

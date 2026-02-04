@@ -40,7 +40,13 @@ var Enemy = (function() {
             reward: 100,
             damage: 5,
             armor: 10,
-            className: 'enemy-boss'
+            className: 'enemy-boss',
+            // Boss skill configuration
+            skills: {
+                summon: { cooldown: 10000, count: 3 },       // Summon 3 slimes every 10s
+                shield: { cooldown: 15000, armor: 50, duration: 5000 }, // +50 armor for 5s
+                enrage: { healthThreshold: 0.3, speedBoost: 0.5, damageMultiplier: 2 } // At 30% HP
+            }
         }
     };
 
@@ -139,13 +145,39 @@ var Enemy = (function() {
         this.reachedEnd = false;
         this.slowed = false;
         this.slowTimer = 0;
-        
-        // Create DOM element
+
+        // Noise-based movement (for speedy and boss types)
+        this.useNoiseMovement = (type === 'boss' || variant === 'speedy');
+        this.noiseTime = Math.random() * 1000; // Random start offset
+
+        // Boss-specific state
+        if (type === 'boss') {
+            this.isBoss = true;
+            this.bossPhase = 1;
+            this.summonCooldown = 0;
+            this.shieldCooldown = 0;
+            this.shieldActive = false;
+            this.shieldTimer = 0;
+            this.baseArmor = this.armor;
+            this.enraged = false;
+        } else {
+            this.isBoss = false;
+        }
+
+        // Create DOM element (use pool if available)
         this.element = this.createElement();
         container.appendChild(this.element);
-        
+
         // Initial render
         this.render();
+    }
+
+    /**
+     * Get base class name for this enemy
+     */
+    EnemyEntity.prototype.getClassName = function() {
+        var variantClass = this.variant ? ENEMY_VARIANTS[this.variant].className : '';
+        return 'enemy ' + this.config.className + (variantClass ? ' ' + variantClass : '');
     }
     
     /**
@@ -344,7 +376,12 @@ var Enemy = (function() {
      */
     EnemyEntity.prototype.update = function(dt) {
         if (!this.alive || this.reachedEnd) return;
-        
+
+        // Update Boss-specific logic
+        if (this.isBoss) {
+            this.updateBoss(dt);
+        }
+
         // Update slow effect
         if (this.slowed) {
             this.slowTimer -= dt;
@@ -354,29 +391,35 @@ var Enemy = (function() {
                 this.element.classList.remove('slowed');
             }
         }
-        
+
         // Get current target waypoint
         var target = this.path[this.pathIndex];
         if (!target) {
             this.reachedEnd = true;
             return;
         }
-        
+
         // Calculate direction to target
         var dx = target.x - this.x;
         var dy = target.y - this.y;
         var distance = Math.sqrt(dx * dx + dy * dy);
-        
+
         // Move towards target
         var moveDistance = this.speed * dt;
-        
+
+        // Apply noise-based speed variation for speedy/boss
+        if (this.useNoiseMovement && typeof Noise !== 'undefined') {
+            var speedMult = Noise.getSpeedMultiplier(this.id, this.noiseTime);
+            moveDistance *= speedMult;
+        }
+
         if (distance <= moveDistance) {
             // Reached waypoint, move to next
             this.x = target.x;
             this.y = target.y;
             this.pathIndex++;
             this.distanceTraveled += distance;
-            
+
             // Check if reached end
             if (this.pathIndex >= this.path.length) {
                 this.reachedEnd = true;
@@ -388,9 +431,118 @@ var Enemy = (function() {
             this.y += dy * ratio;
             this.distanceTraveled += moveDistance;
         }
-        
+
+        // Update noise time for movement variation
+        if (this.useNoiseMovement) {
+            this.noiseTime += dt * 60; // Scale for smoother noise
+        }
+
         // Update visual
         this.render();
+    };
+
+    /**
+     * Update Boss-specific behavior (skills, phases)
+     */
+    EnemyEntity.prototype.updateBoss = function(dt) {
+        var dtMs = dt * 1000;
+        var skills = ENEMY_TYPES.boss.skills;
+
+        // Update shield timer
+        if (this.shieldActive) {
+            this.shieldTimer -= dtMs;
+            if (this.shieldTimer <= 0) {
+                this.shieldActive = false;
+                this.armor = this.baseArmor;
+                this.element.classList.remove('shielded');
+                if (typeof emitGameEvent === 'function') {
+                    emitGameEvent(EVENTS.BOSS_SKILL_USED, { skill: 'shieldEnd', boss: this });
+                }
+            }
+        }
+
+        // Update cooldowns
+        this.summonCooldown -= dtMs;
+        this.shieldCooldown -= dtMs;
+
+        // Check for enrage (30% health threshold)
+        if (!this.enraged && this.health <= this.maxHealth * skills.enrage.healthThreshold) {
+            this.enraged = true;
+            this.baseSpeed *= (1 + skills.enrage.speedBoost);
+            this.speed = this.baseSpeed;
+            this.damage *= skills.enrage.damageMultiplier;
+            this.element.classList.add('enraged');
+
+            // Phase change event
+            this.bossPhase = 2;
+            if (typeof emitGameEvent === 'function') {
+                emitGameEvent(EVENTS.BOSS_PHASE_CHANGE, { phase: 2, boss: this });
+                emitGameEvent(EVENTS.BOSS_SKILL_USED, { skill: 'enrage', boss: this });
+            }
+        }
+
+        // Use Summon skill
+        if (this.summonCooldown <= 0) {
+            this.useSummonSkill();
+            this.summonCooldown = skills.summon.cooldown;
+        }
+
+        // Use Shield skill (only when below 70% health)
+        if (this.shieldCooldown <= 0 && !this.shieldActive && this.health < this.maxHealth * 0.7) {
+            this.useShieldSkill();
+            this.shieldCooldown = skills.shield.cooldown;
+        }
+    };
+
+    /**
+     * Boss Summon skill - spawn minions
+     */
+    EnemyEntity.prototype.useSummonSkill = function() {
+        var skills = ENEMY_TYPES.boss.skills;
+        var count = skills.summon.count;
+
+        // Spawn slimes near the boss position
+        for (var i = 0; i < count; i++) {
+            // Delay each spawn slightly
+            (function(index) {
+                setTimeout(function() {
+                    if (Enemy.count() < 50) { // Limit total enemies
+                        Enemy.spawn('slime');
+                    }
+                }, index * 200);
+            })(i);
+        }
+
+        // Visual feedback
+        this.element.classList.add('summoning');
+        var self = this;
+        setTimeout(function() {
+            if (self.element) {
+                self.element.classList.remove('summoning');
+            }
+        }, 500);
+
+        // Emit event
+        if (typeof emitGameEvent === 'function') {
+            emitGameEvent(EVENTS.BOSS_SKILL_USED, { skill: 'summon', boss: this, count: count });
+        }
+    };
+
+    /**
+     * Boss Shield skill - temporary armor boost
+     */
+    EnemyEntity.prototype.useShieldSkill = function() {
+        var skills = ENEMY_TYPES.boss.skills;
+
+        this.shieldActive = true;
+        this.shieldTimer = skills.shield.duration;
+        this.armor = this.baseArmor + skills.shield.armor;
+        this.element.classList.add('shielded');
+
+        // Emit event
+        if (typeof emitGameEvent === 'function') {
+            emitGameEvent(EVENTS.BOSS_SKILL_USED, { skill: 'shield', boss: this, armor: skills.shield.armor });
+        }
     };
     
     /**
@@ -398,15 +550,22 @@ var Enemy = (function() {
      */
     EnemyEntity.prototype.render = function() {
         if (!this.element) return;
-        
+
         // Position is relative to the map center
         var mapWidth = Path.GRID_COLS * Path.CELL_SIZE;
         var mapHeight = Path.GRID_ROWS * Path.CELL_SIZE;
-        
+
         // Convert to map-local coordinates
         var localX = this.x + (mapWidth / 2);
         var localY = this.y + (mapHeight / 2);
-        
+
+        // Apply noise-based offset for speedy/boss enemies
+        if (this.useNoiseMovement && typeof Noise !== 'undefined') {
+            var offset = Noise.getPathOffset(this.id, this.distanceTraveled);
+            localX += offset.x;
+            localY += offset.y;
+        }
+
         this.element.style.left = localX + 'px';
         this.element.style.top = localY + 'px';
         // Transform is handled by CSS (counter-rotation for 3D perspective)
@@ -493,11 +652,16 @@ var Enemy = (function() {
      * Remove enemy from DOM and array
      */
     EnemyEntity.prototype.destroy = function() {
-        if (this.element && this.element.parentNode) {
-            this.element.parentNode.removeChild(this.element);
+        if (this.element) {
+            // Release to pool if pool system is available
+            if (typeof Pool !== 'undefined' && this.element.dataset.poolType) {
+                Pool.release(this.element);
+            } else if (this.element.parentNode) {
+                this.element.parentNode.removeChild(this.element);
+            }
         }
         this.element = null;
-        
+
         // Remove from enemies array
         var index = enemies.indexOf(this);
         if (index > -1) {
@@ -514,6 +678,12 @@ var Enemy = (function() {
         var path = Path.getPathWaypoints();
         var enemy = new EnemyEntity(type, path, variant);
         enemies.push(enemy);
+
+        // Emit boss spawned event
+        if (type === 'boss' && typeof emitGameEvent === 'function') {
+            emitGameEvent(EVENTS.BOSS_SPAWNED, { boss: enemy });
+        }
+
         return enemy;
     }
     
