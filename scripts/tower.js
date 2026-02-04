@@ -188,6 +188,18 @@ var Tower = (function () {
                     '<div class="tower-ring"></div>' +
                     '<div class="magic-energy"></div>';
                 break;
+            case 'tesla':
+                el.innerHTML = '<div class="tower-base"></div>' +
+                    '<div class="tower-coil"></div>' +
+                    '<div class="tower-spark"></div>' +
+                    '<div class="tesla-arc"></div>';
+                break;
+            case 'flame':
+                el.innerHTML = '<div class="tower-base"></div>' +
+                    '<div class="tower-tank"></div>' +
+                    '<div class="tower-nozzle"></div>' +
+                    '<div class="flame-particles"></div>';
+                break;
         }
 
         return el;

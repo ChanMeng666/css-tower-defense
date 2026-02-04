@@ -315,7 +315,177 @@
     }
 }
 
-// Screen Shake
+// ===========================================
+// TESLA IMPACT EFFECTS
+// ===========================================
+
+.impact-electric-arc {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+        circle,
+        @color-tower-tesla 0%,
+        rgba(100, 200, 255, 0.6) 30%,
+        transparent 60%
+    );
+    border-radius: 50%;
+    animation: electric-arc-pulse 0.3s ease-out forwards;
+
+    // Electric arcs
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 60px;
+        height: 2px;
+        background: @color-tower-tesla;
+        box-shadow: 0 0 5px @color-tower-tesla, 0 0 10px @color-white;
+    }
+
+    &::before {
+        transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    &::after {
+        transform: translate(-50%, -50%) rotate(-45deg);
+    }
+}
+
+.impact-spark-burst {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    // Multiple sparks using box-shadow
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 4px;
+        height: 4px;
+        background: @color-white;
+        border-radius: 50%;
+        box-shadow:
+            10px 0 0 @color-tower-tesla,
+            -10px 0 0 @color-tower-tesla,
+            0 10px 0 @color-tower-tesla,
+            0 -10px 0 @color-tower-tesla,
+            7px 7px 0 @color-white,
+            -7px -7px 0 @color-white,
+            7px -7px 0 @color-white,
+            -7px 7px 0 @color-white;
+        animation: spark-burst-expand 0.3s ease-out forwards;
+    }
+}
+
+@keyframes electric-arc-pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0;
+    }
+}
+
+@keyframes spark-burst-expand {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+    }
+}
+
+// ===========================================
+// FLAME IMPACT SUB-ELEMENTS
+// ===========================================
+
+.impact-flame-burst {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+        circle,
+        @fire-core 0%,
+        @fire-inner 30%,
+        @fire-mid 50%,
+        @fire-outer 70%,
+        transparent 90%
+    );
+    border-radius: 50%;
+    animation: flame-impact-burst 0.4s ease-out forwards;
+    filter: blur(1px);
+}
+
+.impact-smoke {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+        circle,
+        @smoke-color 0%,
+        rgba(50, 50, 50, 0.3) 50%,
+        transparent 80%
+    );
+    border-radius: 50%;
+    animation: smoke-rise 0.6s ease-out forwards;
+}
+
+@keyframes smoke-rise {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0.7;
+    }
+    100% {
+        transform: translate(-50%, -100%) scale(1.5);
+        opacity: 0;
+    }
+}
+
+// ===========================================
+// SCREEN SHAKE EFFECTS
+// ===========================================
+
 .scene.screen-shake {
     animation: shake-hard 0.2s;
+}
+
+.scene.screen-shake-heavy {
+    animation: shake-heavy 0.3s;
+}
+
+@keyframes shake-heavy {
+    0%, 100% { transform: rotateX(55deg) rotateZ(0deg) translateX(0) translateY(0); }
+    10% { transform: rotateX(55deg) rotateZ(0deg) translateX(-4px) translateY(2px); }
+    20% { transform: rotateX(55deg) rotateZ(0deg) translateX(4px) translateY(-2px); }
+    30% { transform: rotateX(55deg) rotateZ(0deg) translateX(-3px) translateY(3px); }
+    40% { transform: rotateX(55deg) rotateZ(0deg) translateX(3px) translateY(-3px); }
+    50% { transform: rotateX(55deg) rotateZ(0deg) translateX(-2px) translateY(2px); }
+    60% { transform: rotateX(55deg) rotateZ(0deg) translateX(2px) translateY(-2px); }
+    70% { transform: rotateX(55deg) rotateZ(0deg) translateX(-1px) translateY(1px); }
+    80% { transform: rotateX(55deg) rotateZ(0deg) translateX(1px) translateY(-1px); }
+    90% { transform: rotateX(55deg) rotateZ(0deg) translateX(0) translateY(0); }
 }

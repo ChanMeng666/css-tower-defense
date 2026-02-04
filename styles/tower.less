@@ -372,6 +372,51 @@
     }
 }
 
+// Tesla arc effect (idle animation)
+.tesla-arc {
+    position: absolute;
+    bottom: 55px;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    transform: translateX(-50%);
+    pointer-events: none;
+
+    // Random arc using clip-path
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 30px;
+        height: 2px;
+        background: @color-tower-tesla;
+        box-shadow: 0 0 4px @color-tower-tesla, 0 0 8px @color-white;
+        opacity: 0;
+        animation: tesla-arc-flash 0.5s ease-out infinite;
+    }
+
+    &::before {
+        transform: translate(-50%, -50%) rotate(30deg);
+        animation-delay: 0.2s;
+    }
+
+    &::after {
+        transform: translate(-50%, -50%) rotate(-30deg);
+        animation-delay: 0.4s;
+    }
+}
+
+@keyframes tesla-arc-flash {
+    0%, 80%, 100% {
+        opacity: 0;
+    }
+    10%, 30% {
+        opacity: 1;
+    }
+}
+
 // 6. FLAME TOWER (Tank & Nozzle)
 .tower-flame {
     .tower-base {
@@ -470,6 +515,54 @@
     100% {
         transform: translateX(-50%) rotate(-45deg) scale(1);
         filter: drop-shadow(0 0 3px @fire-mid);
+    }
+}
+
+// Flame particles (ambient heat shimmer effect)
+.flame-particles {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    transform: translateX(-50%);
+    pointer-events: none;
+
+    // Rising heat particles
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: @fire-inner;
+        border-radius: 50%;
+        opacity: 0;
+        animation: flame-particle-rise 1s ease-out infinite;
+    }
+
+    &::before {
+        left: 30%;
+        animation-delay: 0s;
+    }
+
+    &::after {
+        left: 60%;
+        animation-delay: 0.5s;
+    }
+}
+
+@keyframes flame-particle-rise {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateY(-20px) scale(0.5);
+        opacity: 0;
     }
 }
 

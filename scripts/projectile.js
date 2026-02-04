@@ -305,13 +305,53 @@ var Projectile = (function() {
                 var magicParticles = document.createElement('div');
                 magicParticles.className = 'impact-magic-particles';
                 impact.appendChild(magicParticles);
-                
+
                 // Add magic glow
                 var magicGlow = document.createElement('div');
                 magicGlow.className = 'impact-magic-glow';
                 impact.appendChild(magicGlow);
-                
+
                 // Slight screen shake for magic
+                triggerScreenShake('light');
+                break;
+
+            case 'flame':
+                // Add flame burst effect
+                var flameBurst = document.createElement('div');
+                flameBurst.className = 'impact-flame-burst';
+                impact.appendChild(flameBurst);
+
+                // Add smoke trail
+                var smokeTrail = document.createElement('div');
+                smokeTrail.className = 'impact-smoke';
+                impact.appendChild(smokeTrail);
+
+                // Apply burning effect to target enemy
+                if (this.target && this.target.element && typeof Effects !== 'undefined') {
+                    Effects.applyBurningEffect(this.target.element);
+
+                    // Remove burning effect after 3 seconds
+                    var targetElement = this.target.element;
+                    setTimeout(function() {
+                        if (targetElement && typeof Effects !== 'undefined') {
+                            Effects.removeBurningEffect(targetElement);
+                        }
+                    }, 3000);
+                }
+                break;
+
+            case 'tesla':
+                // Add electric arc effect
+                var electricArc = document.createElement('div');
+                electricArc.className = 'impact-electric-arc';
+                impact.appendChild(electricArc);
+
+                // Add spark burst
+                var sparkBurst = document.createElement('div');
+                sparkBurst.className = 'impact-spark-burst';
+                impact.appendChild(sparkBurst);
+
+                // Light screen shake for tesla
                 triggerScreenShake('light');
                 break;
         }
@@ -321,7 +361,9 @@ var Projectile = (function() {
         // Remove after animation (longer for cannon)
         var duration = this.type === 'cannon' ? 800 :
                        this.type === 'magic' ? 700 :
-                       this.type === 'ice' ? 700 : 500;
+                       this.type === 'ice' ? 700 :
+                       this.type === 'flame' ? 600 :
+                       this.type === 'tesla' ? 400 : 500;
 
         setTimeout(function() {
             // Release to pool if available
