@@ -608,6 +608,8 @@
   font-size: 5rem;
   color: #F2D864;
   margin: 0 0 20px;
+  -webkit-text-stroke: 4px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
   transform: rotate(-3deg);
   z-index: 1;
 }
@@ -913,7 +915,8 @@
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 2rem;
   color: #FFF8F0;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  -webkit-text-stroke: 1px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
   z-index: 2000;
   opacity: 0;
   transition: opacity 0.2s;
@@ -1375,12 +1378,16 @@ body.blood-moon .sky-cycle {
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 4rem;
   color: #F2D864;
+  -webkit-text-stroke: 4px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
   animation: combo-pulse 0.3s ease-out;
 }
 .combo-label {
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 2rem;
   color: #D4738A;
+  -webkit-text-stroke: 2px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
   margin-top: -10px;
 }
 .combo-bonus {
