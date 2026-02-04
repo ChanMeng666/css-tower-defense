@@ -608,9 +608,6 @@
   font-size: 5rem;
   color: #F2D864;
   margin: 0 0 20px;
-  -webkit-text-stroke: 4px #1A1614;
-  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
-  box-shadow: 10px 10px 0 #1A1614;
   transform: rotate(-3deg);
   z-index: 1;
 }
