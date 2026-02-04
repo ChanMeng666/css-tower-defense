@@ -366,8 +366,8 @@ var Display = (function() {
         indicator.style.left = (tower.x + mapWidth / 2) + 'px';
         indicator.style.top = (tower.y + mapHeight / 2) + 'px';
 
-        // Apply 3D perspective transform to match the map rotation (45deg)
-        indicator.style.transform = 'translate(-50%, -50%) rotateX(45deg)';
+        // Center the indicator - no rotateX needed since parent map is already rotated
+        indicator.style.transform = 'translate(-50%, -50%)';
         indicator.style.transformOrigin = 'center center';
 
         document.getElementById('map').appendChild(indicator);
@@ -414,8 +414,8 @@ var Display = (function() {
         indicator.style.left = (worldPos.x + mapWidth / 2) + 'px';
         indicator.style.top = (worldPos.y + mapHeight / 2) + 'px';
 
-        // Apply 3D perspective transform to match the map rotation (45deg)
-        indicator.style.transform = 'translate(-50%, -50%) rotateX(45deg)';
+        // Center the indicator - no rotateX needed since parent map is already rotated
+        indicator.style.transform = 'translate(-50%, -50%)';
         indicator.style.transformOrigin = 'center center';
 
         document.getElementById('map').appendChild(indicator);
