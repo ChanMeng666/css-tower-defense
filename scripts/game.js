@@ -386,6 +386,7 @@ var Game = (function () {
         if (gold < config.cost) {
             Display.showMessage('Not enough gold!');
             Sfx.play('error');
+            selectTowerType(null);  // Clear selection so player isn't stuck
             return false;
         }
 
@@ -410,8 +411,14 @@ var Game = (function () {
      * Start the next wave
      */
     function startNextWave() {
-        if (state !== STATES.PLAYING) return false;
-        if (Wave.isWaveInProgress()) return false;
+        if (state !== STATES.PLAYING) {
+            Display.showMessage('Game not active!');
+            return false;
+        }
+        if (Wave.isWaveInProgress()) {
+            Display.showMessage('Clear current wave first!');
+            return false;
+        }
 
         return Wave.startWave();
     }

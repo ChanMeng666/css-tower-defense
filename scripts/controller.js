@@ -105,8 +105,9 @@
             // If we have a tower type selected, try to place it
             if (Game.getSelectedTowerType()) {
                 if (Path.canBuild(gridX, gridY)) {
-                    Game.placeTower(gridX, gridY);
+                    var success = Game.placeTower(gridX, gridY);
                     Display.clearHighlights();
+                    // If placement failed (e.g., not enough gold), selection is already cleared by placeTower
                 }
             } else {
                 // Check if there's a tower at this location
@@ -230,6 +231,16 @@
         if (Game.getState() === Game.STATES.PLAYING) {
             Game.pause();
             Display.showMessage('Paused');
+        }
+    });
+
+    /**
+     * Handle window focus (auto-resume)
+     */
+    window.addEventListener('focus', function() {
+        if (Game.getState() === Game.STATES.PAUSED) {
+            Game.resume();
+            Display.showMessage('Resumed');
         }
     });
     

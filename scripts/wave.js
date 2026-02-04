@@ -134,7 +134,7 @@ var Wave = (function() {
     // Current state
     var currentWave = 0;
     var waveInProgress = false;
-    var waveStartTime = 0;
+    var waveElapsedTime = 0;  // Accumulated elapsed time (not wall clock)
     var eventIndex = 0;
     var spawnQueue = [];
     var spawnTimer = 0;
@@ -147,7 +147,7 @@ var Wave = (function() {
     function init() {
         currentWave = 0;
         waveInProgress = false;
-        waveStartTime = 0;
+        waveElapsedTime = 0;
         eventIndex = 0;
         spawnQueue = [];
         spawnTimer = 0;
@@ -164,11 +164,21 @@ var Wave = (function() {
      * Start the next wave
      */
     function startWave() {
-        if (waveInProgress) return false;
-        if (currentWave >= waveData.length) return false;
+        if (waveInProgress) {
+            if (typeof Display !== 'undefined') {
+                Display.showMessage('Wave already in progress!');
+            }
+            return false;
+        }
+        if (currentWave >= waveData.length) {
+            if (typeof Display !== 'undefined') {
+                Display.showMessage('All waves complete!');
+            }
+            return false;
+        }
 
         waveInProgress = true;
-        waveStartTime = performance.now();
+        waveElapsedTime = 0;  // Reset accumulated time
         eventIndex = 0;
         spawnQueue = [];
         spawnTimer = 0;
@@ -214,14 +224,15 @@ var Wave = (function() {
     function update(dt) {
         if (!waveInProgress) return;
 
-        var currentTime = performance.now();
-        var elapsedTime = currentTime - waveStartTime;
+        // Use accumulated elapsed time instead of wall clock time
+        // This ensures pausing works correctly
+        waveElapsedTime += dt * 1000;
         var wave = waveData[currentWave];
 
         // Process events that should trigger
         while (eventIndex < wave.events.length) {
             var evt = wave.events[eventIndex];
-            if (evt.time <= elapsedTime) {
+            if (evt.time <= waveElapsedTime) {
                 processEvent(evt);
                 eventIndex++;
             } else {

@@ -26,20 +26,22 @@ var Shop = (function() {
             option.addEventListener('click', function(e) {
                 var type = this.dataset.tower;
                 var cost = parseInt(this.dataset.cost);
-                
-                // Check if can afford
+
+                // If already selected same type, allow deselection (don't check affordability)
+                if (Game.getSelectedTowerType() === type) {
+                    Game.selectTowerType(null);
+                    return;
+                }
+
+                // Selecting new type - check if can afford
                 if (Game.getGold() < cost) {
                     Display.showMessage('Not enough gold!');
                     Sfx.play('error');
                     return;
                 }
-                
-                // Toggle selection
-                if (Game.getSelectedTowerType() === type) {
-                    Game.selectTowerType(null);
-                } else {
-                    Game.selectTowerType(type);
-                }
+
+                // Select the new tower type
+                Game.selectTowerType(type);
             });
             
             // Hover effect - show tower info
