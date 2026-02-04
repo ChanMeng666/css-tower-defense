@@ -1,20 +1,9 @@
 // ===========================================
-// CSS Tower Defense - Map & Environment Styles
-// Enhanced with Atmospheric Effects
-// Inspired by css-space-shooter techniques
+// CSS Tower Defense - Map & Environment
+// THEME: POP-ART / CEL-SHADED
 // ===========================================
 
-// Star colors for variety
-@star-white: white;
-@star-warm: #ffdad0;
-@star-pink: #ffd6e7;
-@star-blue: #bbc3ff;
-@star-yellow: #f1ffad;
-@star-orange: #ffd2a3;
-@star-cyan: #b0ffff;
-@star-green: #dbffeb;
-
-// 3D Scene Container with Enhanced Starry Background
+// 3D Scene Container
 .scene {
     position: fixed;
     top: 0;
@@ -23,473 +12,424 @@
     height: 100%;
     perspective: @perspective;
     overflow: hidden;
-    // Deep space gradient with nebula hints
-    background: 
-        radial-gradient(ellipse at 20% 80%, rgba(100, 50, 150, 0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(50, 100, 150, 0.12) 0%, transparent 45%),
-        radial-gradient(ellipse at 60% 60%, rgba(150, 50, 100, 0.08) 0%, transparent 55%),
-        linear-gradient(180deg, 
-            #050510 0%,
-            #0a0a1a 20%,
-            #0f1629 45%,
-            #162447 70%,
-            #1f4068 100%);
-}
+    background: @color-bg;
+    .halftone-bg(fade(@color-black, 5%), 2px);
 
-// Box-shadow starfield - Layer 1 (Bright stars, slow drift)
-.stars-layer-1 {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 2px;
-    height: 2px;
-    border-radius: 50%;
-    background: @star-white;
-    pointer-events: none;
-    animation: stars-drift-1 80s linear infinite;
-    box-shadow:
-        // Scattered bright stars across the viewport
-        5vw 10vh @star-white,
-        12vw -15vh @star-warm,
-        18vw 25vh @star-blue,
-        25vw -8vh @star-white,
-        32vw 35vh @star-pink,
-        38vw -22vh @star-cyan,
-        45vw 18vh @star-white,
-        52vw -30vh @star-yellow,
-        58vw 42vh @star-orange,
-        65vw -5vh @star-white,
-        72vw 28vh @star-blue,
-        78vw -18vh @star-green,
-        85vw 8vh @star-white,
-        92vw -35vh @star-pink,
-        -5vw 15vh @star-cyan,
-        -12vw -20vh @star-white,
-        -18vw 38vh @star-warm,
-        -25vw -12vh @star-blue,
-        -32vw 22vh @star-white,
-        -38vw -28vh @star-yellow,
-        -45vw 45vh @star-pink,
-        -52vw -8vh @star-white,
-        8vw 48vh @star-orange,
-        22vw -42vh @star-white,
-        35vw 5vh @star-cyan,
-        48vw -48vh @star-blue,
-        62vw 32vh @star-white,
-        75vw -38vh @star-warm,
-        88vw 15vh @star-green;
-}
-
-// Box-shadow starfield - Layer 2 (Medium stars, medium drift)
-.stars-layer-2 {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 1px;
-    height: 1px;
-    border-radius: 50%;
-    background: @star-white;
-    pointer-events: none;
-    animation: stars-drift-2 120s linear infinite reverse;
-    box-shadow:
-        3vw 8vh @star-white,
-        10vw -12vh @star-pink,
-        17vw 32vh @star-white,
-        24vw -25vh @star-blue,
-        31vw 15vh @star-warm,
-        38vw -38vh @star-white,
-        45vw 28vh @star-cyan,
-        52vw -5vh @star-yellow,
-        59vw 42vh @star-white,
-        66vw -32vh @star-green,
-        73vw 10vh @star-pink,
-        80vw -20vh @star-white,
-        87vw 35vh @star-orange,
-        94vw -45vh @star-blue,
-        -3vw 20vh @star-white,
-        -10vw -8vh @star-warm,
-        -17vw 45vh @star-cyan,
-        -24vw -15vh @star-white,
-        -31vw 25vh @star-pink,
-        -38vw -35vh @star-blue,
-        -45vw 12vh @star-white,
-        15vw 50vh @star-yellow,
-        28vw -50vh @star-white,
-        42vw 2vh @star-green,
-        55vw -42vh @star-warm,
-        68vw 38vh @star-white,
-        82vw -28vh @star-cyan;
-}
-
-// Box-shadow starfield - Layer 3 (Dim stars, fast twinkle)
-.stars-layer-3 {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 1px;
-    height: 1px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.6);
-    pointer-events: none;
-    animation: stars-twinkle 4s ease-in-out infinite alternate;
-    box-shadow:
-        2vw 5vh rgba(255, 255, 255, 0.5),
-        8vw -10vh rgba(255, 220, 200, 0.4),
-        14vw 20vh rgba(255, 255, 255, 0.6),
-        20vw -18vh rgba(200, 220, 255, 0.5),
-        26vw 30vh rgba(255, 255, 255, 0.4),
-        32vw -28vh rgba(255, 200, 220, 0.5),
-        38vw 12vh rgba(255, 255, 255, 0.6),
-        44vw -40vh rgba(220, 255, 220, 0.4),
-        50vw 38vh rgba(255, 255, 255, 0.5),
-        56vw -15vh rgba(200, 255, 255, 0.4),
-        62vw 25vh rgba(255, 255, 255, 0.6),
-        68vw -35vh rgba(255, 240, 200, 0.5),
-        74vw 8vh rgba(255, 255, 255, 0.4),
-        80vw -22vh rgba(220, 200, 255, 0.5),
-        86vw 45vh rgba(255, 255, 255, 0.6),
-        92vw -48vh rgba(255, 255, 255, 0.4),
-        -4vw 18vh rgba(255, 220, 220, 0.5),
-        -10vw -30vh rgba(255, 255, 255, 0.4),
-        -16vw 40vh rgba(200, 220, 255, 0.6),
-        -22vw -5vh rgba(255, 255, 255, 0.5),
-        -28vw 28vh rgba(220, 255, 200, 0.4),
-        -34vw -42vh rgba(255, 255, 255, 0.6);
-}
-
-// Star drift animations
-@keyframes stars-drift-1 {
-    0% { transform: translateX(0) translateY(0); }
-    25% { transform: translateX(15px) translateY(-10px); }
-    50% { transform: translateX(5px) translateY(15px); }
-    75% { transform: translateX(-10px) translateY(5px); }
-    100% { transform: translateX(0) translateY(0); }
-}
-
-@keyframes stars-drift-2 {
-    0% { transform: translateX(0) translateY(0) rotate(0deg); }
-    100% { transform: translateX(-20px) translateY(20px) rotate(10deg); }
-}
-
-@keyframes stars-twinkle {
-    0% { opacity: 0.4; }
-    50% { opacity: 0.9; }
-    100% { opacity: 0.5; }
-}
-
-// Enhanced Planet/Moon with dramatic glow (inspired by space-shooter)
-.moon {
-    position: absolute;
-    top: 3%;
-    right: 8%;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%,
-        #e8e8f0 0%,
-        #c0c0d0 30%,
-        #808090 60%,
-        #404050 100%);
-    pointer-events: none;
-    z-index: 1;
-    animation: planet-float 60s ease-in-out infinite alternate;
-    // Multi-layer glow effect like space-shooter
-    box-shadow:
-        // Inner shadow for depth
-        inset -15px -15px 30px rgba(0, 0, 0, 0.5),
-        inset 5px 5px 15px rgba(255, 255, 255, 0.1),
-        // Outer glow layers
-        0 0 30px rgba(255, 255, 255, 0.3),
-        0 0 60px rgba(200, 200, 255, 0.2),
-        0 0 100px rgba(150, 150, 200, 0.15),
-        // Colored rim lights
-        -5px 0 40px rgba(100, 150, 255, 0.2),
-        5px 0 40px rgba(255, 150, 200, 0.15);
-    
-    // Crater texture
+    // Background Radial Burst (Comic style)
     &::before {
         content: '';
         position: absolute;
-        top: 20%;
-        left: 25%;
-        width: 15px;
-        height: 15px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 30% 30%,
-            rgba(150, 150, 160, 0.6) 0%,
-            rgba(80, 80, 90, 0.4) 100%);
-        box-shadow:
-            25px 15px 0 8px rgba(120, 120, 130, 0.3),
-            -5px 35px 0 5px rgba(100, 100, 110, 0.4),
-            40px 40px 0 4px rgba(130, 130, 140, 0.25);
-    }
-    
-    // Atmospheric halo
-    &::after {
-        content: '';
-        position: absolute;
-        top: -20px;
-        left: -20px;
-        right: -20px;
-        bottom: -20px;
-        border-radius: 50%;
-        background: radial-gradient(circle,
-            transparent 50%,
-            rgba(100, 150, 255, 0.05) 70%,
-            rgba(150, 100, 200, 0.08) 85%,
-            transparent 100%);
-        animation: halo-pulse 8s ease-in-out infinite alternate;
-    }
-}
-
-@keyframes planet-float {
-    0% { transform: translateY(0) translateZ(0); }
-    50% { transform: translateY(-15px) translateZ(50px); }
-    100% { transform: translateY(10px) translateZ(-30px); }
-}
-
-@keyframes halo-pulse {
-    0% { opacity: 0.6; transform: scale(1); }
-    100% { opacity: 1; transform: scale(1.1); }
-}
-
-// Shooting star effect (occasional)
-.shooting-star {
-    position: absolute;
-    top: 15%;
-    left: -5%;
-    width: 100px;
-    height: 2px;
-    background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.1) 20%,
-        rgba(255, 255, 255, 0.8) 80%,
-        white 100%);
-    border-radius: 50%;
-    transform: rotate(-25deg);
-    opacity: 0;
-    pointer-events: none;
-    animation: shooting-star 12s linear infinite;
-    animation-delay: 5s;
-    
-    &::after {
-        content: '';
-        position: absolute;
-        right: 0;
         top: 50%;
-        width: 6px;
-        height: 6px;
-        background: white;
-        border-radius: 50%;
-        transform: translateY(-50%);
-        box-shadow: 0 0 10px white, 0 0 20px rgba(200, 220, 255, 0.8);
+        left: 50%;
+        width: 200vmax;
+        height: 200vmax;
+        background: repeating-conic-gradient(from 0deg,
+                @color-white 0deg 10deg,
+                transparent 10deg 20deg);
+        transform: translate(-50%, -50%);
+        z-index: -2;
+        opacity: 0.1;
+        animation: spin-slow 60s linear infinite;
+    }
+
+    transition: background-color 2s ease;
+
+    // DAY STATE
+    &.day {
+        background-color: @color-bg; // Sky Blue
+    }
+
+    // NIGHT STATE
+    &.night {
+        background-color: darken(@color-blue, 30%); // Deep Blue
+
+        &::before {
+            opacity: 0.05;
+        }
+
+        // Dim burst at night
     }
 }
 
-@keyframes shooting-star {
-    0% { 
-        transform: translateX(0) translateY(0) rotate(-25deg);
-        opacity: 0;
-    }
-    2% { opacity: 1; }
-    15% { 
-        transform: translateX(120vw) translateY(40vh) rotate(-25deg);
-        opacity: 0;
-    }
-    100% { opacity: 0; }
-}
-
-// Map Container (3D transformed)
-.map {
+// SKY CYCLE (Sun/Moon Rotation)
+.sky-cycle {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: (@cell-size * @grid-cols);
-    height: (@cell-size * @grid-rows);
-    transform: translate(-50%, -40%) rotateX(@map-rotation);
-    .preserve-3d();
-    background: @color-grass;
-    border-radius: 12px;
-    border: 3px solid darken(@color-grass, 10%);
-    box-shadow: 
-        0 60px 120px rgba(0, 0, 0, 0.6),
-        0 0 50px rgba(0, 0, 0, 0.3),
-        inset 0 0 60px rgba(0, 0, 0, 0.3);
+    width: 80%;
+    height: 80%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: -1;
 }
 
-// Grid Cell with Enhanced Textures
+.sky-body-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    // Rotation handled by JS
+}
+
+.sun {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    background: @color-yellow;
+    border-radius: 50%;
+    .comic-border(4px);
+    .pop-shadow(10px, 10px, orange);
+    transform: translateX(-50%);
+
+    // Sun rays
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 140%;
+        height: 140%;
+        background: repeating-conic-gradient(from 0deg,
+                orange 0deg 10deg,
+                transparent 10deg 20deg);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+        animation: spin 10s linear infinite;
+    }
+}
+
+.moon-comic {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    background: @color-white;
+    border-radius: 50%;
+    .comic-border(3px);
+    .pop-shadow(8px, 8px, gray);
+    transform: translateX(-50%) rotate(180deg); // Upside down initially relative to container
+
+    // Craters
+    &::before {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        width: 10px;
+        height: 10px;
+        background: #e0e0e0;
+        border-radius: 50%;
+        box-shadow: 20px 10px 0 #e0e0e0;
+    }
+}
+
+// WEATHER SYSTEMS
+.weather-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50;
+    overflow: hidden;
+}
+
+// RAIN
+.rain-container {
+    width: 100%;
+    height: 100%;
+
+    &.hidden {
+        display: none;
+    }
+}
+
+.rain-drop {
+    position: absolute;
+    top: -10%;
+    width: 2px;
+    height: 30px;
+    background: @color-blue;
+    opacity: 0.8;
+    animation: rain-fall linear infinite;
+}
+
+@keyframes rain-fall {
+    to {
+        transform: translateY(110vh);
+    }
+}
+
+// Scene reacts to rain
+.scene.weather-rain {
+    filter: saturate(0.8) brightness(0.9);
+}
+
+// SNOW
+.snow-container {
+    width: 100%;
+    height: 100%;
+
+    &.hidden {
+        display: none;
+    }
+}
+
+.snow-flake {
+    position: absolute;
+    top: -5%;
+    width: 6px;
+    height: 6px;
+    background: @color-white;
+    border-radius: 50%;
+    .comic-border(1px);
+    animation: snow-fall linear infinite;
+}
+
+@keyframes snow-fall {
+    to {
+        transform: translateY(110vh) translateX(20px);
+    }
+}
+
+// Scene reacts to snow
+.scene.weather-snow {
+    filter: brightness(1.1);
+}
+
+// WIND
+.wind-container {
+    width: 100%;
+    height: 100%;
+
+    &.hidden {
+        display: none;
+    }
+}
+
+.wind-line {
+    position: absolute;
+    left: -10%;
+    width: 100px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.5);
+    animation: wind-blow linear infinite;
+
+    &::before {
+        content: '〰'; // Wavy line char
+        position: absolute;
+        right: 0;
+        top: -10px;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 20px;
+    }
+}
+
+@keyframes wind-blow {
+    to {
+        transform: translateX(120vw);
+    }
+}
+
+// Map Container
+.map {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    width: (@cell-size * @grid-cols);
+    height: (@cell-size * @grid-rows);
+    transform: translate(-50%, -50%) rotateX(@map-rotation);
+    .preserve-3d();
+    background: @color-black; // Gaps are black lines
+    .comic-border(4px);
+    .pop-shadow(15px, 15px, rgba(0, 0, 0, 0.3));
+
+    // Paper stack effect
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: @color-white;
+        transform: translate(10px, 10px);
+        z-index: -1;
+        .comic-border(4px);
+    }
+}
+
+// Grid Cell
 .cell {
     position: absolute;
     width: @cell-size;
     height: @cell-size;
-    border: 1px solid rgba(255, 255, 255, 0.08);
     box-sizing: border-box;
-    transition: all @transition-fast ease;
+    transition: all 0.2s;
     .preserve-3d();
-    
+    // Inset border for grid lines
+    border: 1px solid @color-black;
+
     &.grass {
-        background: linear-gradient(135deg, 
-            @color-grass-light 0%,
-            @color-grass 30%,
-            darken(@color-grass, 5%) 70%,
-            @color-grass-dark 100%);
-        
-        // Grass texture pattern
-        &::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(100, 200, 100, 0.15) 0%, transparent 30%),
-                radial-gradient(circle at 70% 60%, rgba(50, 100, 50, 0.1) 0%, transparent 25%),
-                radial-gradient(circle at 40% 80%, rgba(80, 150, 80, 0.12) 0%, transparent 20%);
-            pointer-events: none;
-        }
-        
-        // Alternating pattern for visual variety
-        &:nth-child(even) {
-            background: linear-gradient(135deg, 
-                lighten(@color-grass, 5%) 0%,
-                @color-grass-light 30%,
-                @color-grass 70%,
-                darken(@color-grass, 3%) 100%);
-        }
+        background: @color-grass;
+
+        // Polka dot grass texture
+        background-image: radial-gradient(@color-grass-light 20%, transparent 20%);
+        background-size: 10px 10px;
     }
-    
+
     &.path {
-        background: linear-gradient(135deg, 
-            @color-path-light 0%,
-            @color-path 40%,
-            @color-path-dark 100%);
-        border-color: @color-path-dark;
-        
-        // Cobblestone texture
-        &::before {
-            content: '';
-            position: absolute;
-            top: 5%;
-            left: 5%;
-            right: 5%;
-            bottom: 5%;
-            background-image:
-                radial-gradient(ellipse at 15% 20%, rgba(0, 0, 0, 0.12) 0%, transparent 40%),
-                radial-gradient(ellipse at 55% 35%, rgba(0, 0, 0, 0.1) 0%, transparent 35%),
-                radial-gradient(ellipse at 80% 70%, rgba(0, 0, 0, 0.12) 0%, transparent 30%),
-                radial-gradient(ellipse at 30% 80%, rgba(0, 0, 0, 0.08) 0%, transparent 35%),
-                radial-gradient(ellipse at 70% 15%, rgba(255, 255, 255, 0.05) 0%, transparent 30%);
-            pointer-events: none;
-        }
-        
-        // Path direction markers
-        &::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 6px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-        }
+        background: @color-path;
+        border: 2px solid @color-black; // Thicker path outline
+
+        // Striped road pattern
+        background-image: repeating-linear-gradient(45deg,
+                translate(transparent, 10px),
+                transparent 10px,
+                fade(@color-white, 30%) 10px,
+                fade(@color-white, 30%) 20px);
     }
-    
+
     &.buildable {
         cursor: pointer;
-        
+
         &:hover {
-            background: linear-gradient(135deg,
-                lighten(@color-grass-light, 10%) 0%,
-                lighten(@color-grass, 8%) 50%,
-                @color-grass-light 100%);
-            transform: translateZ(8px);
-            box-shadow: 
-                0 8px 20px rgba(0, 0, 0, 0.3),
-                inset 0 0 20px rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateZ(10px);
+            background: @color-cyan;
+            .comic-border(2px);
+            box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.2);
+            z-index: 10;
         }
-        
+
         &.valid-placement {
-            background: linear-gradient(135deg,
-                rgba(100, 255, 100, 0.4) 0%,
-                @color-grid-valid 100%);
-            box-shadow: 
-                0 0 15px rgba(100, 255, 100, 0.4),
-                inset 0 0 10px rgba(100, 255, 100, 0.3);
+            background: @color-success;
+
+            &::after {
+                content: 'OK!';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-family: @font-comic;
+                font-weight: bold;
+                color: @color-white;
+                .text-outline();
+            }
         }
-        
+
         &.invalid-placement {
-            background: linear-gradient(135deg,
-                rgba(255, 100, 100, 0.4) 0%,
-                @color-grid-invalid 100%);
-            box-shadow: 
-                0 0 15px rgba(255, 100, 100, 0.4),
-                inset 0 0 10px rgba(255, 100, 100, 0.3);
+            background: @color-danger;
+
+            &::after {
+                content: 'NO!';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-family: @font-comic;
+                font-weight: bold;
+                color: @color-white;
+                .text-outline();
+            }
         }
     }
-    
-    &.occupied {
-        cursor: default;
-        
-        &:hover {
-            transform: none;
-        }
-    }
-    
+
     &.start {
-        background: linear-gradient(135deg, 
-            darken(@color-path, 5%) 0%, 
-            @color-path-dark 50%,
-            darken(@color-path-dark, 10%) 100%);
-        
+        background: @color-blue;
+
         &::after {
-            content: '▶';
+            content: 'START';
+            font-family: @font-title;
+            color: @color-white;
+            .text-outline();
+            font-size: 0.8rem;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 22px;
-            color: @color-success;
-            text-shadow: 0 0 10px @color-success;
-            animation: pulse-glow 2s ease-in-out infinite;
         }
     }
-    
+
     &.end {
-        background: linear-gradient(135deg, 
-            lighten(@color-danger, 10%) 0%,
-            @color-danger 50%, 
-            darken(@color-danger, 25%) 100%);
-        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
-        
+        background: @color-danger;
+
         &::after {
-            content: '🏰';
+            content: 'END';
+            font-family: @font-title;
+            color: @color-white;
+            .text-outline();
+            font-size: 0.8rem;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 28px;
-            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
-            animation: castle-glow 3s ease-in-out infinite;
         }
     }
 }
 
-@keyframes pulse-glow {
-    0%, 100% { text-shadow: 0 0 10px @color-success; }
-    50% { text-shadow: 0 0 20px @color-success, 0 0 30px @color-success; }
+// Range indicator (Dotted Circle)
+.range-indicator {
+    position: absolute;
+    border-radius: 50%;
+    border: 3px dashed @color-black;
+    background: fade(@color-cyan, 30%);
+    pointer-events: none;
+    transform: rotateX(-@map-rotation); // Flat against screen usually better for 2D look
+    animation: rotate-range 4s linear infinite;
 }
 
-@keyframes castle-glow {
-    0%, 100% { filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); }
-    50% { filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8)); }
+@keyframes rotate-range {
+    from {
+        transform: rotateX(-@map-rotation) rotate(0deg);
+    }
+
+    to {
+        transform: rotateX(-@map-rotation) rotate(360deg);
+    }
+}
+
+// Particle Overrides
+.particles {
+    display: none;
+}
+
+// Remove old particles
+
+// New Comic Particles (Squares/Stars)
+.comic-particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: @color-black;
+    animation: comic-float 2s infinite;
+}
+
+@keyframes comic-float {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(20deg);
+    }
+
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+}
+
+.ground-shadow {
+    display: none; // Flat style doesn't need smooth shadow
 }
 
 // Container layers (inside map, above cells)
-.enemies, .towers, .projectiles {
+.enemies,
+.towers,
+.projectiles {
     position: absolute;
     top: 0;
     left: 0;
@@ -498,503 +438,4 @@
     .preserve-3d();
     pointer-events: none;
     z-index: 10;
-}
-
-// Range indicator with glow
-.range-indicator {
-    position: absolute;
-    border-radius: 50%;
-    border: 3px dashed rgba(255, 215, 0, 0.5);
-    background: radial-gradient(circle, 
-        rgba(255, 215, 0, 0.1) 0%, 
-        rgba(255, 215, 0, 0.05) 50%,
-        transparent 70%);
-    pointer-events: none;
-    transform: rotateX(-@map-rotation);
-    animation: range-pulse 2s ease-in-out infinite;
-}
-
-@keyframes range-pulse {
-    0%, 100% { 
-        border-color: rgba(255, 215, 0, 0.5);
-        box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-    }
-    50% { 
-        border-color: rgba(255, 215, 0, 0.8);
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-    }
-}
-
-// Environment Decorations
-.environment {
-    position: absolute;
-    .preserve-3d();
-    pointer-events: none;
-    z-index: 5;
-}
-
-// ===========================================
-// Enhanced Floating Particle System
-// Using efficient box-shadow technique
-// ===========================================
-.particles {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: 20;
-}
-
-// Primary ambient particles - golden sparkles
-.ambient-particles-1 {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 2px;
-    height: 2px;
-    background: transparent;
-    pointer-events: none;
-    animation: ambientFloat1 12s ease-in-out infinite;
-    box-shadow:
-        // Golden/warm sparkles
-        60px -40px rgba(255, 220, 100, 0.7),
-        -80px -60px rgba(255, 200, 80, 0.5),
-        120px -30px rgba(255, 215, 0, 0.6),
-        -40px -80px rgba(255, 230, 120, 0.4),
-        180px -50px rgba(255, 200, 100, 0.5),
-        -120px -20px rgba(255, 220, 80, 0.6),
-        90px -70px rgba(255, 215, 0, 0.4),
-        -160px -40px rgba(255, 200, 120, 0.5);
-}
-
-// Secondary ambient particles - cool sparkles
-.ambient-particles-2 {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 1px;
-    height: 1px;
-    background: transparent;
-    pointer-events: none;
-    animation: ambientFloat2 15s ease-in-out infinite reverse;
-    box-shadow:
-        // Cyan/cool sparkles
-        70px -50px rgba(100, 200, 255, 0.5),
-        -90px -30px rgba(150, 220, 255, 0.4),
-        140px -70px rgba(100, 180, 255, 0.6),
-        -60px -90px rgba(120, 200, 255, 0.3),
-        200px -40px rgba(100, 220, 255, 0.5),
-        -140px -60px rgba(150, 200, 255, 0.4),
-        110px -20px rgba(100, 200, 255, 0.5),
-        -180px -80px rgba(120, 220, 255, 0.3);
-}
-
-// Tertiary ambient particles - magic/purple
-.ambient-particles-3 {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 1px;
-    height: 1px;
-    background: transparent;
-    pointer-events: none;
-    animation: ambientFloat3 18s ease-in-out infinite;
-    box-shadow:
-        // Purple/magic sparkles
-        80px -60px rgba(200, 100, 255, 0.4),
-        -100px -40px rgba(180, 80, 255, 0.3),
-        160px -80px rgba(220, 120, 255, 0.5),
-        -70px -100px rgba(200, 100, 255, 0.3),
-        220px -30px rgba(180, 100, 255, 0.4),
-        -150px -70px rgba(200, 80, 255, 0.3);
-}
-
-// Emoji sparkle particles (complement box-shadow particles)
-.sparkle-particles {
-    position: absolute;
-    top: 20%;
-    left: 30%;
-    pointer-events: none;
-    
-    &::before {
-        content: '✦';
-        position: absolute;
-        font-size: 10px;
-        color: rgba(255, 220, 100, 0.7);
-        animation: sparkleFloat 8s ease-in-out infinite;
-        text-shadow: 0 0 10px rgba(255, 200, 0, 0.5);
-    }
-    
-    &::after {
-        content: '✧';
-        position: absolute;
-        top: 150px;
-        left: 200px;
-        font-size: 8px;
-        color: rgba(150, 220, 255, 0.6);
-        animation: sparkleFloat 10s ease-in-out infinite 3s;
-        text-shadow: 0 0 8px rgba(100, 200, 255, 0.4);
-    }
-}
-
-// Additional sparkles
-.sparkle-particles-2 {
-    position: absolute;
-    top: 60%;
-    left: 70%;
-    pointer-events: none;
-    
-    &::before {
-        content: '✧';
-        position: absolute;
-        font-size: 7px;
-        color: rgba(200, 150, 255, 0.5);
-        animation: sparkleFloat 12s ease-in-out infinite 1s;
-        text-shadow: 0 0 6px rgba(180, 100, 255, 0.3);
-    }
-    
-    &::after {
-        content: '✦';
-        position: absolute;
-        top: -100px;
-        left: -80px;
-        font-size: 9px;
-        color: rgba(255, 200, 100, 0.6);
-        animation: sparkleFloat 9s ease-in-out infinite 5s;
-        text-shadow: 0 0 8px rgba(255, 180, 0, 0.4);
-    }
-}
-
-// Ambient particle animations
-@keyframes ambientFloat1 {
-    0%, 100% { 
-        transform: translate(0, 0) rotate(0deg);
-        opacity: 0.6;
-    }
-    25% { 
-        transform: translate(20px, -30px) rotate(90deg);
-        opacity: 0.9;
-    }
-    50% { 
-        transform: translate(-10px, -50px) rotate(180deg);
-        opacity: 0.5;
-    }
-    75% { 
-        transform: translate(15px, -20px) rotate(270deg);
-        opacity: 0.8;
-    }
-}
-
-@keyframes ambientFloat2 {
-    0%, 100% { 
-        transform: translate(0, 0) scale(1);
-        opacity: 0.5;
-    }
-    33% { 
-        transform: translate(-25px, -40px) scale(1.2);
-        opacity: 0.8;
-    }
-    66% { 
-        transform: translate(10px, -60px) scale(0.8);
-        opacity: 0.4;
-    }
-}
-
-@keyframes ambientFloat3 {
-    0%, 100% { 
-        transform: translate(0, 0);
-        opacity: 0.4;
-    }
-    50% { 
-        transform: translate(-15px, -45px);
-        opacity: 0.7;
-    }
-}
-
-@keyframes sparkleFloat {
-    0%, 100% { 
-        transform: translateY(0) rotate(0deg);
-        opacity: 0.6;
-    }
-    25% { 
-        transform: translateY(-20px) rotate(90deg);
-        opacity: 1;
-    }
-    50% { 
-        transform: translateY(-35px) rotate(180deg);
-        opacity: 0.4;
-    }
-    75% { 
-        transform: translateY(-15px) rotate(270deg);
-        opacity: 0.8;
-    }
-}
-
-// Ground shadow under the map
-.ground-shadow {
-    position: absolute;
-    bottom: -30px;
-    left: 50%;
-    width: 130%;
-    height: 60px;
-    background: radial-gradient(ellipse, 
-        rgba(0, 0, 0, 0.5) 0%, 
-        rgba(0, 0, 0, 0.2) 40%,
-        transparent 70%);
-    transform: translateX(-50%) rotateX(90deg);
-    z-index: -1;
-}
-
-// ===========================================
-// Weather & Environmental Effects
-// ===========================================
-
-// Weather container
-.weather-effects {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: 15;
-}
-
-// Floating dust particles (box-shadow technique)
-.dust-particles {
-    position: absolute;
-    top: 30%;
-    left: 50%;
-    width: 2px;
-    height: 2px;
-    background: transparent;
-    animation: dustDrift 20s linear infinite;
-    box-shadow:
-        // Layer 1 - warm dust
-        50px 20px rgba(255, 220, 180, 0.3),
-        -80px 50px rgba(255, 200, 150, 0.25),
-        120px -30px rgba(255, 230, 190, 0.35),
-        -40px 80px rgba(255, 210, 160, 0.3),
-        180px 60px rgba(255, 220, 170, 0.25),
-        -150px -20px rgba(255, 200, 140, 0.3),
-        90px 100px rgba(255, 230, 180, 0.35),
-        -100px 40px rgba(255, 210, 150, 0.25),
-        // Layer 2 - larger particles
-        30px -60px rgba(255, 240, 200, 0.4),
-        -60px 90px rgba(255, 220, 180, 0.3),
-        140px 10px rgba(255, 230, 170, 0.35),
-        -120px -50px rgba(255, 200, 160, 0.3);
-}
-
-@keyframes dustDrift {
-    0% {
-        transform: translate(0, 0) rotate(0deg);
-    }
-    25% {
-        transform: translate(30px, -20px) rotate(90deg);
-    }
-    50% {
-        transform: translate(-10px, 40px) rotate(180deg);
-    }
-    75% {
-        transform: translate(20px, 10px) rotate(270deg);
-    }
-    100% {
-        transform: translate(0, 0) rotate(360deg);
-    }
-}
-
-// Floating leaf particles
-.leaf-particles {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    
-    .leaf {
-        position: absolute;
-        font-size: 12px;
-        opacity: 0.6;
-        animation: leafFall 15s ease-in-out infinite;
-        
-        &.leaf-1 {
-            left: 10%;
-            animation-delay: 0s;
-            color: rgba(100, 180, 80, 0.7);
-            &::before { content: '🍃'; }
-        }
-        
-        &.leaf-2 {
-            left: 30%;
-            animation-delay: 3s;
-            font-size: 10px;
-            color: rgba(120, 160, 60, 0.6);
-            &::before { content: '🍂'; }
-        }
-        
-        &.leaf-3 {
-            left: 55%;
-            animation-delay: 7s;
-            font-size: 14px;
-            color: rgba(80, 150, 70, 0.7);
-            &::before { content: '🍃'; }
-        }
-        
-        &.leaf-4 {
-            left: 75%;
-            animation-delay: 10s;
-            font-size: 11px;
-            color: rgba(110, 170, 75, 0.6);
-            &::before { content: '🍂'; }
-        }
-        
-        &.leaf-5 {
-            left: 90%;
-            animation-delay: 5s;
-            font-size: 9px;
-            color: rgba(90, 160, 65, 0.65);
-            &::before { content: '🍃'; }
-        }
-    }
-}
-
-@keyframes leafFall {
-    0% {
-        top: -5%;
-        transform: translateX(0) rotate(0deg);
-        opacity: 0;
-    }
-    10% {
-        opacity: 0.6;
-    }
-    25% {
-        transform: translateX(30px) rotate(90deg);
-    }
-    50% {
-        transform: translateX(-20px) rotate(180deg);
-    }
-    75% {
-        transform: translateX(25px) rotate(270deg);
-    }
-    90% {
-        opacity: 0.5;
-    }
-    100% {
-        top: 105%;
-        transform: translateX(10px) rotate(360deg);
-        opacity: 0;
-    }
-}
-
-// Firefly/magical sparkle particles (over the map)
-.firefly-particles {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 3px;
-    height: 3px;
-    background: transparent;
-    animation: fireflyGlow 8s ease-in-out infinite;
-    box-shadow:
-        // Warm golden fireflies
-        80px -40px rgba(255, 220, 100, 0.8),
-        -60px 30px rgba(255, 200, 80, 0.7),
-        40px 60px rgba(255, 230, 120, 0.75),
-        -100px -20px rgba(255, 210, 90, 0.8),
-        120px 50px rgba(255, 240, 140, 0.7),
-        // Cool magical particles
-        -30px 80px rgba(150, 220, 255, 0.6),
-        70px -70px rgba(180, 200, 255, 0.55),
-        -90px 60px rgba(160, 230, 255, 0.65);
-}
-
-@keyframes fireflyGlow {
-    0%, 100% {
-        transform: translate(0, 0);
-        opacity: 0.4;
-    }
-    25% {
-        transform: translate(15px, -20px);
-        opacity: 0.9;
-    }
-    50% {
-        transform: translate(-10px, 10px);
-        opacity: 0.5;
-    }
-    75% {
-        transform: translate(20px, 15px);
-        opacity: 0.85;
-    }
-}
-
-// Fog/mist layer (subtle atmosphere)
-.fog-layer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 40%;
-    background: linear-gradient(180deg,
-        transparent 0%,
-        rgba(100, 120, 150, 0.03) 30%,
-        rgba(80, 100, 130, 0.06) 60%,
-        rgba(60, 80, 110, 0.08) 100%);
-    animation: fogDrift 30s ease-in-out infinite;
-    pointer-events: none;
-}
-
-@keyframes fogDrift {
-    0%, 100% {
-        transform: translateX(0) scaleX(1);
-        opacity: 0.5;
-    }
-    50% {
-        transform: translateX(20px) scaleX(1.05);
-        opacity: 0.7;
-    }
-}
-
-// Light rays/god rays effect (subtle)
-.light-rays {
-    position: absolute;
-    top: 0;
-    right: 15%;
-    width: 200px;
-    height: 100%;
-    background: linear-gradient(180deg,
-        rgba(255, 255, 200, 0.05) 0%,
-        rgba(255, 255, 180, 0.08) 20%,
-        rgba(255, 255, 200, 0.03) 50%,
-        transparent 100%);
-    transform: skewX(-15deg);
-    animation: lightRayPulse 15s ease-in-out infinite;
-    pointer-events: none;
-    
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -80px;
-        width: 60px;
-        height: 100%;
-        background: linear-gradient(180deg,
-            rgba(255, 255, 220, 0.03) 0%,
-            rgba(255, 255, 200, 0.05) 30%,
-            transparent 70%);
-        transform: skewX(5deg);
-    }
-}
-
-@keyframes lightRayPulse {
-    0%, 100% {
-        opacity: 0.3;
-    }
-    50% {
-        opacity: 0.6;
-    }
 }

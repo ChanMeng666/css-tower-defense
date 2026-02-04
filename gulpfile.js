@@ -13,6 +13,9 @@ const rename = require('gulp-rename');
 // Script files in order
 const scriptFiles = [
     './scripts/path.js',
+    './scripts/weather.js', // Add Weather System
+    './scripts/seasons.js', // Add Seasonal System
+    './scripts/progression.js', // Add Progression System
     './scripts/enemy.js',
     './scripts/tower.js',
     './scripts/projectile.js',
@@ -76,9 +79,9 @@ function buildProd() {
     ], { read: false });
 
     return gulp.src('index.src.html')
-        .pipe(inject(sources, { 
+        .pipe(inject(sources, {
             addRootSlash: false,
-            transform: function(filepath) {
+            transform: function (filepath) {
                 if (filepath.endsWith('.js')) {
                     return '<script src="assets/script.js"></script>';
                 }

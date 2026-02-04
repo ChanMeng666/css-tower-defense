@@ -1,97 +1,121 @@
 // ===========================================
 // CSS Tower Defense - Variables & Mixins
-// Enhanced Visual Design
+// THEME: POP-ART / CEL-SHADED
 // ===========================================
 
 // Grid Configuration
 @grid-cols: 12;
 @grid-rows: 8;
 @cell-size: 60px;
-@scale: 1vw;
+@map-rotation: 45deg; // Flatter angle for comic look
+@perspective: 1200px;
 
-// Colors - Game Theme (Neon Style inspired by css-space-shooter)
-@color-grass: #2d5a27;
-@color-grass-light: #3d7a37;
-@color-grass-dark: #1d3a17;
-@color-path: #5d4037;
-@color-path-dark: #3e2723;
-@color-path-light: #795548;
-@color-grid-hover: rgba(255, 255, 255, 0.3);
-@color-grid-valid: rgba(76, 175, 80, 0.5);
-@color-grid-invalid: rgba(244, 67, 54, 0.5);
+// ===========================================
+// CSS VARIABLES (Dynamic Theming)
+// ===========================================
+:root {
+    // SEASONAL THEME COLORS (Changeable)
+    --color-bg: #87CEEB; // Sky blue default
 
-// Colors - UI (Vibrant)
-@color-primary: #00d4ff;
-@color-secondary: #ff6b00;
-@color-danger: #ff2e53;
-@color-success: #00ff88;
-@color-gold: #ffd700;
-@color-dark: #0a0a1a;
-@color-darker: #050510;
+    --color-grass: #aaff00;
+    --color-grass-light: #ccff66;
+    --color-grass-dark: #88cc00;
 
-// Colors - Towers (Neon Glow)
-@color-tower-arrow: #ff8c00;
-@color-tower-arrow-glow: rgba(255, 140, 0, 0.6);
-@color-tower-cannon: #8b8b8b;
-@color-tower-cannon-glow: rgba(255, 100, 50, 0.6);
-@color-tower-ice: #00e5ff;
-@color-tower-ice-glow: rgba(0, 229, 255, 0.6);
-@color-tower-magic: #e040fb;
-@color-tower-magic-glow: rgba(224, 64, 251, 0.6);
+    --color-path: #ffcc00;
+    --color-path-light: #ffff66;
+    --color-path-dark: #cca300;
+}
 
-// Colors - Enemies (Vibrant with Glow)
-@color-enemy-slime: #76ff03;
-@color-enemy-slime-glow: rgba(118, 255, 3, 0.5);
-@color-enemy-goblin: #ff5722;
-@color-enemy-goblin-glow: rgba(255, 87, 34, 0.5);
-@color-enemy-knight: #448aff;
-@color-enemy-knight-glow: rgba(68, 138, 255, 0.5);
-@color-enemy-boss: #ea80fc;
-@color-enemy-boss-glow: rgba(234, 128, 252, 0.5);
+// ===========================================
+// STATIC PALETTE (HEX for LESS functions)
+// ===========================================
+@color-cyan: #00ffff;
+@color-magenta: #ff00ff;
+@color-yellow: #ffff00;
+@color-black: #000000;
+@color-white: #ffffff;
+@color-blue: #0088ff;
+@color-green: #00cc66;
+@color-danger: #ff3333;
+@color-success: #33cc33;
 
-// Typography (Comic Style)
-@font-main: 'Comic Neue', 'Comic Sans MS', sans-serif; 
+// SEMANTIC COLORS
+@color-primary: @color-cyan;
+@color-secondary: @color-magenta;
+@color-dark: @color-black;
+@color-darker: #000;
+@color-light: @color-white;
+
+// GAME ENTITIES (Dynamic)
+@color-grass: var(--color-grass);
+@color-grass-light: var(--color-grass-light);
+@color-grass-dark: var(--color-grass-dark);
+
+@color-path: var(--color-path);
+@color-path-light: var(--color-path-light);
+@color-path-dark: var(--color-path-dark);
+@color-bg: var(--color-bg);
+
+// Static calculated values (because fade() works on hex)
+@color-grid-hover: fade(@color-cyan, 50%);
+@color-grid-valid: fade(@color-success, 60%);
+@color-grid-invalid: fade(@color-danger, 60%);
+
+// TOWERS (Static)
+@color-tower-arrow: #ff9933; // Orange wood
+@color-tower-arrow-glow: #ffff00;
+@color-tower-cannon: #666666; // Grey
+@color-tower-cannon-glow: #ff3333;
+@color-tower-ice: #00ffff;
+@color-tower-ice-glow: #ffffff;
+@color-tower-magic: #ff00ff;
+@color-tower-magic-glow: #00ffff;
+@color-tower-tesla: #ffd700; // Gold
+@color-tower-flame: #ff5722; // Deep Orange
+
+// ENEMIES (Static)
+@color-enemy-slime: #ccff00; // Neon lime
+@color-enemy-goblin: #ff3300; // Red-Orange
+@color-enemy-knight: #3366ff; // Blue
+@color-enemy-boss: #aa00ff; // Dark Purple
+
+// TYPOGRAPHY
+@font-main: 'Comic Neue', 'Comic Sans MS', sans-serif;
 @font-title: 'Bangers', 'Impact', cursive;
 @font-comic: 'Comic Neue', cursive;
-// Timing
-@transition-fast: 0.15s;
-@transition-normal: 0.3s;
-@transition-slow: 0.5s;
 
-// 3D Scene
-@perspective: 1000px;
-@map-rotation: 55deg;
-@border-width: 2px;
+// ===========================================
+// POP-ART MIXINS
+// ===========================================
 
-// Glow Effect Mixin (like css-space-shooter)
-.glow-effect(@color, @intensity: 10px) {
-    box-shadow: 
-        inset 0 0 @intensity @color,
-        0 0 @intensity @color,
-        0 0 (@intensity * 2) fade(@color, 50%);
+// 1. HARD SHADOW (Pop-out effect)
+.pop-shadow(@x: 8px, @y: 8px, @color: @color-black) {
+    box-shadow: @x @y 0 @color;
 }
 
-.glow-border(@color, @width: @border-width) {
+// 2. COMIC BORDER (Thick outline)
+.comic-border(@width: 3px, @color: @color-black) {
     border: @width solid @color;
-    .glow-effect(@color);
 }
 
-.text-glow(@color) {
-    text-shadow: 
-        0 0 10px @color,
-        0 0 20px @color,
-        0 0 30px fade(@color, 70%),
-        0 0 40px fade(@color, 50%);
+// 3. TEXT OUTLINE (Stroke effect)
+.text-outline(@color: @color-black, @width: 1px) {
+    -webkit-text-stroke: @width @color;
+    text-shadow:
+        1px 1px 0 @color,
+        -1px -1px 0 @color,
+        1px -1px 0 @color,
+        -1px 1px 0 @color;
 }
 
-// Common Mixins
-.center-absolute() {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+// 4. HALFTONE PATTERN (Dots)
+.halftone-bg(@dot-color: rgba(0, 0, 0, 0.1), @dot-size: 2px) {
+    background-image: radial-gradient(@dot-color @dot-size, transparent @dot-size);
+    background-size: (@dot-size * 4) (@dot-size * 4);
+    background-position: 0 0;
 }
 
+// Common Helpers
 .flex-center() {
     display: flex;
     justify-content: center;
@@ -105,185 +129,4 @@
 .no-select() {
     user-select: none;
     -webkit-user-select: none;
-}
-
-// Animation Keyframes
-@keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.05); }
-}
-
-@keyframes glow-pulse {
-    0%, 100% { 
-        box-shadow: inset 0 0 10px currentColor, 0 0 10px currentColor;
-    }
-    50% { 
-        box-shadow: inset 0 0 20px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
-    }
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-}
-
-@keyframes spin {
-    0% { transform: rotateZ(0deg); }
-    100% { transform: rotateZ(360deg); }
-}
-
-@keyframes spin-reverse {
-    0% { transform: rotateZ(360deg); }
-    100% { transform: rotateZ(0deg); }
-}
-
-// ===========================================
-// Box-Shadow Particle System Mixins
-// Efficient technique inspired by css-space-shooter
-// ===========================================
-
-// Generate particle field with varying positions and colors
-.particle-field(@color, @size: 2px) {
-    width: @size;
-    height: @size;
-    background: transparent;
-    border-radius: 50%;
-    pointer-events: none;
-}
-
-// Ambient floating particles mixin
-.floating-particles(@color) {
-    .particle-field(@color);
-    box-shadow:
-        // Random scatter of particles
-        10px -20px @color,
-        -15px -30px fade(@color, 80%),
-        25px -15px fade(@color, 60%),
-        -20px -40px @color,
-        30px -35px fade(@color, 70%),
-        -10px -25px fade(@color, 90%),
-        15px -45px @color,
-        -25px -10px fade(@color, 50%),
-        5px -50px fade(@color, 80%),
-        -30px -30px @color;
-}
-
-// Explosion particle burst mixin
-.explosion-particles(@color) {
-    .particle-field(@color, 3px);
-    box-shadow:
-        // Radial burst pattern
-        0 -30px @color,
-        21px -21px @color,
-        30px 0 @color,
-        21px 21px @color,
-        0 30px @color,
-        -21px 21px @color,
-        -30px 0 @color,
-        -21px -21px @color,
-        // Secondary layer
-        0 -45px fade(@color, 60%),
-        32px -32px fade(@color, 60%),
-        45px 0 fade(@color, 60%),
-        32px 32px fade(@color, 60%),
-        0 45px fade(@color, 60%),
-        -32px 32px fade(@color, 60%),
-        -45px 0 fade(@color, 60%),
-        -32px -32px fade(@color, 60%);
-}
-
-// Sparkle particle effect
-.sparkle-particles(@color) {
-    .particle-field(@color, 1px);
-    box-shadow:
-        5px -8px @color,
-        -8px -12px fade(@color, 70%),
-        12px -5px @color,
-        -5px -18px fade(@color, 80%),
-        18px -15px @color,
-        -15px -3px fade(@color, 60%),
-        3px -22px @color,
-        -12px -20px fade(@color, 90%);
-}
-
-// Trail particle effect
-.trail-particles(@color) {
-    .particle-field(@color, 2px);
-    box-shadow:
-        -5px 0 @color,
-        -12px 2px fade(@color, 80%),
-        -20px -1px fade(@color, 60%),
-        -28px 3px fade(@color, 40%),
-        -36px -2px fade(@color, 20%);
-}
-
-// Ambient glow particles for map atmosphere
-.ambient-glow(@color1, @color2) {
-    width: 1px;
-    height: 1px;
-    background: transparent;
-    box-shadow:
-        // Layer 1 - Primary color
-        15vw 10vh @color1,
-        35vw 25vh fade(@color1, 70%),
-        55vw 15vh @color1,
-        75vw 35vh fade(@color1, 60%),
-        25vw 45vh @color1,
-        // Layer 2 - Secondary color  
-        10vw 30vh @color2,
-        45vw 40vh fade(@color2, 70%),
-        65vw 20vh @color2,
-        85vw 45vh fade(@color2, 60%),
-        30vw 10vh @color2;
-}
-
-// Common particle animation keyframes
-@keyframes particle-rise {
-    0% { 
-        transform: translateY(0) scale(1);
-        opacity: 0.8;
-    }
-    50% {
-        opacity: 1;
-    }
-    100% { 
-        transform: translateY(-60px) scale(0.5);
-        opacity: 0;
-    }
-}
-
-@keyframes particle-burst {
-    0% { 
-        transform: scale(0);
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.8;
-    }
-    100% { 
-        transform: scale(2.5);
-        opacity: 0;
-    }
-}
-
-@keyframes particle-spiral {
-    0% { 
-        transform: rotate(0deg) translateX(0);
-        opacity: 0.8;
-    }
-    100% { 
-        transform: rotate(360deg) translateX(30px);
-        opacity: 0;
-    }
-}
-
-@keyframes particle-scatter {
-    0% { 
-        transform: scale(1);
-        opacity: 1;
-    }
-    100% { 
-        transform: scale(3);
-        opacity: 0;
-    }
 }

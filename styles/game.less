@@ -1,24 +1,24 @@
 // ===========================================
 // CSS Tower Defense - Game UI Styles
-// Enhanced with Glow Effects & Modern Design
+// THEME: POP-ART / CEL-SHADED
 // ===========================================
 
-// Start Screen with Animated Background
+// Start Screen (Comic Cover Style)
 .start-screen {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, 
-        @color-darker 0%, 
-        darken(@color-dark, 5%) 50%,
-        #0a1628 100%);
+    // Sunburst background
+    background: repeating-conic-gradient(from 0deg,
+            @color-cyan 0deg 15deg,
+            lighten(@color-cyan, 10%) 15deg 30deg);
     .flex-center();
     flex-direction: column;
     z-index: 1000;
-    
-    // Animated gradient overlay
+
+    // Halftone overlay
     &::before {
         content: '';
         position: absolute;
@@ -26,209 +26,106 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: 
-            radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 40%),
-            radial-gradient(circle at 80% 20%, rgba(224, 64, 251, 0.1) 0%, transparent 40%);
-        animation: bg-shift 10s ease-in-out infinite alternate;
+        .halftone-bg(fade(@color-white, 30%), 3px);
+        pointer-events: none;
     }
-    
+
     &.hidden {
         display: none;
     }
-}
-
-@keyframes bg-shift {
-    0% { opacity: 0.5; }
-    100% { opacity: 1; }
 }
 
 .title-container {
     text-align: center;
     margin-bottom: 50px;
-    position: relative;
     z-index: 1;
+    transform: rotate(-3deg);
 }
 
 .game-title {
     font-family: @font-title;
-    font-size: 4.5rem;
-    color: @color-gold;
+    font-size: 6rem;
+    color: @color-yellow;
     margin: 0;
-    letter-spacing: 6px;
-    .text-glow(@color-gold);
-    animation: titlePulse 3s ease-in-out infinite;
+    line-height: 1;
     text-transform: uppercase;
-    
-    // Metallic text effect
-    background: linear-gradient(180deg, 
-        #fff 0%,
-        @color-gold 30%,
-        darken(@color-gold, 20%) 70%,
-        @color-gold 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    filter: drop-shadow(0 0 20px @color-gold);
+    .text-outline(@color-black, 4px);
+    .pop-shadow(10px, 10px, @color-black);
+    animation: title-wobble 2s infinite ease-in-out;
+}
+
+@keyframes title-wobble {
+
+    0%,
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+
+    50% {
+        transform: scale(1.05) rotate(2deg);
+    }
 }
 
 .subtitle {
-    font-family: @font-main;
-    font-size: 1.8rem;
-    color: @color-primary;
+    font-family: @font-comic;
+    font-size: 2rem;
+    color: @color-white;
+    background: @color-magenta;
+    padding: 5px 15px;
     margin-top: 15px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    .text-glow(@color-primary);
-    opacity: 0.9;
+    display: inline-block;
+    transform: rotate(2deg);
+    .comic-border();
+    .pop-shadow(5px, 5px);
 }
 
-.start-btn, .restart-btn {
-    font-family: @font-main;
-    font-size: 1.6rem;
-    font-weight: bold;
-    padding: 18px 60px;
+// Buttons (Comic Callouts)
+.start-btn,
+.restart-btn {
+    font-family: @font-title;
+    font-size: 2rem;
+    padding: 15px 50px;
     border: none;
-    border-radius: 50px;
-    background: linear-gradient(135deg, 
-        @color-primary 0%, 
-        darken(@color-primary, 15%) 100%);
-    color: #fff;
+    background: @color-yellow;
+    color: @color-black;
     cursor: pointer;
-    transition: all @transition-normal ease;
     text-transform: uppercase;
-    letter-spacing: 3px;
     position: relative;
     z-index: 1;
-    .glow-effect(@color-primary, 15px);
-    
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border-radius: 50px;
-        background: linear-gradient(135deg, 
-            rgba(255, 255, 255, 0.2) 0%, 
-            transparent 50%);
-        pointer-events: none;
-    }
-    
-    &:hover {
-        transform: scale(1.08) translateY(-3px);
-        .glow-effect(@color-primary, 25px);
-    }
-    
-    &:active {
-        transform: scale(0.98);
-    }
-}
+    .comic-border(3px);
+    .pop-shadow(8px, 8px);
+    transition: all 0.1s;
 
-.wave-btn {
-    font-family: @font-main;
-    font-size: 1rem;
-    font-weight: bold;
-    padding: 12px 40px;
-    border: none;
-    border-radius: 25px;
-    background: linear-gradient(135deg, 
-        @color-success 0%, 
-        darken(@color-success, 20%) 100%);
-    color: #fff;
-    cursor: pointer;
-    transition: all @transition-normal ease;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    .glow-effect(@color-success, 12px);
-    
-    &:hover:not(:disabled) {
-        transform: scale(1.08) translateY(-2px);
-        .glow-effect(@color-success, 20px);
+    &:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 10px 10px 0 @color-black;
     }
-    
-    &:disabled {
-        background: linear-gradient(135deg, #555 0%, #333 100%);
-        box-shadow: none;
-        cursor: not-allowed;
-        opacity: 0.6;
+
+    &:active {
+        transform: translate(4px, 4px);
+        box-shadow: 2px 2px 0 @color-black;
     }
 }
 
 .instructions {
-    margin-top: 50px;
-    text-align: center;
+    margin-top: 40px;
     position: relative;
     z-index: 1;
-    
+    background: @color-white;
+    padding: 20px;
+    .comic-border();
+    .pop-shadow();
+    transform: rotate(1deg);
+
     p {
-        margin: 12px 0;
-        font-size: 1.1rem;
-        color: rgba(255, 255, 255, 0.7);
-        letter-spacing: 1px;
+        margin: 5px 0;
+        font-family: @font-comic;
+        font-size: 1.2rem;
+        color: @color-black;
     }
 }
 
-// Game Over Screen
-.game-over-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.92);
-    backdrop-filter: blur(10px);
-    .flex-center();
-    flex-direction: column;
-    z-index: 1000;
-    
-    &.hidden {
-        display: none;
-    }
-}
-
-.game-over-title {
-    font-family: @font-title;
-    font-size: 5rem;
-    color: @color-danger;
-    margin: 0 0 30px 0;
-    text-transform: uppercase;
-    letter-spacing: 8px;
-    .text-glow(@color-danger);
-    animation: shake 0.5s ease-in-out;
-    
-    &.victory {
-        color: @color-gold;
-        .text-glow(@color-gold);
-        animation: victory-glow 2s ease-in-out infinite;
-    }
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-10px); }
-    75% { transform: translateX(10px); }
-}
-
-@keyframes victory-glow {
-    0%, 100% { filter: drop-shadow(0 0 20px @color-gold); }
-    50% { filter: drop-shadow(0 0 40px @color-gold) brightness(1.2); }
-}
-
-.final-score {
-    font-size: 2.5rem;
-    color: #fff;
-    margin-bottom: 50px;
-    font-weight: bold;
-    
-    span {
-        color: @color-gold;
-        font-size: 3rem;
-        .text-glow(@color-gold);
-    }
-}
-
-// Game UI Overlay
+// Top Bar (Comic Panel Strip)
 .game-ui {
     position: fixed;
     top: 0;
@@ -237,26 +134,25 @@
     height: 100%;
     pointer-events: none;
     z-index: 100;
-    
+
     &.hidden {
         display: none;
     }
 }
 
-// Top Status Bar - Clean minimalist design (text only)
 .top-bar {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 15px 40px;
-    background: linear-gradient(180deg, 
-        rgba(0, 0, 0, 0.6) 0%, 
-        rgba(0, 0, 0, 0.3) 60%,
-        transparent 100%);
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    height: 60px;
+    background: @color-white;
+    .comic-border();
+    .pop-shadow();
     display: flex;
-    justify-content: center;
-    gap: 50px;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 20px;
     pointer-events: auto;
 }
 
@@ -264,66 +160,59 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #fff;
-    font-family: @font-main;
+    font-family: @font-comic;
+    font-weight: bold;
     font-size: 1.2rem;
-    padding: 5px 0;
-    background: transparent;
-    border-radius: 0;
-    border: none;
-    
-    .stat-icon {
-        font-size: 1.4rem;
-        filter: drop-shadow(0 0 8px currentColor);
-    }
-    
+    color: @color-black;
+
     .stat-value {
-        font-weight: bold;
-        min-width: 40px;
-        color: @color-gold;
-        .text-glow(fade(@color-gold, 60%));
-        transition: transform 0.15s ease;
+        font-family: @font-title;
+        font-size: 1.5rem;
+        color: @color-magenta;
+
+        &.changed {
+            animation: pop-scale 0.2s;
+        }
     }
 }
 
-// Animated stat change
-.stat-value.changed {
-    animation: stat-pop 0.3s ease-out;
+@keyframes pop-scale {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.5);
+        color: @color-danger;
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
-@keyframes stat-pop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); }
-}
-
-// Shop Panel - Moved to right side, vertical layout
+// Shop Panel (Right Side Comic Col)
 .shop-panel {
     position: absolute;
     right: 20px;
     top: 50%;
-    transform: translateY(-50%);
-    background: linear-gradient(180deg,
-        rgba(0, 0, 0, 0.85) 0%,
-        rgba(10, 10, 30, 0.9) 100%);
-    border-radius: 15px;
-    padding: 15px 12px;
+    transform: translateY(-50%) rotate(1deg);
+    background: @color-white;
+    padding: 15px;
+    .comic-border();
+    .pop-shadow();
     pointer-events: auto;
-    border: 1px solid rgba(255, 215, 0, 0.2);
-    box-shadow: 
-        0 5px 30px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
 
-.shop-title {
-    color: @color-gold;
-    font-family: @font-main;
-    font-size: 0.75rem;
-    text-align: center;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    .text-glow(fade(@color-gold, 40%));
+    .shop-title {
+        font-family: @font-title;
+        font-size: 1.5rem;
+        text-align: center;
+        margin-bottom: 10px;
+        background: @color-cyan;
+        color: @color-black;
+        .comic-border(2px);
+        transform: rotate(-2deg);
+    }
 }
 
 .tower-options {
@@ -333,536 +222,354 @@
 }
 
 .tower-option {
-    width: 70px;
+    display: flex;
+    align-items: center;
     padding: 8px;
-    background: linear-gradient(180deg,
-        rgba(255, 255, 255, 0.06) 0%,
-        rgba(255, 255, 255, 0.02) 100%);
-    border-radius: 10px;
+    background: #eee;
+    .comic-border(2px);
     cursor: pointer;
-    transition: all @transition-fast ease;
-    border: 1px solid transparent;
-    
+    transition: all 0.1s;
+
     &:hover:not(.disabled) {
-        background: linear-gradient(180deg,
-            rgba(255, 255, 255, 0.12) 0%,
-            rgba(255, 255, 255, 0.06) 100%);
+        background: @color-yellow;
         transform: translateX(-5px);
-        border-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 5px 5px 0 @color-black;
     }
-    
+
     &.selected {
-        border-color: @color-gold;
-        background: linear-gradient(180deg,
-            rgba(255, 215, 0, 0.12) 0%,
-            rgba(255, 215, 0, 0.04) 100%);
-        .glow-effect(@color-gold, 6px);
+        background: @color-yellow;
+        box-shadow: inset 3px 3px 0 rgba(0, 0, 0, 0.1);
     }
-    
+
     &.disabled {
-        opacity: 0.4;
+        opacity: 0.5;
+        background: #ccc;
         cursor: not-allowed;
-        filter: grayscale(0.5);
-        
-        &:hover {
-            transform: none;
-        }
     }
 }
 
 .tower-preview {
     width: 40px;
     height: 40px;
-    margin: 0 auto 6px;
-    border-radius: 6px;
-    position: relative;
-    overflow: hidden;
+    border: 2px solid @color-black;
+    margin-right: 10px;
+    background: @color-white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
 }
 
 .tower-arrow-preview {
-    background: linear-gradient(135deg, 
-        lighten(@color-tower-arrow, 10%) 0%,
-        @color-tower-arrow 50%,
-        darken(@color-tower-arrow, 15%) 100%);
-    .glow-effect(@color-tower-arrow-glow, 4px);
-    
+    background: @color-tower-arrow;
+
     &::after {
         content: '🏹';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 18px;
     }
 }
 
 .tower-cannon-preview {
-    background: linear-gradient(135deg, 
-        lighten(@color-tower-cannon, 15%) 0%,
-        @color-tower-cannon 50%,
-        darken(@color-tower-cannon, 15%) 100%);
-    .glow-effect(@color-tower-cannon-glow, 4px);
-    
+    background: @color-tower-cannon;
+
     &::after {
         content: '💣';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 18px;
     }
 }
 
 .tower-ice-preview {
-    background: linear-gradient(135deg, 
-        lighten(@color-tower-ice, 15%) 0%,
-        @color-tower-ice 50%,
-        darken(@color-tower-ice, 15%) 100%);
-    .glow-effect(@color-tower-ice-glow, 5px);
-    
+    background: @color-tower-ice;
+
     &::after {
         content: '❄️';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 18px;
     }
 }
 
 .tower-magic-preview {
-    background: linear-gradient(135deg, 
-        lighten(@color-tower-magic, 15%) 0%,
-        @color-tower-magic 50%,
-        darken(@color-tower-magic, 15%) 100%);
-    .glow-effect(@color-tower-magic-glow, 5px);
-    
+    background: @color-tower-magic;
+
     &::after {
         content: '✨';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 18px;
     }
 }
 
 .tower-info {
-    text-align: center;
-    
+    flex: 1;
+
     .tower-name {
         display: block;
-        color: #fff;
-        font-size: 0.7rem;
-        font-weight: bold;
-        margin-bottom: 3px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        font-family: @font-title;
+        font-size: 1rem;
     }
-    
+
     .tower-cost {
         display: block;
-        color: @color-gold;
-        font-size: 0.65rem;
+        font-family: @font-comic;
         font-weight: bold;
+        color: darken(@color-green, 10%);
     }
 }
 
-// Wave Control - Moved to bottom center
+// Wave Button
 .wave-control {
     position: absolute;
-    bottom: 25px;
+    bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
     pointer-events: auto;
 }
 
-// Game Message Toast
+.wave-btn {
+    font-family: @font-title;
+    font-size: 1.5rem;
+    padding: 10px 40px;
+    background: @color-success; // Green
+    color: @color-white;
+    border: none;
+    .comic-border();
+    .pop-shadow();
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 6px 6px 0 @color-black;
+    }
+}
+
+// Tooltip
+.tower-tooltip {
+    position: absolute;
+    right: 110%;
+    top: 0;
+    min-width: 150px;
+    background: @color-white;
+    padding: 10px;
+    .comic-border();
+    .pop-shadow(4px, 4px);
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s;
+
+    .tooltip-name {
+        font-family: @font-title;
+        border-bottom: 2px solid @color-black;
+    }
+
+    .tooltip-stats {
+        font-family: @font-comic;
+        font-size: 0.9rem;
+    }
+
+    .tooltip-desc {
+        font-style: italic;
+        font-size: 0.8rem;
+    }
+}
+
+.tower-option:hover .tower-tooltip {
+    opacity: 1;
+}
+
+// Notifications
 .game-message {
     position: fixed;
-    top: 20%;
+    top: 30%;
     left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg,
-        rgba(0, 0, 0, 0.9) 0%,
-        rgba(20, 20, 40, 0.95) 100%);
-    color: @color-gold;
-    padding: 18px 40px;
-    border-radius: 15px;
-    font-size: 1.6rem;
-    font-weight: bold;
-    z-index: 1000;
+    transform: translate(-50%, -50%) rotate(-5deg);
+    background: @color-yellow;
+    padding: 20px 40px;
+    font-family: @font-title;
+    font-size: 3rem;
+    color: @color-danger;
+    .text-outline();
+    .comic-border(4px);
+    .pop-shadow(15px, 15px);
+    z-index: 2000;
     opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-    text-align: center;
-    border: 2px solid rgba(255, 215, 0, 0.4);
-    .glow-effect(@color-gold, 10px);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
+    transition: opacity 0.2s;
 
-// Title Animation
-@keyframes titlePulse {
-    0%, 100% {
-        transform: scale(1);
-        filter: drop-shadow(0 0 20px @color-gold);
-    }
-    50% {
-        transform: scale(1.02);
-        filter: drop-shadow(0 0 30px @color-gold) brightness(1.1);
-    }
-}
-
-// ===========================================
-// Enhanced UI Polish & Feedback
-// ===========================================
-
-// Stat hover effects - subtle for clean design
-.stat {
-    transition: all @transition-fast ease;
-    
-    &:hover {
-        transform: scale(1.05);
-        
-        .stat-value {
-            transform: scale(1.1);
-        }
-    }
-    
-    // Color-coded stats
-    &:nth-child(1) .stat-value { color: @color-danger; .text-glow(fade(@color-danger, 50%)); } // Lives
-    &:nth-child(2) .stat-value { color: @color-gold; .text-glow(fade(@color-gold, 60%)); } // Gold
-    &:nth-child(3) .stat-value { color: @color-primary; .text-glow(fade(@color-primary, 50%)); } // Wave
-    &:nth-child(4) .stat-value { color: @color-success; .text-glow(fade(@color-success, 50%)); } // Score
-}
-
-// Enhanced shop panel hover glow
-.shop-panel {
-    transition: all @transition-normal ease;
-    
-    &:hover {
-        border-color: rgba(255, 215, 0, 0.35);
-        box-shadow: 
-            0 8px 35px rgba(0, 0, 0, 0.5),
-            0 0 20px rgba(255, 215, 0, 0.08),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    }
-}
-
-// Enhanced tower option hover with type-specific glows
-.tower-option {
-    &[data-tower="arrow"]:hover:not(.disabled) {
-        border-color: @color-tower-arrow;
-        .glow-effect(@color-tower-arrow-glow, 8px);
-    }
-    
-    &[data-tower="cannon"]:hover:not(.disabled) {
-        border-color: @color-tower-cannon;
-        .glow-effect(@color-tower-cannon-glow, 8px);
-    }
-    
-    &[data-tower="ice"]:hover:not(.disabled) {
-        border-color: @color-tower-ice;
-        .glow-effect(@color-tower-ice-glow, 8px);
-    }
-    
-    &[data-tower="magic"]:hover:not(.disabled) {
-        border-color: @color-tower-magic;
-        .glow-effect(@color-tower-magic-glow, 8px);
-    }
-    
-    // Tower preview pulse on hover
-    &:hover:not(.disabled) .tower-preview {
-        animation: previewPulse 0.4s ease-in-out;
-    }
-}
-
-@keyframes previewPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-}
-
-// Wave button enhanced feedback
-.wave-btn {
-    position: relative;
-    overflow: hidden;
-    
-    // Shine sweep effect
-    &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg,
-            transparent 0%,
-            rgba(255, 255, 255, 0.3) 50%,
-            transparent 100%);
-        transition: left 0.5s ease;
-    }
-    
-    &:hover:not(:disabled)::after {
-        left: 100%;
-    }
-    
-    // Pulsing border when ready
-    &:not(:disabled) {
-        animation: waveButtonReady 2s ease-in-out infinite;
-    }
-}
-
-@keyframes waveButtonReady {
-    0%, 100% {
-        box-shadow: inset 0 0 10px rgba(0, 255, 136, 0.4), 0 0 10px rgba(0, 255, 136, 0.4);
-    }
-    50% {
-        box-shadow: inset 0 0 20px rgba(0, 255, 136, 0.6), 0 0 25px rgba(0, 255, 136, 0.5);
-    }
-}
-
-// ===========================================
-// Wave Announcement System
-// ===========================================
-.wave-announcement {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    background: linear-gradient(135deg,
-        rgba(0, 0, 0, 0.95) 0%,
-        rgba(20, 20, 40, 0.98) 100%);
-    padding: 30px 60px;
-    border-radius: 20px;
-    border: 3px solid @color-gold;
-    z-index: 500;
-    pointer-events: none;
-    .glow-effect(@color-gold, 20px);
-    
     &.show {
-        animation: waveAnnounceIn 0.5s ease-out forwards;
-    }
-    
-    &.hide {
-        animation: waveAnnounceOut 0.3s ease-in forwards;
-    }
-    
-    .wave-number {
-        font-family: @font-title;
-        font-size: 4rem;
-        color: @color-gold;
-        text-align: center;
-        .text-glow(@color-gold);
-        text-transform: uppercase;
-        letter-spacing: 4px;
-    }
-    
-    .wave-subtitle {
-        font-family: @font-main;
-        font-size: 1.2rem;
-        color: @color-primary;
-        text-align: center;
-        margin-top: 10px;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        opacity: 0.8;
-    }
-}
-
-@keyframes waveAnnounceIn {
-    0% {
-        transform: translate(-50%, -50%) scale(0) rotate(-10deg);
-        opacity: 0;
-    }
-    50% {
-        transform: translate(-50%, -50%) scale(1.1) rotate(2deg);
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(1) rotate(0deg);
         opacity: 1;
+        animation: message-pop 0.5s;
     }
 }
 
-@keyframes waveAnnounceOut {
+@keyframes message-pop {
     0% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
+        transform: translate(-50%, -50%) scale(0) rotate(-45deg);
     }
+
+    80% {
+        transform: translate(-50%, -50%) scale(1.2) rotate(5deg);
+    }
+
     100% {
-        transform: translate(-50%, -50%) scale(0.5) translateY(-50px);
-        opacity: 0;
+        transform: translate(-50%, -50%) scale(1) rotate(-5deg);
     }
 }
 
-// ===========================================
-// Gold Gain/Loss Floating Numbers
-// ===========================================
+// Floating Numbers
 .floating-number {
     position: absolute;
-    font-family: @font-main;
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-family: @font-title;
+    font-size: 1.5rem;
+    .text-outline(@color-black, 2px);
     pointer-events: none;
-    z-index: 200;
-    animation: floatUp 1s ease-out forwards;
-    
+    z-index: 500;
+    animation: float-up 1s forwards;
+
     &.gold-gain {
-        color: @color-gold;
-        .text-glow(@color-gold);
+        color: @color-yellow;
+
+        &::before {
+            content: '+';
+        }
     }
-    
+
     &.gold-loss {
         color: @color-danger;
-        .text-glow(@color-danger);
+
+        &::before {
+            content: '-';
+        }
     }
-    
+
     &.damage {
-        color: #fff;
-        text-shadow: 0 0 5px @color-danger, 0 0 10px @color-danger;
+        color: @color-white;
+        font-size: 1.2rem;
     }
 }
 
-@keyframes floatUp {
+@keyframes float-up {
     0% {
         transform: translateY(0) scale(1);
         opacity: 1;
     }
-    50% {
-        transform: translateY(-30px) scale(1.2);
-        opacity: 1;
-    }
+
     100% {
-        transform: translateY(-60px) scale(0.8);
+        transform: translateY(-50px) scale(1.5);
         opacity: 0;
     }
 }
 
-// ===========================================
-// Enemy Incoming Warning
-// ===========================================
-.enemy-warning {
-    position: fixed;
-    top: 15%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg,
-        rgba(255, 50, 50, 0.9) 0%,
-        rgba(200, 30, 30, 0.95) 100%);
-    padding: 15px 40px;
-    border-radius: 10px;
-    border: 2px solid @color-danger;
-    z-index: 400;
-    opacity: 0;
-    pointer-events: none;
-    .glow-effect(@color-danger, 15px);
-    
-    &.show {
-        animation: warningPulse 0.5s ease-in-out forwards;
-    }
-    
-    .warning-text {
-        font-family: @font-main;
-        font-size: 1.4rem;
-        font-weight: bold;
-        color: #fff;
-        text-transform: uppercase;
-        letter-spacing: 3px;
-    }
-}
-
-@keyframes warningPulse {
-    0%, 100% {
-        opacity: 1;
-        transform: translateX(-50%) scale(1);
-    }
-    50% {
-        opacity: 0.8;
-        transform: translateX(-50%) scale(1.05);
-    }
-}
-
-// ===========================================
-// Tower Info Tooltip (on hover)
-// ===========================================
-.tower-tooltip {
+// TECH TREE UI
+.tech-control {
     position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-10px);
-    background: linear-gradient(180deg,
-        rgba(0, 0, 0, 0.95) 0%,
-        rgba(20, 20, 40, 0.98) 100%);
-    padding: 15px 20px;
-    border-radius: 12px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    min-width: 180px;
-    opacity: 0;
-    visibility: hidden;
-    transition: all @transition-fast ease;
-    z-index: 1000;
-    pointer-events: none;
-    
-    .tower-option:hover & {
-        opacity: 1;
-        visibility: visible;
-        transform: translateX(-50%) translateY(-15px);
-    }
-    
-    .tooltip-name {
-        font-weight: bold;
-        color: @color-gold;
-        font-size: 1rem;
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    
-    .tooltip-stats {
-        font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.8);
-        line-height: 1.6;
-        
-        span {
-            color: @color-primary;
-        }
-    }
-    
-    .tooltip-desc {
-        font-size: 0.75rem;
-        color: rgba(255, 255, 255, 0.6);
-        margin-top: 8px;
-        font-style: italic;
+    bottom: 30px;
+    left: 20px;
+    pointer-events: auto;
+}
+
+.tech-btn {
+    font-family: @font-title;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    background: @color-cyan;
+    color: @color-black;
+    border: none;
+    .comic-border();
+    .pop-shadow();
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-3px);
     }
 }
 
-// ===========================================
-// Button Press Effects
-// ===========================================
-.start-btn, .restart-btn, .wave-btn {
-    &:active {
-        transform: scale(0.95) !important;
-        transition: transform 0.05s ease;
-    }
-}
-
-// ===========================================
-// Loading/Transition Overlay
-// ===========================================
-.transition-overlay {
+.tech-modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: @color-darker;
+    background: rgba(0, 0, 0, 0.8);
     z-index: 2000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    
-    &.active {
-        opacity: 1;
-        pointer-events: auto;
+    .flex-center();
+
+    &.hidden {
+        display: none;
+    }
+}
+
+.tech-content {
+    background: @color-white;
+    padding: 30px;
+    width: 600px;
+    .comic-border(5px);
+    .pop-shadow(20px, 20px);
+    transform: rotate(1deg);
+    text-align: center;
+}
+
+.tech-title {
+    font-family: @font-title;
+    font-size: 3rem;
+    margin: 0 0 20px;
+    color: @color-blue;
+    .text-outline();
+}
+
+.tech-stats {
+    display: flex;
+    justify-content: space-around;
+    font-family: @font-comic;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.tech-card {
+    background: #f0f0f0;
+    padding: 10px;
+    .comic-border(2px);
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        transform: scale(1.05);
+        background: @color-yellow;
+    }
+
+    &.maxed {
+        background: @color-success;
+        cursor: default;
+    }
+
+    h3 {
+        font-family: @font-title;
+        margin: 5px 0;
+    }
+
+    p {
+        font-size: 0.9rem;
+        margin: 5px 0;
+        font-family: @font-comic;
+    }
+
+    .tech-cost {
+        font-weight: bold;
+        color: @color-danger;
+    }
+}
+
+.close-tech-btn {
+    font-family: @font-title;
+    font-size: 1.5rem;
+    padding: 10px 30px;
+    background: @color-danger;
+    color: @color-white;
+    border: none;
+    .comic-border();
+    cursor: pointer;
+
+    &:hover {
+        transform: scale(1.1);
     }
 }
