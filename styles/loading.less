@@ -14,7 +14,7 @@
     // Sunburst background (matching game theme)
     background: repeating-conic-gradient(from 0deg,
             @color-cyan 0deg 15deg,
-            lighten(@color-cyan, 10%) 15deg 30deg);
+            lighten(@color-cyan, 8%) 15deg 30deg);
     .flex-center();
     flex-direction: column;
     z-index: 100000;
@@ -52,7 +52,7 @@
 
     // Floating comic elements
     &::before {
-        content: '💥 POW! 💥';
+        content: 'POW!';
         position: absolute;
         top: 10%;
         left: 5%;
@@ -65,7 +65,7 @@
     }
 
     &::after {
-        content: '⚔️ BOOM! ⚔️';
+        content: 'BOOM!';
         position: absolute;
         bottom: 15%;
         right: 5%;
@@ -257,12 +257,16 @@
 
     // Arrow icon
     &::after {
-        content: '🏹';
+        content: '';
         position: absolute;
         top: -25px;
         left: 50%;
+        width: 20px;
+        height: 20px;
+        border: 3px solid @color-white;
+        border-radius: 0 50% 50% 0;
+        border-left: none;
         transform: translateX(-50%);
-        font-size: 30px;
         animation: arrow-ready 1s ease-in-out infinite;
     }
 }

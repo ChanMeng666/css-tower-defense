@@ -88,7 +88,7 @@
     }
 
     to {
-        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.05) rotate(2deg);
+        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.03) rotate(1.5deg);
     }
 }
 
@@ -146,12 +146,27 @@
         // Let's add a visual crossbow or arrow
 
         &::after {
-            content: '🏹';
+            content: '';
             position: absolute;
             top: -20px;
             left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 3px solid @color-black;
+            border-radius: 0 50% 50% 0;
+            border-left: none;
             transform: translateX(-50%);
-            font-size: 30px;
+        }
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            width: 24px;
+            height: 3px;
+            background: @color-black;
+            transform: translateX(-50%);
         }
     }
 }
@@ -350,11 +365,14 @@
         animation: spark-pulse 0.1s infinite alternate;
 
         &::after {
-            content: '⚡';
-            font-size: 20px;
+            content: '';
             position: absolute;
             top: 50%;
             left: 50%;
+            width: 14px;
+            height: 18px;
+            background: @color-tower-tesla;
+            clip-path: polygon(40% 0%, 100% 40%, 55% 45%, 70% 100%, 0% 55%, 45% 50%);
             transform: translate(-50%, -50%);
         }
     }

@@ -210,6 +210,22 @@ var Game = (function () {
             addGold(e.detail.gold);
             Sfx.play('sell');
         });
+
+        // Boss phase changes
+        document.addEventListener('bossPhaseChange', function(e) {
+            if (e.detail.phase === 'enrage') {
+                Sfx.play('bossEnrage');
+            } else if (e.detail.phase === 'shield') {
+                Sfx.play('bossShield');
+            }
+        });
+
+        // Combo kill sound
+        document.addEventListener('comboKill', function(e) {
+            if (e.detail.count >= 3) {
+                Sfx.play('comboKill');
+            }
+        });
     }
 
     /**

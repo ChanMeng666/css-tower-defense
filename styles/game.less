@@ -107,6 +107,59 @@
     }
 }
 
+// Game Over Screen
+.game-over-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 22, 20, 0.85);
+    z-index: 2000;
+    .flex-center();
+    flex-direction: column;
+
+    // Halftone overlay
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        .halftone-bg(rgba(255, 248, 240, 0.08), 3px);
+        pointer-events: none;
+    }
+
+    &.hidden {
+        display: none;
+    }
+}
+
+.game-over-title {
+    font-family: @font-title;
+    font-size: 5rem;
+    color: @color-yellow;
+    margin: 0 0 20px;
+    .text-outline(@color-black, 4px);
+    .pop-shadow(10px, 10px, @color-black);
+    transform: rotate(-3deg);
+    z-index: 1;
+}
+
+.final-score {
+    font-family: @font-comic;
+    font-size: 2rem;
+    color: @color-white;
+    background: @color-magenta;
+    padding: 10px 30px;
+    margin-bottom: 30px;
+    .comic-border(3px);
+    .pop-shadow(5px, 5px);
+    transform: rotate(1deg);
+    z-index: 1;
+}
+
 .instructions {
     margin-top: 40px;
     position: relative;
@@ -191,6 +244,158 @@
     }
 }
 
+// ===========================================
+// CSS Stat Icons (replacing emoji)
+// ===========================================
+.stat-icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+// Heart icon for lives
+.stat-icon-lives {
+    width: 24px;
+    height: 22px;
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        width: 12px;
+        height: 20px;
+        border-radius: 12px 12px 0 0;
+        background: @color-danger;
+        border: 2px solid @color-black;
+    }
+
+    &::before {
+        left: 0;
+        transform: rotate(-45deg);
+        transform-origin: bottom right;
+    }
+
+    &::after {
+        right: 0;
+        transform: rotate(45deg);
+        transform-origin: bottom left;
+    }
+}
+
+// Coin icon for gold
+.stat-icon-gold {
+    width: 22px;
+    height: 22px;
+    background: @color-yellow;
+    border-radius: 50%;
+    border: 2px solid @color-black;
+    box-shadow: inset 0 0 0 3px darken(@color-yellow, 15%);
+}
+
+// Wave icon
+.stat-icon-wave {
+    width: 24px;
+    height: 16px;
+    margin-top: 4px;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 48px;
+        height: 16px;
+        border: 3px solid @color-blue;
+        border-color: @color-blue transparent transparent transparent;
+        border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    }
+}
+
+// Crosshair icon for score
+.stat-icon-score {
+    width: 22px;
+    height: 22px;
+    border: 2px solid @color-black;
+    border-radius: 50%;
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 6px;
+        height: 6px;
+        background: @color-danger;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 2px;
+        background: @color-black;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 0 0 @color-black;
+    }
+}
+
+// Gear icon for scrap
+.stat-icon-scrap {
+    width: 20px;
+    height: 20px;
+    background: #888;
+    border-radius: 50%;
+    border: 2px solid @color-black;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 8px;
+        background: @color-white;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        border: 2px solid @color-black;
+    }
+}
+
+// Bolt icon for core
+.stat-icon-core {
+    width: 14px;
+    height: 22px;
+    background: @color-yellow;
+    clip-path: polygon(40% 0%, 100% 40%, 55% 45%, 70% 100%, 0% 55%, 45% 50%);
+}
+
+// Diamond icon for crystal
+.stat-icon-crystal {
+    width: 18px;
+    height: 22px;
+    background: @color-blue;
+    clip-path: polygon(50% 0%, 100% 35%, 50% 100%, 0% 35%);
+    border: none;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 50%;
+        width: 6px;
+        height: 10px;
+        background: rgba(255, 255, 255, 0.4);
+        transform: translateX(-50%) skewX(-10deg);
+    }
+}
+
 // Shop Panel (Right Side Comic Col)
 .shop-panel {
     position: absolute;
@@ -200,7 +405,7 @@
     background: @color-white;
     padding: 15px;
     .comic-border();
-    .pop-shadow();
+    .pop-shadow(5px, 5px);
     pointer-events: auto;
 
     .shop-title {
@@ -208,7 +413,7 @@
         font-size: 1.5rem;
         text-align: center;
         margin-bottom: 10px;
-        background: @color-cyan;
+        background: @color-primary;
         color: @color-black;
         .comic-border(2px);
         transform: rotate(-2deg);
@@ -262,33 +467,85 @@
 
 .tower-arrow-preview {
     background: @color-tower-arrow;
+    position: relative;
 
     &::after {
-        content: '🏹';
+        content: '';
+        width: 16px;
+        height: 16px;
+        border: 3px solid @color-black;
+        border-radius: 0 50% 50% 0;
+        border-left: none;
+        position: absolute;
+        top: 50%;
+        left: 45%;
+        transform: translate(-50%, -50%);
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 18px;
+        height: 3px;
+        background: @color-black;
+        transform: translate(-50%, -50%);
     }
 }
 
 .tower-cannon-preview {
     background: @color-tower-cannon;
+    position: relative;
 
     &::after {
-        content: '💣';
+        content: '';
+        width: 16px;
+        height: 16px;
+        background: @color-black;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 }
 
 .tower-ice-preview {
     background: @color-tower-ice;
+    position: relative;
 
     &::after {
-        content: '❄️';
+        content: '';
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 18px solid @color-white;
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        filter: drop-shadow(1px 1px 0 @color-black);
     }
 }
 
 .tower-magic-preview {
     background: @color-tower-magic;
+    position: relative;
 
     &::after {
-        content: '✨';
+        content: '';
+        width: 16px;
+        height: 16px;
+        background: @color-white;
+        border-radius: 50%;
+        border: 3px solid @color-tower-magic;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 6px @color-tower-magic;
     }
 }
 
@@ -468,7 +725,7 @@
     color: @color-black;
     border: none;
     .comic-border();
-    .pop-shadow();
+    .pop-shadow(5px, 5px);
     cursor: pointer;
 
     &:hover {
@@ -582,18 +839,36 @@
 // Tesla Tower Preview
 .tower-tesla-preview {
     background: @color-tower-tesla;
+    position: relative;
 
     &::after {
-        content: '⚡';
+        content: '';
+        width: 12px;
+        height: 20px;
+        background: @color-black;
+        clip-path: polygon(40% 0%, 100% 40%, 55% 45%, 70% 100%, 0% 55%, 45% 50%);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 }
 
 // Flame Tower Preview
 .tower-flame-preview {
     background: @color-tower-flame;
+    position: relative;
 
     &::after {
-        content: '🔥';
+        content: '';
+        width: 14px;
+        height: 18px;
+        background: radial-gradient(ellipse at bottom, #FFF8E8 0%, #F2D864 30%, #E88A42 60%, #D4512A 100%);
+        border-radius: 50% 50% 20% 50%;
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-15deg);
     }
 }
 

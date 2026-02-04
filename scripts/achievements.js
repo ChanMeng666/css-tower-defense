@@ -12,70 +12,70 @@ var Achievements = (function() {
             name: 'First Blood',
             description: 'Kill your first enemy',
             reward: 10,
-            icon: '🩸',
+            icon: 'achievement-icon-blood',
             unlocked: false
         },
         wave_5: {
             name: 'Veteran',
             description: 'Reach wave 5',
             reward: 25,
-            icon: '🎖️',
+            icon: 'achievement-icon-medal',
             unlocked: false
         },
         survivor: {
             name: 'Survivor',
             description: 'Complete all 10 waves',
             reward: 100,
-            icon: '🏆',
+            icon: 'achievement-icon-trophy',
             unlocked: false
         },
         perfect_wave: {
             name: 'Perfect Wave',
             description: 'Complete a wave without taking damage',
             reward: 50,
-            icon: '⭐',
+            icon: 'achievement-icon-star',
             unlocked: false
         },
         combo_5: {
             name: 'Combo Master',
             description: 'Achieve a 5x combo',
             reward: 30,
-            icon: '🔥',
+            icon: 'achievement-icon-fire',
             unlocked: false
         },
         combo_10: {
             name: 'Combo Legend',
             description: 'Achieve a 10x combo',
             reward: 75,
-            icon: '💥',
+            icon: 'achievement-icon-explosion',
             unlocked: false
         },
         boss_slayer: {
             name: 'Boss Slayer',
             description: 'Defeat the boss',
             reward: 50,
-            icon: '👑',
+            icon: 'achievement-icon-crown',
             unlocked: false
         },
         tower_master: {
             name: 'Tower Master',
             description: 'Place 10 towers in one game',
             reward: 25,
-            icon: '🏰',
+            icon: 'achievement-icon-castle',
             unlocked: false
         },
         reforger: {
             name: 'Lucky Reforge',
             description: 'Get a Legendary prefix',
             reward: 50,
-            icon: '✨',
+            icon: 'achievement-icon-sparkle',
             unlocked: false
         },
         rich: {
             name: 'Wealthy',
             description: 'Have 500 gold at once',
             reward: 25,
-            icon: '💰',
+            icon: 'achievement-icon-gold',
             unlocked: false
         }
     };
@@ -206,7 +206,7 @@ var Achievements = (function() {
         var notification = document.createElement('div');
         notification.className = 'achievement-notification';
         notification.innerHTML =
-            '<div class="achievement-icon">' + achievement.icon + '</div>' +
+            '<div class="achievement-icon"><div class="' + achievement.icon + '"></div></div>' +
             '<div class="achievement-info">' +
             '<div class="achievement-title">Achievement Unlocked!</div>' +
             '<div class="achievement-name">' + achievement.name + '</div>' +

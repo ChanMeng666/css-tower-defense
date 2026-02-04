@@ -1,11 +1,11 @@
 :root {
-  --color-bg: #87CEEB;
-  --color-grass: #aaff00;
-  --color-grass-light: #ccff66;
-  --color-grass-dark: #88cc00;
-  --color-path: #ffcc00;
-  --color-path-light: #ffff66;
-  --color-path-dark: #cca300;
+  --color-bg: #B8D8E8;
+  --color-grass: #8BC34A;
+  --color-grass-light: #A8D965;
+  --color-grass-dark: #6B9A30;
+  --color-path: #E8C864;
+  --color-path-light: #F2DD8A;
+  --color-path-dark: #C4A642;
 }
 .loading-screen {
   position: fixed;
@@ -13,7 +13,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: repeating-conic-gradient(from 0deg, #00ffff 0deg 15deg, #33ffff 15deg 30deg);
+  background: repeating-conic-gradient(from 0deg, #2D8A8A 0deg 15deg, #37a9a9 15deg 30deg);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -29,7 +29,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.3) 3px, transparent 3px);
+  background-image: radial-gradient(rgba(255, 248, 240, 0.3) 3px, transparent 3px);
   background-size: 12px 12px;
   background-position: 0 0;
   pointer-events: none;
@@ -49,28 +49,28 @@
   overflow: hidden;
 }
 .loading-bg::before {
-  content: '💥 POW! 💥';
+  content: 'POW!';
   position: absolute;
   top: 10%;
   left: 5%;
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 2rem;
-  color: #ffff00;
-  -webkit-text-stroke: 1px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  color: #F2D864;
+  -webkit-text-stroke: 1px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
   transform: rotate(-15deg);
   animation: float-decoration 3s ease-in-out infinite;
 }
 .loading-bg::after {
-  content: '⚔️ BOOM! ⚔️';
+  content: 'BOOM!';
   position: absolute;
   bottom: 15%;
   right: 5%;
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 2rem;
-  color: #ff00ff;
-  -webkit-text-stroke: 1px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  color: #D4738A;
+  -webkit-text-stroke: 1px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
   transform: rotate(10deg);
   animation: float-decoration 3s ease-in-out infinite reverse;
 }
@@ -86,13 +86,13 @@
 .loading-text {
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 5rem;
-  color: #ffff00;
+  color: #F2D864;
   margin: 0;
   line-height: 1;
   text-transform: uppercase;
-  -webkit-text-stroke: 4px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
-  box-shadow: 10px 10px 0 #000000;
+  -webkit-text-stroke: 4px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
+  box-shadow: 10px 10px 0 #1A1614;
   animation: title-wobble 2s infinite ease-in-out;
   transform: rotate(-3deg);
   z-index: 2;
@@ -107,10 +107,10 @@
   top: 20%;
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 5rem;
-  color: #ffff00;
-  -webkit-text-stroke: 4px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
-  box-shadow: 10px 10px 0 #000000;
+  color: #F2D864;
+  -webkit-text-stroke: 4px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
+  box-shadow: 10px 10px 0 #1A1614;
   animation: title-wobble 2s infinite ease-in-out;
   transform: rotate(-3deg);
   opacity: 0;
@@ -144,20 +144,20 @@
   bottom: 0;
   width: 120px;
   height: 25px;
-  background: #ff9933;
-  border: 3px solid #000000;
-  box-shadow: 4px 4px 0 #000000;
+  background: #C47832;
+  border: 3px solid #1A1614;
+  box-shadow: 4px 4px 0 #1A1614;
   transform: perspective(200px) rotateX(-20deg);
-  background-image: repeating-linear-gradient(90deg, transparent, transparent 15px, #ff8000 15px, #ff8000 17px);
+  background-image: repeating-linear-gradient(90deg, transparent, transparent 15px, #9b5f28 15px, #9b5f28 17px);
 }
 .loading-tower-body {
   position: absolute;
   bottom: 25px;
   width: 80px;
   height: 100px;
-  background: linear-gradient(180deg, #ffb366 0%, #ff9933 50%, #ff8000 100%);
-  border: 3px solid #000000;
-  box-shadow: 5px 5px 0 #000000;
+  background: linear-gradient(180deg, #d49255 0%, #C47832 50%, #9b5f28 100%);
+  border: 3px solid #1A1614;
+  box-shadow: 5px 5px 0 #1A1614;
 }
 .loading-tower-body::before {
   content: '';
@@ -167,8 +167,8 @@
   transform: translateX(-50%);
   width: 30px;
   height: 35px;
-  background: #00ffff;
-  border: 2px solid #000000;
+  background: #2D8A8A;
+  border: 2px solid #1A1614;
   border-radius: 50% 50% 0 0;
 }
 .loading-tower-body::after {
@@ -179,8 +179,8 @@
   transform: translateX(-50%);
   width: 25px;
   height: 30px;
-  background: #cc6600;
-  border: 2px solid #000000;
+  background: #73461d;
+  border: 2px solid #1A1614;
   border-radius: 5px 5px 0 0;
 }
 .loading-tower-top {
@@ -188,9 +188,9 @@
   bottom: 125px;
   width: 100px;
   height: 20px;
-  background: #ff9933;
-  border: 3px solid #000000;
-  box-shadow: 3px 3px 0 #000000;
+  background: #C47832;
+  border: 3px solid #1A1614;
+  box-shadow: 3px 3px 0 #1A1614;
 }
 .loading-tower-top::before {
   content: '';
@@ -199,8 +199,8 @@
   left: 5px;
   right: 5px;
   height: 15px;
-  background: repeating-linear-gradient(90deg, #ff9933 0px, #ff9933 12px, transparent 12px, transparent 18px);
-  border: 2px solid #000000;
+  background: repeating-linear-gradient(90deg, #C47832 0px, #C47832 12px, transparent 12px, transparent 18px);
+  border: 2px solid #1A1614;
   border-bottom: none;
 }
 .loading-tower-turret {
@@ -208,19 +208,23 @@
   bottom: 145px;
   width: 40px;
   height: 50px;
-  background: #000000;
-  border: 3px solid #000000;
+  background: #1A1614;
+  border: 3px solid #1A1614;
   border-radius: 5px;
   animation: turret-scan 2s ease-in-out infinite;
   transform-origin: center bottom;
 }
 .loading-tower-turret::after {
-  content: '🏹';
+  content: '';
   position: absolute;
   top: -25px;
   left: 50%;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #FFF8F0;
+  border-radius: 0 50% 50% 0;
+  border-left: none;
   transform: translateX(-50%);
-  font-size: 30px;
   animation: arrow-ready 1s ease-in-out infinite;
 }
 @keyframes turret-scan {
@@ -254,19 +258,19 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 2px solid #000000;
+  border: 2px solid #1A1614;
   animation: dot-bounce 1s ease-in-out infinite;
 }
 .loading-dot:nth-child(1) {
-  background: #ff3333;
+  background: #E8635A;
   animation-delay: 0s;
 }
 .loading-dot:nth-child(2) {
-  background: #ffff00;
+  background: #F2D864;
   animation-delay: 0.2s;
 }
 .loading-dot:nth-child(3) {
-  background: #33cc33;
+  background: #5EA65E;
   animation-delay: 0.4s;
 }
 @keyframes dot-bounce {
@@ -281,9 +285,9 @@
 .loading-progress {
   width: 300px;
   height: 25px;
-  background: #ffffff;
-  border: 3px solid #000000;
-  box-shadow: 4px 4px 0 #000000;
+  background: #FFF8F0;
+  border: 3px solid #1A1614;
+  box-shadow: 4px 4px 0 #1A1614;
   overflow: hidden;
   position: relative;
   z-index: 2;
@@ -294,7 +298,7 @@
 .loading-progress-fill {
   height: 100%;
   width: 0;
-  background: repeating-linear-gradient(45deg, #33cc33 0px, #33cc33 10px, #70db70 10px, #70db70 20px);
+  background: repeating-linear-gradient(45deg, #5EA65E 0px, #5EA65E 10px, #8fc18f 10px, #8fc18f 20px);
   animation: progress-fill 2s ease-out forwards;
   position: relative;
 }
@@ -320,14 +324,14 @@
   font-size: 2rem;
   padding: 15px 50px;
   border: none;
-  background: #ffff00;
-  color: #000000;
+  background: #F2D864;
+  color: #1A1614;
   cursor: pointer;
   text-transform: uppercase;
   position: relative;
   z-index: 2;
-  border: 3px solid #000000;
-  box-shadow: 8px 8px 0 #000000;
+  border: 3px solid #1A1614;
+  box-shadow: 8px 8px 0 #1A1614;
   transition: all 0.1s;
   opacity: 0;
   pointer-events: none;
@@ -337,12 +341,12 @@
 }
 .loading-start:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 10px 10px 0 #000000;
-  background: #ffff33;
+  box-shadow: 10px 10px 0 #1A1614;
+  background: #f6e493;
 }
 .loading-start:active {
   transform: translate(4px, 4px);
-  box-shadow: 2px 2px 0 #000000;
+  box-shadow: 2px 2px 0 #1A1614;
 }
 .ready .loading-start {
   opacity: 1;
@@ -370,10 +374,10 @@
   }
 }
 .loading-instructions {
-  background: #ffffff;
+  background: #FFF8F0;
   padding: 15px 25px;
-  border: 3px solid #000000;
-  box-shadow: 8px 8px 0 #000000;
+  border: 3px solid #1A1614;
+  box-shadow: 8px 8px 0 #1A1614;
   transform: rotate(1deg);
   margin-top: 25px;
   z-index: 2;
@@ -385,7 +389,7 @@
   margin: 5px 0;
   font-family: 'Comic Neue', cursive;
   font-size: 1.1rem;
-  color: #000000;
+  color: #1A1614;
 }
 .ready .loading-instructions {
   opacity: 1;
@@ -407,10 +411,10 @@
   right: -80px;
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 1.5rem;
-  color: #000000;
-  background: #ffffff;
+  color: #1A1614;
+  background: #FFF8F0;
   padding: 8px 15px;
-  border: 2px solid #000000;
+  border: 2px solid #1A1614;
   border-radius: 20px;
   opacity: 0;
   animation: speech-appear 0.5s ease forwards;
@@ -423,7 +427,7 @@
   left: 20px;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-top: 12px solid #000000;
+  border-top: 12px solid #1A1614;
 }
 @keyframes speech-appear {
   0% {
@@ -482,34 +486,34 @@
   font-family: 'Comic Neue', cursive;
   font-size: 1.2rem;
   font-weight: bold;
-  color: #000000;
+  color: #1A1614;
 }
 .difficulty-btn {
   font-family: 'Comic Neue', cursive;
   font-size: 1rem;
   padding: 8px 16px;
   border: none;
-  border: 2px solid #000000;
+  border: 2px solid #1A1614;
   cursor: pointer;
   transition: all 0.1s;
-  background: #ffffff;
-  color: #000000;
+  background: #FFF8F0;
+  color: #1A1614;
 }
 .difficulty-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 4px 4px 0 #000000;
+  box-shadow: 4px 4px 0 #1A1614;
 }
 .difficulty-btn.selected {
-  background: #ffff00;
+  background: #F2D864;
   box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.2);
 }
 .difficulty-btn[data-difficulty="hard"].selected {
-  background: #ff00ff;
-  color: #ffffff;
+  background: #D4738A;
+  color: #FFF8F0;
 }
 .difficulty-btn[data-difficulty="expert"].selected {
-  background: #ff3333;
-  color: #ffffff;
+  background: #E8635A;
+  color: #FFF8F0;
 }
 @media (prefers-reduced-motion: reduce) {
   .loading-tower-turret,
@@ -538,7 +542,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: repeating-conic-gradient(from 0deg, #00ffff 0deg 15deg, #33ffff 15deg 30deg);
+  background: repeating-conic-gradient(from 0deg, #2D8A8A 0deg 15deg, #3ab0b0 15deg 30deg);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -552,7 +556,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.3) 3px, transparent 3px);
+  background-image: radial-gradient(rgba(255, 248, 240, 0.3) 3px, transparent 3px);
   background-size: 12px 12px;
   background-position: 0 0;
   pointer-events: none;
@@ -569,13 +573,13 @@
 .game-title {
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 6rem;
-  color: #ffff00;
+  color: #F2D864;
   margin: 0;
   line-height: 1;
   text-transform: uppercase;
-  -webkit-text-stroke: 4px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
-  box-shadow: 10px 10px 0 #000000;
+  -webkit-text-stroke: 4px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
+  box-shadow: 10px 10px 0 #1A1614;
   animation: title-wobble 2s infinite ease-in-out;
 }
 @keyframes title-wobble {
@@ -590,14 +594,14 @@
 .subtitle {
   font-family: 'Comic Neue', cursive;
   font-size: 2rem;
-  color: #ffffff;
-  background: #ff00ff;
+  color: #FFF8F0;
+  background: #D4738A;
   padding: 5px 15px;
   margin-top: 15px;
   display: inline-block;
   transform: rotate(2deg);
-  border: 3px solid #000000;
-  box-shadow: 5px 5px 0 #000000;
+  border: 3px solid #1A1614;
+  box-shadow: 5px 5px 0 #1A1614;
 }
 .start-btn,
 .restart-btn {
@@ -605,41 +609,92 @@
   font-size: 2rem;
   padding: 15px 50px;
   border: none;
-  background: #ffff00;
-  color: #000000;
+  background: #F2D864;
+  color: #1A1614;
   cursor: pointer;
   text-transform: uppercase;
   position: relative;
   z-index: 1;
-  border: 3px solid #000000;
-  box-shadow: 8px 8px 0 #000000;
+  border: 3px solid #1A1614;
+  box-shadow: 8px 8px 0 #1A1614;
   transition: all 0.1s;
 }
 .start-btn:hover,
 .restart-btn:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 10px 10px 0 #000000;
+  box-shadow: 10px 10px 0 #1A1614;
 }
 .start-btn:active,
 .restart-btn:active {
   transform: translate(4px, 4px);
-  box-shadow: 2px 2px 0 #000000;
+  box-shadow: 2px 2px 0 #1A1614;
+}
+.game-over-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(26, 22, 20, 0.85);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.game-over-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(rgba(255, 248, 240, 0.08) 3px, transparent 3px);
+  background-size: 12px 12px;
+  background-position: 0 0;
+  pointer-events: none;
+}
+.game-over-screen.hidden {
+  display: none;
+}
+.game-over-title {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 5rem;
+  color: #F2D864;
+  margin: 0 0 20px;
+  -webkit-text-stroke: 4px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
+  box-shadow: 10px 10px 0 #1A1614;
+  transform: rotate(-3deg);
+  z-index: 1;
+}
+.final-score {
+  font-family: 'Comic Neue', cursive;
+  font-size: 2rem;
+  color: #FFF8F0;
+  background: #D4738A;
+  padding: 10px 30px;
+  margin-bottom: 30px;
+  border: 3px solid #1A1614;
+  box-shadow: 5px 5px 0 #1A1614;
+  transform: rotate(1deg);
+  z-index: 1;
 }
 .instructions {
   margin-top: 40px;
   position: relative;
   z-index: 1;
-  background: #ffffff;
+  background: #FFF8F0;
   padding: 20px;
-  border: 3px solid #000000;
-  box-shadow: 8px 8px 0 #000000;
+  border: 3px solid #1A1614;
+  box-shadow: 8px 8px 0 #1A1614;
   transform: rotate(1deg);
 }
 .instructions p {
   margin: 5px 0;
   font-family: 'Comic Neue', cursive;
   font-size: 1.2rem;
-  color: #000000;
+  color: #1A1614;
 }
 .game-ui {
   position: fixed;
@@ -659,9 +714,9 @@
   left: 10px;
   right: 10px;
   height: 60px;
-  background: #ffffff;
-  border: 3px solid #000000;
-  box-shadow: 8px 8px 0 #000000;
+  background: #FFF8F0;
+  border: 3px solid #1A1614;
+  box-shadow: 8px 8px 0 #1A1614;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -675,12 +730,12 @@
   font-family: 'Comic Neue', cursive;
   font-weight: bold;
   font-size: 1.2rem;
-  color: #000000;
+  color: #1A1614;
 }
 .stat .stat-value {
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 1.5rem;
-  color: #ff00ff;
+  color: #D4738A;
 }
 .stat .stat-value.changed {
   animation: pop-scale 0.2s;
@@ -691,21 +746,147 @@
   }
   50% {
     transform: scale(1.5);
-    color: #ff3333;
+    color: #E8635A;
   }
   100% {
     transform: scale(1);
   }
+}
+.stat-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  flex-shrink: 0;
+}
+.stat-icon-lives {
+  width: 24px;
+  height: 22px;
+}
+.stat-icon-lives::before,
+.stat-icon-lives::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 12px;
+  height: 20px;
+  border-radius: 12px 12px 0 0;
+  background: #E8635A;
+  border: 2px solid #1A1614;
+}
+.stat-icon-lives::before {
+  left: 0;
+  transform: rotate(-45deg);
+  transform-origin: bottom right;
+}
+.stat-icon-lives::after {
+  right: 0;
+  transform: rotate(45deg);
+  transform-origin: bottom left;
+}
+.stat-icon-gold {
+  width: 22px;
+  height: 22px;
+  background: #F2D864;
+  border-radius: 50%;
+  border: 2px solid #1A1614;
+  box-shadow: inset 0 0 0 3px #ecc61d;
+}
+.stat-icon-wave {
+  width: 24px;
+  height: 16px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+.stat-icon-wave::before {
+  content: '';
+  position: absolute;
+  width: 48px;
+  height: 16px;
+  border: 3px solid #4A90C4;
+  border-color: #4A90C4 transparent transparent transparent;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+.stat-icon-score {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #1A1614;
+  border-radius: 50%;
+  position: relative;
+}
+.stat-icon-score::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: #E8635A;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.stat-icon-score::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 2px;
+  background: #1A1614;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 0 #1A1614;
+}
+.stat-icon-scrap {
+  width: 20px;
+  height: 20px;
+  background: #888;
+  border-radius: 50%;
+  border: 2px solid #1A1614;
+}
+.stat-icon-scrap::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: #FFF8F0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid #1A1614;
+}
+.stat-icon-core {
+  width: 14px;
+  height: 22px;
+  background: #F2D864;
+  clip-path: polygon(40% 0%, 100% 40%, 55% 45%, 70% 100%, 0% 55%, 45% 50%);
+}
+.stat-icon-crystal {
+  width: 18px;
+  height: 22px;
+  background: #4A90C4;
+  clip-path: polygon(50% 0%, 100% 35%, 50% 100%, 0% 35%);
+  border: none;
+}
+.stat-icon-crystal::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  width: 6px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.4);
+  transform: translateX(-50%) skewX(-10deg);
 }
 .shop-panel {
   position: absolute;
   right: 20px;
   top: 50%;
   transform: translateY(-50%) rotate(1deg);
-  background: #ffffff;
+  background: #FFF8F0;
   padding: 15px;
-  border: 3px solid #000000;
-  box-shadow: 8px 8px 0 #000000;
+  border: 3px solid #1A1614;
+  box-shadow: 5px 5px 0 #1A1614;
   pointer-events: auto;
 }
 .shop-panel .shop-title {
@@ -713,9 +894,9 @@
   font-size: 1.5rem;
   text-align: center;
   margin-bottom: 10px;
-  background: #00ffff;
-  color: #000000;
-  border: 2px solid #000000;
+  background: #2D8A8A;
+  color: #1A1614;
+  border: 2px solid #1A1614;
   transform: rotate(-2deg);
 }
 .tower-options {
@@ -728,17 +909,17 @@
   align-items: center;
   padding: 8px;
   background: #eee;
-  border: 2px solid #000000;
+  border: 2px solid #1A1614;
   cursor: pointer;
   transition: all 0.1s;
 }
 .tower-option:hover:not(.disabled) {
-  background: #ffff00;
+  background: #F2D864;
   transform: translateX(-5px);
-  box-shadow: 5px 5px 0 #000000;
+  box-shadow: 5px 5px 0 #1A1614;
 }
 .tower-option.selected {
-  background: #ffff00;
+  background: #F2D864;
   box-shadow: inset 3px 3px 0 rgba(0, 0, 0, 0.1);
 }
 .tower-option.disabled {
@@ -749,37 +930,88 @@
 .tower-preview {
   width: 40px;
   height: 40px;
-  border: 2px solid #000000;
+  border: 2px solid #1A1614;
   margin-right: 10px;
-  background: #ffffff;
+  background: #FFF8F0;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 20px;
 }
 .tower-arrow-preview {
-  background: #ff9933;
+  background: #C47832;
+  position: relative;
 }
 .tower-arrow-preview::after {
-  content: '🏹';
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 3px solid #1A1614;
+  border-radius: 0 50% 50% 0;
+  border-left: none;
+  position: absolute;
+  top: 50%;
+  left: 45%;
+  transform: translate(-50%, -50%);
+}
+.tower-arrow-preview::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 3px;
+  background: #1A1614;
+  transform: translate(-50%, -50%);
 }
 .tower-cannon-preview {
-  background: #666666;
+  background: #4A4A4A;
+  position: relative;
 }
 .tower-cannon-preview::after {
-  content: '💣';
+  content: '';
+  width: 16px;
+  height: 16px;
+  background: #1A1614;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .tower-ice-preview {
-  background: #00ffff;
+  background: #7EC8D9;
+  position: relative;
 }
 .tower-ice-preview::after {
-  content: '❄️';
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 18px solid #FFF8F0;
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(1px 1px 0 #1A1614);
 }
 .tower-magic-preview {
-  background: #ff00ff;
+  background: #9B59B6;
+  position: relative;
 }
 .tower-magic-preview::after {
-  content: '✨';
+  content: '';
+  width: 16px;
+  height: 16px;
+  background: #FFF8F0;
+  border-radius: 50%;
+  border: 3px solid #9B59B6;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 6px #9B59B6;
 }
 .tower-info {
   flex: 1;
@@ -793,7 +1025,7 @@
   display: block;
   font-family: 'Comic Neue', cursive;
   font-weight: bold;
-  color: #00994d;
+  color: #4a874a;
 }
 .wave-control {
   position: absolute;
@@ -806,26 +1038,26 @@
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 1.5rem;
   padding: 10px 40px;
-  background: #33cc33;
-  color: #ffffff;
+  background: #5EA65E;
+  color: #FFF8F0;
   border: none;
-  border: 3px solid #000000;
-  box-shadow: 8px 8px 0 #000000;
+  border: 3px solid #1A1614;
+  box-shadow: 8px 8px 0 #1A1614;
   cursor: pointer;
 }
 .wave-btn:hover:not(:disabled) {
   transform: translateY(-3px);
-  box-shadow: 6px 6px 0 #000000;
+  box-shadow: 6px 6px 0 #1A1614;
 }
 .tower-tooltip {
   position: absolute;
   right: 110%;
   top: 0;
   min-width: 150px;
-  background: #ffffff;
+  background: #FFF8F0;
   padding: 10px;
-  border: 3px solid #000000;
-  box-shadow: 4px 4px 0 #000000;
+  border: 3px solid #1A1614;
+  box-shadow: 4px 4px 0 #1A1614;
   z-index: 200;
   opacity: 0;
   pointer-events: none;
@@ -833,7 +1065,7 @@
 }
 .tower-tooltip .tooltip-name {
   font-family: 'Bangers', 'Impact', cursive;
-  border-bottom: 2px solid #000000;
+  border-bottom: 2px solid #1A1614;
 }
 .tower-tooltip .tooltip-stats {
   font-family: 'Comic Neue', cursive;
@@ -851,15 +1083,15 @@
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-5deg);
-  background: #ffff00;
+  background: #F2D864;
   padding: 20px 40px;
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 3rem;
-  color: #ff3333;
-  -webkit-text-stroke: 1px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
-  border: 4px solid #000000;
-  box-shadow: 15px 15px 0 #000000;
+  color: #E8635A;
+  -webkit-text-stroke: 1px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
+  border: 4px solid #1A1614;
+  box-shadow: 15px 15px 0 #1A1614;
   z-index: 2000;
   opacity: 0;
   transition: opacity 0.2s;
@@ -883,26 +1115,26 @@
   position: absolute;
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 1.5rem;
-  -webkit-text-stroke: 2px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  -webkit-text-stroke: 2px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
   pointer-events: none;
   z-index: 500;
   animation: float-up 1s forwards;
 }
 .floating-number.gold-gain {
-  color: #ffff00;
+  color: #F2D864;
 }
 .floating-number.gold-gain::before {
   content: '+';
 }
 .floating-number.gold-loss {
-  color: #ff3333;
+  color: #E8635A;
 }
 .floating-number.gold-loss::before {
   content: '-';
 }
 .floating-number.damage {
-  color: #ffffff;
+  color: #FFF8F0;
   font-size: 1.2rem;
 }
 @keyframes float-up {
@@ -925,11 +1157,11 @@
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 1.2rem;
   padding: 10px 20px;
-  background: #00ffff;
-  color: #000000;
+  background: #2D8A8A;
+  color: #1A1614;
   border: none;
-  border: 3px solid #000000;
-  box-shadow: 8px 8px 0 #000000;
+  border: 3px solid #1A1614;
+  box-shadow: 5px 5px 0 #1A1614;
   cursor: pointer;
 }
 .tech-btn:hover {
@@ -951,11 +1183,11 @@
   display: none;
 }
 .tech-content {
-  background: #ffffff;
+  background: #FFF8F0;
   padding: 30px;
   width: 600px;
-  border: 5px solid #000000;
-  box-shadow: 20px 20px 0 #000000;
+  border: 5px solid #1A1614;
+  box-shadow: 20px 20px 0 #1A1614;
   transform: rotate(1deg);
   text-align: center;
 }
@@ -963,9 +1195,9 @@
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 3rem;
   margin: 0 0 20px;
-  color: #0088ff;
-  -webkit-text-stroke: 1px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  color: #4A90C4;
+  -webkit-text-stroke: 1px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
 }
 .tech-stats {
   display: flex;
@@ -984,16 +1216,16 @@
 .tech-card {
   background: #f0f0f0;
   padding: 10px;
-  border: 2px solid #000000;
+  border: 2px solid #1A1614;
   cursor: pointer;
   transition: all 0.2s;
 }
 .tech-card:hover {
   transform: scale(1.05);
-  background: #ffff00;
+  background: #F2D864;
 }
 .tech-card.maxed {
-  background: #33cc33;
+  background: #5EA65E;
   cursor: default;
 }
 .tech-card.unavailable {
@@ -1011,32 +1243,50 @@
 }
 .tech-card .tech-cost {
   font-weight: bold;
-  color: #ff3333;
+  color: #E8635A;
 }
 .close-tech-btn {
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 1.5rem;
   padding: 10px 30px;
-  background: #ff3333;
-  color: #ffffff;
+  background: #E8635A;
+  color: #FFF8F0;
   border: none;
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
   cursor: pointer;
 }
 .close-tech-btn:hover {
   transform: scale(1.1);
 }
 .tower-tesla-preview {
-  background: #ffd700;
+  background: #E8C84A;
+  position: relative;
 }
 .tower-tesla-preview::after {
-  content: '⚡';
+  content: '';
+  width: 12px;
+  height: 20px;
+  background: #1A1614;
+  clip-path: polygon(40% 0%, 100% 40%, 55% 45%, 70% 100%, 0% 55%, 45% 50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .tower-flame-preview {
-  background: #ff5722;
+  background: #D4512A;
+  position: relative;
 }
 .tower-flame-preview::after {
-  content: '🔥';
+  content: '';
+  width: 14px;
+  height: 18px;
+  background: radial-gradient(ellipse at bottom, #FFF8E8 0%, #F2D864 30%, #E88A42 60%, #D4512A 100%);
+  border-radius: 50% 50% 20% 50%;
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
 }
 .announcement-overlay {
   position: fixed;
@@ -1066,27 +1316,27 @@
 .announcement-title {
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 5rem;
-  color: #ffff00;
+  color: #F2D864;
   margin: 0;
   line-height: 1.1;
   text-transform: uppercase;
-  -webkit-text-stroke: 5px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
-  box-shadow: 12px 12px 0 #000000;
+  -webkit-text-stroke: 5px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
+  box-shadow: 12px 12px 0 #1A1614;
   animation: announcement-pulse 0.5s ease-out;
   transform: rotate(-3deg);
 }
 .announcement-subtitle {
   font-family: 'Comic Neue', cursive;
   font-size: 2rem;
-  color: #ffffff;
-  background: #ff00ff;
+  color: #FFF8F0;
+  background: #D4738A;
   padding: 10px 30px;
   margin-top: 15px;
   display: inline-block;
   transform: rotate(2deg);
-  border: 3px solid #000000;
-  box-shadow: 6px 6px 0 #000000;
+  border: 3px solid #1A1614;
+  box-shadow: 6px 6px 0 #1A1614;
   animation: announcement-slide 0.4s ease-out 0.1s backwards;
 }
 @keyframes announcement-pulse {
@@ -1119,7 +1369,7 @@
   left: -10px;
   right: -10px;
   bottom: -10px;
-  border: 4px solid #00ffff;
+  border: 4px solid #2D8A8A;
   border-radius: 50%;
   animation: shield-pulse 1s infinite;
   pointer-events: none;
@@ -1129,7 +1379,7 @@
   animation: boss-rage 0.2s infinite alternate !important;
 }
 .enemy-boss.enraged .enemy-body {
-  background: #ff0000 !important;
+  background: #e2392d !important;
 }
 .enemy-boss.summoning::before {
   content: '';
@@ -1138,7 +1388,7 @@
   left: 50%;
   width: 80px;
   height: 80px;
-  background: radial-gradient(circle, rgba(255, 0, 255, 0.6) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(212, 115, 138, 0.6) 0%, transparent 70%);
   transform: translate(-50%, -50%);
   animation: summon-pulse 0.5s ease-out;
 }
@@ -1174,34 +1424,34 @@
 .range-indicator {
   position: absolute;
   border-radius: 50%;
-  border: 3px dashed rgba(0, 255, 255, 0.6);
-  background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+  border: 3px dashed rgba(45, 138, 138, 0.6);
+  background: radial-gradient(circle, rgba(45, 138, 138, 0.1) 0%, transparent 70%);
   pointer-events: none;
   animation: range-fade-in 0.2s ease-out forwards;
 }
 .range-indicator.range-arrow {
-  border-color: rgba(255, 153, 51, 0.6);
-  background: radial-gradient(circle, rgba(255, 153, 51, 0.1) 0%, transparent 70%);
+  border-color: rgba(196, 120, 50, 0.6);
+  background: radial-gradient(circle, rgba(196, 120, 50, 0.1) 0%, transparent 70%);
 }
 .range-indicator.range-cannon {
-  border-color: rgba(102, 102, 102, 0.6);
-  background: radial-gradient(circle, rgba(102, 102, 102, 0.1) 0%, transparent 70%);
+  border-color: rgba(74, 74, 74, 0.6);
+  background: radial-gradient(circle, rgba(74, 74, 74, 0.1) 0%, transparent 70%);
 }
 .range-indicator.range-ice {
-  border-color: rgba(0, 255, 255, 0.6);
-  background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+  border-color: rgba(126, 200, 217, 0.6);
+  background: radial-gradient(circle, rgba(126, 200, 217, 0.1) 0%, transparent 70%);
 }
 .range-indicator.range-magic {
-  border-color: rgba(255, 0, 255, 0.6);
-  background: radial-gradient(circle, rgba(255, 0, 255, 0.1) 0%, transparent 70%);
+  border-color: rgba(155, 89, 182, 0.6);
+  background: radial-gradient(circle, rgba(155, 89, 182, 0.1) 0%, transparent 70%);
 }
 .range-indicator.range-tesla {
-  border-color: rgba(255, 215, 0, 0.6);
-  background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+  border-color: rgba(232, 200, 74, 0.6);
+  background: radial-gradient(circle, rgba(232, 200, 74, 0.1) 0%, transparent 70%);
 }
 .range-indicator.range-flame {
-  border-color: rgba(255, 87, 34, 0.6);
-  background: radial-gradient(circle, rgba(255, 87, 34, 0.1) 0%, transparent 70%);
+  border-color: rgba(212, 81, 42, 0.6);
+  background: radial-gradient(circle, rgba(212, 81, 42, 0.1) 0%, transparent 70%);
 }
 @keyframes range-fade-in {
   0% {
@@ -1256,7 +1506,7 @@ body.blood-moon .sky-cycle {
   font-size: 0.7rem;
   font-weight: bold;
   white-space: nowrap;
-  text-shadow: 1px 1px 0 #000000;
+  text-shadow: 1px 1px 0 #1A1614;
   z-index: 10;
 }
 .tower.prefix-rare {
@@ -1295,24 +1545,24 @@ body.blood-moon .sky-cycle {
 .combo-count {
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 4rem;
-  color: #ffff00;
-  -webkit-text-stroke: 4px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
-  box-shadow: 6px 6px 0 #000000;
+  color: #F2D864;
+  -webkit-text-stroke: 4px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
+  box-shadow: 6px 6px 0 #1A1614;
   animation: combo-pulse 0.3s ease-out;
 }
 .combo-label {
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 2rem;
-  color: #ff00ff;
-  -webkit-text-stroke: 2px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  color: #D4738A;
+  -webkit-text-stroke: 2px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
   margin-top: -10px;
 }
 .combo-bonus {
   font-family: 'Comic Neue', cursive;
   font-size: 1.2rem;
-  color: #33cc33;
+  color: #5EA65E;
   font-weight: bold;
   margin-top: 5px;
 }
@@ -1331,10 +1581,10 @@ body.blood-moon .sky-cycle {
   display: flex;
   align-items: center;
   gap: 15px;
-  background: #ffffff;
+  background: #FFF8F0;
   padding: 15px 25px;
-  border: 3px solid #000000;
-  box-shadow: 6px 6px 0 #000000;
+  border: 3px solid #1A1614;
+  box-shadow: 6px 6px 0 #1A1614;
   z-index: 2000;
   transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
@@ -1348,8 +1598,8 @@ body.blood-moon .sky-cycle {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ffff00;
-  border: 2px solid #000000;
+  background: #F2D864;
+  border: 2px solid #1A1614;
   border-radius: 50%;
 }
 .achievement-info {
@@ -1358,17 +1608,17 @@ body.blood-moon .sky-cycle {
 .achievement-title {
   font-family: 'Comic Neue', cursive;
   font-size: 0.9rem;
-  color: #000000;
+  color: #1A1614;
 }
 .achievement-name {
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 1.5rem;
-  color: #ff00ff;
+  color: #D4738A;
 }
 .achievement-reward {
   font-family: 'Comic Neue', cursive;
   font-size: 1rem;
-  color: #33cc33;
+  color: #5EA65E;
   font-weight: bold;
 }
 .scene {
@@ -1380,7 +1630,7 @@ body.blood-moon .sky-cycle {
   perspective: 1200px;
   overflow: hidden;
   background: var(--color-bg);
-  background-image: radial-gradient(rgba(0, 0, 0, 0.05) 2px, transparent 2px);
+  background-image: radial-gradient(rgba(26, 22, 20, 0.05) 2px, transparent 2px);
   background-size: 8px 8px;
   background-position: 0 0;
   transition: background-color 2s ease;
@@ -1392,7 +1642,7 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 200vmax;
   height: 200vmax;
-  background: repeating-conic-gradient(from 0deg, #ffffff 0deg 10deg, transparent 10deg 20deg);
+  background: repeating-conic-gradient(from 0deg, #FFF8F0 0deg 10deg, transparent 10deg 20deg);
   transform: translate(-50%, -50%);
   z-index: -2;
   opacity: 0.1;
@@ -1402,7 +1652,7 @@ body.blood-moon .sky-cycle {
   background-color: var(--color-bg);
 }
 .scene.night {
-  background-color: #003666;
+  background-color: #1A2A3A;
 }
 .scene.night::before {
   opacity: 0.05;
@@ -1428,9 +1678,9 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 80px;
   height: 80px;
-  background: #ffff00;
+  background: #F2D864;
   border-radius: 50%;
-  border: 4px solid #000000;
+  border: 4px solid #1A1614;
   box-shadow: 10px 10px 0 orange;
   transform: translateX(-50%);
 }
@@ -1453,9 +1703,9 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 60px;
   height: 60px;
-  background: #ffffff;
+  background: #FFF8F0;
   border-radius: 50%;
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
   box-shadow: 8px 8px 0 gray;
   transform: translateX(-50%) rotate(180deg);
 }
@@ -1492,7 +1742,7 @@ body.blood-moon .sky-cycle {
   top: -10%;
   width: 2px;
   height: 30px;
-  background: #0088ff;
+  background: #4A90C4;
   opacity: 0.8;
   animation: rain-fall linear infinite;
 }
@@ -1516,9 +1766,9 @@ body.blood-moon .sky-cycle {
   top: -5%;
   width: 6px;
   height: 6px;
-  background: #ffffff;
+  background: #FFF8F0;
   border-radius: 50%;
-  border: 1px solid #000000;
+  border: 1px solid #1A1614;
   animation: snow-fall linear infinite;
 }
 @keyframes snow-fall {
@@ -1584,8 +1834,8 @@ body.blood-moon .sky-cycle {
   height: 480px;
   transform: translate(-50%, -50%) rotateX(45deg);
   transform-style: preserve-3d;
-  background: #000000;
-  border: 4px solid #000000;
+  background: #1A1614;
+  border: 4px solid #1A1614;
   box-shadow: 15px 15px 0 rgba(0, 0, 0, 0.3);
 }
 .map::after {
@@ -1595,10 +1845,10 @@ body.blood-moon .sky-cycle {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #ffffff;
+  background: #FFF8F0;
   transform: translate(10px, 10px);
   z-index: -1;
-  border: 4px solid #000000;
+  border: 4px solid #1A1614;
 }
 .cell {
   position: absolute;
@@ -1607,7 +1857,7 @@ body.blood-moon .sky-cycle {
   box-sizing: border-box;
   transition: all 0.2s;
   transform-style: preserve-3d;
-  border: 1px solid #000000;
+  border: 1px solid #1A1614;
 }
 .cell.grass {
   background: var(--color-grass);
@@ -1616,21 +1866,21 @@ body.blood-moon .sky-cycle {
 }
 .cell.path {
   background: var(--color-path);
-  border: 2px solid #000000;
-  background-image: repeating-linear-gradient(45deg, translate(transparent, 10px), transparent 10px, rgba(255, 255, 255, 0.3) 10px, rgba(255, 255, 255, 0.3) 20px);
+  border: 2px solid #1A1614;
+  background-image: repeating-linear-gradient(45deg, translate(transparent, 10px), transparent 10px, rgba(255, 248, 240, 0.3) 10px, rgba(255, 248, 240, 0.3) 20px);
 }
 .cell.buildable {
   cursor: pointer;
 }
 .cell.buildable:hover {
   transform: translateZ(10px);
-  background: #00ffff;
-  border: 2px solid #000000;
+  background: #2D8A8A;
+  border: 2px solid #1A1614;
   box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.2);
   z-index: 10;
 }
 .cell.buildable.valid-placement {
-  background: #33cc33;
+  background: #5EA65E;
 }
 .cell.buildable.valid-placement::after {
   content: 'OK!';
@@ -1640,12 +1890,12 @@ body.blood-moon .sky-cycle {
   transform: translate(-50%, -50%);
   font-family: 'Comic Neue', cursive;
   font-weight: bold;
-  color: #ffffff;
-  -webkit-text-stroke: 1px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  color: #FFF8F0;
+  -webkit-text-stroke: 1px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
 }
 .cell.buildable.invalid-placement {
-  background: #ff3333;
+  background: #E8635A;
 }
 .cell.buildable.invalid-placement::after {
   content: 'NO!';
@@ -1655,19 +1905,19 @@ body.blood-moon .sky-cycle {
   transform: translate(-50%, -50%);
   font-family: 'Comic Neue', cursive;
   font-weight: bold;
-  color: #ffffff;
-  -webkit-text-stroke: 1px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  color: #FFF8F0;
+  -webkit-text-stroke: 1px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
 }
 .cell.start {
-  background: #0088ff;
+  background: #4A90C4;
 }
 .cell.start::after {
   content: 'START';
   font-family: 'Bangers', 'Impact', cursive;
-  color: #ffffff;
-  -webkit-text-stroke: 1px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  color: #FFF8F0;
+  -webkit-text-stroke: 1px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
   font-size: 0.8rem;
   position: absolute;
   top: 50%;
@@ -1675,14 +1925,14 @@ body.blood-moon .sky-cycle {
   transform: translate(-50%, -50%);
 }
 .cell.end {
-  background: #ff3333;
+  background: #E8635A;
 }
 .cell.end::after {
   content: 'END';
   font-family: 'Bangers', 'Impact', cursive;
-  color: #ffffff;
-  -webkit-text-stroke: 1px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  color: #FFF8F0;
+  -webkit-text-stroke: 1px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
   font-size: 0.8rem;
   position: absolute;
   top: 50%;
@@ -1692,8 +1942,8 @@ body.blood-moon .sky-cycle {
 .range-indicator {
   position: absolute;
   border-radius: 50%;
-  border: 3px dashed #000000;
-  background: rgba(0, 255, 255, 0.3);
+  border: 3px dashed #1A1614;
+  background: rgba(45, 138, 138, 0.3);
   pointer-events: none;
   transform: rotateX(-45deg);
   animation: rotate-range 4s linear infinite;
@@ -1713,7 +1963,7 @@ body.blood-moon .sky-cycle {
   position: absolute;
   width: 8px;
   height: 8px;
-  background: #000000;
+  background: #1A1614;
   animation: comic-float 2s infinite;
 }
 @keyframes comic-float {
@@ -1810,7 +2060,7 @@ body.blood-moon .sky-cycle {
     transform: translate(-50%, -100%) rotateX(-45deg) scale(1) rotate(0deg);
   }
   to {
-    transform: translate(-50%, -100%) rotateX(-45deg) scale(1.05) rotate(2deg);
+    transform: translate(-50%, -100%) rotateX(-45deg) scale(1.03) rotate(1.5deg);
   }
 }
 .tower-arrow .tower-base {
@@ -1819,9 +2069,9 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 40px;
   height: 10px;
-  background: #ff9933;
+  background: #C47832;
   transform: translateX(-50%) rotateX(-90deg);
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
 }
 .tower-arrow .tower-body {
   position: absolute;
@@ -1829,10 +2079,10 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 30px;
   height: 50px;
-  background: #ffb366;
+  background: #d49255;
   transform: translateX(-50%);
-  border: 3px solid #000000;
-  background-image: repeating-linear-gradient(0deg, transparent, transparent 9px, #000000 10px);
+  border: 3px solid #1A1614;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 9px, #1A1614 10px);
 }
 .tower-arrow .tower-top {
   position: absolute;
@@ -1840,9 +2090,9 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 44px;
   height: 12px;
-  background: #ff9933;
+  background: #C47832;
   transform: translateX(-50%);
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
 }
 .tower-arrow .tower-turret {
   position: absolute;
@@ -1852,12 +2102,26 @@ body.blood-moon .sky-cycle {
   height: 40px;
 }
 .tower-arrow .tower-turret::after {
-  content: '🏹';
+  content: '';
   position: absolute;
   top: -20px;
   left: 50%;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #1A1614;
+  border-radius: 0 50% 50% 0;
+  border-left: none;
   transform: translateX(-50%);
-  font-size: 30px;
+}
+.tower-arrow .tower-turret::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 24px;
+  height: 3px;
+  background: #1A1614;
+  transform: translateX(-50%);
 }
 .tower-cannon .tower-base {
   position: absolute;
@@ -1865,10 +2129,10 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 50px;
   height: 50px;
-  background: #000000;
+  background: #1A1614;
   border-radius: 50%;
   transform: translateX(-50%) rotateX(-90deg);
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
 }
 .tower-cannon .tower-body {
   position: absolute;
@@ -1878,7 +2142,7 @@ body.blood-moon .sky-cycle {
   height: 30px;
   background: #444;
   transform: translateX(-50%);
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
   border-radius: 5px;
 }
 .tower-cannon .tower-body::after {
@@ -1897,7 +2161,7 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 20px;
   height: 50px;
-  background: #000000;
+  background: #1A1614;
   transform-origin: center bottom;
   transform: translateX(-50%);
   border: 2px solid #fff;
@@ -1909,7 +2173,7 @@ body.blood-moon .sky-cycle {
   top: 5px;
   width: 4px;
   height: 30px;
-  background: #ffffff;
+  background: #FFF8F0;
   border-radius: 2px;
 }
 .tower-ice .tower-base {
@@ -1918,9 +2182,9 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 40px;
   height: 40px;
-  background: #00ffff;
+  background: #7EC8D9;
   transform: translateX(-50%) rotateX(-90deg);
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
 }
 .tower-ice .tower-crystal {
   position: absolute;
@@ -1930,9 +2194,9 @@ body.blood-moon .sky-cycle {
   height: 0;
   border-left: 20px solid transparent;
   border-right: 20px solid transparent;
-  border-bottom: 70px solid #00ffff;
+  border-bottom: 70px solid #7EC8D9;
   transform: translateX(-50%);
-  filter: drop-shadow(3px 3px 0 #000000);
+  filter: drop-shadow(3px 3px 0 #1A1614);
 }
 .tower-ice .tower-crystal::after {
   content: '';
@@ -1953,12 +2217,12 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 30px;
   height: 60px;
-  background: #ff00ff;
+  background: #9B59B6;
   transform: translateX(-50%);
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
   clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
   border: none;
-  filter: drop-shadow(2px 0 0 #000000) drop-shadow(-2px 0 0 #000000) drop-shadow(0 -2px 0 #000000) drop-shadow(0 2px 0 #000000);
+  filter: drop-shadow(2px 0 0 #1A1614) drop-shadow(-2px 0 0 #1A1614) drop-shadow(0 -2px 0 #1A1614) drop-shadow(0 2px 0 #1A1614);
 }
 .tower-magic .tower-orb {
   position: absolute;
@@ -1966,11 +2230,11 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 30px;
   height: 30px;
-  background: #ffffff;
+  background: #FFF8F0;
   border-radius: 50%;
   transform: translateX(-50%);
-  border: 4px solid #ff00ff;
-  box-shadow: 4px 4px 0 #000000;
+  border: 4px solid #9B59B6;
+  box-shadow: 4px 4px 0 #1A1614;
   animation: orb-hop 0.5s infinite alternate;
 }
 .tower-magic .tower-ring {
@@ -1979,7 +2243,7 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 60px;
   height: 10px;
-  border: 4px solid #ff00ff;
+  border: 4px solid #D4738A;
   border-radius: 50%;
   transform: translateX(-50%);
   animation: spin-flat 2s linear infinite;
@@ -1992,7 +2256,7 @@ body.blood-moon .sky-cycle {
   height: 15px;
   background: #555;
   transform: translateX(-50%) rotateX(-90deg);
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
 }
 .tower-tesla .tower-coil {
   position: absolute;
@@ -2000,9 +2264,9 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 20px;
   height: 40px;
-  background: repeating-linear-gradient(0deg, #ffd700, #ffd700 5px, #000000 5px, #000000 8px);
+  background: repeating-linear-gradient(0deg, #E8C84A, #E8C84A 5px, #1A1614 5px, #1A1614 8px);
   transform: translateX(-50%);
-  border: 2px solid #000000;
+  border: 2px solid #1A1614;
 }
 .tower-tesla .tower-spark {
   position: absolute;
@@ -2010,19 +2274,22 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 30px;
   height: 30px;
-  background: #ffffff;
+  background: #FFF8F0;
   border-radius: 50%;
   transform: translateX(-50%);
-  border: 2px solid #ffd700;
-  box-shadow: 0 0 10px #ffd700;
+  border: 2px solid #E8C84A;
+  box-shadow: 0 0 10px #E8C84A;
   animation: spark-pulse 0.1s infinite alternate;
 }
 .tower-tesla .tower-spark::after {
-  content: '⚡';
-  font-size: 20px;
+  content: '';
   position: absolute;
   top: 50%;
   left: 50%;
+  width: 14px;
+  height: 18px;
+  background: #E8C84A;
+  clip-path: polygon(40% 0%, 100% 40%, 55% 45%, 70% 100%, 0% 55%, 45% 50%);
   transform: translate(-50%, -50%);
 }
 @keyframes spark-pulse {
@@ -2052,8 +2319,8 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 30px;
   height: 2px;
-  background: #ffd700;
-  box-shadow: 0 0 4px #ffd700, 0 0 8px #ffffff;
+  background: #E8C84A;
+  box-shadow: 0 0 4px #E8C84A, 0 0 8px #FFF8F0;
   opacity: 0;
   animation: tesla-arc-flash 0.5s ease-out infinite;
 }
@@ -2084,7 +2351,7 @@ body.blood-moon .sky-cycle {
   height: 10px;
   background: #333;
   transform: translateX(-50%) rotateX(-90deg);
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
 }
 .tower-flame .tower-tank {
   position: absolute;
@@ -2092,10 +2359,10 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 30px;
   height: 40px;
-  background: #ff5722;
+  background: #D4512A;
   border-radius: 10px;
   transform: translateX(-50%);
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
   background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(0, 0, 0, 0.2) 5px, rgba(0, 0, 0, 0.2) 10px);
 }
 .tower-flame .tower-nozzle {
@@ -2107,7 +2374,7 @@ body.blood-moon .sky-cycle {
   background: #444;
   transform: translateX(-50%) rotate(45deg);
   transform-origin: bottom center;
-  border: 2px solid #000000;
+  border: 2px solid #1A1614;
 }
 .tower-flame .tower-nozzle::after {
   content: '';
@@ -2117,10 +2384,10 @@ body.blood-moon .sky-cycle {
   width: 12px;
   height: 18px;
   transform: translateX(-50%) rotate(-45deg);
-  background: radial-gradient(ellipse at bottom, #ffffff 0%, #ffff00 30%, #ff6600 60%, #ff0000 80%, transparent 100%);
+  background: radial-gradient(ellipse at bottom, #FFF8E8 0%, #F2D864 30%, #E88A42 60%, #D4512A 80%, transparent 100%);
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
   animation: nozzle-flame 0.15s ease-in-out infinite alternate;
-  filter: drop-shadow(0 0 3px #ff6600);
+  filter: drop-shadow(0 0 3px #E88A42);
   transform: translateZ(0);
   will-change: transform, opacity;
   backface-visibility: hidden;
@@ -2143,15 +2410,15 @@ body.blood-moon .sky-cycle {
 @keyframes nozzle-flame-burst {
   0% {
     transform: translateX(-50%) rotate(-45deg) scale(1);
-    filter: drop-shadow(0 0 3px #ff6600);
+    filter: drop-shadow(0 0 3px #E88A42);
   }
   50% {
     transform: translateX(-50%) rotate(-45deg) scale(1.8);
-    filter: drop-shadow(0 0 10px #ff0000) drop-shadow(0 0 20px #ff6600);
+    filter: drop-shadow(0 0 10px #D4512A) drop-shadow(0 0 20px #E88A42);
   }
   100% {
     transform: translateX(-50%) rotate(-45deg) scale(1);
-    filter: drop-shadow(0 0 3px #ff6600);
+    filter: drop-shadow(0 0 3px #E88A42);
   }
 }
 .flame-particles {
@@ -2169,7 +2436,7 @@ body.blood-moon .sky-cycle {
   position: absolute;
   width: 4px;
   height: 4px;
-  background: #ffff00;
+  background: #F2D864;
   border-radius: 50%;
   opacity: 0;
   animation: flame-particle-rise 1s ease-out infinite;
@@ -2222,9 +2489,9 @@ body.blood-moon .sky-cycle {
 .tower-level .level-star {
   width: 12px;
   height: 12px;
-  background: #ffff00;
+  background: #F2D864;
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  filter: drop-shadow(1px 1px 0 #000000);
+  filter: drop-shadow(1px 1px 0 #1A1614);
 }
 .tower.level-2 {
   filter: brightness(1.1) saturate(1.1);
@@ -2326,7 +2593,7 @@ body.blood-moon .sky-cycle {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, #ffff00 0%, transparent 70%);
+  background: radial-gradient(circle, #F2D864 0%, transparent 70%);
   animation: upgrade-particles-expand 0.6s ease-out forwards;
 }
 .upgrade-particles::after {
@@ -2359,14 +2626,14 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 40px;
   height: 10px;
-  background: #ffffff;
-  border: 2px solid #000000;
+  background: #FFF8F0;
+  border: 2px solid #1A1614;
   transform: translateX(-50%);
 }
 .health-bar .health-fill {
   height: 100%;
-  background: #ff3333;
-  border-right: 2px solid #000000;
+  background: #E8635A;
+  border-right: 2px solid #1A1614;
 }
 .enemy-slime .enemy-body {
   position: absolute;
@@ -2374,12 +2641,25 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 40px;
   height: 30px;
-  background: #ccff00;
+  background: #8BC34A;
   transform: translateX(-50%);
   border-radius: 50% 50% 10% 10%;
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
   box-shadow: inset -5px -5px 0 rgba(0, 0, 0, 0.2);
   animation: wobble 0.5s infinite alternate;
+}
+.enemy-slime .enemy-body::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  right: 8px;
+  width: 8px;
+  height: 12px;
+  background: #8BC34A;
+  border-radius: 0 0 50% 50%;
+  border: 2px solid #1A1614;
+  border-top: none;
+  animation: drip 1.5s ease-in-out infinite;
 }
 .enemy-slime .enemy-face {
   position: absolute;
@@ -2395,7 +2675,7 @@ body.blood-moon .sky-cycle {
   content: '';
   width: 6px;
   height: 6px;
-  background: #000000;
+  background: #1A1614;
   border-radius: 50%;
 }
 .enemy-slime .tentacles {
@@ -2409,16 +2689,27 @@ body.blood-moon .sky-cycle {
     transform: translateX(-50%) scale(1.1, 0.9);
   }
 }
+@keyframes drip {
+  0%,
+  100% {
+    height: 8px;
+    opacity: 1;
+  }
+  50% {
+    height: 14px;
+    opacity: 0.8;
+  }
+}
 .enemy-goblin .enemy-body {
   position: absolute;
   bottom: 0;
   left: 50%;
   width: 25px;
   height: 40px;
-  background: #ff3300;
+  background: #D46A4A;
   transform: translateX(-50%);
   border-radius: 5px;
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
   animation: hop 0.3s infinite;
 }
 .enemy-goblin .enemy-face {
@@ -2437,7 +2728,7 @@ body.blood-moon .sky-cycle {
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-bottom: 15px solid #000000;
+  border-bottom: 15px solid #1A1614;
 }
 .enemy-goblin .enemy-face::before {
   left: 0;
@@ -2468,9 +2759,20 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 35px;
   height: 45px;
-  background: #3366ff;
+  background: #5A7CB5;
   transform: translateX(-50%);
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
+}
+.enemy-knight .enemy-body::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 20px;
+  height: 5px;
+  background: #1A1614;
+  transform: translateX(-50%);
+  border-radius: 2px;
 }
 .enemy-knight .enemy-body::after {
   content: '';
@@ -2487,9 +2789,9 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 40px;
   height: 40px;
-  background: #ff3333;
+  background: #E8635A;
   transform: translateX(-50%) translateZ(-1px);
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
   z-index: -1;
   animation: cape-flap 0.5s infinite alternate;
 }
@@ -2510,9 +2812,9 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 60px;
   height: 70px;
-  background: #aa00ff;
+  background: #7B2D8E;
   transform: translateX(-50%);
-  border: 4px solid #000000;
+  border: 4px solid #1A1614;
 }
 .enemy-boss .enemy-body::before {
   content: '';
@@ -2521,9 +2823,26 @@ body.blood-moon .sky-cycle {
   left: 5px;
   right: 5px;
   height: 10px;
-  background: #000000;
+  background: #1A1614;
   transform: rotate(10deg);
   clip-path: polygon(0 0, 100% 40%, 100% 60%, 0 100%);
+}
+.enemy-boss .enemy-face {
+  position: absolute;
+  top: 35px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+.enemy-boss .enemy-face::before,
+.enemy-boss .enemy-face::after {
+  content: '';
+  width: 8px;
+  height: 4px;
+  background: #E8635A;
+  box-shadow: 0 0 4px #E8635A;
 }
 .enemy-boss .energy-rings {
   position: absolute;
@@ -2531,7 +2850,7 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 100px;
   height: 100px;
-  border: 4px dashed #000000;
+  border: 4px dashed #1A1614;
   border-radius: 50%;
   transform: translate(-50%, -50%);
   animation: spin-slow 10s linear infinite;
@@ -2552,7 +2871,7 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 20px;
   height: 20px;
-  background: radial-gradient(circle, rgba(0, 255, 255, 0.6) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(126, 200, 217, 0.6) 0%, transparent 70%);
   transform: translateX(-50%);
   animation: slow-pulse 0.5s infinite;
   pointer-events: none;
@@ -2612,8 +2931,8 @@ body.blood-moon .sky-cycle {
 .projectile-arrow {
   width: 20px;
   height: 6px;
-  background: #ff9933;
-  border: 2px solid #000000;
+  background: #C47832;
+  border: 2px solid #1A1614;
 }
 .projectile-arrow::after {
   content: '';
@@ -2622,12 +2941,12 @@ body.blood-moon .sky-cycle {
   top: 2px;
   width: 15px;
   height: 2px;
-  background: #000000;
+  background: #1A1614;
 }
 .projectile-cannon {
   width: 14px;
   height: 14px;
-  background: #000000;
+  background: #1A1614;
   border-radius: 50%;
 }
 .projectile-cannon::before {
@@ -2637,31 +2956,31 @@ body.blood-moon .sky-cycle {
   left: 2px;
   width: 4px;
   height: 4px;
-  background: #ffffff;
+  background: #FFF8F0;
   border-radius: 50%;
 }
 .projectile-ice {
   width: 15px;
   height: 15px;
-  background: #00ffff;
+  background: #7EC8D9;
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-  filter: drop-shadow(2px 2px 0 #000000);
+  filter: drop-shadow(2px 2px 0 #1A1614);
 }
 .projectile-magic {
   width: 16px;
   height: 16px;
-  background: #ffffff;
+  background: #FFF8F0;
   border-radius: 50%;
-  border: 4px solid #ff00ff;
-  box-shadow: 2px 2px 0 #000000;
+  border: 4px solid #9B59B6;
+  box-shadow: 2px 2px 0 #1A1614;
 }
 .projectile-tesla {
   width: 40px;
   height: 4px;
-  background: #ffd700;
+  background: #E8C84A;
   transform-origin: center;
   clip-path: polygon(0% 40%, 30% 0%, 60% 80%, 100% 40%, 100% 60%, 70% 100%, 40% 20%, 0% 60%);
-  box-shadow: 0 0 5px #ffffff;
+  box-shadow: 0 0 5px #FFF8F0;
   animation: zap-flash 0.1s infinite;
 }
 @keyframes zap-flash {
@@ -2678,10 +2997,10 @@ body.blood-moon .sky-cycle {
 .projectile-flame {
   width: 16px;
   height: 16px;
-  background: radial-gradient(ellipse at 70% 70%, #ffffff 0%, #ffff00 25%, #ff6600 50%, #ff0000 75%, transparent 100%);
+  background: radial-gradient(ellipse at 70% 70%, #FFF8E8 0%, #F2D864 25%, #E88A42 50%, #D4512A 75%, transparent 100%);
   border-radius: 50% 50% 20% 50%;
   transform: rotate(45deg);
-  box-shadow: 0 0 8px #ffff00, 0 0 15px #ff6600, 0 0 25px rgba(255, 102, 0, 0.5);
+  box-shadow: 0 0 8px #F2D864, 0 0 15px #E88A42, 0 0 25px rgba(255, 102, 0, 0.5);
   animation: flame-projectile-flicker 0.1s ease-in-out infinite alternate;
   transform: translateZ(0);
   will-change: transform, opacity;
@@ -2695,7 +3014,7 @@ body.blood-moon .sky-cycle {
   width: 25px;
   height: 8px;
   transform: translateY(-50%) rotate(-45deg);
-  background: linear-gradient(90deg, transparent 0%, #ff0000 30%, #ff6600 60%, #ffff00 90%, #ffffff 100%);
+  background: linear-gradient(90deg, transparent 0%, #D4512A 30%, #E88A42 60%, #F2D864 90%, #FFF8E8 100%);
   border-radius: 50% 0 0 50%;
   filter: blur(2px);
   opacity: 0.8;
@@ -2707,7 +3026,7 @@ body.blood-moon .sky-cycle {
   left: 30%;
   width: 40%;
   height: 40%;
-  background: #ffffff;
+  background: #FFF8E8;
   border-radius: 50%;
   filter: blur(1px);
   animation: flame-core-pulse 0.08s ease-in-out infinite alternate;
@@ -2749,9 +3068,9 @@ body.blood-moon .sky-cycle {
 .impact-tesla::after {
   content: 'ZZZT!';
   font-family: 'Bangers', 'Impact', cursive;
-  color: #ffd700;
-  -webkit-text-stroke: 1px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  color: #E8C84A;
+  -webkit-text-stroke: 1px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
   font-size: 1.5rem;
 }
 .impact-flame::before {
@@ -2762,7 +3081,7 @@ body.blood-moon .sky-cycle {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, #ffffff 0%, #ffff00 20%, #ff6600 40%, #ff0000 60%, transparent 80%);
+  background: radial-gradient(circle, #FFF8E8 0%, #F2D864 20%, #E88A42 40%, #D4512A 60%, transparent 80%);
   border-radius: 50%;
   animation: flame-impact-burst 0.4s ease-out forwards;
   transform: translateZ(0);
@@ -2772,10 +3091,10 @@ body.blood-moon .sky-cycle {
 .impact-flame::after {
   content: 'HOT!';
   font-family: 'Bangers', 'Impact', cursive;
-  color: #ffff00;
+  color: #F2D864;
   font-size: 1.2rem;
   transform: rotate(10deg);
-  text-shadow: 0 0 10px #ff6600, 2px 2px 0 #000000;
+  text-shadow: 0 0 10px #E88A42, 2px 2px 0 #1A1614;
   animation: impact-text-float 0.4s ease-out forwards;
 }
 @keyframes flame-impact-burst {
@@ -2806,37 +3125,37 @@ body.blood-moon .sky-cycle {
   font-family: 'Comic Neue', cursive;
   font-weight: bold;
   font-size: 1.2rem;
-  color: #ffff00;
-  -webkit-text-stroke: 1px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  color: #F2D864;
+  -webkit-text-stroke: 1px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
   transform: rotate(-15deg);
 }
 .impact-cannon::after {
   content: 'BOOM!';
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 2rem;
-  color: #ff3333;
-  -webkit-text-stroke: 1px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
-  background: #ffffff;
+  color: #E8635A;
+  -webkit-text-stroke: 1px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
+  background: #FFF8F0;
   padding: 2px 5px;
-  border: 3px solid #000000;
+  border: 3px solid #1A1614;
   transform: rotate(5deg);
 }
 .impact-ice::after {
   content: 'CRACK!';
   font-family: 'Comic Neue', cursive;
-  color: #00ffff;
+  color: #2D8A8A;
   font-style: italic;
-  -webkit-text-stroke: 1px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  -webkit-text-stroke: 1px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
 }
 .impact-magic::after {
   content: 'ZAP!';
   font-family: 'Bangers', 'Impact', cursive;
-  color: #ff00ff;
-  -webkit-text-stroke: 1px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  color: #D4738A;
+  -webkit-text-stroke: 1px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
   transform: skew(-10deg);
 }
 @keyframes impact-pop {
@@ -2858,7 +3177,7 @@ body.blood-moon .sky-cycle {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, #ffd700 0%, rgba(100, 200, 255, 0.6) 30%, transparent 60%);
+  background: radial-gradient(circle, #E8C84A 0%, rgba(100, 200, 255, 0.6) 30%, transparent 60%);
   border-radius: 50%;
   animation: electric-arc-pulse 0.3s ease-out forwards;
 }
@@ -2870,8 +3189,8 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 60px;
   height: 2px;
-  background: #ffd700;
-  box-shadow: 0 0 5px #ffd700, 0 0 10px #ffffff;
+  background: #E8C84A;
+  box-shadow: 0 0 5px #E8C84A, 0 0 10px #FFF8F0;
 }
 .impact-electric-arc::before {
   transform: translate(-50%, -50%) rotate(45deg);
@@ -2894,9 +3213,9 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 4px;
   height: 4px;
-  background: #ffffff;
+  background: #FFF8F0;
   border-radius: 50%;
-  box-shadow: 10px 0 0 #ffd700, -10px 0 0 #ffd700, 0 10px 0 #ffd700, 0 -10px 0 #ffd700, 7px 7px 0 #ffffff, -7px -7px 0 #ffffff, 7px -7px 0 #ffffff, -7px 7px 0 #ffffff;
+  box-shadow: 10px 0 0 #E8C84A, -10px 0 0 #E8C84A, 0 10px 0 #E8C84A, 0 -10px 0 #E8C84A, 7px 7px 0 #FFF8F0, -7px -7px 0 #FFF8F0, 7px -7px 0 #FFF8F0, -7px 7px 0 #FFF8F0;
   animation: spark-burst-expand 0.3s ease-out forwards;
 }
 @keyframes electric-arc-pulse {
@@ -2929,7 +3248,7 @@ body.blood-moon .sky-cycle {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, #ffffff 0%, #ffff00 30%, #ff6600 50%, #ff0000 70%, transparent 90%);
+  background: radial-gradient(circle, #FFF8E8 0%, #F2D864 30%, #E88A42 50%, #D4512A 70%, transparent 90%);
   border-radius: 50%;
   animation: flame-impact-burst 0.4s ease-out forwards;
   filter: blur(1px);
@@ -2941,7 +3260,7 @@ body.blood-moon .sky-cycle {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(50, 50, 50, 0.6) 0%, rgba(50, 50, 50, 0.3) 50%, transparent 80%);
+  background: radial-gradient(circle, rgba(60, 50, 45, 0.5) 0%, rgba(50, 50, 50, 0.3) 50%, transparent 80%);
   border-radius: 50%;
   animation: smoke-rise 0.6s ease-out forwards;
 }
@@ -3043,7 +3362,7 @@ body.blood-moon .sky-cycle {
   position: absolute;
   width: 20px;
   height: 8px;
-  background: linear-gradient(90deg, transparent 0%, #ff0000 20%, #ff6600 50%, #ffff00 80%, #ffffff 100%);
+  background: linear-gradient(90deg, transparent 0%, #D4512A 20%, #E88A42 50%, #F2D864 80%, #FFF8E8 100%);
   border-radius: 50% 0 0 50%;
   filter: blur(1px);
   animation: flame-trail-pulse 0.1s ease-in-out infinite alternate;
@@ -3058,7 +3377,7 @@ body.blood-moon .sky-cycle {
   top: 50%;
   width: 12px;
   height: 12px;
-  background: radial-gradient(circle, #ffffff 0%, #ffff00 40%, #ff6600 70%, transparent 100%);
+  background: radial-gradient(circle, #FFF8E8 0%, #F2D864 40%, #E88A42 70%, transparent 100%);
   transform: translateY(-50%);
   border-radius: 50%;
 }
@@ -3086,7 +3405,7 @@ body.blood-moon .sky-cycle {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, #ffffff 0%, #ffff00 20%, #ff6600 40%, #ff0000 60%, transparent 80%);
+  background: radial-gradient(circle, #FFF8E8 0%, #F2D864 20%, #E88A42 40%, #D4512A 60%, transparent 80%);
   border-radius: 50%;
   animation: flame-burst 0.4s ease-out forwards;
 }
@@ -3097,7 +3416,7 @@ body.blood-moon .sky-cycle {
   height: 60%;
   top: 20%;
   left: 20%;
-  background: radial-gradient(circle, #ffffff 0%, #ffff00 50%, transparent 100%);
+  background: radial-gradient(circle, #FFF8E8 0%, #F2D864 50%, transparent 100%);
   border-radius: 50%;
   animation: flame-burst-core 0.3s ease-out forwards;
 }
@@ -3136,7 +3455,7 @@ body.blood-moon .sky-cycle {
   width: 15px;
   height: 20px;
   transform: translateX(-50%);
-  background: radial-gradient(ellipse at bottom, #ffff00 0%, #ff6600 40%, #ff0000 70%, transparent 100%);
+  background: radial-gradient(ellipse at bottom, #F2D864 0%, #E88A42 40%, #D4512A 70%, transparent 100%);
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
   animation: enemy-flame 0.2s ease-in-out infinite alternate;
   pointer-events: none;
@@ -3146,10 +3465,10 @@ body.blood-moon .sky-cycle {
 }
 @keyframes burning-pulse {
   from {
-    filter: brightness(1) drop-shadow(0 0 3px #ff0000);
+    filter: brightness(1) drop-shadow(0 0 3px #D4512A);
   }
   to {
-    filter: brightness(1.2) drop-shadow(0 0 8px #ff6600);
+    filter: brightness(1.2) drop-shadow(0 0 8px #E88A42);
   }
 }
 @keyframes enemy-flame {
@@ -3178,7 +3497,7 @@ body.blood-moon .sky-cycle {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  background: radial-gradient(ellipse at bottom, #ffffff 0%, #ffff00 30%, #ff6600 60%, transparent 100%);
+  background: radial-gradient(ellipse at bottom, #FFF8E8 0%, #F2D864 30%, #E88A42 60%, transparent 100%);
   animation: flame-core 0.15s ease-in-out infinite alternate;
   z-index: 2;
 }
@@ -3188,7 +3507,7 @@ body.blood-moon .sky-cycle {
   bottom: -5px;
   left: 50%;
   transform: translateX(-50%);
-  background: radial-gradient(ellipse at bottom, #ff6600 0%, #ff0000 40%, #330000 70%, transparent 100%);
+  background: radial-gradient(ellipse at bottom, #E88A42 0%, #D4512A 40%, #3A1A10 70%, transparent 100%);
   animation: flame-outer 0.2s ease-in-out infinite alternate;
   filter: blur(2px);
   z-index: 1;
@@ -3220,7 +3539,7 @@ body.blood-moon .sky-cycle {
 .aurora-sky::before {
   top: 10%;
   left: -50%;
-  background: linear-gradient(180deg, transparent 0%, rgba(100, 255, 150, 0.6) 20%, rgba(100, 200, 255, 0.5) 50%, transparent 80%);
+  background: linear-gradient(180deg, transparent 0%, rgba(94, 166, 94, 0.5) 20%, rgba(126, 200, 217, 0.4) 50%, transparent 80%);
   mask-image: linear-gradient(90deg, transparent 0%, black 20%, black 80%, transparent 100%);
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 20%, black 80%, transparent 100%);
   animation: aurora-wave-1 8s ease-in-out infinite;
@@ -3230,7 +3549,7 @@ body.blood-moon .sky-cycle {
 .aurora-sky::after {
   top: 15%;
   left: -30%;
-  background: linear-gradient(180deg, transparent 0%, rgba(180, 100, 255, 0.4) 30%, rgba(100, 200, 255, 0.5) 60%, transparent 90%);
+  background: linear-gradient(180deg, transparent 0%, rgba(155, 89, 182, 0.35) 30%, rgba(126, 200, 217, 0.4) 60%, transparent 90%);
   mask-image: linear-gradient(90deg, transparent 10%, black 30%, black 70%, transparent 90%);
   -webkit-mask-image: linear-gradient(90deg, transparent 10%, black 30%, black 70%, transparent 90%);
   animation: aurora-wave-2 12s ease-in-out infinite;
@@ -3292,7 +3611,7 @@ body.blood-moon .sky-cycle {
   position: absolute;
   width: 3px;
   height: 3px;
-  background: #ffffff;
+  background: #FFF8F0;
   border-radius: 50%;
   box-shadow: 100px 50px 0 rgba(255, 255, 255, 0.8), 200px 80px 0 rgba(200, 255, 220, 0.6), 350px 40px 0 rgba(150, 255, 200, 0.7), 500px 100px 0 rgba(100, 200, 255, 0.5), 650px 60px 0 rgba(180, 150, 255, 0.6), 800px 90px 0 rgba(255, 255, 255, 0.7), 950px 45px 0 rgba(150, 255, 230, 0.5), 1100px 85px 0 rgba(200, 200, 255, 0.6);
   animation: aurora-sparkle 4s ease-in-out infinite;
@@ -3355,7 +3674,7 @@ body.blood-moon .sky-cycle {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: conic-gradient(from 0deg, #ff00ff, #00ffff, #ff00ff, #ff00ff);
+  background: conic-gradient(from 0deg, #D4738A, #2D8A8A, #9B59B6, #D4738A);
   border-radius: 50%;
   filter: blur(15px);
   opacity: 0.4;
@@ -3430,12 +3749,12 @@ body.blood-moon .sky-cycle {
   left: -50%;
   width: 200%;
   height: 60%;
-  background: linear-gradient(90deg, transparent 49.5%, #ff00ff 49.5%, #ff00ff 50.5%, transparent 50.5%), linear-gradient(0deg, transparent 49.5%, #00ffff 49.5%, #00ffff 50.5%, transparent 50.5%);
+  background: linear-gradient(90deg, transparent 49.5%, #7B2D8E 49.5%, #7B2D8E 50.5%, transparent 50.5%), linear-gradient(0deg, transparent 49.5%, #2D8A8A 49.5%, #2D8A8A 50.5%, transparent 50.5%);
   background-size: 60px 60px;
   transform: rotateX(75deg);
   transform-origin: center bottom;
   animation: boss-grid-approach 3s ease-out forwards;
-  filter: drop-shadow(0 0 10px #ff00ff);
+  filter: drop-shadow(0 0 10px #7B2D8E);
 }
 .boss-entrance-overlay::after {
   content: '';
@@ -3445,7 +3764,7 @@ body.blood-moon .sky-cycle {
   width: 300px;
   height: 300px;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(255, 0, 255, 0.8) 0%, rgba(255, 0, 255, 0.4) 30%, transparent 70%);
+  background: radial-gradient(circle, rgba(123, 45, 142, 0.7) 0%, rgba(255, 0, 255, 0.4) 30%, transparent 70%);
   animation: boss-glow-pulse 0.5s ease-in-out infinite alternate;
   filter: blur(20px);
 }
@@ -3493,13 +3812,13 @@ body.blood-moon .sky-cycle {
   transform: translate(-50%, -50%);
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 5rem;
-  color: #ff00ff;
-  text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff, 4px 4px 0 #000000;
+  color: #7B2D8E;
+  text-shadow: 0 0 20px #7B2D8E, 0 0 40px #2D8A8A, 4px 4px 0 #1A1614;
   z-index: 501;
   pointer-events: none;
   opacity: 0;
-  -webkit-text-stroke: 2px #000000;
-  text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000;
+  -webkit-text-stroke: 2px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
 }
 .boss-warning-text.active {
   animation: boss-text-appear 3s ease-out forwards;
@@ -3539,7 +3858,7 @@ body.blood-moon .sky-cycle {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: conic-gradient(from 0deg, #aa00ff 0deg, #ff00ff 90deg, #aa00ff 180deg, #ff00ff 270deg, #aa00ff 360deg);
+  background: conic-gradient(from 0deg, #7B2D8E 0deg, #D4738A 90deg, #7B2D8E 180deg, #D4738A 270deg, #7B2D8E 360deg);
   border-radius: 50%;
   animation: portal-spin 2s linear infinite;
   mask-image: radial-gradient(circle, transparent 20%, black 25%, black 45%, transparent 50%, black 55%, black 75%, transparent 80%);
@@ -3553,7 +3872,7 @@ body.blood-moon .sky-cycle {
   width: 30%;
   height: 30%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, #ffffff 0%, #ff00ff 50%, transparent 100%);
+  background: radial-gradient(circle, #FFF8F0 0%, #D4738A 50%, transparent 100%);
   border-radius: 50%;
   animation: portal-core-pulse 1s ease-in-out infinite alternate;
 }
@@ -3646,7 +3965,7 @@ body.blood-moon .sky-cycle {
 }
 .performance-low .burning {
   animation: none !important;
-  filter: drop-shadow(0 0 5px #ff0000);
+  filter: drop-shadow(0 0 5px #D4512A);
 }
 .performance-low .burning::after {
   display: none;
@@ -3711,15 +4030,15 @@ body.blood-moon .sky-cycle {
   opacity: 0;
 }
 .screen-flash.flash-damage {
-  background: #ff3333;
+  background: #E8635A;
   animation: screen-flash-anim 0.2s ease-out;
 }
 .screen-flash.flash-gold {
-  background: #ffff00;
+  background: #F2D864;
   animation: screen-flash-anim 0.3s ease-out;
 }
 .screen-flash.flash-heal {
-  background: #33cc33;
+  background: #5EA65E;
   animation: screen-flash-anim 0.25s ease-out;
 }
 @keyframes screen-flash-anim {

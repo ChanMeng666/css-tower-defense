@@ -48,6 +48,21 @@
         .comic-border();
         box-shadow: inset -5px -5px 0 rgba(0, 0, 0, 0.2);
         animation: wobble 0.5s infinite alternate;
+
+        // Drip appendage
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: 8px;
+            width: 8px;
+            height: 12px;
+            background: @color-enemy-slime;
+            border-radius: 0 0 50% 50%;
+            border: 2px solid @color-black;
+            border-top: none;
+            animation: drip 1.5s ease-in-out infinite;
+        }
     }
 
     .enemy-face {
@@ -84,6 +99,17 @@
 
     to {
         transform: translateX(-50%) scale(1.1, 0.9);
+    }
+}
+
+@keyframes drip {
+    0%, 100% {
+        height: 8px;
+        opacity: 1;
+    }
+    50% {
+        height: 14px;
+        opacity: 0.8;
     }
 }
 
@@ -166,6 +192,19 @@
         transform: translateX(-50%);
         .comic-border();
 
+        // Helmet visor slit
+        &::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            width: 20px;
+            height: 5px;
+            background: @color-black;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
         // Armor Shine
         &::after {
             content: '';
@@ -227,6 +266,25 @@
             background: @color-black;
             transform: rotate(10deg); // Angry slant
             clip-path: polygon(0 0, 100% 40%, 100% 60%, 0 100%); // V shape roughly
+        }
+    }
+
+    .enemy-face {
+        position: absolute;
+        top: 35px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 30px;
+        display: flex;
+        justify-content: space-between;
+
+        &::before,
+        &::after {
+            content: '';
+            width: 8px;
+            height: 4px;
+            background: @color-danger;
+            box-shadow: 0 0 4px @color-danger;
         }
     }
 

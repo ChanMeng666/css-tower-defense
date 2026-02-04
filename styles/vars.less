@@ -15,29 +15,29 @@
 // ===========================================
 :root {
     // SEASONAL THEME COLORS (Changeable)
-    --color-bg: #87CEEB; // Sky blue default
+    --color-bg: #B8D8E8; // Soft powder blue
 
-    --color-grass: #aaff00;
-    --color-grass-light: #ccff66;
-    --color-grass-dark: #88cc00;
+    --color-grass: #8BC34A;
+    --color-grass-light: #A8D965;
+    --color-grass-dark: #6B9A30;
 
-    --color-path: #ffcc00;
-    --color-path-light: #ffff66;
-    --color-path-dark: #cca300;
+    --color-path: #E8C864;
+    --color-path-light: #F2DD8A;
+    --color-path-dark: #C4A642;
 }
 
 // ===========================================
 // STATIC PALETTE (HEX for LESS functions)
 // ===========================================
-@color-cyan: #00ffff;
-@color-magenta: #ff00ff;
-@color-yellow: #ffff00;
-@color-black: #000000;
-@color-white: #ffffff;
-@color-blue: #0088ff;
-@color-green: #00cc66;
-@color-danger: #ff3333;
-@color-success: #33cc33;
+@color-cyan: #2D8A8A;
+@color-magenta: #D4738A;
+@color-yellow: #F2D864;
+@color-black: #1A1614;
+@color-white: #FFF8F0;
+@color-blue: #4A90C4;
+@color-green: #5EA65E;
+@color-danger: #E8635A;
+@color-success: #5EA65E;
 
 // SEMANTIC COLORS
 @color-primary: @color-cyan;
@@ -62,22 +62,22 @@
 @color-grid-invalid: fade(@color-danger, 60%);
 
 // TOWERS (Static)
-@color-tower-arrow: #ff9933; // Orange wood
-@color-tower-arrow-glow: #ffff00;
-@color-tower-cannon: #666666; // Grey
-@color-tower-cannon-glow: #ff3333;
-@color-tower-ice: #00ffff;
-@color-tower-ice-glow: #ffffff;
-@color-tower-magic: #ff00ff;
-@color-tower-magic-glow: #00ffff;
-@color-tower-tesla: #ffd700; // Gold
-@color-tower-flame: #ff5722; // Deep Orange
+@color-tower-arrow: #C47832;
+@color-tower-arrow-glow: #F5C882;
+@color-tower-cannon: #4A4A4A;
+@color-tower-cannon-glow: #E8635A;
+@color-tower-ice: #7EC8D9;
+@color-tower-ice-glow: #E0F4F8;
+@color-tower-magic: #9B59B6;
+@color-tower-magic-glow: #D4A8E8;
+@color-tower-tesla: #E8C84A;
+@color-tower-flame: #D4512A;
 
 // ENEMIES (Static)
-@color-enemy-slime: #ccff00; // Neon lime
-@color-enemy-goblin: #ff3300; // Red-Orange
-@color-enemy-knight: #3366ff; // Blue
-@color-enemy-boss: #aa00ff; // Dark Purple
+@color-enemy-slime: #8BC34A;
+@color-enemy-goblin: #D46A4A;
+@color-enemy-knight: #5A7CB5;
+@color-enemy-boss: #7B2D8E;
 
 // TYPOGRAPHY
 @font-main: 'Comic Neue', 'Comic Sans MS', sans-serif;
@@ -136,22 +136,22 @@
 // ===========================================
 
 // Fire Effect Colors
-@fire-core: #ffffff;
-@fire-inner: #ffff00;
-@fire-mid: #ff6600;
-@fire-outer: #ff0000;
-@fire-edge: #330000;
-@smoke-color: rgba(50, 50, 50, 0.6);
+@fire-core: #FFF8E8;
+@fire-inner: #F2D864;
+@fire-mid: #E88A42;
+@fire-outer: #D4512A;
+@fire-edge: #3A1A10;
+@smoke-color: rgba(60, 50, 45, 0.5);
 
 // Aurora Effect Colors
-@aurora-green: rgba(100, 255, 150, 0.6);
-@aurora-cyan: rgba(100, 200, 255, 0.5);
-@aurora-purple: rgba(180, 100, 255, 0.4);
+@aurora-green: rgba(94, 166, 94, 0.5);
+@aurora-cyan: rgba(126, 200, 217, 0.4);
+@aurora-purple: rgba(155, 89, 182, 0.35);
 
 // Boss Effect Colors
-@boss-grid-primary: #ff00ff;
-@boss-grid-secondary: #00ffff;
-@boss-glow: rgba(255, 0, 255, 0.8);
+@boss-grid-primary: #7B2D8E;
+@boss-grid-secondary: #2D8A8A;
+@boss-glow: rgba(123, 45, 142, 0.7);
 
 // Effect Performance Mixins
 .gpu-accelerate() {

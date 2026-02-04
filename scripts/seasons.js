@@ -14,13 +14,13 @@ var Seasons = (function () {
         spring: {
             name: 'Spring',
             colors: {
-                '--color-bg': '#87CEEB', // Light Blue
-                '--color-grass': '#aaff00', // Lime
-                '--color-grass-light': '#ccff66',
-                '--color-grass-dark': '#88cc00',
-                '--color-path': '#ffcc00', // Yellow
-                '--color-path-light': '#ffff66',
-                '--color-path-dark': '#cca300'
+                '--color-bg': '#B8D8E8',
+                '--color-grass': '#8BC34A',
+                '--color-grass-light': '#A8D965',
+                '--color-grass-dark': '#6B9A30',
+                '--color-path': '#E8C864',
+                '--color-path-light': '#F2DD8A',
+                '--color-path-dark': '#C4A642'
             },
             weatherWeights: { clear: 0.4, rain: 0.5, wind: 0.1, snow: 0.0 },
             sceneClass: null
@@ -28,13 +28,13 @@ var Seasons = (function () {
         summer: {
             name: 'Summer',
             colors: {
-                '--color-bg': '#00d4ff', // Cyan
-                '--color-grass': '#00cc66', // Deep Green
-                '--color-grass-light': '#33ff88',
-                '--color-grass-dark': '#009944',
-                '--color-path': '#ffd700', // Gold
-                '--color-path-light': '#ffeb3b',
-                '--color-path-dark': '#ffc107'
+                '--color-bg': '#7EC8D9',
+                '--color-grass': '#5EA65E',
+                '--color-grass-light': '#78C878',
+                '--color-grass-dark': '#3D7A3D',
+                '--color-path': '#F5A623',
+                '--color-path-light': '#FFD080',
+                '--color-path-dark': '#C4841A'
             },
             weatherWeights: { clear: 0.8, rain: 0.1, wind: 0.1, snow: 0.0 },
             sceneClass: null
@@ -42,13 +42,13 @@ var Seasons = (function () {
         autumn: {
             name: 'Autumn',
             colors: {
-                '--color-bg': '#ffcc80', // Peach/Orange sky
-                '--color-grass': '#ff9933', // Orange grass
-                '--color-grass-light': '#ffb74d',
-                '--color-grass-dark': '#e65100',
-                '--color-path': '#8d6e63', // Brown path
-                '--color-path-light': '#a1887f',
-                '--color-path-dark': '#5d4037'
+                '--color-bg': '#E8B87A',
+                '--color-grass': '#D4884A',
+                '--color-grass-light': '#E8A868',
+                '--color-grass-dark': '#A66832',
+                '--color-path': '#8B6642',
+                '--color-path-light': '#A68060',
+                '--color-path-dark': '#6B4E32'
             },
             weatherWeights: { clear: 0.4, rain: 0.2, wind: 0.4, snow: 0.0 },
             sceneClass: null
@@ -56,13 +56,13 @@ var Seasons = (function () {
         winter: {
             name: 'Winter',
             colors: {
-                '--color-bg': '#e0f7fa', // Very light blue
-                '--color-grass': '#ffffff', // Snow
-                '--color-grass-light': '#f5f5f5',
-                '--color-grass-dark': '#e0e0e0',
-                '--color-path': '#b0bec5', // Grey ice
-                '--color-path-light': '#cfd8dc',
-                '--color-path-dark': '#90a4ae'
+                '--color-bg': '#D4E4EC',
+                '--color-grass': '#E8E0D8',
+                '--color-grass-light': '#F2ECE8',
+                '--color-grass-dark': '#C8BEB4',
+                '--color-path': '#A0AAB4',
+                '--color-path-light': '#B8C4D0',
+                '--color-path-dark': '#889098'
             },
             weatherWeights: { clear: 0.3, rain: 0.0, wind: 0.2, snow: 0.5 },
             sceneClass: 'aurora-active' // Enable aurora effect for winter

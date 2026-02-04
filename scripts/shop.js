@@ -145,7 +145,7 @@ var Shop = (function() {
             upgradeBtn.style.cssText = 'padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; ' +
                                        'background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%); color: #fff; ' +
                                        'font-size: 0.9rem;';
-            upgradeBtn.innerHTML = 'Upgrade<br><span style="font-size: 0.75rem;">💰 ' + upgradeCost + '</span>';
+            upgradeBtn.innerHTML = 'Upgrade<br><span style="font-size: 0.75rem;">' + upgradeCost + 'g</span>';
             
             if (Game.getGold() < upgradeCost) {
                 upgradeBtn.style.opacity = '0.5';
@@ -166,7 +166,7 @@ var Shop = (function() {
         reforgeBtn.style.cssText = 'padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; ' +
                                    'background: linear-gradient(135deg, #9C27B0 0%, #6A1B9A 100%); color: #fff; ' +
                                    'font-size: 0.9rem;';
-        reforgeBtn.innerHTML = 'Reforge<br><span style="font-size: 0.75rem;">💰 ' + reforgeCost + '</span>';
+        reforgeBtn.innerHTML = 'Reforge<br><span style="font-size: 0.75rem;">' + reforgeCost + 'g</span>';
 
         if (Game.getGold() < reforgeCost) {
             reforgeBtn.style.opacity = '0.5';
@@ -185,7 +185,7 @@ var Shop = (function() {
         sellBtn.style.cssText = 'padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; ' +
                                'background: linear-gradient(135deg, #F44336 0%, #C62828 100%); color: #fff; ' +
                                'font-size: 0.9rem;';
-        sellBtn.innerHTML = 'Sell<br><span style="font-size: 0.75rem;">💰 ' + sellValue + '</span>';
+        sellBtn.innerHTML = 'Sell<br><span style="font-size: 0.75rem;">' + sellValue + 'g</span>';
         sellBtn.addEventListener('click', function() {
             sellTower(tower);
         });
@@ -249,7 +249,7 @@ var Shop = (function() {
         // Show result with rarity color
         var rarityText = prefix.rarity.charAt(0).toUpperCase() + prefix.rarity.slice(1);
         Display.showMessage(prefix.name + ' ' + tower.config.name + '! (' + rarityText + ')');
-        Sfx.play('upgrade');
+        Sfx.play('reforge');
 
         // Check achievement
         if (typeof Achievements !== 'undefined') {
