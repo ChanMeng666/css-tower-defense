@@ -77,7 +77,7 @@ var Display = (function() {
      */
     function init() {
         // Cache DOM elements
-        elements.startScreen = document.getElementById('startScreen');
+        elements.loadingScreen = document.getElementById('loadingScreen');
         elements.gameOverScreen = document.getElementById('gameOverScreen');
         elements.gameOverTitle = document.getElementById('gameOverTitle');
         elements.finalScore = document.getElementById('finalScore');
@@ -246,20 +246,20 @@ var Display = (function() {
     }
     
     /**
-     * Show start screen
+     * Show start screen (unified loading/start screen)
      */
     function showStartScreen() {
-        if (elements.startScreen) {
-            elements.startScreen.classList.remove('hidden');
+        if (elements.loadingScreen) {
+            elements.loadingScreen.classList.remove('hidden');
         }
     }
-    
+
     /**
-     * Hide start screen
+     * Hide start screen (unified loading/start screen)
      */
     function hideStartScreen() {
-        if (elements.startScreen) {
-            elements.startScreen.classList.add('hidden');
+        if (elements.loadingScreen) {
+            elements.loadingScreen.classList.add('hidden');
         }
     }
     

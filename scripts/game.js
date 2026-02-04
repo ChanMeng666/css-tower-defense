@@ -208,12 +208,6 @@ var Game = (function () {
 
         Sfx.play('start');
         Sfx.playMusic('playing');
-
-        // Hide loading screen if present
-        var loadingScreen = document.getElementById('loadingScreen');
-        if (loadingScreen) {
-            loadingScreen.classList.add('hidden');
-        }
     }
 
     /**

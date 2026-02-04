@@ -1,22 +1,37 @@
 // ===========================================
-// CSS Tower Defense - Loading Screen
-// REDESIGNED: Modern Geometric Fortress Animation
-// Inspired by design-pages 3D effects
+// CSS Tower Defense - Unified Start Screen
+// THEME: POP-ART / CEL-SHADED
+// Combines loading and start functionality
 // ===========================================
 
-// Loading Screen Container
+// Main Container - Comic Cover Style
 .loading-screen {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f0f1a 100%);
+    width: 100%;
+    height: 100%;
+    // Sunburst background (matching game theme)
+    background: repeating-conic-gradient(from 0deg,
+            @color-cyan 0deg 15deg,
+            lighten(@color-cyan, 10%) 15deg 30deg);
     .flex-center();
     flex-direction: column;
     z-index: 100000;
     transition: opacity 0.5s ease, visibility 0.5s ease;
     overflow: hidden;
+
+    // Halftone overlay
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        .halftone-bg(fade(@color-white, 30%), 3px);
+        pointer-events: none;
+    }
 
     &.hidden {
         opacity: 0;
@@ -25,7 +40,7 @@
     }
 }
 
-// Background Effects
+// Background decorations
 .loading-bg {
     position: absolute;
     top: 0;
@@ -33,443 +48,316 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
+    overflow: hidden;
 
-    // Animated grid pattern
+    // Floating comic elements
     &::before {
-        content: '';
+        content: '💥 POW! 💥';
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 200%;
-        height: 200%;
-        background-image:
-            linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
-        background-size: 50px 50px;
-        animation: grid-scroll 20s linear infinite;
-        transform: perspective(500px) rotateX(60deg);
-        transform-origin: center top;
+        top: 10%;
+        left: 5%;
+        font-family: @font-title;
+        font-size: 2rem;
+        color: @color-yellow;
+        .text-outline();
+        transform: rotate(-15deg);
+        animation: float-decoration 3s ease-in-out infinite;
     }
 
-    // Radial glow
     &::after {
-        content: '';
+        content: '⚔️ BOOM! ⚔️';
         position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 800px;
-        height: 800px;
-        transform: translate(-50%, -50%);
-        background: radial-gradient(
-            circle,
-            rgba(0, 255, 255, 0.1) 0%,
-            rgba(255, 0, 255, 0.05) 30%,
-            transparent 70%
-        );
-        animation: bg-pulse 4s ease-in-out infinite;
+        bottom: 15%;
+        right: 5%;
+        font-family: @font-title;
+        font-size: 2rem;
+        color: @color-magenta;
+        .text-outline();
+        transform: rotate(10deg);
+        animation: float-decoration 3s ease-in-out infinite reverse;
     }
 }
 
-@keyframes grid-scroll {
-    0% {
-        transform: perspective(500px) rotateX(60deg) translateY(0);
-    }
-    100% {
-        transform: perspective(500px) rotateX(60deg) translateY(50px);
-    }
-}
-
-@keyframes bg-pulse {
+@keyframes float-decoration {
     0%, 100% {
-        opacity: 0.5;
-        transform: translate(-50%, -50%) scale(1);
+        transform: rotate(-15deg) translateY(0);
     }
     50% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1.1);
+        transform: rotate(-15deg) translateY(-15px);
     }
 }
 
-// Main Fortress Container
+// Title Area
+.loading-text {
+    font-family: @font-title;
+    font-size: 5rem;
+    color: @color-yellow;
+    margin: 0;
+    line-height: 1;
+    text-transform: uppercase;
+    .text-outline(@color-black, 4px);
+    .pop-shadow(10px, 10px, @color-black);
+    animation: title-wobble 2s infinite ease-in-out;
+    transform: rotate(-3deg);
+    z-index: 2;
+    text-align: center;
+
+    // Hidden when ready
+    .ready & {
+        display: none;
+    }
+}
+
+// Subtitle (shows when loading complete)
+.loading-screen::after {
+    content: 'CSS TOWER DEFENSE';
+    position: absolute;
+    top: 20%;
+    font-family: @font-title;
+    font-size: 5rem;
+    color: @color-yellow;
+    .text-outline(@color-black, 4px);
+    .pop-shadow(10px, 10px, @color-black);
+    animation: title-wobble 2s infinite ease-in-out;
+    transform: rotate(-3deg);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+
+    .ready & {
+        opacity: 1;
+    }
+}
+
+@keyframes title-wobble {
+    0%, 100% {
+        transform: rotate(-3deg) scale(1);
+    }
+    50% {
+        transform: rotate(-1deg) scale(1.05);
+    }
+}
+
+// Animated Tower Container
 .loading-tower {
     position: relative;
     width: 200px;
     height: 200px;
-    .preserve-3d();
+    margin: 30px 0;
     .flex-center();
+    z-index: 2;
 }
 
-// Central Hexagon Fortress
+// Tower Base - Wooden Platform
 .loading-tower-base {
     position: absolute;
-    width: 80px;
-    height: 92px;
-    background: linear-gradient(180deg,
-        @color-cyan 0%,
-        darken(@color-cyan, 20%) 50%,
-        darken(@color-cyan, 40%) 100%
+    bottom: 0;
+    width: 120px;
+    height: 25px;
+    background: @color-tower-arrow;
+    .comic-border();
+    .pop-shadow(4px, 4px);
+    transform: perspective(200px) rotateX(-20deg);
+
+    // Wood grain
+    background-image: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 15px,
+        darken(@color-tower-arrow, 10%) 15px,
+        darken(@color-tower-arrow, 10%) 17px
     );
-    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    animation: fortress-pulse 2s ease-in-out infinite;
-    z-index: 3;
-
-    // Inner glow
-    &::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 50px;
-        height: 50px;
-        transform: translate(-50%, -50%);
-        background: radial-gradient(
-            circle,
-            @color-white 0%,
-            @color-cyan 30%,
-            transparent 70%
-        );
-        animation: inner-glow 1.5s ease-in-out infinite alternate;
-    }
-
-    // Tower icon in center
-    &::after {
-        content: '🏰';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 28px;
-        filter: drop-shadow(0 0 10px @color-cyan);
-        animation: icon-float 2s ease-in-out infinite;
-    }
 }
 
-@keyframes fortress-pulse {
-    0%, 100% {
-        transform: scale(1);
-        filter: drop-shadow(0 0 20px @color-cyan);
-    }
-    50% {
-        transform: scale(1.05);
-        filter: drop-shadow(0 0 40px @color-cyan) drop-shadow(0 0 60px rgba(0, 255, 255, 0.5));
-    }
-}
-
-@keyframes inner-glow {
-    0% {
-        opacity: 0.5;
-        transform: translate(-50%, -50%) scale(0.8);
-    }
-    100% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1.2);
-    }
-}
-
-@keyframes icon-float {
-    0%, 100% {
-        transform: translate(-50%, -50%) translateY(0);
-    }
-    50% {
-        transform: translate(-50%, -50%) translateY(-5px);
-    }
-}
-
-// Rotating Shield Ring 1 (Outer)
+// Tower Body - Main Structure
 .loading-tower-body {
     position: absolute;
-    width: 160px;
-    height: 160px;
-    border: 3px solid transparent;
-    border-top-color: @color-magenta;
-    border-right-color: @color-magenta;
-    border-radius: 50%;
-    animation: ring-rotate 3s linear infinite;
-    z-index: 2;
+    bottom: 25px;
+    width: 80px;
+    height: 100px;
+    background: linear-gradient(
+        180deg,
+        lighten(@color-tower-arrow, 10%) 0%,
+        @color-tower-arrow 50%,
+        darken(@color-tower-arrow, 10%) 100%
+    );
+    .comic-border();
+    .pop-shadow(5px, 5px);
 
-    // Second ring layer
+    // Window decoration
     &::before {
         content: '';
         position: absolute;
-        top: -8px;
-        left: -8px;
-        right: -8px;
-        bottom: -8px;
-        border: 2px dashed rgba(255, 0, 255, 0.3);
-        border-radius: 50%;
-        animation: ring-rotate-reverse 4s linear infinite;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 30px;
+        height: 35px;
+        background: @color-cyan;
+        .comic-border(2px);
+        border-radius: 50% 50% 0 0;
     }
 
-    // Glow trail
+    // Door decoration
     &::after {
         content: '';
         position: absolute;
-        top: -3px;
+        bottom: 0;
         left: 50%;
-        width: 20px;
-        height: 6px;
-        background: @color-magenta;
-        border-radius: 3px;
-        filter: blur(2px);
-        box-shadow: 0 0 15px @color-magenta, 0 0 30px @color-magenta;
+        transform: translateX(-50%);
+        width: 25px;
+        height: 30px;
+        background: darken(@color-tower-arrow, 20%);
+        .comic-border(2px);
+        border-radius: 5px 5px 0 0;
     }
 }
 
-// Rotating Shield Ring 2 (Middle)
+// Tower Top - Turret Platform
 .loading-tower-top {
     position: absolute;
-    width: 120px;
-    height: 120px;
-    border: 3px solid transparent;
-    border-bottom-color: @color-yellow;
-    border-left-color: @color-yellow;
-    border-radius: 50%;
-    animation: ring-rotate-reverse 2.5s linear infinite;
-    z-index: 2;
+    bottom: 125px;
+    width: 100px;
+    height: 20px;
+    background: @color-tower-arrow;
+    .comic-border();
+    .pop-shadow(3px, 3px);
 
-    // Inner dashed ring
+    // Battlements
     &::before {
         content: '';
         position: absolute;
-        top: 6px;
-        left: 6px;
-        right: 6px;
-        bottom: 6px;
-        border: 2px dotted rgba(255, 255, 0, 0.4);
-        border-radius: 50%;
-        animation: ring-rotate 5s linear infinite;
-    }
-
-    // Glow orb
-    &::after {
-        content: '';
-        position: absolute;
-        bottom: -3px;
-        left: 50%;
-        width: 12px;
-        height: 12px;
-        background: @color-yellow;
-        border-radius: 50%;
-        filter: blur(1px);
-        box-shadow: 0 0 10px @color-yellow, 0 0 20px @color-yellow;
+        top: -15px;
+        left: 5px;
+        right: 5px;
+        height: 15px;
+        background: repeating-linear-gradient(
+            90deg,
+            @color-tower-arrow 0px,
+            @color-tower-arrow 12px,
+            transparent 12px,
+            transparent 18px
+        );
+        border: 2px solid @color-black;
+        border-bottom: none;
     }
 }
 
-// Energy Particles Ring
+// Turret - Animated Arrow Shooter
 .loading-tower-turret {
     position: absolute;
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    animation: ring-rotate 8s linear infinite;
-    z-index: 1;
+    bottom: 145px;
+    width: 40px;
+    height: 50px;
+    background: @color-dark;
+    .comic-border();
+    border-radius: 5px;
+    animation: turret-scan 2s ease-in-out infinite;
+    transform-origin: center bottom;
 
-    // Particle 1
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 50%;
-        width: 8px;
-        height: 8px;
-        background: @color-cyan;
-        border-radius: 50%;
-        transform: translateX(-50%);
-        box-shadow:
-            0 0 10px @color-cyan,
-            90px 90px 0 @color-magenta,
-            0 180px 0 @color-yellow,
-            -90px 90px 0 @color-cyan;
-        animation: particle-pulse 1s ease-in-out infinite alternate;
-    }
-
-    // Particle 2 (offset)
+    // Arrow icon
     &::after {
-        content: '';
+        content: '🏹';
         position: absolute;
-        top: 25px;
-        right: 25px;
-        width: 6px;
-        height: 6px;
-        background: @color-white;
-        border-radius: 50%;
-        box-shadow:
-            0 0 8px @color-white,
-            -130px 0 0 rgba(255, 255, 255, 0.6),
-            -65px 112px 0 rgba(255, 255, 255, 0.6),
-            65px 112px 0 rgba(255, 255, 255, 0.6);
-        animation: particle-pulse 1.5s ease-in-out infinite alternate-reverse;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 30px;
+        animation: arrow-ready 1s ease-in-out infinite;
     }
 }
 
-@keyframes ring-rotate {
-    from {
-        transform: rotate(0deg);
+@keyframes turret-scan {
+    0%, 100% {
+        transform: rotate(-15deg);
     }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes ring-rotate-reverse {
-    from {
-        transform: rotate(360deg);
-    }
-    to {
-        transform: rotate(0deg);
+    50% {
+        transform: rotate(15deg);
     }
 }
 
-@keyframes particle-pulse {
-    0% {
-        opacity: 0.5;
-        filter: blur(0px);
+@keyframes arrow-ready {
+    0%, 100% {
+        transform: translateX(-50%) translateY(0);
     }
-    100% {
-        opacity: 1;
-        filter: blur(1px);
+    50% {
+        transform: translateX(-50%) translateY(-10px);
     }
 }
 
-// Loading Title
-.loading-text {
-    margin-top: 60px;
-    font-family: @font-title;
-    font-size: 3rem;
-    color: @color-white;
-    letter-spacing: 8px;
-    text-transform: uppercase;
-    position: relative;
-    .gpu-accelerate();
-
-    // Gradient text effect
-    background: linear-gradient(
-        90deg,
-        @color-cyan 0%,
-        @color-white 25%,
-        @color-magenta 50%,
-        @color-white 75%,
-        @color-yellow 100%
-    );
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: gradient-shift 3s linear infinite;
-
-    // Glow effect
-    &::before {
-        content: 'LOADING';
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: -1;
-        color: @color-cyan;
-        filter: blur(10px);
-        opacity: 0.5;
-        animation: text-glow 2s ease-in-out infinite alternate;
-    }
-}
-
-@keyframes gradient-shift {
-    0% {
-        background-position: 0% center;
-    }
-    100% {
-        background-position: 200% center;
-    }
-}
-
-@keyframes text-glow {
-    0% {
-        filter: blur(10px);
-        opacity: 0.3;
-    }
-    100% {
-        filter: blur(20px);
-        opacity: 0.6;
-    }
-}
-
-// Loading Dots (Bouncing Orbs)
+// Loading Dots - Comic Style
 .loading-dots {
     display: flex;
     gap: 15px;
-    margin-top: 25px;
+    margin: 20px 0;
+    z-index: 2;
+
+    // Hide when ready
+    .ready & {
+        display: none;
+    }
 }
 
 .loading-dot {
-    width: 14px;
-    height: 14px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
-    animation: dot-orbit 1.5s ease-in-out infinite;
-    .gpu-accelerate();
+    .comic-border(2px);
+    animation: dot-bounce 1s ease-in-out infinite;
 
     &:nth-child(1) {
-        background: @color-cyan;
-        box-shadow: 0 0 10px @color-cyan, 0 0 20px @color-cyan;
+        background: @color-danger;
         animation-delay: 0s;
     }
 
     &:nth-child(2) {
-        background: @color-magenta;
-        box-shadow: 0 0 10px @color-magenta, 0 0 20px @color-magenta;
+        background: @color-yellow;
         animation-delay: 0.2s;
     }
 
     &:nth-child(3) {
-        background: @color-yellow;
-        box-shadow: 0 0 10px @color-yellow, 0 0 20px @color-yellow;
+        background: @color-success;
         animation-delay: 0.4s;
     }
 }
 
-@keyframes dot-orbit {
+@keyframes dot-bounce {
     0%, 100% {
         transform: translateY(0) scale(1);
-        opacity: 1;
     }
     50% {
-        transform: translateY(-20px) scale(1.2);
-        opacity: 0.7;
+        transform: translateY(-15px) scale(1.2);
     }
 }
 
-// Progress Bar
+// Progress Bar - Comic Style
 .loading-progress {
-    position: absolute;
-    bottom: 20%;
-    width: 280px;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
+    width: 300px;
+    height: 25px;
+    background: @color-white;
+    .comic-border();
+    .pop-shadow(4px, 4px);
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    z-index: 2;
 
-    // Outer glow
-    &::before {
-        content: '';
-        position: absolute;
-        top: -10px;
-        left: -10px;
-        right: -10px;
-        bottom: -10px;
-        border: 1px solid rgba(0, 255, 255, 0.2);
-        border-radius: 8px;
+    // Hide when ready
+    .ready & {
+        display: none;
     }
 }
 
 .loading-progress-fill {
     height: 100%;
     width: 0;
-    background: linear-gradient(
-        90deg,
-        @color-cyan 0%,
-        @color-magenta 50%,
-        @color-yellow 100%
+    background: repeating-linear-gradient(
+        45deg,
+        @color-success 0px,
+        @color-success 10px,
+        lighten(@color-success, 15%) 10px,
+        lighten(@color-success, 15%) 20px
     );
-    border-radius: 3px;
-    animation: progress-fill 2.5s ease-out forwards;
+    animation: progress-fill 2s ease-out forwards;
     position: relative;
 
     // Shine effect
@@ -479,14 +367,12 @@
         top: 0;
         left: 0;
         right: 0;
-        bottom: 0;
+        height: 50%;
         background: linear-gradient(
-            90deg,
-            transparent 0%,
-            rgba(255, 255, 255, 0.4) 50%,
+            180deg,
+            rgba(255, 255, 255, 0.5) 0%,
             transparent 100%
         );
-        animation: progress-shine 1s ease-in-out infinite;
     }
 }
 
@@ -499,171 +385,211 @@
     }
 }
 
-@keyframes progress-shine {
-    0% {
-        transform: translateX(-100%);
-    }
-    100% {
-        transform: translateX(200%);
-    }
-}
-
-// Click to Start Button
+// Start Button - Main CTA
 .loading-start {
-    position: absolute;
-    bottom: 12%;
     font-family: @font-title;
-    font-size: 1.6rem;
-    color: @color-white;
-    letter-spacing: 4px;
+    font-size: 2rem;
+    padding: 15px 50px;
+    border: none;
+    background: @color-yellow;
+    color: @color-black;
     cursor: pointer;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 2;
+    .comic-border(3px);
+    .pop-shadow(8px, 8px);
+    transition: all 0.1s;
     opacity: 0;
-    animation: start-appear 0.8s ease forwards;
-    animation-delay: 2.5s;
-    padding: 15px 40px;
-    border: 2px solid @color-cyan;
-    background: rgba(0, 255, 255, 0.1);
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    .gpu-accelerate();
+    pointer-events: none;
+    animation: button-appear 0.5s ease forwards;
+    animation-delay: 2.2s;
+    margin-top: 20px;
 
     &:hover {
-        background: rgba(0, 255, 255, 0.2);
-        border-color: @color-white;
-        transform: scale(1.05);
-        box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+        transform: translate(-2px, -2px);
+        box-shadow: 10px 10px 0 @color-black;
+        background: lighten(@color-yellow, 10%);
     }
 
-    // Animated border
-    &::before {
-        content: '';
-        position: absolute;
-        top: -2px;
-        left: -2px;
-        right: -2px;
-        bottom: -2px;
-        background: linear-gradient(90deg, @color-cyan, @color-magenta, @color-yellow, @color-cyan);
-        background-size: 300% 100%;
-        border-radius: 6px;
-        z-index: -1;
-        animation: border-flow 3s linear infinite;
-        opacity: 0;
-        transition: opacity 0.3s ease;
+    &:active {
+        transform: translate(4px, 4px);
+        box-shadow: 2px 2px 0 @color-black;
     }
 
-    &:hover::before {
+    // Ready state - show immediately
+    .ready & {
         opacity: 1;
-    }
-
-    // Pulsing arrows
-    &::after {
-        content: '▶';
-        margin-left: 15px;
-        display: inline-block;
-        animation: arrow-pulse 1s ease-in-out infinite;
+        pointer-events: auto;
+        animation: button-pulse 1s ease-in-out infinite;
     }
 }
 
-@keyframes start-appear {
+@keyframes button-appear {
     0% {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(20px);
     }
     100% {
         opacity: 1;
         transform: translateY(0);
+        pointer-events: auto;
     }
 }
 
-@keyframes border-flow {
-    0% {
-        background-position: 0% center;
-    }
-    100% {
-        background-position: 300% center;
-    }
-}
-
-@keyframes arrow-pulse {
+@keyframes button-pulse {
     0%, 100% {
-        transform: translateX(0);
-        opacity: 1;
+        transform: scale(1);
     }
     50% {
-        transform: translateX(5px);
-        opacity: 0.5;
+        transform: scale(1.05);
     }
 }
 
-// Corner Decorations
-.loading-screen::before,
-.loading-screen::after {
-    content: '';
+// Instructions Panel - Comic Callout
+.loading-instructions {
+    background: @color-white;
+    padding: 15px 25px;
+    .comic-border();
+    .pop-shadow();
+    transform: rotate(1deg);
+    margin-top: 25px;
+    z-index: 2;
+    opacity: 0;
+    animation: instructions-appear 0.5s ease forwards;
+    animation-delay: 2.5s;
+
+    p {
+        margin: 5px 0;
+        font-family: @font-comic;
+        font-size: 1.1rem;
+        color: @color-black;
+    }
+
+    // Ready state
+    .ready & {
+        opacity: 1;
+    }
+}
+
+@keyframes instructions-appear {
+    0% {
+        opacity: 0;
+        transform: rotate(1deg) translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(1deg) translateY(0);
+    }
+}
+
+// Enemy Parade Animation (background decoration)
+.loading-screen {
+    // Marching enemies at bottom
+    &::before {
+        // Already used for halftone
+    }
+}
+
+// Corner Speech Bubbles
+.loading-tower::before {
+    content: 'READY?';
     position: absolute;
-    width: 100px;
-    height: 100px;
-    border: 2px solid rgba(0, 255, 255, 0.3);
-    pointer-events: none;
+    top: -40px;
+    right: -80px;
+    font-family: @font-title;
+    font-size: 1.5rem;
+    color: @color-black;
+    background: @color-white;
+    padding: 8px 15px;
+    .comic-border(2px);
+    border-radius: 20px;
+    opacity: 0;
+    animation: speech-appear 0.5s ease forwards;
+    animation-delay: 1.5s;
+
+    // Speech bubble tail
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 20px;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-top: 12px solid @color-black;
+    }
 }
 
-.loading-screen::before {
-    top: 30px;
-    left: 30px;
-    border-right: none;
-    border-bottom: none;
-}
-
-.loading-screen::after {
-    bottom: 30px;
-    right: 30px;
-    border-left: none;
-    border-top: none;
+@keyframes speech-appear {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 // Responsive Design
-@media (max-width: 480px) {
+@media (max-width: 600px) {
+    .loading-text,
+    .loading-screen::after {
+        font-size: 3rem;
+    }
+
     .loading-tower {
         transform: scale(0.8);
     }
 
-    .loading-text {
-        font-size: 2rem;
-        letter-spacing: 4px;
-    }
-
     .loading-start {
-        font-size: 1.2rem;
-        padding: 12px 30px;
+        font-size: 1.5rem;
+        padding: 12px 35px;
     }
 
     .loading-progress {
-        width: 200px;
+        width: 250px;
+    }
+
+    .loading-bg::before,
+    .loading-bg::after {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .loading-text,
+    .loading-screen::after {
+        font-size: 2.2rem;
+    }
+
+    .loading-tower {
+        transform: scale(0.6);
+    }
+
+    .loading-bg::before,
+    .loading-bg::after {
+        display: none;
     }
 }
 
 // Reduced Motion Support
 @media (prefers-reduced-motion: reduce) {
-    .loading-tower-body,
-    .loading-tower-top,
     .loading-tower-turret,
-    .loading-bg::before {
+    .loading-dot,
+    .loading-text,
+    .loading-screen::after {
         animation: none !important;
     }
 
-    .loading-tower-base {
-        animation: fortress-pulse 4s ease-in-out infinite;
+    .loading-start {
+        animation: none !important;
+        opacity: 1;
+        pointer-events: auto;
     }
 
-    .loading-dot {
-        animation: dot-simple 2s ease-in-out infinite;
-    }
-
-    @keyframes dot-simple {
-        0%, 100% {
-            opacity: 0.5;
-        }
-        50% {
-            opacity: 1;
-        }
+    .loading-progress-fill {
+        animation: none !important;
+        width: 100%;
     }
 }

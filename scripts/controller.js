@@ -22,8 +22,7 @@
         Game.init();
 
         // Setup event listeners
-        setupLoadingScreen();
-        setupStartButton();
+        setupStartScreen();
         setupRestartButton();
         setupWaveButton();
         setupMapInteraction();
@@ -33,49 +32,33 @@
     });
 
     /**
-     * Setup loading screen click-to-start
+     * Setup unified start screen (combines loading and start)
      */
-    function setupLoadingScreen() {
+    function setupStartScreen() {
         var loadingScreen = document.getElementById('loadingScreen');
-        var loadingStart = document.getElementById('loadingStart');
-
-        if (!loadingScreen) return;
-
-        // Hide loading screen and show start screen on click
-        function dismissLoading() {
-            loadingScreen.classList.add('hidden');
-            // Play button click sound and start menu music
-            Sfx.playEffect('button');
-            Sfx.playMusic('menu');
-        }
-
-        // Click on "CLICK TO START" text
-        if (loadingStart) {
-            loadingStart.addEventListener('click', dismissLoading);
-        }
-
-        // Also allow clicking anywhere on loading screen after a delay
-        setTimeout(function() {
-            loadingScreen.addEventListener('click', function(e) {
-                // Prevent double trigger if clicking on loadingStart
-                if (e.target !== loadingStart) {
-                    dismissLoading();
-                }
-            });
-        }, 2500); // Match the animation delay for the start prompt
-    }
-    
-    /**
-     * Setup start button
-     */
-    function setupStartButton() {
         var startBtn = document.getElementById('startBtn');
-        if (startBtn) {
-            startBtn.addEventListener('click', function() {
-                Sfx.playEffect('button');
-                Game.start();
-            });
+
+        if (!loadingScreen || !startBtn) return;
+
+        // Start menu music after user interaction (for autoplay policy)
+        var musicStarted = false;
+        function startMenuMusic() {
+            if (!musicStarted) {
+                musicStarted = true;
+                Sfx.playMusic('menu');
+            }
         }
+
+        // Start music on any click
+        loadingScreen.addEventListener('click', startMenuMusic, { once: true });
+
+        // Start game when clicking the button
+        startBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            Sfx.playEffect('button');
+            loadingScreen.classList.add('hidden');
+            Game.start();
+        });
     }
     
     /**
