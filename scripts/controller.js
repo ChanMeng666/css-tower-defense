@@ -655,7 +655,7 @@
      * Prevent context menu on game area
      */
     document.addEventListener('contextmenu', function(e) {
-        if (e.target.closest('.scene') || e.target.closest('.game-ui')) {
+        if (e.target.closest('.map')) {
             e.preventDefault();
         }
     });
