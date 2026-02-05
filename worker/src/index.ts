@@ -5,6 +5,7 @@ import { leaderboardRoutes } from './routes/leaderboard';
 import { savesRoutes } from './routes/saves';
 import { progressionRoutes } from './routes/progression';
 import { statsRoutes } from './routes/stats';
+import { challengeRoutes } from './routes/challenges';
 
 type Bindings = {
   DATABASE_URL: string;
@@ -33,6 +34,7 @@ app.route('/api/leaderboard', leaderboardRoutes);
 app.route('/api/saves', savesRoutes);
 app.route('/api/progression', progressionRoutes);
 app.route('/api/stats', statsRoutes);
+app.route('/api/challenges', challengeRoutes);
 
 // Non-API requests fall through to static assets (handled by [assets] config)
 

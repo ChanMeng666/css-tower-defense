@@ -111,6 +111,20 @@ export const achievements = pgTable('achievements', {
   uniq: uniqueIndex('idx_ach_uniq').on(t.userId, t.achievementId),
 }));
 
+export const dailyChallengeCompletions = pgTable('daily_challenge_completions', {
+  id: serial('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => user.id),
+  challengeDate: varchar('challenge_date', { length: 10 }).notNull(),
+  templateId: varchar('template_id', { length: 30 }).notNull(),
+  score: integer('score').notNull(),
+  durationSeconds: integer('duration_seconds'),
+  metadata: jsonb('metadata').default({}),
+  completedAt: timestamp('completed_at').defaultNow(),
+}, (t) => ({
+  dateUserUniq: uniqueIndex('idx_dc_date_user').on(t.challengeDate, t.userId),
+  dateScoreIdx: index('idx_dc_date_score').on(t.challengeDate, t.score),
+}));
+
 export const gameHistory = pgTable('game_history', {
   id: serial('id').primaryKey(),
   userId: text('user_id').notNull().references(() => user.id),

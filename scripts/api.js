@@ -131,6 +131,33 @@ var API = (function() {
         return request('/stats/achievements/global');
     }
 
+    // ── Player Profiles ──
+
+    function getPlayerProfile(userId) {
+        return request('/stats/player/' + userId);
+    }
+
+    // ── Daily Challenges ──
+
+    function getDailyChallenge() {
+        return request('/challenges/today');
+    }
+
+    function completeDailyChallenge(data) {
+        return silentRequest('/challenges/complete', {
+            method: 'POST',
+            body: data
+        });
+    }
+
+    function getChallengeLeaderboard(date) {
+        return request('/challenges/leaderboard?date=' + (date || ''));
+    }
+
+    function getMyChallenges() {
+        return silentRequest('/challenges/me');
+    }
+
     return {
         getLeaderboard: getLeaderboard,
         getMyRank: getMyRank,
@@ -145,6 +172,11 @@ var API = (function() {
         getMyStats: getMyStats,
         unlockAchievement: unlockAchievement,
         getAchievements: getAchievements,
-        getGlobalAchievements: getGlobalAchievements
+        getGlobalAchievements: getGlobalAchievements,
+        getPlayerProfile: getPlayerProfile,
+        getDailyChallenge: getDailyChallenge,
+        completeDailyChallenge: completeDailyChallenge,
+        getChallengeLeaderboard: getChallengeLeaderboard,
+        getMyChallenges: getMyChallenges
     };
 })();

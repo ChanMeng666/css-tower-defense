@@ -267,6 +267,12 @@ var Shop = (function() {
      * Sell the selected tower
      */
     function sellTower(tower) {
+        // Challenge: no sell restriction
+        if (typeof Challenge !== 'undefined' && Challenge.isActive() && !Challenge.isSellAllowed()) {
+            Display.showMessage('Cannot sell in this challenge!');
+            Sfx.play('error');
+            return;
+        }
         var value = Tower.sell(tower);
         Display.showMessage('Tower Sold!');
         deselectTower();
