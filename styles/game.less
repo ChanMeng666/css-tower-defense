@@ -1155,36 +1155,14 @@ body.blood-moon {
     display: flex;
     align-items: center;
     gap: 4px;
-    padding: 3px 8px;
-    border-radius: 12px;
+    padding: 2px 4px;
     font-family: @font-comic;
     font-size: 0.75rem;
     font-weight: bold;
     color: @color-white;
-    background: rgba(26, 22, 20, 0.6);
-    border: 1.5px solid rgba(255, 248, 240, 0.3);
+    background: none;
+    border: none;
     white-space: nowrap;
-    transition: background 0.3s, border-color 0.3s;
-
-    &.env-buff {
-        border-color: @color-success;
-        background: fade(@color-success, 30%);
-    }
-
-    &.env-debuff {
-        border-color: @color-danger;
-        background: fade(@color-danger, 30%);
-    }
-
-    &.env-mixed {
-        border-color: @color-yellow;
-        background: fade(@color-yellow, 20%);
-    }
-
-    &.env-neutral {
-        border-color: rgba(255, 248, 240, 0.3);
-        background: rgba(26, 22, 20, 0.6);
-    }
 
     &.hidden {
         display: none;

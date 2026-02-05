@@ -549,9 +549,6 @@ var Display = (function() {
             var isNight = (typeof Weather !== 'undefined' && Weather.isNight) ? Weather.isNight() : false;
             timeIcon.innerHTML = isNight ? ENV_ICONS.moon : ENV_ICONS.sun;
             timeLabel.textContent = isNight ? 'Night' : 'Day';
-            if (timePill) {
-                timePill.className = 'env-pill env-time ' + (isNight ? 'env-debuff' : 'env-buff');
-            }
         }
 
         // Weather
@@ -559,10 +556,6 @@ var Display = (function() {
             var weather = (typeof Weather !== 'undefined' && Weather.getCurrentWeather) ? Weather.getCurrentWeather() : 'clear';
             weatherIcon.innerHTML = ENV_ICONS[weather] || ENV_ICONS.clear;
             weatherLabel.textContent = weather.charAt(0).toUpperCase() + weather.slice(1);
-            if (weatherPill) {
-                var weatherClass = weather === 'clear' ? 'env-buff' : 'env-mixed';
-                weatherPill.className = 'env-pill env-weather ' + weatherClass;
-            }
         }
 
         // Season
@@ -571,10 +564,6 @@ var Display = (function() {
             var seasonName = (typeof Seasons !== 'undefined' && Seasons.getSeasonName) ? Seasons.getSeasonName() : 'Summer';
             seasonIcon.innerHTML = ENV_ICONS[season] || ENV_ICONS.summer;
             seasonLabel.textContent = seasonName;
-            if (seasonPill) {
-                var seasonClass = (season === 'autumn') ? 'env-buff' : (season === 'winter' ? 'env-mixed' : 'env-neutral');
-                seasonPill.className = 'env-pill env-season ' + seasonClass;
-            }
         }
 
         // Special event
@@ -583,15 +572,12 @@ var Display = (function() {
             var isBloodMoon = (typeof Weather !== 'undefined' && Weather.isBloodMoon) ? Weather.isBloodMoon() : false;
             if (isBloodMoon || (activeEvt && activeEvt.type === 'bloodMoon')) {
                 envEvent.classList.remove('hidden');
-                envEvent.className = 'env-pill env-event env-debuff';
                 envEventLabel.textContent = 'Blood Moon';
             } else if (activeEvt && activeEvt.type === 'eliteSwarm') {
                 envEvent.classList.remove('hidden');
-                envEvent.className = 'env-pill env-event env-debuff';
                 envEventLabel.textContent = 'Elite Swarm';
             } else if (activeEvt && activeEvt.type === 'luckyStar') {
                 envEvent.classList.remove('hidden');
-                envEvent.className = 'env-pill env-event env-buff';
                 envEventLabel.textContent = 'Lucky Star';
             } else {
                 envEvent.classList.add('hidden');
