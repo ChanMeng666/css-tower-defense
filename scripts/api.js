@@ -39,7 +39,10 @@ var API = (function() {
      */
     function silentRequest(path, options) {
         if (!Auth.isLoggedIn()) return Promise.resolve(null);
-        return request(path, options).catch(function() { return null; });
+        return request(path, options).catch(function(err) {
+            console.error('[API] Silent request failed:', path, err);
+            return null;
+        });
     }
 
     // ── Leaderboard ──

@@ -1791,6 +1791,35 @@ body.blood-moon .sky-cycle {
   z-index: 150;
   pointer-events: none;
 }
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: 10px 24px;
+  border-radius: 4px;
+  background: #1A1614;
+  color: #FFF8F0;
+  font-family: 'Comic Neue', cursive;
+  font-weight: bold;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  border: 2px solid #1A1614;
+  box-shadow: 4px 4px 0 #1A1614;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.toast-success {
+  background: #5EA65E;
+  color: #FFF8F0;
+}
+.toast-error {
+  background: #E8635A;
+  color: #FFF8F0;
+}
 .scene {
   position: fixed;
   top: 0;

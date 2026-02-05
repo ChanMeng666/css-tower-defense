@@ -1496,3 +1496,39 @@ body.blood-moon {
     z-index: 150;
     pointer-events: none;
 }
+
+// ===========================================
+// Toast Notifications
+// ===========================================
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    padding: 10px 24px;
+    border-radius: 4px;
+    background: @color-dark;
+    color: @color-white;
+    font-family: @font-comic;
+    font-weight: bold;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    .comic-border(2px);
+    .pop-shadow(4px, 4px);
+
+    &.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.toast-success {
+    background: @color-success;
+    color: @color-white;
+}
+
+.toast-error {
+    background: @color-danger;
+    color: @color-white;
+}

@@ -425,17 +425,29 @@ var Game = (function () {
             outcome: 'defeat'
         };
         if (typeof API !== 'undefined') {
-            API.submitScore(gameData);
-            API.recordGame(gameData);
-            // Fetch rank after submission
-            if (API.getMyRank) {
-                API.getMyRank(difficulty).then(function(data) {
-                    if (data && data.rank) {
-                        var goRank = document.getElementById('goRank');
-                        if (goRank) goRank.textContent = '#' + data.rank;
+            API.submitScore(gameData).then(function(result) {
+                if (result && result.success) {
+                    console.log('[Leaderboard] Score submitted successfully');
+                    if (typeof Display !== 'undefined' && Display.showToast) {
+                        Display.showToast('Score submitted!', 'success');
                     }
-                });
-            }
+                } else if (result === null && typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+                    console.warn('[Leaderboard] Submission failed silently');
+                    if (typeof Display !== 'undefined' && Display.showToast) {
+                        Display.showToast('Score submission failed', 'error');
+                    }
+                }
+                // Fetch rank after submission
+                if (API.getMyRank) {
+                    API.getMyRank(difficulty).then(function(data) {
+                        if (data && data.rank) {
+                            var goRank = document.getElementById('goRank');
+                            if (goRank) goRank.textContent = '#' + data.rank;
+                        }
+                    });
+                }
+            });
+            API.recordGame(gameData);
         }
 
         // Submit challenge if active
@@ -496,17 +508,29 @@ var Game = (function () {
             outcome: 'victory'
         };
         if (typeof API !== 'undefined') {
-            API.submitScore(gameData);
-            API.recordGame(gameData);
-            // Fetch rank after submission
-            if (API.getMyRank) {
-                API.getMyRank(difficulty).then(function(data) {
-                    if (data && data.rank) {
-                        var goRank = document.getElementById('goRank');
-                        if (goRank) goRank.textContent = '#' + data.rank;
+            API.submitScore(gameData).then(function(result) {
+                if (result && result.success) {
+                    console.log('[Leaderboard] Score submitted successfully');
+                    if (typeof Display !== 'undefined' && Display.showToast) {
+                        Display.showToast('Score submitted!', 'success');
                     }
-                });
-            }
+                } else if (result === null && typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+                    console.warn('[Leaderboard] Submission failed silently');
+                    if (typeof Display !== 'undefined' && Display.showToast) {
+                        Display.showToast('Score submission failed', 'error');
+                    }
+                }
+                // Fetch rank after submission
+                if (API.getMyRank) {
+                    API.getMyRank(difficulty).then(function(data) {
+                        if (data && data.rank) {
+                            var goRank = document.getElementById('goRank');
+                            if (goRank) goRank.textContent = '#' + data.rank;
+                        }
+                    });
+                }
+            });
+            API.recordGame(gameData);
         }
 
         // Submit challenge if active

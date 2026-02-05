@@ -101,8 +101,62 @@
         startBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             Sfx.playEffect('button');
-            loadingScreen.classList.add('hidden');
-            Game.start();
+            promptLoginForLeaderboard(function() {
+                loadingScreen.classList.add('hidden');
+                Game.start();
+            });
+        });
+    }
+
+    /**
+     * Prompt user to login for leaderboard before starting game
+     */
+    function promptLoginForLeaderboard(callback) {
+        // Skip prompt if already logged in
+        if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+            callback();
+            return;
+        }
+
+        // Create modal
+        var modal = document.createElement('div');
+        modal.className = 'auth-modal';
+        modal.id = 'loginPromptModal';
+        modal.innerHTML =
+            '<div class="auth-modal-content">' +
+                '<h2 class="auth-modal-title">Login for Leaderboard?</h2>' +
+                '<p style="font-family: Comic Neue, sans-serif; color: #FFF8F0; margin-bottom: 20px; text-align: center;">' +
+                    'Sign in to have your score appear on the leaderboard.' +
+                '</p>' +
+                '<div style="display: flex; gap: 12px; justify-content: center;">' +
+                    '<button class="auth-btn" id="loginPromptYes">Login</button>' +
+                    '<button class="auth-btn secondary" id="loginPromptSkip">Play as Guest</button>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(modal);
+
+        // Login button
+        document.getElementById('loginPromptYes').addEventListener('click', function() {
+            modal.remove();
+            if (typeof Auth !== 'undefined' && Auth.showLoginModal) {
+                Auth.showLoginModal(callback);
+            } else {
+                callback();
+            }
+        });
+
+        // Skip button
+        document.getElementById('loginPromptSkip').addEventListener('click', function() {
+            modal.remove();
+            callback();
+        });
+
+        // Click backdrop to close and play as guest
+        modal.addEventListener('click', function(ev) {
+            if (ev.target === modal) {
+                modal.remove();
+                callback();
+            }
         });
     }
     

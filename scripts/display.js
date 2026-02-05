@@ -523,6 +523,31 @@ var Display = (function() {
         }
     }
 
+    /**
+     * Show a toast notification
+     * @param {string} message - Toast message
+     * @param {string} type - Toast type: 'info', 'success', 'error'
+     */
+    function showToast(message, type) {
+        var toast = document.createElement('div');
+        toast.className = 'toast toast-' + (type || 'info');
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        // Trigger animation
+        setTimeout(function() {
+            toast.classList.add('show');
+        }, 10);
+
+        // Remove after 3 seconds
+        setTimeout(function() {
+            toast.classList.remove('show');
+            setTimeout(function() {
+                if (toast.parentNode) toast.remove();
+            }, 300);
+        }, 3000);
+    }
+
     // =========================================
     // Environment Bar
     // =========================================
@@ -656,6 +681,7 @@ var Display = (function() {
         hideAnnouncement: hideAnnouncement,
         showCombo: showCombo,
         hideCombo: hideCombo,
+        showToast: showToast,
         updateEnvironment: updateEnvironment
     };
 })();
