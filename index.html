@@ -40,19 +40,23 @@
             <button class="difficulty-btn" data-difficulty="expert">Expert</button>
         </div>
         <button class="loading-start" id="startBtn">START GAME</button>
-        <!-- Daily Challenge -->
-        <div class="challenge-section" id="challengeSection" style="display:none;">
-            <div class="challenge-title">Daily Challenge</div>
-            <div class="challenge-name" id="challengeName">-</div>
-            <div class="challenge-desc" id="challengeDesc">-</div>
-            <button class="challenge-play-btn" id="challengePlayBtn">Play Challenge</button>
-            <div class="challenge-lb" id="challengeLb"></div>
-        </div>
-        <!-- Leaderboard Preview -->
-        <div class="leaderboard-preview" id="leaderboardPreview">
-            <h3 class="leaderboard-title">Top Scores</h3>
-            <div class="leaderboard-list" id="leaderboardList">
-                <div class="leaderboard-loading">Loading...</div>
+        <!-- Bottom section: Leaderboard + Challenge -->
+        <div class="start-screen-bottom" id="startScreenBottom">
+            <!-- Leaderboard Preview -->
+            <div class="leaderboard-preview" id="leaderboardPreview">
+                <h3 class="leaderboard-title">Top Scores</h3>
+                <div class="leaderboard-list" id="leaderboardList">
+                    <div class="leaderboard-loading">Loading...</div>
+                </div>
+                <button class="leaderboard-view-all" id="viewLeaderboardBtn">View Full Leaderboard</button>
+            </div>
+            <!-- Daily Challenge -->
+            <div class="challenge-section" id="challengeSection" style="display:none;">
+                <div class="challenge-title">Daily Challenge</div>
+                <div class="challenge-name" id="challengeName">-</div>
+                <div class="challenge-desc" id="challengeDesc">-</div>
+                <button class="challenge-play-btn" id="challengePlayBtn">Play Challenge</button>
+                <div class="challenge-lb" id="challengeLb"></div>
             </div>
         </div>
     </div>

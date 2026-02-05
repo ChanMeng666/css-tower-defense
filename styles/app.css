@@ -418,6 +418,35 @@
     display: none;
   }
 }
+.start-screen-bottom {
+  position: relative;
+  z-index: 2;
+  width: 90%;
+  max-width: 360px;
+  max-height: 40vh;
+  overflow-y: auto;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0;
+  animation: instructions-appear 0.5s ease forwards;
+  animation-delay: 2.2s;
+}
+.ready .start-screen-bottom {
+  opacity: 1;
+  animation: none;
+}
+.start-screen-bottom::-webkit-scrollbar {
+  width: 6px;
+}
+.start-screen-bottom::-webkit-scrollbar-track {
+  background: transparent;
+}
+.start-screen-bottom::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
 .difficulty-select {
   display: flex;
   align-items: center;
@@ -1685,14 +1714,11 @@ body.blood-moon .sky-cycle {
   border: 1px solid #1A1614;
 }
 .challenge-section {
-  margin-top: 15px;
   padding: 12px;
   background: rgba(255, 248, 240, 0.05);
   border: 2px solid rgba(255, 248, 240, 0.15);
   border-radius: 8px;
   text-align: center;
-  z-index: 1;
-  position: relative;
 }
 .challenge-title {
   font-family: 'Bangers', 'Impact', cursive;
@@ -4336,17 +4362,29 @@ body.blood-moon .sky-cycle {
   color: #FFF8F0;
 }
 .leaderboard-preview {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 320px;
-  max-height: 200px;
+  width: 100%;
   background: rgba(0, 0, 0, 0.6);
   border: 2px solid rgba(45, 138, 138, 0.5);
   border-radius: 6px;
   padding: 12px;
-  z-index: 10;
+}
+.leaderboard-view-all {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 6px 12px;
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 13px;
+  background: transparent;
+  color: #2D8A8A;
+  border: 1px solid #2D8A8A;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.leaderboard-view-all:hover {
+  background: #2D8A8A;
+  color: #FFF8F0;
 }
 .leaderboard-title {
   font-family: 'Bangers', 'Impact', cursive;

@@ -296,6 +296,15 @@
         var listEl = document.getElementById('leaderboardList');
         if (!listEl) return;
 
+        // Wire "View Full Leaderboard" button
+        var viewAllBtn = document.getElementById('viewLeaderboardBtn');
+        if (viewAllBtn) {
+            viewAllBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                showLeaderboardModal();
+            });
+        }
+
         API.getLeaderboard('normal', 10, 0)
             .then(function(data) {
                 if (!data || !data.entries || data.entries.length === 0) {
@@ -349,10 +358,32 @@
                 lbEl.textContent = lbHtml;
             }
 
+            // Check completion status if logged in
+            if (playBtn && typeof Auth !== 'undefined' && Auth.isLoggedIn() && API.getMyChallenges) {
+                API.getMyChallenges().then(function(myData) {
+                    if (!myData) return;
+                    var today = new Date().toISOString().slice(0, 10);
+                    var completedToday = myData.completions && myData.completions.some(function(c) {
+                        return c.date === today;
+                    });
+                    if (completedToday) {
+                        playBtn.textContent = 'Completed';
+                        playBtn.disabled = true;
+                        playBtn.style.opacity = '0.6';
+                        playBtn.style.cursor = 'default';
+                    }
+                    if (myData.streak > 0 && lbEl) {
+                        var streakText = myData.streak + ' day streak';
+                        lbEl.textContent = (lbEl.textContent ? lbEl.textContent + ' | ' : '') + streakText;
+                    }
+                }).catch(function() { /* ignore */ });
+            }
+
             // Play challenge button
             if (playBtn) {
                 playBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
+                    if (playBtn.disabled) return;
                     if (typeof Challenge !== 'undefined') {
                         Game.setDifficulty('normal'); // Force normal
                         Challenge.startChallenge(data.challenge.id);

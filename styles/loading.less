@@ -517,6 +517,42 @@
     }
 }
 
+// Start Screen Bottom Container (Leaderboard + Challenge)
+.start-screen-bottom {
+    position: relative;
+    z-index: 2;
+    width: 90%;
+    max-width: 360px;
+    max-height: 40vh;
+    overflow-y: auto;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    opacity: 0;
+    animation: instructions-appear 0.5s ease forwards;
+    animation-delay: 2.2s;
+
+    .ready & {
+        opacity: 1;
+        animation: none;
+    }
+
+    // Scrollbar styling
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+    }
+}
+
 // Difficulty Selector
 .difficulty-select {
     display: flex;
