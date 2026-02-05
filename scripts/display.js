@@ -264,12 +264,26 @@ var Display = (function() {
     }
     
     /**
-     * Show game over screen
+     * Format duration in seconds to M:SS or H:MM:SS
      */
-    function showGameOverScreen(isVictory, score) {
+    function formatDuration(seconds) {
+        var mins = Math.floor(seconds / 60);
+        var secs = seconds % 60;
+        if (mins >= 60) {
+            var hrs = Math.floor(mins / 60);
+            mins = mins % 60;
+            return hrs + ':' + (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+        }
+        return mins + ':' + (secs < 10 ? '0' : '') + secs;
+    }
+
+    /**
+     * Show game over screen with optional stats
+     */
+    function showGameOverScreen(isVictory, score, stats) {
         if (elements.gameOverScreen) {
             elements.gameOverScreen.classList.remove('hidden');
-            
+
             if (elements.gameOverTitle) {
                 if (isVictory) {
                     elements.gameOverTitle.textContent = 'Victory!';
@@ -279,9 +293,29 @@ var Display = (function() {
                     elements.gameOverTitle.classList.remove('victory');
                 }
             }
-            
+
             if (elements.finalScore) {
                 elements.finalScore.textContent = score;
+            }
+
+            // Populate post-game stats grid
+            if (stats) {
+                var goStats = document.getElementById('gameOverStats');
+                if (goStats) goStats.classList.remove('hidden');
+
+                var goWaves = document.getElementById('goWaves');
+                var goEnemies = document.getElementById('goEnemies');
+                var goTowers = document.getElementById('goTowers');
+                var goGold = document.getElementById('goGold');
+                var goDuration = document.getElementById('goDuration');
+                var goRank = document.getElementById('goRank');
+
+                if (goWaves) goWaves.textContent = stats.waveReached || '-';
+                if (goEnemies) goEnemies.textContent = stats.enemiesKilled || '0';
+                if (goTowers) goTowers.textContent = stats.towersBuilt || '0';
+                if (goGold) goGold.textContent = stats.goldEarned || '0';
+                if (goDuration) goDuration.textContent = stats.durationSeconds ? formatDuration(stats.durationSeconds) : '-';
+                if (goRank) goRank.textContent = '-';
             }
         }
     }

@@ -1178,3 +1178,315 @@ body.blood-moon {
 .env-label {
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
+
+// ===========================================
+// Post-Game Stats Grid
+// ===========================================
+.game-over-stats {
+    z-index: 1;
+    margin-bottom: 20px;
+
+    &.hidden {
+        display: none;
+    }
+}
+
+.post-game-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.post-stat {
+    background: rgba(255, 248, 240, 0.1);
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid rgba(255, 248, 240, 0.15);
+}
+
+.post-label {
+    display: block;
+    font-family: @font-comic;
+    font-size: 0.75rem;
+    color: rgba(255, 248, 240, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.post-value {
+    display: block;
+    font-family: @font-title;
+    font-size: 1.5rem;
+    color: @color-yellow;
+    margin-top: 2px;
+}
+
+// ===========================================
+// Stats Dashboard
+// ===========================================
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.stat-card {
+    background: #f0f0f0;
+    padding: 12px;
+    .comic-border(2px);
+    text-align: center;
+}
+
+.stat-card-label {
+    font-family: @font-comic;
+    font-size: 0.8rem;
+    color: #666;
+    text-transform: uppercase;
+}
+
+.stat-card-value {
+    font-family: @font-title;
+    font-size: 2rem;
+    color: @color-magenta;
+}
+
+// ===========================================
+// Achievement Gallery
+// ===========================================
+.ach-content {
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.ach-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.ach-card {
+    background: #f0f0f0;
+    padding: 12px;
+    .comic-border(2px);
+    text-align: center;
+    transition: transform 0.1s;
+
+    &:hover {
+        transform: scale(1.03);
+    }
+}
+
+.ach-locked {
+    opacity: 0.4;
+    filter: grayscale(1);
+}
+
+.ach-icon {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 6px;
+    background: @color-yellow;
+    .comic-border(2px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ach-name {
+    font-family: @font-title;
+    font-size: 1.1rem;
+    color: @color-magenta;
+}
+
+.ach-desc {
+    font-family: @font-comic;
+    font-size: 0.8rem;
+    color: #666;
+    margin: 4px 0;
+}
+
+.ach-reward {
+    font-family: @font-comic;
+    font-weight: bold;
+    font-size: 0.85rem;
+    color: @color-success;
+}
+
+.ach-global {
+    font-family: @font-comic;
+    font-size: 0.7rem;
+    color: @color-blue;
+    margin-top: 4px;
+}
+
+// ===========================================
+// Player Profile Modal
+// ===========================================
+.profile-card {
+    text-align: center;
+}
+
+.profile-name {
+    font-family: @font-title;
+    font-size: 2rem;
+    color: @color-yellow;
+    .text-outline(@color-black, 2px);
+    margin-bottom: 15px;
+}
+
+// ===========================================
+// Crafting System
+// ===========================================
+.craft-content {
+    max-width: 550px;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.craft-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.craft-card {
+    background: #f0f0f0;
+    padding: 12px;
+    .comic-border(2px);
+    cursor: pointer;
+    transition: all 0.1s;
+
+    &:hover:not(.craft-disabled) {
+        background: @color-yellow;
+        transform: translateY(-2px);
+        box-shadow: 4px 4px 0 @color-black;
+    }
+}
+
+.craft-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.craft-name {
+    font-family: @font-title;
+    font-size: 1rem;
+    color: @color-magenta;
+}
+
+.craft-effect {
+    font-family: @font-comic;
+    font-size: 0.8rem;
+    color: #666;
+    margin: 4px 0;
+}
+
+.craft-cost {
+    font-family: @font-comic;
+    font-weight: bold;
+    font-size: 0.8rem;
+    color: @color-dark;
+
+    .mat-scrap { color: #888; }
+    .mat-core { color: #0088FF; }
+    .mat-crystal { color: #AA00FF; }
+}
+
+.active-buffs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.buff-pill {
+    font-family: @font-comic;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: @color-cyan;
+    color: @color-black;
+    .comic-border(1px);
+}
+
+// ===========================================
+// Challenge System
+// ===========================================
+.challenge-section {
+    margin-top: 15px;
+    padding: 12px;
+    background: rgba(255, 248, 240, 0.05);
+    border: 2px solid rgba(255, 248, 240, 0.15);
+    border-radius: 8px;
+    text-align: center;
+    z-index: 1;
+    position: relative;
+}
+
+.challenge-title {
+    font-family: @font-title;
+    font-size: 1.2rem;
+    color: @color-yellow;
+    margin-bottom: 6px;
+}
+
+.challenge-name {
+    font-family: @font-title;
+    font-size: 1.5rem;
+    color: @color-magenta;
+    .text-outline(@color-black, 2px);
+}
+
+.challenge-desc {
+    font-family: @font-comic;
+    font-size: 0.85rem;
+    color: @color-white;
+    margin: 6px 0;
+}
+
+.challenge-play-btn {
+    font-family: @font-title;
+    font-size: 1rem;
+    padding: 6px 20px;
+    background: @color-success;
+    color: @color-white;
+    border: none;
+    .comic-border(2px);
+    cursor: pointer;
+    margin-top: 8px;
+
+    &:hover {
+        transform: translateY(-2px);
+    }
+}
+
+.challenge-lb {
+    margin-top: 10px;
+    font-family: @font-comic;
+    font-size: 0.8rem;
+    color: rgba(255, 248, 240, 0.7);
+}
+
+.challenge-banner {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: @font-title;
+    font-size: 0.9rem;
+    color: @color-yellow;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 4px 16px;
+    border-radius: 4px;
+    z-index: 150;
+    pointer-events: none;
+}

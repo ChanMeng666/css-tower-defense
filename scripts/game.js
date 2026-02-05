@@ -98,6 +98,9 @@ var Game = (function () {
         if (typeof Achievements !== 'undefined') {
             Achievements.init(); // Init Achievement System
         }
+        if (typeof Crafting !== 'undefined') {
+            Crafting.init(); // Init Crafting System
+        }
         if (typeof Effects !== 'undefined') {
             Effects.init(); // Init Visual Effects Manager
         }
@@ -139,7 +142,9 @@ var Game = (function () {
             if (typeof Seasons !== 'undefined' && Seasons.getGoldMultiplier) {
                 envGold *= Seasons.getGoldMultiplier();
             }
-            var reward = Math.floor(baseReward * DIFFICULTIES[difficulty].goldMult * Progression.getGoldMultiplier() * envGold);
+            // Apply crafting gold multiplier
+            var craftGold = (typeof Crafting !== 'undefined' && Crafting.getMultiplier) ? Crafting.getMultiplier('gold_mult') : 1.0;
+            var reward = Math.floor(baseReward * DIFFICULTIES[difficulty].goldMult * Progression.getGoldMultiplier() * envGold * craftGold);
 
             // Combo system
             comboCount++;
@@ -260,6 +265,13 @@ var Game = (function () {
         gold = 100 + Progression.getStartingGoldBonus();
         lives = 20 + Progression.getExtraLives();
         score = 0;
+
+        // Apply challenge start modifiers
+        if (typeof Challenge !== 'undefined' && Challenge.isActive()) {
+            var mods = Challenge.getStartModifiers();
+            if (mods.gold !== undefined) gold = mods.gold;
+            if (mods.lives !== undefined) lives = mods.lives;
+        }
         selectedTowerType = null;
         totalEnemiesKilled = 0;
         totalTowersBuilt = 0;
@@ -277,6 +289,14 @@ var Game = (function () {
         // Clear object pool in-use items
         if (typeof Pool !== 'undefined') {
             Pool.clear();
+        }
+
+        // Apply challenge wave override
+        if (typeof Challenge !== 'undefined' && Challenge.isActive()) {
+            var mods = Challenge.getStartModifiers();
+            if (mods.startWave && mods.startWave > 1) {
+                Wave.setCurrentWave(mods.startWave);
+            }
         }
 
         // Update display
@@ -407,9 +427,37 @@ var Game = (function () {
         if (typeof API !== 'undefined') {
             API.submitScore(gameData);
             API.recordGame(gameData);
+            // Fetch rank after submission
+            if (API.getMyRank) {
+                API.getMyRank(difficulty).then(function(data) {
+                    if (data && data.rank) {
+                        var goRank = document.getElementById('goRank');
+                        if (goRank) goRank.textContent = '#' + data.rank;
+                    }
+                });
+            }
         }
 
-        Display.showGameOverScreen(false, score);
+        // Submit challenge if active
+        if (typeof Challenge !== 'undefined' && Challenge.isActive()) {
+            var challengeScore = Math.floor(score * Challenge.getScoreBonus());
+            if (typeof API !== 'undefined' && API.completeDailyChallenge) {
+                API.completeDailyChallenge({
+                    score: challengeScore,
+                    durationSeconds: durationSeconds,
+                    metadata: { outcome: 'defeat', waveReached: Wave.getCurrentWave() }
+                });
+            }
+            Challenge.end();
+        }
+
+        Display.showGameOverScreen(false, score, {
+            waveReached: Wave.getCurrentWave(),
+            enemiesKilled: totalEnemiesKilled,
+            towersBuilt: totalTowersBuilt,
+            goldEarned: totalGoldEarned,
+            durationSeconds: durationSeconds
+        });
         Sfx.play('gameOver');
         Sfx.playMusic('defeat');
     }
@@ -450,9 +498,37 @@ var Game = (function () {
         if (typeof API !== 'undefined') {
             API.submitScore(gameData);
             API.recordGame(gameData);
+            // Fetch rank after submission
+            if (API.getMyRank) {
+                API.getMyRank(difficulty).then(function(data) {
+                    if (data && data.rank) {
+                        var goRank = document.getElementById('goRank');
+                        if (goRank) goRank.textContent = '#' + data.rank;
+                    }
+                });
+            }
         }
 
-        Display.showGameOverScreen(true, score);
+        // Submit challenge if active
+        if (typeof Challenge !== 'undefined' && Challenge.isActive()) {
+            var challengeScore = Math.floor(score * Challenge.getScoreBonus());
+            if (typeof API !== 'undefined' && API.completeDailyChallenge) {
+                API.completeDailyChallenge({
+                    score: challengeScore,
+                    durationSeconds: durationSeconds,
+                    metadata: { outcome: 'victory', waveReached: Wave.getCurrentWave() }
+                });
+            }
+            Challenge.end();
+        }
+
+        Display.showGameOverScreen(true, score, {
+            waveReached: Wave.getCurrentWave(),
+            enemiesKilled: totalEnemiesKilled,
+            towersBuilt: totalTowersBuilt,
+            goldEarned: totalGoldEarned,
+            durationSeconds: durationSeconds
+        });
         Sfx.play('victory');
         Sfx.playMusic('victory');
     }
@@ -494,6 +570,11 @@ var Game = (function () {
      * Take damage
      */
     function takeDamage(amount) {
+        // Apply crafting shield
+        if (typeof Crafting !== 'undefined' && Crafting.absorbDamage) {
+            amount = Crafting.absorbDamage(amount);
+        }
+        if (amount <= 0) return;
         lives -= amount;
         if (lives < 0) lives = 0;
         Display.updateLives(lives);
@@ -529,6 +610,25 @@ var Game = (function () {
 
         var config = Tower.getType(selectedTowerType);
         if (!config) return false;
+
+        // Challenge: tower type restriction
+        if (typeof Challenge !== 'undefined' && Challenge.isActive() && !Challenge.isTowerAllowed(selectedTowerType)) {
+            Display.showMessage('Tower not allowed in this challenge!');
+            Sfx.play('error');
+            selectTowerType(null);
+            return false;
+        }
+
+        // Challenge: tower count limit
+        if (typeof Challenge !== 'undefined' && Challenge.isActive()) {
+            var maxTowers = Challenge.getMaxTowers();
+            if (Tower.getAll().length >= maxTowers) {
+                Display.showMessage('Tower limit reached! (max ' + maxTowers + ')');
+                Sfx.play('error');
+                selectTowerType(null);
+                return false;
+            }
+        }
 
         // Check if can afford
         if (gold < config.cost) {
