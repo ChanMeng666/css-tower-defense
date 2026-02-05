@@ -1046,15 +1046,16 @@
   display: none;
 }
 .tech-content {
-  background: #FFF8F0;
+  background: #1A1614;
   padding: 30px;
   width: 600px;
   max-width: 90vw;
   max-height: 90vh;
   overflow-y: auto;
-  border: 5px solid #1A1614;
-  box-shadow: 20px 20px 0 #1A1614;
-  transform: rotate(1deg);
+  border: 3px solid #2D8A8A;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 8px 8px 0 #1A1614;
   text-align: center;
   box-sizing: border-box;
 }
@@ -1062,7 +1063,7 @@
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 3rem;
   margin: 0 0 20px;
-  color: #4A90C4;
+  color: #F2D864;
   -webkit-text-stroke: 1px #1A1614;
   text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
 }
@@ -1073,6 +1074,7 @@
   font-size: 1.5rem;
   margin-bottom: 20px;
   font-weight: bold;
+  color: #FFF8F0;
 }
 .tech-grid {
   display: grid;
@@ -1081,15 +1083,17 @@
   margin-bottom: 20px;
 }
 .tech-card {
-  background: #f0f0f0;
+  background: #2A2420;
   padding: 10px;
-  border: 2px solid #1A1614;
+  border: 1px solid #444;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
 }
 .tech-card:hover {
   transform: scale(1.05);
-  background: #F2D864;
+  background: #473d36;
+  border-color: #2D8A8A;
 }
 .tech-card.maxed {
   background: #5EA65E;
@@ -1097,33 +1101,36 @@
 }
 .tech-card.unavailable {
   opacity: 0.6;
-  background: #d0d0d0;
+  background: #1A1614;
 }
 .tech-card h3 {
   font-family: 'Bangers', 'Impact', cursive;
   margin: 5px 0;
+  color: #F2D864;
 }
 .tech-card p {
   font-size: 0.9rem;
   margin: 5px 0;
   font-family: 'Comic Neue', cursive;
+  color: #888;
 }
 .tech-card .tech-cost {
   font-weight: bold;
   color: #E8635A;
 }
 .close-tech-btn {
-  font-family: 'Bangers', 'Impact', cursive;
-  font-size: 1.5rem;
-  padding: 10px 30px;
-  background: #E8635A;
-  color: #FFF8F0;
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
   border: none;
-  border: 3px solid #1A1614;
+  color: #888;
+  font-size: 24px;
   cursor: pointer;
+  line-height: 1;
 }
 .close-tech-btn:hover {
-  transform: scale(1.1);
+  color: #FFF8F0;
 }
 .tower-tesla-preview {
   background: #E8C84A;
@@ -1568,21 +1575,22 @@ body.blood-moon .sky-cycle {
   margin-bottom: 15px;
 }
 .stat-card {
-  background: #f0f0f0;
+  background: #2A2420;
   padding: 12px;
-  border: 2px solid #1A1614;
+  border: 1px solid #444;
+  border-radius: 4px;
   text-align: center;
 }
 .stat-card-label {
   font-family: 'Comic Neue', cursive;
   font-size: 0.8rem;
-  color: #666;
+  color: #888;
   text-transform: uppercase;
 }
 .stat-card-value {
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 2rem;
-  color: #D4738A;
+  color: #F2D864;
 }
 .ach-content {
   max-width: 600px;
@@ -1596,14 +1604,16 @@ body.blood-moon .sky-cycle {
   margin-bottom: 15px;
 }
 .ach-card {
-  background: #f0f0f0;
+  background: #2A2420;
   padding: 12px;
-  border: 2px solid #1A1614;
+  border: 1px solid #444;
+  border-radius: 4px;
   text-align: center;
   transition: transform 0.1s;
 }
 .ach-card:hover {
   transform: scale(1.03);
+  border-color: #2D8A8A;
 }
 .ach-locked {
   opacity: 0.4;
@@ -1628,7 +1638,7 @@ body.blood-moon .sky-cycle {
 .ach-desc {
   font-family: 'Comic Neue', cursive;
   font-size: 0.8rem;
-  color: #666;
+  color: #888;
   margin: 4px 0;
 }
 .ach-reward {
@@ -1640,7 +1650,7 @@ body.blood-moon .sky-cycle {
 .ach-global {
   font-family: 'Comic Neue', cursive;
   font-size: 0.7rem;
-  color: #4A90C4;
+  color: #2D8A8A;
   margin-top: 4px;
 }
 .profile-card {
@@ -1666,14 +1676,16 @@ body.blood-moon .sky-cycle {
   margin-bottom: 15px;
 }
 .craft-card {
-  background: #f0f0f0;
+  background: #2A2420;
   padding: 12px;
-  border: 2px solid #1A1614;
+  border: 1px solid #444;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.1s;
 }
 .craft-card:hover:not(.craft-disabled) {
-  background: #F2D864;
+  background: #473d36;
+  border-color: #2D8A8A;
   transform: translateY(-2px);
   box-shadow: 4px 4px 0 #1A1614;
 }
@@ -1689,14 +1701,14 @@ body.blood-moon .sky-cycle {
 .craft-effect {
   font-family: 'Comic Neue', cursive;
   font-size: 0.8rem;
-  color: #666;
+  color: #888;
   margin: 4px 0;
 }
 .craft-cost {
   font-family: 'Comic Neue', cursive;
   font-weight: bold;
   font-size: 0.8rem;
-  color: #1A1614;
+  color: #FFF8F0;
 }
 .craft-cost .mat-scrap {
   color: #888;
@@ -1756,7 +1768,7 @@ body.blood-moon .sky-cycle {
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 1rem;
   padding: 8px 24px;
-  background: #5EA65E;
+  background: #2D8A8A;
   color: #FFF8F0;
   border: none;
   border: 2px solid #1A1614;
