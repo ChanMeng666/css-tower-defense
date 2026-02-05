@@ -1,22 +1,80 @@
 /**
  * CSS Tower Defense - Weather & Day/Night System
- * Controls atmospheric effects and time cycle
+ * Wave-driven day/night cycle with gameplay modifiers
  */
 
 var Weather = (function () {
     'use strict';
 
-    // Configuration
-    var DAY_LENGTH = 60; // Seconds for full 24h cycle
+    // Weather types
     var WEATHER_TYPES = ['clear', 'rain', 'snow', 'wind'];
-    var WEATHER_CHANCE = 0.3; // 30% chance to change weather
     var WEATHER_DURATION_MIN = 10;
     var WEATHER_DURATION_MAX = 20;
 
+    // Day/Night gameplay modifiers
+    var DAYNIGHT_MODIFIERS = {
+        day: {
+            towerRange: 1.10,
+            enemySpeed: 1.0,
+            gold: 1.0
+        },
+        night: {
+            towerRange: 0.85,
+            enemySpeed: 1.10,
+            gold: 1.20
+        }
+    };
+
+    // Weather gameplay modifiers
+    var WEATHER_MODIFIERS = {
+        clear: {
+            towerRange: 1.05,
+            enemySpeed: 1.0,
+            gold: 1.0,
+            tower: {}
+        },
+        rain: {
+            towerRange: 0.90,
+            enemySpeed: 0.95,
+            gold: 1.0,
+            tower: {
+                flame: { fireRate: 0.85 },
+                tesla: { chainRange: 1.20 }
+            }
+        },
+        snow: {
+            towerRange: 0.85,
+            enemySpeed: 0.85,
+            gold: 1.10,
+            tower: {
+                flame: { damage: 0.90 },
+                ice: { slowDuration: 1.20 }
+            }
+        },
+        wind: {
+            towerRange: 1.0,
+            enemySpeed: 1.05,
+            gold: 1.0,
+            tower: {
+                arrow: { range: 1.20 },
+                cannon: { splashRadius: 1.15 },
+                magic: { range: 0.90 }
+            }
+        }
+    };
+
+    // Blood Moon modifiers (override normal night, not stack)
+    var BLOOD_MOON_MODIFIERS = {
+        towerRange: 0.80,
+        enemySpeed: 1.15,
+        gold: 1.50
+    };
+
     // State
-    var time = 0; // 0 to DAY_LENGTH
+    var nightState = false; // false = day, true = night
     var currentWeather = 'clear';
     var weatherTimer = 0;
+    var bloodMoonActive = false;
 
     // DOM Elements
     var scene = null;
@@ -35,13 +93,51 @@ var Weather = (function () {
         snowContainer = document.querySelector('.snow-container');
         windContainer = document.querySelector('.wind-container');
 
-        // Initial weather
+        // Initial state: day, clear
+        nightState = false;
+        currentWeather = 'clear';
+        bloodMoonActive = false;
         setWeather('clear');
+        setDayNight(false);
 
         // Generate particles
         createRainParticles();
         createSnowParticles();
         createWindParticles();
+
+        // Listen for wave start to set day/night
+        document.addEventListener('waveStarted', function (e) {
+            var waveNum = e.detail.wave; // 1-indexed
+            var isNightWave = (waveNum % 2 === 0); // Even waves = night
+            setDayNight(isNightWave);
+
+            // Pick weather for the wave using seasonal weights
+            pickSeasonalWeather();
+        });
+    }
+
+    /**
+     * Set day/night state based on wave number
+     */
+    function setDayNight(isNight) {
+        nightState = isNight;
+
+        if (scene) {
+            if (isNight) {
+                scene.classList.add('night');
+                scene.classList.remove('day');
+            } else {
+                scene.classList.add('day');
+                scene.classList.remove('night');
+            }
+        }
+
+        // Set sky rotation with CSS transition for smooth dawn/dusk
+        if (skyContainer) {
+            // Day: 90deg (sun at top), Night: 270deg (moon at top)
+            var rotation = isNight ? 270 : 90;
+            skyContainer.style.transform = 'rotate(' + rotation + 'deg)';
+        }
     }
 
     function createRainParticles() {
@@ -81,76 +177,69 @@ var Weather = (function () {
     }
 
     /**
-     * Update loop
+     * Update loop - only handles weather timer now (day/night is wave-driven)
      */
     function update(dt) {
-        // Update Time
-        time += dt;
-        if (time >= DAY_LENGTH) {
-            time = 0;
-        }
-
-        // Update Sky Rotation (0 to 360 degrees)
-        // Noon is at 25% (90deg), Midnight at 75% (270deg)
-        // Let's say 0 is sunrise (left horizon)
-        var rotation = (time / DAY_LENGTH) * 360;
-        if (skyContainer) {
-            skyContainer.style.transform = 'rotate(' + rotation + 'deg)';
-        }
-
-        // Update Day/Night Classes
-        updateDayNightState(rotation);
-
-        // Update Weather
         updateWeather(dt);
-    }
-
-    function updateDayNightState(rotation) {
-        // Simple day/night switching based on rotation
-        // Day: 0-180 (Sun visible), Night: 180-360 (Moon visible)
-        // Background color handled in CSS via animation synced to same duration, or we set class
-
-        var isNight = (rotation > 180);
-        if (scene) {
-            if (isNight) {
-                scene.classList.add('night');
-                scene.classList.remove('day');
-            } else {
-                scene.classList.add('day');
-                scene.classList.remove('night');
-            }
-        }
     }
 
     function updateWeather(dt) {
         weatherTimer -= dt;
         if (weatherTimer <= 0) {
-            // Change weather
-            pickRandomWeather();
+            pickSeasonalWeather();
         }
     }
 
-    function pickRandomWeather() {
+    /**
+     * Pick weather using seasonal weights from Seasons module
+     */
+    function pickSeasonalWeather() {
         weatherTimer = WEATHER_DURATION_MIN + Math.random() * (WEATHER_DURATION_MAX - WEATHER_DURATION_MIN);
 
-        if (Math.random() < WEATHER_CHANCE) {
-            // Pick a new non-clear weather
-            var type = WEATHER_TYPES[1 + Math.floor(Math.random() * (WEATHER_TYPES.length - 1))];
-            setWeather(type);
-        } else {
+        var weights = null;
+        if (typeof Seasons !== 'undefined' && Seasons.getWeatherWeights) {
+            weights = Seasons.getWeatherWeights();
+        }
+
+        if (weights) {
+            // Weighted random selection
+            var roll = Math.random();
+            var cumulative = 0;
+            for (var i = 0; i < WEATHER_TYPES.length; i++) {
+                var type = WEATHER_TYPES[i];
+                cumulative += (weights[type] || 0);
+                if (roll < cumulative) {
+                    setWeather(type);
+                    return;
+                }
+            }
+            // Fallback
             setWeather('clear');
+        } else {
+            // Fallback: 70% clear, 10% each other
+            if (Math.random() < 0.7) {
+                setWeather('clear');
+            } else {
+                var type = WEATHER_TYPES[1 + Math.floor(Math.random() * (WEATHER_TYPES.length - 1))];
+                setWeather(type);
+            }
         }
     }
 
     function setWeather(type) {
-        if (currentWeather === type) return;
+        var oldWeather = currentWeather;
+        if (oldWeather === type) return;
         currentWeather = type;
 
         // Hide all
         if (rainContainer) rainContainer.classList.add('hidden');
         if (snowContainer) snowContainer.classList.add('hidden');
         if (windContainer) windContainer.classList.add('hidden');
-        if (scene) scene.className = 'scene ' + (scene.classList.contains('night') ? 'night' : 'day'); // Reset weather classes
+
+        // Reset weather classes on scene, preserving day/night and aurora
+        if (scene) {
+            scene.classList.remove('weather-rain', 'weather-snow', 'weather-wind');
+        }
 
         // Show new
         switch (type) {
@@ -168,11 +257,110 @@ var Weather = (function () {
                 break;
         }
 
-        // console.log('Weather changed to:', type);
+        // Dispatch event for other systems
+        if (typeof emitGameEvent === 'function') {
+            emitGameEvent('weatherChanged', { weather: type, previous: oldWeather });
+        }
+    }
+
+    // =========================================
+    // Modifier API
+    // =========================================
+
+    /**
+     * Is it currently night?
+     */
+    function isNight() {
+        return nightState;
+    }
+
+    /**
+     * Set blood moon state (called by Wave system)
+     */
+    function setBloodMoon(active) {
+        bloodMoonActive = active;
+    }
+
+    /**
+     * Get combined range multiplier from day/night + weather
+     */
+    function getRangeMultiplier() {
+        var dayNight;
+        if (bloodMoonActive) {
+            dayNight = BLOOD_MOON_MODIFIERS.towerRange;
+        } else {
+            dayNight = nightState ? DAYNIGHT_MODIFIERS.night.towerRange : DAYNIGHT_MODIFIERS.day.towerRange;
+        }
+        var weather = WEATHER_MODIFIERS[currentWeather].towerRange;
+        return dayNight * weather;
+    }
+
+    /**
+     * Get combined enemy speed multiplier from day/night + weather
+     */
+    function getEnemySpeedMultiplier() {
+        var dayNight;
+        if (bloodMoonActive) {
+            dayNight = BLOOD_MOON_MODIFIERS.enemySpeed;
+        } else {
+            dayNight = nightState ? DAYNIGHT_MODIFIERS.night.enemySpeed : DAYNIGHT_MODIFIERS.day.enemySpeed;
+        }
+        var weather = WEATHER_MODIFIERS[currentWeather].enemySpeed;
+        return dayNight * weather;
+    }
+
+    /**
+     * Get combined gold multiplier from day/night + weather
+     */
+    function getGoldMultiplier() {
+        var dayNight;
+        if (bloodMoonActive) {
+            dayNight = BLOOD_MOON_MODIFIERS.gold;
+        } else {
+            dayNight = nightState ? DAYNIGHT_MODIFIERS.night.gold : DAYNIGHT_MODIFIERS.day.gold;
+        }
+        var weather = WEATHER_MODIFIERS[currentWeather].gold;
+        return dayNight * weather;
+    }
+
+    /**
+     * Get tower-specific modifier from weather
+     * @param {string} towerType - e.g. 'flame', 'ice', 'tesla'
+     * @param {string} stat - e.g. 'damage', 'fireRate', 'range', 'slowDuration', 'chainRange', 'splashRadius'
+     * @returns {number} multiplier (1.0 = no change)
+     */
+    function getTowerModifier(towerType, stat) {
+        var weatherMods = WEATHER_MODIFIERS[currentWeather];
+        if (weatherMods.tower && weatherMods.tower[towerType] && weatherMods.tower[towerType][stat]) {
+            return weatherMods.tower[towerType][stat];
+        }
+        return 1.0;
+    }
+
+    /**
+     * Get current weather type
+     */
+    function getCurrentWeather() {
+        return currentWeather;
+    }
+
+    /**
+     * Is blood moon active?
+     */
+    function isBloodMoon() {
+        return bloodMoonActive;
     }
 
     return {
         init: init,
-        update: update
+        update: update,
+        isNight: isNight,
+        setBloodMoon: setBloodMoon,
+        isBloodMoon: isBloodMoon,
+        getRangeMultiplier: getRangeMultiplier,
+        getEnemySpeedMultiplier: getEnemySpeedMultiplier,
+        getGoldMultiplier: getGoldMultiplier,
+        getTowerModifier: getTowerModifier,
+        getCurrentWeather: getCurrentWeather
     };
 })();

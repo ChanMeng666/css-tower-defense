@@ -125,8 +125,15 @@ var Game = (function () {
         // Enemy killed
         document.addEventListener('enemyKilled', function (e) {
             var baseReward = e.detail.reward;
-            // Apply difficulty gold multiplier and progression gold bonus
-            var reward = Math.floor(baseReward * DIFFICULTIES[difficulty].goldMult * Progression.getGoldMultiplier());
+            // Apply difficulty, progression, and environmental gold multipliers
+            var envGold = 1.0;
+            if (typeof Weather !== 'undefined' && Weather.getGoldMultiplier) {
+                envGold *= Weather.getGoldMultiplier();
+            }
+            if (typeof Seasons !== 'undefined' && Seasons.getGoldMultiplier) {
+                envGold *= Seasons.getGoldMultiplier();
+            }
+            var reward = Math.floor(baseReward * DIFFICULTIES[difficulty].goldMult * Progression.getGoldMultiplier() * envGold);
 
             // Combo system
             comboCount++;
@@ -164,9 +171,14 @@ var Game = (function () {
 
         // Wave complete
         document.addEventListener('waveComplete', function (e) {
-            addGold(e.detail.reward);
-            addScore(e.detail.reward * 5);
-            Display.showMessage('Wave Complete! +' + e.detail.reward + ' gold');
+            var waveReward = e.detail.reward;
+            // Apply seasonal wave reward multiplier
+            if (typeof Seasons !== 'undefined' && Seasons.getWaveRewardMultiplier) {
+                waveReward = Math.floor(waveReward * Seasons.getWaveRewardMultiplier());
+            }
+            addGold(waveReward);
+            addScore(waveReward * 5);
+            Display.showMessage('Wave Complete! +' + waveReward + ' gold');
             Sfx.play('waveComplete');
 
             // Always update wave display and button

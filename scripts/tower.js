@@ -143,6 +143,18 @@ var Tower = (function () {
             }
         }
 
+        // Apply environmental modifiers for display
+        if (typeof Weather !== 'undefined' && Weather.getRangeMultiplier) {
+            var envRange = Weather.getRangeMultiplier();
+            if (typeof Seasons !== 'undefined' && Seasons.getTowerModifier) {
+                envRange *= Seasons.getTowerModifier(type, 'range');
+            }
+            if (Weather.getTowerModifier) {
+                envRange *= Weather.getTowerModifier(type, 'range');
+            }
+            upgraded.range = Math.floor(upgraded.range * envRange);
+        }
+
         return upgraded;
     }
     // DOM container
@@ -273,10 +285,27 @@ var Tower = (function () {
             this.rotateToTarget();
         }
 
-        // Try to fire
-        if (this.target && currentTime - this.lastFireTime >= this.fireCooldown) {
+        // Try to fire (use environmental cooldown)
+        if (this.target && currentTime - this.lastFireTime >= this.getEffectiveCooldown()) {
             this.fire(currentTime);
         }
+    };
+
+    /**
+     * Get effective range including environmental modifiers
+     */
+    TowerEntity.prototype.getEffectiveRange = function () {
+        var envRange = 1.0;
+        if (typeof Weather !== 'undefined' && Weather.getRangeMultiplier) {
+            envRange *= Weather.getRangeMultiplier();
+        }
+        if (typeof Seasons !== 'undefined' && Seasons.getTowerModifier) {
+            envRange *= Seasons.getTowerModifier(this.type, 'range');
+        }
+        if (typeof Weather !== 'undefined' && Weather.getTowerModifier) {
+            envRange *= Weather.getTowerModifier(this.type, 'range');
+        }
+        return this.range * envRange;
     };
 
     /**
@@ -286,6 +315,7 @@ var Tower = (function () {
         var enemies = Enemy.getAll();
         var nearestEnemy = null;
         var nearestDistance = Infinity;
+        var effectiveRange = this.getEffectiveRange();
 
         for (var i = 0; i < enemies.length; i++) {
             var enemy = enemies[i];
@@ -294,7 +324,7 @@ var Tower = (function () {
             var distance = Math.sqrt(dx * dx + dy * dy);
 
             // Check if in range and closer than current target
-            if (distance <= this.range && distance < nearestDistance) {
+            if (distance <= effectiveRange && distance < nearestDistance) {
                 nearestEnemy = enemy;
                 nearestDistance = distance;
             }
@@ -306,7 +336,7 @@ var Tower = (function () {
             var dy = this.target.y - this.y;
             var distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance <= this.range) {
+            if (distance <= effectiveRange) {
                 return; // Keep current target
             }
         }
@@ -344,6 +374,21 @@ var Tower = (function () {
     };
 
     /**
+     * Get effective fire cooldown including environmental modifiers
+     */
+    TowerEntity.prototype.getEffectiveCooldown = function () {
+        var envFireRate = 1.0;
+        if (typeof Weather !== 'undefined' && Weather.getTowerModifier) {
+            envFireRate *= Weather.getTowerModifier(this.type, 'fireRate');
+        }
+        if (typeof Seasons !== 'undefined' && Seasons.getTowerModifier) {
+            envFireRate *= Seasons.getTowerModifier(this.type, 'fireRate');
+        }
+        // Higher fire rate multiplier = shorter cooldown
+        return this.fireCooldown / envFireRate;
+    };
+
+    /**
      * Fire at target with visual feedback (with throttle protection)
      */
     TowerEntity.prototype.fire = function (currentTime) {
@@ -372,8 +417,22 @@ var Tower = (function () {
             self.element.classList.remove('firing');
         }, animationDuration);
 
+        // Apply environmental damage modifier before spawning projectile
+        var baseDamage = this.damage;
+        var envDamage = 1.0;
+        if (typeof Weather !== 'undefined' && Weather.getTowerModifier) {
+            envDamage *= Weather.getTowerModifier(this.type, 'damage');
+        }
+        if (typeof Seasons !== 'undefined' && Seasons.getTowerModifier) {
+            envDamage *= Seasons.getTowerModifier(this.type, 'damage');
+        }
+        this.damage = Math.floor(baseDamage * envDamage);
+
         // Create projectile
         Projectile.spawn(this, this.target);
+
+        // Restore base damage after projectile captures it
+        this.damage = baseDamage;
 
         // Dispatch event with position for spatial audio
         var event = new CustomEvent('towerFired', {

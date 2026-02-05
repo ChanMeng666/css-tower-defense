@@ -431,6 +431,16 @@ var Enemy = (function() {
         // Move towards target
         var moveDistance = this.speed * dt;
 
+        // Apply environmental speed modifiers (weather + season)
+        var envSpeedMult = 1.0;
+        if (typeof Weather !== 'undefined' && Weather.getEnemySpeedMultiplier) {
+            envSpeedMult *= Weather.getEnemySpeedMultiplier();
+        }
+        if (typeof Seasons !== 'undefined' && Seasons.getEnemySpeedMultiplier) {
+            envSpeedMult *= Seasons.getEnemySpeedMultiplier();
+        }
+        moveDistance *= envSpeedMult;
+
         // Apply noise-based speed variation for speedy/boss
         if (this.useNoiseMovement && typeof Noise !== 'undefined') {
             var speedMult = Noise.getSpeedMultiplier(this.id, this.noiseTime);

@@ -490,6 +490,126 @@ var Display = (function() {
         }
     }
 
+    // =========================================
+    // Environment Bar
+    // =========================================
+
+    // SVG icon paths for environment indicators
+    var ENV_ICONS = {
+        sun: '<circle cx="12" cy="12" r="5" fill="#F2D864" stroke="#1A1614" stroke-width="1.5"/>' +
+             '<line x1="12" y1="2" x2="12" y2="5" stroke="#F2D864" stroke-width="2" stroke-linecap="round"/>' +
+             '<line x1="12" y1="19" x2="12" y2="22" stroke="#F2D864" stroke-width="2" stroke-linecap="round"/>' +
+             '<line x1="2" y1="12" x2="5" y2="12" stroke="#F2D864" stroke-width="2" stroke-linecap="round"/>' +
+             '<line x1="19" y1="12" x2="22" y2="12" stroke="#F2D864" stroke-width="2" stroke-linecap="round"/>',
+        moon: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="#E8E0D8" stroke="#1A1614" stroke-width="1.5"/>',
+        clear: '<circle cx="12" cy="12" r="5" fill="#F2D864" stroke="#1A1614" stroke-width="1.5"/>' +
+               '<line x1="12" y1="3" x2="12" y2="6" stroke="#F2D864" stroke-width="1.5" stroke-linecap="round"/>' +
+               '<line x1="12" y1="18" x2="12" y2="21" stroke="#F2D864" stroke-width="1.5" stroke-linecap="round"/>',
+        rain: '<path d="M4 14h.01M8 14h.01" stroke="#4A90C4" stroke-width="2" stroke-linecap="round"/>' +
+              '<path d="M20 10a4 4 0 0 0-8 0 3 3 0 0 0-3 3h14a3 3 0 0 0-3-3z" fill="#A0AAB4" stroke="#1A1614" stroke-width="1.5"/>' +
+              '<line x1="8" y1="17" x2="7" y2="21" stroke="#4A90C4" stroke-width="1.5" stroke-linecap="round"/>' +
+              '<line x1="14" y1="17" x2="13" y2="21" stroke="#4A90C4" stroke-width="1.5" stroke-linecap="round"/>',
+        snow: '<circle cx="12" cy="12" r="2" fill="#FFF8F0" stroke="#4A90C4" stroke-width="1"/>' +
+              '<line x1="12" y1="4" x2="12" y2="20" stroke="#4A90C4" stroke-width="1.5"/>' +
+              '<line x1="5" y1="8" x2="19" y2="16" stroke="#4A90C4" stroke-width="1.5"/>' +
+              '<line x1="5" y1="16" x2="19" y2="8" stroke="#4A90C4" stroke-width="1.5"/>',
+        wind: '<path d="M5 12h14M5 8h10a3 3 0 0 0 0-6M5 16h8a3 3 0 0 1 0 6" fill="none" stroke="#A0AAB4" stroke-width="2" stroke-linecap="round"/>',
+        summer: '<circle cx="12" cy="12" r="6" fill="#F2D864" stroke="#E88A42" stroke-width="2"/>',
+        autumn: '<path d="M12 2C9 7 5 10 5 14a7 7 0 0 0 14 0c0-4-4-7-7-12z" fill="#D4884A" stroke="#1A1614" stroke-width="1.5"/>',
+        winter: '<circle cx="12" cy="12" r="2" fill="#FFF8F0"/>' +
+                '<line x1="12" y1="3" x2="12" y2="21" stroke="#4A90C4" stroke-width="1.5"/>' +
+                '<line x1="4" y1="7.5" x2="20" y2="16.5" stroke="#4A90C4" stroke-width="1.5"/>' +
+                '<line x1="4" y1="16.5" x2="20" y2="7.5" stroke="#4A90C4" stroke-width="1.5"/>',
+        spring: '<circle cx="12" cy="12" r="4" fill="#F2D864" stroke="#1A1614" stroke-width="1"/>' +
+                '<ellipse cx="12" cy="5" rx="3" ry="2" fill="#E8635A" stroke="#1A1614" stroke-width="0.8"/>' +
+                '<ellipse cx="18" cy="10" rx="3" ry="2" fill="#E8635A" stroke="#1A1614" stroke-width="0.8" transform="rotate(60 18 10)"/>' +
+                '<ellipse cx="16" cy="17" rx="3" ry="2" fill="#E8635A" stroke="#1A1614" stroke-width="0.8" transform="rotate(120 16 17)"/>' +
+                '<ellipse cx="8" cy="17" rx="3" ry="2" fill="#E8635A" stroke="#1A1614" stroke-width="0.8" transform="rotate(60 8 17)"/>' +
+                '<ellipse cx="6" cy="10" rx="3" ry="2" fill="#E8635A" stroke="#1A1614" stroke-width="0.8" transform="rotate(120 6 10)"/>'
+    };
+
+    /**
+     * Update the environment bar with current conditions
+     */
+    function updateEnvironment() {
+        var timeIcon = document.getElementById('envTimeIcon');
+        var timeLabel = document.getElementById('envTimeLabel');
+        var weatherIcon = document.getElementById('envWeatherIcon');
+        var weatherLabel = document.getElementById('envWeatherLabel');
+        var seasonIcon = document.getElementById('envSeasonIcon');
+        var seasonLabel = document.getElementById('envSeasonLabel');
+        var envEvent = document.getElementById('envEvent');
+        var envEventLabel = document.getElementById('envEventLabel');
+        var timePill = document.getElementById('envTime');
+        var weatherPill = document.getElementById('envWeather');
+        var seasonPill = document.getElementById('envSeason');
+
+        // Time of day
+        if (timeIcon && timeLabel) {
+            var isNight = (typeof Weather !== 'undefined' && Weather.isNight) ? Weather.isNight() : false;
+            timeIcon.innerHTML = isNight ? ENV_ICONS.moon : ENV_ICONS.sun;
+            timeLabel.textContent = isNight ? 'Night' : 'Day';
+            if (timePill) {
+                timePill.className = 'env-pill env-time ' + (isNight ? 'env-debuff' : 'env-buff');
+            }
+        }
+
+        // Weather
+        if (weatherIcon && weatherLabel) {
+            var weather = (typeof Weather !== 'undefined' && Weather.getCurrentWeather) ? Weather.getCurrentWeather() : 'clear';
+            weatherIcon.innerHTML = ENV_ICONS[weather] || ENV_ICONS.clear;
+            weatherLabel.textContent = weather.charAt(0).toUpperCase() + weather.slice(1);
+            if (weatherPill) {
+                var weatherClass = weather === 'clear' ? 'env-buff' : 'env-mixed';
+                weatherPill.className = 'env-pill env-weather ' + weatherClass;
+            }
+        }
+
+        // Season
+        if (seasonIcon && seasonLabel) {
+            var season = (typeof Seasons !== 'undefined' && Seasons.getCurrentSeason) ? Seasons.getCurrentSeason() : 'summer';
+            var seasonName = (typeof Seasons !== 'undefined' && Seasons.getSeasonName) ? Seasons.getSeasonName() : 'Summer';
+            seasonIcon.innerHTML = ENV_ICONS[season] || ENV_ICONS.summer;
+            seasonLabel.textContent = seasonName;
+            if (seasonPill) {
+                var seasonClass = (season === 'autumn') ? 'env-buff' : (season === 'winter' ? 'env-mixed' : 'env-neutral');
+                seasonPill.className = 'env-pill env-season ' + seasonClass;
+            }
+        }
+
+        // Special event
+        if (envEvent && envEventLabel) {
+            var activeEvt = (typeof Wave !== 'undefined' && Wave.getActiveEvent) ? Wave.getActiveEvent() : null;
+            var isBloodMoon = (typeof Weather !== 'undefined' && Weather.isBloodMoon) ? Weather.isBloodMoon() : false;
+            if (isBloodMoon || (activeEvt && activeEvt.type === 'bloodMoon')) {
+                envEvent.classList.remove('hidden');
+                envEvent.className = 'env-pill env-event env-debuff';
+                envEventLabel.textContent = 'Blood Moon';
+            } else if (activeEvt && activeEvt.type === 'eliteSwarm') {
+                envEvent.classList.remove('hidden');
+                envEvent.className = 'env-pill env-event env-debuff';
+                envEventLabel.textContent = 'Elite Swarm';
+            } else if (activeEvt && activeEvt.type === 'luckyStar') {
+                envEvent.classList.remove('hidden');
+                envEvent.className = 'env-pill env-event env-buff';
+                envEventLabel.textContent = 'Lucky Star';
+            } else {
+                envEvent.classList.add('hidden');
+            }
+        }
+    }
+
+    // Listen for environment change events
+    document.addEventListener('waveStarted', function () {
+        setTimeout(updateEnvironment, 100); // Small delay to let systems update
+    });
+    document.addEventListener('weatherChanged', function () {
+        updateEnvironment();
+    });
+    document.addEventListener('seasonChanged', function () {
+        updateEnvironment();
+    });
+
     // Public API
     return {
         init: init,
@@ -516,6 +636,7 @@ var Display = (function() {
         showAnnouncement: showAnnouncement,
         hideAnnouncement: hideAnnouncement,
         showCombo: showCombo,
-        hideCombo: hideCombo
+        hideCombo: hideCombo,
+        updateEnvironment: updateEnvironment
     };
 })();

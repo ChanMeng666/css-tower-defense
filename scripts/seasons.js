@@ -1,6 +1,6 @@
 /**
  * CSS Tower Defense - Seasonal System
- * Manages Seasons, Visual Themes, and Weather probabilities
+ * Manages Seasons, Visual Themes, Weather probabilities, and Gameplay modifiers
  */
 
 var Seasons = (function () {
@@ -8,6 +8,15 @@ var Seasons = (function () {
 
     var SEASON_TYPES = ['spring', 'summer', 'autumn', 'winter'];
     var currentSeasonIndex = 1; // Start in Summer
+
+    // Wave-to-season mapping: waves 1-2 Summer, 3-4 Autumn, 5-6 Winter, 7-8 Spring, 9-10 Summer
+    var WAVE_SEASON_MAP = {
+        1: 'summer', 2: 'summer',
+        3: 'autumn', 4: 'autumn',
+        5: 'winter', 6: 'winter',
+        7: 'spring', 8: 'spring',
+        9: 'summer', 10: 'summer'
+    };
 
     // Configuration per Season
     var SEASON_CONFIG = {
@@ -23,7 +32,16 @@ var Seasons = (function () {
                 '--color-path-dark': '#C4A642'
             },
             weatherWeights: { clear: 0.4, rain: 0.5, wind: 0.1, snow: 0.0 },
-            sceneClass: null
+            sceneClass: null,
+            gameplayModifiers: {
+                enemySpeed: 1.10,
+                gold: 1.0,
+                waveReward: 1.0,
+                tower: {
+                    magic: { damage: 1.15 },
+                    tesla: { chainTargets: 1 }  // +1 chain target during rain (applied conditionally)
+                }
+            }
         },
         summer: {
             name: 'Summer',
@@ -37,7 +55,16 @@ var Seasons = (function () {
                 '--color-path-dark': '#C4841A'
             },
             weatherWeights: { clear: 0.8, rain: 0.1, wind: 0.1, snow: 0.0 },
-            sceneClass: null
+            sceneClass: null,
+            gameplayModifiers: {
+                enemySpeed: 1.0,
+                gold: 1.0,
+                waveReward: 1.0,
+                tower: {
+                    flame: { damage: 1.15 },
+                    ice: { slowDuration: 0.90 }
+                }
+            }
         },
         autumn: {
             name: 'Autumn',
@@ -51,7 +78,15 @@ var Seasons = (function () {
                 '--color-path-dark': '#6B4E32'
             },
             weatherWeights: { clear: 0.4, rain: 0.2, wind: 0.4, snow: 0.0 },
-            sceneClass: null
+            sceneClass: null,
+            gameplayModifiers: {
+                enemySpeed: 1.0,
+                gold: 1.15,
+                waveReward: 1.20,
+                tower: {
+                    arrow: { range: 1.10 }
+                }
+            }
         },
         winter: {
             name: 'Winter',
@@ -65,26 +100,37 @@ var Seasons = (function () {
                 '--color-path-dark': '#889098'
             },
             weatherWeights: { clear: 0.3, rain: 0.0, wind: 0.2, snow: 0.5 },
-            sceneClass: 'aurora-active' // Enable aurora effect for winter
+            sceneClass: 'aurora-active',
+            gameplayModifiers: {
+                enemySpeed: 0.90,
+                gold: 1.0,
+                waveReward: 1.0,
+                tower: {
+                    ice: { slowDuration: 1.25, slowAmount: 1.10 },
+                    flame: { damage: 0.85 }
+                }
+            }
         }
     };
 
-    // State
-    var wavesSinceChange = 0;
-    var WAVES_PER_SEASON = 2;
-
     function init() {
-        // Set initial season
+        // Set initial season (Summer)
+        currentSeasonIndex = 1;
         setSeason(SEASON_TYPES[currentSeasonIndex]);
 
-        // Listen for wave complete to advance seasons
-        document.addEventListener('waveComplete', function (e) {
-            wavesSinceChange++;
-            if (wavesSinceChange >= WAVES_PER_SEASON) {
-                nextSeason(); // Advance season
-                wavesSinceChange = 0;
-
-                Display.showMessage('Season Changed: ' + getSeasonName().toUpperCase());
+        // Listen for wave start to advance seasons based on wave-season map
+        document.addEventListener('waveStarted', function (e) {
+            var waveNum = e.detail.wave;
+            var targetSeason = WAVE_SEASON_MAP[waveNum];
+            if (targetSeason && targetSeason !== getCurrentSeason()) {
+                var idx = SEASON_TYPES.indexOf(targetSeason);
+                if (idx !== -1) {
+                    currentSeasonIndex = idx;
+                    setSeason(targetSeason);
+                    if (typeof Display !== 'undefined') {
+                        Display.showMessage('Season Changed: ' + getSeasonName().toUpperCase());
+                    }
+                }
             }
         });
     }
@@ -118,35 +164,27 @@ var Seasons = (function () {
             }
         }
 
-        // 3. Notify Weather System (if possible)
-        // Weather.js can call Seasons.getWeatherWeights() to get probabilities
-
-        // Console log for debug
-        console.log("Season set to: " + config.name);
+        // Dispatch season changed event
+        if (typeof emitGameEvent === 'function') {
+            emitGameEvent('seasonChanged', { season: seasonKey, name: config.name });
+        }
     }
 
     /**
      * Create aurora effect DOM elements
      */
     function createAuroraElements(scene) {
-        // Create aurora sky element if it doesn't exist
         if (!scene.querySelector('.aurora-sky')) {
             var auroraSky = document.createElement('div');
             auroraSky.className = 'aurora-sky';
             scene.insertBefore(auroraSky, scene.firstChild);
         }
 
-        // Create aurora particles element if it doesn't exist
         if (!scene.querySelector('.aurora-particles')) {
             var auroraParticles = document.createElement('div');
             auroraParticles.className = 'aurora-particles';
             scene.insertBefore(auroraParticles, scene.firstChild);
         }
-    }
-
-    function nextSeason() {
-        currentSeasonIndex = (currentSeasonIndex + 1) % SEASON_TYPES.length;
-        setSeason(SEASON_TYPES[currentSeasonIndex]);
     }
 
     function getCurrentSeason() {
@@ -161,10 +199,70 @@ var Seasons = (function () {
         return SEASON_CONFIG[SEASON_TYPES[currentSeasonIndex]].weatherWeights;
     }
 
+    // =========================================
+    // Gameplay Modifier API
+    // =========================================
+
+    /**
+     * Get enemy speed multiplier from current season
+     */
+    function getEnemySpeedMultiplier() {
+        var config = SEASON_CONFIG[getCurrentSeason()];
+        return config.gameplayModifiers.enemySpeed;
+    }
+
+    /**
+     * Get gold multiplier from current season (applied to kill rewards)
+     */
+    function getGoldMultiplier() {
+        var config = SEASON_CONFIG[getCurrentSeason()];
+        return config.gameplayModifiers.gold;
+    }
+
+    /**
+     * Get wave completion reward multiplier
+     */
+    function getWaveRewardMultiplier() {
+        var config = SEASON_CONFIG[getCurrentSeason()];
+        return config.gameplayModifiers.waveReward;
+    }
+
+    /**
+     * Get tower-specific modifier from season
+     * @param {string} towerType - e.g. 'flame', 'ice', 'arrow'
+     * @param {string} stat - e.g. 'damage', 'range', 'slowDuration', 'slowAmount'
+     * @returns {number} multiplier (1.0 = no change)
+     */
+    function getTowerModifier(towerType, stat) {
+        var config = SEASON_CONFIG[getCurrentSeason()];
+        var towerMods = config.gameplayModifiers.tower;
+        if (towerMods && towerMods[towerType] && towerMods[towerType][stat] !== undefined) {
+            return towerMods[towerType][stat];
+        }
+        return 1.0;
+    }
+
+    /**
+     * Get extra chain targets for tesla (spring bonus)
+     */
+    function getTeslaChainBonus() {
+        var config = SEASON_CONFIG[getCurrentSeason()];
+        if (config.gameplayModifiers.tower && config.gameplayModifiers.tower.tesla &&
+            config.gameplayModifiers.tower.tesla.chainTargets) {
+            return config.gameplayModifiers.tower.tesla.chainTargets;
+        }
+        return 0;
+    }
+
     return {
         init: init,
-        nextSeason: nextSeason,
         getCurrentSeason: getCurrentSeason,
-        getWeatherWeights: getWeatherWeights
+        getSeasonName: getSeasonName,
+        getWeatherWeights: getWeatherWeights,
+        getEnemySpeedMultiplier: getEnemySpeedMultiplier,
+        getGoldMultiplier: getGoldMultiplier,
+        getWaveRewardMultiplier: getWaveRewardMultiplier,
+        getTowerModifier: getTowerModifier,
+        getTeslaChainBonus: getTeslaChainBonus
     };
 })();

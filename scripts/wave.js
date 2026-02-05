@@ -288,9 +288,17 @@ var Wave = (function() {
      * Handle announcement event
      */
     function handleAnnouncement(data) {
+        // Enhance subtitle with environmental context
+        var envSubtitle = data.subtitle || '';
+        if (typeof Seasons !== 'undefined' && Seasons.getSeasonName) {
+            var season = Seasons.getSeasonName();
+            var timeOfDay = (typeof Weather !== 'undefined' && Weather.isNight && Weather.isNight()) ? 'Night' : 'Day';
+            envSubtitle = season + ' ' + timeOfDay + ' — ' + envSubtitle;
+        }
+
         // Use Display announcer if available
         if (typeof Display !== 'undefined' && Display.showAnnouncement) {
-            Display.showAnnouncement(data.title, data.subtitle);
+            Display.showAnnouncement(data.title, envSubtitle);
         }
 
         // Emit event for other systems
@@ -364,13 +372,17 @@ var Wave = (function() {
                 break;
 
             case 'bloodMoon':
-                // Blood Moon - enemies stronger but more gold
+                // Blood Moon - enemies stronger but more gold (night-only event)
                 activeEvent = { type: 'bloodMoon' };
                 if (typeof Display !== 'undefined') {
                     Display.showAnnouncement('BLOOD MOON!', 'Enemies +30% HP, +50% gold!');
                 }
                 // Apply to map visual
                 document.body.classList.add('blood-moon');
+                // Set blood moon modifiers in weather system
+                if (typeof Weather !== 'undefined' && Weather.setBloodMoon) {
+                    Weather.setBloodMoon(true);
+                }
                 break;
 
             case 'eliteSwarm':
@@ -406,16 +418,24 @@ var Wave = (function() {
         // Clear previous event
         if (activeEvent && activeEvent.type === 'bloodMoon') {
             document.body.classList.remove('blood-moon');
+            if (typeof Weather !== 'undefined' && Weather.setBloodMoon) {
+                Weather.setBloodMoon(false);
+            }
         }
         if (activeEvent && activeEvent.type === 'luckyStar' && typeof Inventory !== 'undefined') {
             Inventory.setDropMultiplier(1.0);
         }
         activeEvent = null;
 
-        // Blood Moon - wave 3+, 15% chance
-        if (waveNum >= 3 && Math.random() < 0.15) {
-            handleSpecialEvent({ type: 'bloodMoon' });
-            return;
+        // Blood Moon - night waves only (even), scaling probability
+        var isNightWave = (waveNum % 2 === 0);
+        if (isNightWave && waveNum >= 2) {
+            // Wave 2: 5%, Wave 4: 10%, Wave 6: 15%, Wave 8: 20%, Wave 10: 25%
+            var bloodMoonChance = waveNum * 0.025;
+            if (Math.random() < bloodMoonChance) {
+                handleSpecialEvent({ type: 'bloodMoon' });
+                return;
+            }
         }
 
         // Elite Swarm - wave 5+, 10% chance
@@ -540,10 +560,7 @@ var Wave = (function() {
         // so getCurrentWave() returns the correct next wave number
         currentWave++;
 
-        // Advance season (every 2 waves)
-        if (typeof Seasons !== 'undefined' && Seasons.nextSeason && completedWaveNum % 2 === 0) {
-            Seasons.nextSeason();
-        }
+        // Seasons are now wave-driven (set on waveStarted event in seasons.js)
 
         // Dispatch event with reward (uses completedWaveNum for the wave that just finished)
         var event = new CustomEvent('waveComplete', {
