@@ -204,4 +204,48 @@ statsRoutes.get('/achievements/global', async (c) => {
   return c.json({ percentages, totalPlayers: total });
 });
 
+// GET /api/stats/player/:userId - Public player profile
+statsRoutes.get('/player/:userId', async (c) => {
+  const userId = c.req.param('userId');
+  const db = getDb(c.env.DATABASE_URL);
+
+  // Get profile
+  const profile = await db
+    .select()
+    .from(profiles)
+    .where(eq(profiles.userId, userId))
+    .limit(1);
+
+  if (profile.length === 0) {
+    return c.json({ error: 'Player not found' }, 404);
+  }
+
+  // Get game stats
+  const games = await db
+    .select({
+      totalGames: sql<number>`count(*)`,
+      wins: sql<number>`count(*) filter (where ${gameHistory.outcome} = 'victory')`,
+      maxScore: sql<number>`coalesce(max(${gameHistory.score}), 0)`,
+    })
+    .from(gameHistory)
+    .where(eq(gameHistory.userId, userId));
+
+  // Get achievement count
+  const achCount = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(achievements)
+    .where(eq(achievements.userId, userId));
+
+  const stats = games[0];
+
+  return c.json({
+    displayName: profile[0].displayName,
+    totalGamesPlayed: Number(stats.totalGames),
+    wins: Number(stats.wins),
+    maxScore: Number(stats.maxScore),
+    achievementCount: Number(achCount[0].count),
+    memberSince: profile[0].createdAt,
+  });
+});
+
 export { statsRoutes };

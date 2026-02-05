@@ -47,6 +47,7 @@ leaderboardRoutes.get('/', async (c) => {
   return c.json({
     entries: entries.map((e, i) => ({
       rank: offset + i + 1,
+      userId: e.userId,
       displayName: e.displayName,
       score: e.score,
       waveReached: e.waveReached,

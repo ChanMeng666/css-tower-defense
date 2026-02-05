@@ -35,20 +35,28 @@
         setupKeyboardControls();
         setupSaveLoad();
 
-        // Load leaderboard preview on start screen
-        loadLeaderboardPreview();
+        // Setup crafting button
+        setupCraftButton();
 
-        // Show/hide save button based on auth state
+        // Load leaderboard preview and daily challenge on start screen
+        loadLeaderboardPreview();
+        loadDailyChallenge();
+
+        // Show/hide save button + stats button based on auth state
         document.addEventListener('authStateChanged', function(e) {
             var saveGameBtn = document.getElementById('saveGameBtn');
-            if (saveGameBtn) {
-                if (e.detail && e.detail.user) {
-                    saveGameBtn.classList.remove('hidden');
-                } else {
-                    saveGameBtn.classList.add('hidden');
-                }
+            var statsBtn = document.getElementById('statsBtn');
+            if (e.detail && e.detail.user) {
+                if (saveGameBtn) saveGameBtn.classList.remove('hidden');
+                if (statsBtn) statsBtn.classList.remove('hidden');
+            } else {
+                if (saveGameBtn) saveGameBtn.classList.add('hidden');
+                if (statsBtn) statsBtn.classList.add('hidden');
             }
         });
+
+        // Add stats + achievements buttons to start screen auth container
+        setupStartScreenButtons();
 
         console.log('CSS Tower Defense initialized!');
     });
@@ -261,6 +269,20 @@
                 case 'l':
                     showLeaderboardModal();
                     break;
+
+                // Stats (S key - start screen only)
+                case 's':
+                    if (Game.getState() === Game.STATES.MENU) {
+                        showStatsModal();
+                    }
+                    break;
+
+                // Achievements (A key - start screen only)
+                case 'a':
+                    if (Game.getState() === Game.STATES.MENU) {
+                        showAchievementGallery();
+                    }
+                    break;
             }
         });
     }
@@ -295,6 +317,54 @@
             .catch(function() {
                 listEl.innerHTML = '<div class="leaderboard-loading">Leaderboard unavailable</div>';
             });
+    }
+
+    /**
+     * Load daily challenge on start screen
+     */
+    function loadDailyChallenge() {
+        if (typeof API === 'undefined' || !API.getDailyChallenge) return;
+
+        var section = document.getElementById('challengeSection');
+        if (!section) return;
+
+        API.getDailyChallenge().then(function(data) {
+            if (!data || !data.challenge) return;
+
+            section.style.display = '';
+            var nameEl = document.getElementById('challengeName');
+            var descEl = document.getElementById('challengeDesc');
+            var lbEl = document.getElementById('challengeLb');
+            var playBtn = document.getElementById('challengePlayBtn');
+
+            if (nameEl) nameEl.textContent = data.challenge.name;
+            if (descEl) descEl.textContent = data.challenge.description;
+
+            // Show mini leaderboard
+            if (lbEl && data.topScores && data.topScores.length > 0) {
+                var lbHtml = '';
+                data.topScores.slice(0, 3).forEach(function(entry, i) {
+                    lbHtml += '#' + (i+1) + ' ' + escapeHtml(entry.displayName) + ' - ' + entry.score + '  ';
+                });
+                lbEl.textContent = lbHtml;
+            }
+
+            // Play challenge button
+            if (playBtn) {
+                playBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (typeof Challenge !== 'undefined') {
+                        Game.setDifficulty('normal'); // Force normal
+                        Challenge.startChallenge(data.challenge.id);
+                        var loadingScreen = document.getElementById('loadingScreen');
+                        if (loadingScreen) loadingScreen.classList.add('hidden');
+                        Game.start();
+                    }
+                });
+            }
+        }).catch(function() {
+            // Challenge unavailable - keep section hidden
+        });
     }
 
     /**
@@ -534,6 +604,12 @@
                 data.entries.forEach(function(entry) {
                     var row = document.createElement('div');
                     row.className = 'leaderboard-row';
+                    if (entry.userId) {
+                        row.style.cursor = 'pointer';
+                        row.addEventListener('click', function() {
+                            showPlayerProfile(entry.userId);
+                        });
+                    }
                     row.innerHTML =
                         '<span class="leaderboard-rank">#' + entry.rank + '</span>' +
                         '<span class="leaderboard-name">' + escapeHtml(entry.displayName) + '</span>' +
@@ -621,6 +697,230 @@
                 });
                 content.innerHTML += recentHtml;
             }
+        });
+    }
+
+    /**
+     * Setup craft button
+     */
+    function setupCraftButton() {
+        var craftBtn = document.getElementById('craftBtn');
+        if (craftBtn) {
+            craftBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                showCraftingModal();
+            });
+        }
+    }
+
+    /**
+     * Show crafting modal
+     */
+    function showCraftingModal() {
+        if (typeof Crafting === 'undefined') return;
+
+        var existing = document.getElementById('craftModal');
+        if (existing) existing.parentNode.removeChild(existing);
+
+        var modal = document.createElement('div');
+        modal.className = 'auth-modal';
+        modal.id = 'craftModal';
+
+        var recipes = Crafting.RECIPES;
+        var inv = (typeof Inventory !== 'undefined') ? Inventory.getInventory() : {};
+
+        // Active buffs display
+        var buffsHtml = '';
+        var activeBuffs = Crafting.getActiveBuffs();
+        var shieldCharges = Crafting.getShieldCharges();
+        if (activeBuffs.length > 0 || shieldCharges > 0) {
+            buffsHtml = '<div class="active-buffs">';
+            activeBuffs.forEach(function(b) {
+                buffsHtml += '<span class="buff-pill">' + b.name + ' (' + b.wavesRemaining + 'w)</span>';
+            });
+            if (shieldCharges > 0) {
+                buffsHtml += '<span class="buff-pill">Shield x' + shieldCharges + '</span>';
+            }
+            buffsHtml += '</div>';
+        }
+
+        var cardsHtml = '';
+        for (var id in recipes) {
+            var r = recipes[id];
+            var canCraft = (typeof Inventory !== 'undefined') ? Inventory.hasMaterials(r.cost) : false;
+            var costParts = [];
+            for (var mat in r.cost) {
+                var matName = mat.charAt(0).toUpperCase() + mat.slice(1);
+                var has = inv[mat] || 0;
+                var need = r.cost[mat];
+                costParts.push('<span class="mat-' + mat + '">' + need + ' ' + matName + (has < need ? ' (' + has + ')' : '') + '</span>');
+            }
+
+            cardsHtml +=
+                '<div class="craft-card' + (canCraft ? '' : ' craft-disabled') + '" data-recipe="' + id + '">' +
+                    '<div class="craft-name">' + r.name + '</div>' +
+                    '<div class="craft-effect">' + r.description + '</div>' +
+                    '<div class="craft-cost">' + costParts.join(' + ') + '</div>' +
+                '</div>';
+        }
+
+        modal.innerHTML =
+            '<div class="auth-modal-content craft-content">' +
+                '<h2 class="auth-modal-title">Crafting</h2>' +
+                '<div style="text-align:center;font-family:Bangers;margin-bottom:8px;">' +
+                    'Materials: <span style="color:#888">' + (inv.scrap || 0) + ' Scrap</span> ' +
+                    '<span style="color:#0088FF">' + (inv.core || 0) + ' Core</span> ' +
+                    '<span style="color:#AA00FF">' + (inv.crystal || 0) + ' Crystal</span>' +
+                '</div>' +
+                buffsHtml +
+                '<div class="craft-grid">' + cardsHtml + '</div>' +
+                '<button class="auth-close" id="craftClose">&times;</button>' +
+            '</div>';
+        document.body.appendChild(modal);
+
+        document.getElementById('craftClose').addEventListener('click', function() {
+            modal.parentNode.removeChild(modal);
+        });
+
+        // Wire up craft buttons
+        modal.querySelectorAll('.craft-card:not(.craft-disabled)').forEach(function(card) {
+            card.addEventListener('click', function() {
+                var recipeId = card.dataset.recipe;
+                if (Crafting.craft(recipeId)) {
+                    // Refresh modal
+                    showCraftingModal();
+                }
+            });
+        });
+    }
+
+    /**
+     * Setup buttons on start screen (stats, achievements, craft)
+     */
+    function setupStartScreenButtons() {
+        var authContainer = document.getElementById('authContainer');
+        if (!authContainer) return;
+
+        // Stats button (hidden until logged in)
+        var statsBtn = document.createElement('button');
+        statsBtn.className = 'auth-btn auth-btn-small hidden';
+        statsBtn.id = 'statsBtn';
+        statsBtn.textContent = 'My Stats';
+        statsBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showStatsModal();
+        });
+        authContainer.appendChild(statsBtn);
+
+        // Achievements button (always visible)
+        var achBtn = document.createElement('button');
+        achBtn.className = 'auth-btn auth-btn-small';
+        achBtn.id = 'achievementsBtn';
+        achBtn.textContent = 'Achievements';
+        achBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showAchievementGallery();
+        });
+        authContainer.appendChild(achBtn);
+    }
+
+    /**
+     * Show achievement gallery modal
+     */
+    function showAchievementGallery() {
+        if (typeof Achievements === 'undefined') return;
+
+        var existing = document.getElementById('achGalleryModal');
+        if (existing) existing.parentNode.removeChild(existing);
+
+        var modal = document.createElement('div');
+        modal.className = 'auth-modal';
+        modal.id = 'achGalleryModal';
+
+        var allAch = Achievements.getAll();
+        var svgs = Achievements.ACHIEVEMENT_SVGS || {};
+
+        var cardsHtml = '';
+        for (var id in allAch) {
+            var a = allAch[id];
+            var iconSvg = svgs[a.icon] || '';
+            var lockedClass = a.unlocked ? '' : ' ach-locked';
+            cardsHtml +=
+                '<div class="ach-card' + lockedClass + '" data-id="' + id + '">' +
+                    '<div class="ach-icon">' + iconSvg + '</div>' +
+                    '<div class="ach-name">' + a.name + '</div>' +
+                    '<div class="ach-desc">' + a.description + '</div>' +
+                    '<div class="ach-reward">+' + a.reward + 'g</div>' +
+                    '<div class="ach-global" id="achGlobal_' + id + '"></div>' +
+                '</div>';
+        }
+
+        modal.innerHTML =
+            '<div class="auth-modal-content ach-content">' +
+                '<h2 class="auth-modal-title">Achievements</h2>' +
+                '<div class="ach-grid">' + cardsHtml + '</div>' +
+                '<button class="auth-close" id="achGalleryClose">&times;</button>' +
+            '</div>';
+        document.body.appendChild(modal);
+
+        document.getElementById('achGalleryClose').addEventListener('click', function() {
+            modal.parentNode.removeChild(modal);
+        });
+
+        // Fetch global percentages
+        if (typeof API !== 'undefined' && API.getGlobalAchievements) {
+            API.getGlobalAchievements().then(function(data) {
+                if (!data || !data.percentages) return;
+                for (var achId in data.percentages) {
+                    var el = document.getElementById('achGlobal_' + achId);
+                    if (el) el.textContent = data.percentages[achId] + '% of players';
+                }
+            }).catch(function() { /* ignore */ });
+        }
+    }
+
+    /**
+     * Show player profile modal
+     */
+    function showPlayerProfile(userId) {
+        if (typeof API === 'undefined' || !API.getPlayerProfile) return;
+
+        var existing = document.getElementById('profileModal');
+        if (existing) existing.parentNode.removeChild(existing);
+
+        var modal = document.createElement('div');
+        modal.className = 'auth-modal';
+        modal.id = 'profileModal';
+        modal.innerHTML =
+            '<div class="auth-modal-content profile-card">' +
+                '<h2 class="auth-modal-title">Player Profile</h2>' +
+                '<div id="profileContent"><div class="leaderboard-loading">Loading...</div></div>' +
+                '<button class="auth-close" id="profileClose">&times;</button>' +
+            '</div>';
+        document.body.appendChild(modal);
+
+        document.getElementById('profileClose').addEventListener('click', function() {
+            modal.parentNode.removeChild(modal);
+        });
+
+        API.getPlayerProfile(userId).then(function(data) {
+            var content = document.getElementById('profileContent');
+            if (!content || !data) {
+                if (content) content.innerHTML = '<div class="leaderboard-loading">Profile not found</div>';
+                return;
+            }
+
+            content.innerHTML =
+                '<div class="profile-name">' + escapeHtml(data.displayName || 'Player') + '</div>' +
+                '<div class="stats-grid">' +
+                    '<div class="stat-card"><div class="stat-card-label">Games</div><div class="stat-card-value">' + (data.totalGamesPlayed || 0) + '</div></div>' +
+                    '<div class="stat-card"><div class="stat-card-label">Wins</div><div class="stat-card-value">' + (data.wins || 0) + '</div></div>' +
+                    '<div class="stat-card"><div class="stat-card-label">Best Score</div><div class="stat-card-value">' + (data.maxScore || 0) + '</div></div>' +
+                    '<div class="stat-card"><div class="stat-card-label">Achievements</div><div class="stat-card-value">' + (data.achievementCount || 0) + '</div></div>' +
+                '</div>';
+        }).catch(function() {
+            var content = document.getElementById('profileContent');
+            if (content) content.innerHTML = '<div class="leaderboard-loading">Could not load profile</div>';
         });
     }
 
