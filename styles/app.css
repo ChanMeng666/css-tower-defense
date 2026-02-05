@@ -1159,12 +1159,13 @@
   font-family: 'Comic Neue', cursive;
   font-size: 2rem;
   color: #FFF8F0;
-  background: #D4738A;
-  padding: 10px 30px;
-  margin-top: 15px;
+  background: none;
+  padding: 5px 0;
+  margin-top: 10px;
   display: inline-block;
   transform: rotate(2deg);
-  border: 3px solid #1A1614;
+  -webkit-text-stroke: 2px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
   animation: announcement-slide 0.4s ease-out 0.1s backwards;
 }
 @keyframes announcement-pulse {
@@ -3679,12 +3680,10 @@ body.blood-moon .sky-cycle {
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 5rem;
   color: #7B2D8E;
-  text-shadow: 0 0 20px #7B2D8E, 0 0 40px #2D8A8A, 4px 4px 0 #1A1614;
+  text-shadow: 0 0 20px #7B2D8E, 0 0 40px #2D8A8A;
   z-index: 501;
   pointer-events: none;
   opacity: 0;
-  -webkit-text-stroke: 2px #1A1614;
-  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
 }
 .boss-warning-text.active {
   animation: boss-text-appear 3s ease-out forwards;

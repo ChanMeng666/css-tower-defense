@@ -268,7 +268,7 @@ var Shop = (function() {
      */
     function sellTower(tower) {
         var value = Tower.sell(tower);
-        Display.showMessage('Tower sold for ' + value + ' gold');
+        Display.showMessage('Tower Sold!');
         deselectTower();
     }
     

@@ -471,8 +471,7 @@ var Display = (function() {
         }
 
         comboEl.innerHTML = '<div class="combo-count">' + count + 'x</div>' +
-                           '<div class="combo-label">COMBO!</div>' +
-                           '<div class="combo-bonus">+' + bonus + ' gold</div>';
+                           '<div class="combo-label">COMBO!</div>';
         comboEl.classList.add('active');
 
         // Scale animation based on combo size

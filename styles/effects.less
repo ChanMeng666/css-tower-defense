@@ -128,12 +128,10 @@
     color: @boss-grid-primary;
     text-shadow:
         0 0 20px @boss-grid-primary,
-        0 0 40px @boss-grid-secondary,
-        4px 4px 0 @color-black;
+        0 0 40px @boss-grid-secondary;
     z-index: 501;
     pointer-events: none;
     opacity: 0;
-    .text-outline(@color-black, 2px);
 
     &.active {
         animation: boss-text-appear 3s ease-out forwards;

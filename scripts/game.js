@@ -178,7 +178,7 @@ var Game = (function () {
             }
             addGold(waveReward);
             addScore(waveReward * 5);
-            Display.showMessage('Wave Complete! +' + waveReward + ' gold');
+            Display.showMessage('Wave Complete!');
             Sfx.play('waveComplete');
 
             // Always update wave display and button
@@ -187,7 +187,7 @@ var Game = (function () {
             // Repair Drone event - wave 6+, 20% chance if lives < 10
             if (e.detail.wave >= 6 && lives < 10 && Math.random() < 0.20) {
                 addLives(5);
-                Display.showMessage('Repair Drone! +5 lives!');
+                Display.showMessage('Repair Drone!');
                 Sfx.play('powerup');
             }
 

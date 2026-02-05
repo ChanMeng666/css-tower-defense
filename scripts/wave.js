@@ -348,7 +348,7 @@ var Wave = (function() {
                     Game.addGold(data.bonus);
                 }
                 if (typeof Display !== 'undefined') {
-                    Display.showMessage('Gold Rush! +' + data.bonus + ' gold!');
+                    Display.showMessage('Gold Rush!');
                 }
                 break;
 
