@@ -439,6 +439,10 @@ var Enemy = (function() {
         if (typeof Seasons !== 'undefined' && Seasons.getEnemySpeedMultiplier) {
             envSpeedMult *= Seasons.getEnemySpeedMultiplier();
         }
+        // Apply crafting slow
+        if (typeof Crafting !== 'undefined' && Crafting.getMultiplier) {
+            envSpeedMult *= Crafting.getMultiplier('slow_enemies');
+        }
         moveDistance *= envSpeedMult;
 
         // Apply noise-based speed variation for speedy/boss

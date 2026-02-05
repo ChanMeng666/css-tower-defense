@@ -384,6 +384,10 @@ var Tower = (function () {
         if (typeof Seasons !== 'undefined' && Seasons.getTowerModifier) {
             envFireRate *= Seasons.getTowerModifier(this.type, 'fireRate');
         }
+        // Apply crafting attack speed
+        if (typeof Crafting !== 'undefined' && Crafting.getMultiplier) {
+            envFireRate *= Crafting.getMultiplier('attack_speed_mult');
+        }
         // Higher fire rate multiplier = shorter cooldown
         return this.fireCooldown / envFireRate;
     };
@@ -417,7 +421,7 @@ var Tower = (function () {
             self.element.classList.remove('firing');
         }, animationDuration);
 
-        // Apply environmental damage modifier before spawning projectile
+        // Apply environmental + crafting damage modifier before spawning projectile
         var baseDamage = this.damage;
         var envDamage = 1.0;
         if (typeof Weather !== 'undefined' && Weather.getTowerModifier) {
@@ -425,6 +429,9 @@ var Tower = (function () {
         }
         if (typeof Seasons !== 'undefined' && Seasons.getTowerModifier) {
             envDamage *= Seasons.getTowerModifier(this.type, 'damage');
+        }
+        if (typeof Crafting !== 'undefined' && Crafting.getMultiplier) {
+            envDamage *= Crafting.getMultiplier('damage_mult');
         }
         this.damage = Math.floor(baseDamage * envDamage);
 

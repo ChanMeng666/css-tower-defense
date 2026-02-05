@@ -21,8 +21,10 @@ const scriptFiles = [
     './scripts/seasons.js',   // Seasonal System
     './scripts/auth.js',      // Auth UI + session management
     './scripts/api.js',       // Backend API client
+    './scripts/challenge.js', // Daily Challenge System
     './scripts/progression.js', // Progression System
     './scripts/inventory.js', // Inventory/Loot System (Terraria-inspired)
+    './scripts/crafting.js',  // Crafting System (consumables from materials)
     './scripts/enemy.js',
     './scripts/tower.js',
     './scripts/projectile.js',
