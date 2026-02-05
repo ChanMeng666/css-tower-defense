@@ -288,114 +288,128 @@
     }
     
     /**
-     * Load leaderboard preview on start screen
+     * Wire leaderboard button on start screen
      */
     function loadLeaderboardPreview() {
-        if (typeof API === 'undefined') return;
+        var btn = document.getElementById('leaderboardBtn');
+        if (!btn) return;
 
-        var listEl = document.getElementById('leaderboardList');
-        if (!listEl) return;
-
-        // Wire "View Full Leaderboard" button
-        var viewAllBtn = document.getElementById('viewLeaderboardBtn');
-        if (viewAllBtn) {
-            viewAllBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                showLeaderboardModal();
-            });
-        }
-
-        API.getLeaderboard('normal', 10, 0)
-            .then(function(data) {
-                if (!data || !data.entries || data.entries.length === 0) {
-                    listEl.innerHTML = '<div class="leaderboard-loading">No scores yet. Be the first!</div>';
-                    return;
-                }
-
-                listEl.innerHTML = '';
-                data.entries.forEach(function(entry) {
-                    var row = document.createElement('div');
-                    row.className = 'leaderboard-row';
-                    row.innerHTML =
-                        '<span class="leaderboard-rank">#' + entry.rank + '</span>' +
-                        '<span class="leaderboard-name">' + escapeHtml(entry.displayName) + '</span>' +
-                        '<span class="leaderboard-score">' + entry.score + '</span>';
-                    listEl.appendChild(row);
-                });
-            })
-            .catch(function() {
-                listEl.innerHTML = '<div class="leaderboard-loading">Leaderboard unavailable</div>';
-            });
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showLeaderboardModal();
+        });
     }
 
     /**
-     * Load daily challenge on start screen
+     * Wire daily challenge button on start screen
      */
     function loadDailyChallenge() {
         if (typeof API === 'undefined' || !API.getDailyChallenge) return;
 
-        var section = document.getElementById('challengeSection');
-        if (!section) return;
+        var btn = document.getElementById('challengeBtn');
+        if (!btn) return;
+
+        // Fetch challenge data in background
+        var challengeData = null;
 
         API.getDailyChallenge().then(function(data) {
             if (!data || !data.challenge) return;
+            challengeData = data;
+            btn.classList.remove('hidden');
+        }).catch(function() { /* keep hidden */ });
 
-            section.style.display = '';
-            var nameEl = document.getElementById('challengeName');
-            var descEl = document.getElementById('challengeDesc');
-            var lbEl = document.getElementById('challengeLb');
-            var playBtn = document.getElementById('challengePlayBtn');
-
-            if (nameEl) nameEl.textContent = data.challenge.name;
-            if (descEl) descEl.textContent = data.challenge.description;
-
-            // Show mini leaderboard
-            if (lbEl && data.topScores && data.topScores.length > 0) {
-                var lbHtml = '';
-                data.topScores.slice(0, 3).forEach(function(entry, i) {
-                    lbHtml += '#' + (i+1) + ' ' + escapeHtml(entry.displayName) + ' - ' + entry.score + '  ';
-                });
-                lbEl.textContent = lbHtml;
-            }
-
-            // Check completion status if logged in
-            if (playBtn && typeof Auth !== 'undefined' && Auth.isLoggedIn() && API.getMyChallenges) {
-                API.getMyChallenges().then(function(myData) {
-                    if (!myData) return;
-                    var today = new Date().toISOString().slice(0, 10);
-                    var completedToday = myData.completions && myData.completions.some(function(c) {
-                        return c.date === today;
-                    });
-                    if (completedToday) {
-                        playBtn.textContent = 'Completed';
-                        playBtn.disabled = true;
-                        playBtn.style.opacity = '0.6';
-                        playBtn.style.cursor = 'default';
-                    }
-                    if (myData.streak > 0 && lbEl) {
-                        var streakText = myData.streak + ' day streak';
-                        lbEl.textContent = (lbEl.textContent ? lbEl.textContent + ' | ' : '') + streakText;
-                    }
-                }).catch(function() { /* ignore */ });
-            }
-
-            // Play challenge button
-            if (playBtn) {
-                playBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    if (playBtn.disabled) return;
-                    if (typeof Challenge !== 'undefined') {
-                        Game.setDifficulty('normal'); // Force normal
-                        Challenge.startChallenge(data.challenge.id);
-                        var loadingScreen = document.getElementById('loadingScreen');
-                        if (loadingScreen) loadingScreen.classList.add('hidden');
-                        Game.start();
-                    }
-                });
-            }
-        }).catch(function() {
-            // Challenge unavailable - keep section hidden
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (challengeData) showChallengeModal(challengeData);
         });
+    }
+
+    /**
+     * Show daily challenge in a modal
+     */
+    function showChallengeModal(data) {
+        var existing = document.getElementById('challengeModal');
+        if (existing) existing.parentNode.removeChild(existing);
+
+        var modal = document.createElement('div');
+        modal.className = 'auth-modal';
+        modal.id = 'challengeModal';
+
+        var topHtml = '';
+        if (data.topScores && data.topScores.length > 0) {
+            topHtml = '<div class="challenge-lb-section">';
+            data.topScores.slice(0, 5).forEach(function(entry, i) {
+                topHtml += '<div class="leaderboard-row">' +
+                    '<span class="leaderboard-rank">#' + (i + 1) + '</span>' +
+                    '<span class="leaderboard-name">' + escapeHtml(entry.displayName) + '</span>' +
+                    '<span class="leaderboard-score">' + entry.score + '</span>' +
+                    '</div>';
+            });
+            topHtml += '</div>';
+        }
+
+        modal.innerHTML =
+            '<div class="auth-modal-content">' +
+                '<h2 class="auth-modal-title">Daily Challenge</h2>' +
+                '<div class="challenge-modal-name">' + escapeHtml(data.challenge.name) + '</div>' +
+                '<div class="challenge-modal-desc">' + escapeHtml(data.challenge.description) + '</div>' +
+                topHtml +
+                '<div class="challenge-modal-status" id="challengeStatus"></div>' +
+                '<div class="challenge-modal-actions">' +
+                    '<button class="challenge-play-btn" id="challengePlayBtn">Play Challenge</button>' +
+                '</div>' +
+                '<button class="auth-close" id="challengeClose">&times;</button>' +
+            '</div>';
+
+        document.body.appendChild(modal);
+
+        // Close button
+        document.getElementById('challengeClose').addEventListener('click', function() {
+            modal.parentNode.removeChild(modal);
+        });
+
+        // Click backdrop to close
+        modal.addEventListener('click', function(ev) {
+            if (ev.target === modal) modal.parentNode.removeChild(modal);
+        });
+
+        var playBtn = document.getElementById('challengePlayBtn');
+        var statusEl = document.getElementById('challengeStatus');
+
+        // Check completion status if logged in
+        if (typeof Auth !== 'undefined' && Auth.isLoggedIn() && API.getMyChallenges) {
+            API.getMyChallenges().then(function(myData) {
+                if (!myData) return;
+                var today = new Date().toISOString().slice(0, 10);
+                var completedToday = myData.completions && myData.completions.some(function(c) {
+                    return c.date === today;
+                });
+                if (completedToday && playBtn) {
+                    playBtn.textContent = 'Completed';
+                    playBtn.disabled = true;
+                    playBtn.style.opacity = '0.6';
+                    playBtn.style.cursor = 'default';
+                }
+                if (myData.streak > 0 && statusEl) {
+                    statusEl.textContent = myData.streak + ' day streak';
+                }
+            }).catch(function() { /* ignore */ });
+        }
+
+        // Play button
+        if (playBtn) {
+            playBtn.addEventListener('click', function() {
+                if (playBtn.disabled) return;
+                modal.parentNode.removeChild(modal);
+                if (typeof Challenge !== 'undefined') {
+                    Game.setDifficulty('normal');
+                    Challenge.startChallenge(data.challenge.id);
+                    var loadingScreen = document.getElementById('loadingScreen');
+                    if (loadingScreen) loadingScreen.classList.add('hidden');
+                    Game.start();
+                }
+            });
+        }
     }
 
     /**

@@ -1421,56 +1421,53 @@ body.blood-moon {
 // ===========================================
 // Challenge System
 // ===========================================
-.challenge-section {
-    padding: 12px;
-    background: rgba(255, 248, 240, 0.05);
-    border: 2px solid rgba(255, 248, 240, 0.15);
-    border-radius: 8px;
-    text-align: center;
-}
-
-.challenge-title {
-    font-family: @font-title;
-    font-size: 1.2rem;
-    color: @color-yellow;
-    margin-bottom: 6px;
-}
-
-.challenge-name {
+// Challenge Modal (opened from start screen button)
+.challenge-modal-name {
     font-family: @font-title;
     font-size: 1.5rem;
     color: @color-magenta;
+    text-align: center;
+    margin-bottom: 6px;
     .text-outline(@color-black, 2px);
 }
 
-.challenge-desc {
+.challenge-modal-desc {
     font-family: @font-comic;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: @color-white;
-    margin: 6px 0;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.challenge-lb-section {
+    margin-bottom: 12px;
+}
+
+.challenge-modal-status {
+    font-family: @font-title;
+    font-size: 0.85rem;
+    color: @color-yellow;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.challenge-modal-actions {
+    text-align: center;
 }
 
 .challenge-play-btn {
     font-family: @font-title;
     font-size: 1rem;
-    padding: 6px 20px;
+    padding: 8px 24px;
     background: @color-success;
     color: @color-white;
     border: none;
     .comic-border(2px);
     cursor: pointer;
-    margin-top: 8px;
 
     &:hover {
         transform: translateY(-2px);
     }
-}
-
-.challenge-lb {
-    margin-top: 10px;
-    font-family: @font-comic;
-    font-size: 0.8rem;
-    color: rgba(255, 248, 240, 0.7);
 }
 
 .challenge-banner {
