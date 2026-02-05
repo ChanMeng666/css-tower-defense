@@ -60,7 +60,13 @@ var Game = (function () {
 
     // Timing
     var lastFrameTime = 0;
+    var gameStartTime = 0;
     var animationFrameId = null;
+
+    // Stats tracking
+    var totalEnemiesKilled = 0;
+    var totalTowersBuilt = 0;
+    var totalGoldEarned = 0;
 
     // Selected tower type for building
     var selectedTowerType = null;
@@ -147,6 +153,8 @@ var Game = (function () {
             }
 
             addGold(reward);
+            totalGoldEarned += reward;
+            totalEnemiesKilled++;
             addScore(reward * 10);
             Sfx.play('kill');
 
@@ -199,6 +207,7 @@ var Game = (function () {
 
         // Tower placed
         document.addEventListener('towerPlaced', function (e) {
+            totalTowersBuilt++;
             Sfx.play('place');
         });
 
@@ -252,6 +261,10 @@ var Game = (function () {
         lives = 20 + Progression.getExtraLives();
         score = 0;
         selectedTowerType = null;
+        totalEnemiesKilled = 0;
+        totalTowersBuilt = 0;
+        totalGoldEarned = 0;
+        gameStartTime = performance.now();
 
         // Clear and reinitialize
         Enemy.clear();
@@ -379,6 +392,23 @@ var Game = (function () {
             localStorage.setItem('towerDefenseHighScore', highScore);
         }
 
+        // Submit to backend
+        var durationSeconds = Math.floor((performance.now() - gameStartTime) / 1000);
+        var gameData = {
+            score: score,
+            difficulty: difficulty,
+            waveReached: Wave.getCurrentWave(),
+            towersBuilt: totalTowersBuilt,
+            enemiesKilled: totalEnemiesKilled,
+            durationSeconds: durationSeconds,
+            goldEarned: totalGoldEarned,
+            outcome: 'defeat'
+        };
+        if (typeof API !== 'undefined') {
+            API.submitScore(gameData);
+            API.recordGame(gameData);
+        }
+
         Display.showGameOverScreen(false, score);
         Sfx.play('gameOver');
         Sfx.playMusic('defeat');
@@ -403,6 +433,23 @@ var Game = (function () {
         if (score > highScore) {
             highScore = score;
             localStorage.setItem('towerDefenseHighScore', highScore);
+        }
+
+        // Submit to backend
+        var durationSeconds = Math.floor((performance.now() - gameStartTime) / 1000);
+        var gameData = {
+            score: score,
+            difficulty: difficulty,
+            waveReached: Wave.getCurrentWave(),
+            towersBuilt: totalTowersBuilt,
+            enemiesKilled: totalEnemiesKilled,
+            durationSeconds: durationSeconds,
+            goldEarned: totalGoldEarned,
+            outcome: 'victory'
+        };
+        if (typeof API !== 'undefined') {
+            API.submitScore(gameData);
+            API.recordGame(gameData);
         }
 
         Display.showGameOverScreen(true, score);
@@ -576,6 +623,87 @@ var Game = (function () {
         return DIFFICULTIES[difficulty].name;
     }
 
+    /**
+     * Get current game state data for saving
+     */
+    function getGameStateForSave() {
+        return {
+            difficulty: difficulty,
+            gold: gold,
+            lives: lives,
+            score: score,
+            currentWave: Wave.getCurrentWave(),
+            towers: Tower.getAll ? Tower.getAll().map(function(t) {
+                return { type: t.type, gridX: t.gridX, gridY: t.gridY };
+            }) : [],
+            inventory: typeof Inventory !== 'undefined' && Inventory.getState ? Inventory.getState() : {}
+        };
+    }
+
+    /**
+     * Load game from save data
+     */
+    function loadFromSave(saveData) {
+        if (!saveData) return;
+
+        // Set difficulty
+        difficulty = saveData.difficulty || 'normal';
+
+        // Reset and apply save
+        Enemy.clear();
+        Tower.clear();
+        Projectile.clear();
+        Path.init();
+        Path.render();
+        Wave.init();
+
+        if (typeof Pool !== 'undefined') {
+            Pool.clear();
+        }
+
+        gold = saveData.gold || 100;
+        lives = saveData.lives || 20;
+        score = saveData.score || 0;
+        selectedTowerType = null;
+        totalEnemiesKilled = 0;
+        totalTowersBuilt = 0;
+        totalGoldEarned = 0;
+        gameStartTime = performance.now();
+
+        // Restore towers
+        if (saveData.towers && saveData.towers.length > 0) {
+            saveData.towers.forEach(function(t) {
+                Tower.create(t.type, t.gridX, t.gridY);
+                totalTowersBuilt++;
+            });
+        }
+
+        // Advance wave counter
+        if (saveData.currentWave && saveData.currentWave > 1) {
+            Wave.setCurrentWave(saveData.currentWave);
+        }
+
+        // Update display
+        Display.updateGold(gold);
+        Display.updateLives(lives);
+        Display.updateScore(score);
+        Display.updateWave(Wave.getCurrentWave(), Wave.getTotalWaves());
+        Display.hideStartScreen();
+        Display.hideGameOverScreen();
+        Display.showGameUI();
+
+        // Start game loop
+        state = STATES.PLAYING;
+        lastFrameTime = performance.now();
+        gameLoop();
+
+        Sfx.play('start');
+        Sfx.playMusic('playing');
+    }
+
+    function getScore() { return score; }
+    function getLives() { return lives; }
+
     // Public API
     return {
         init: init,
@@ -587,6 +715,8 @@ var Game = (function () {
         startNextWave: startNextWave,
         getState: getState,
         getGold: getGold,
+        getScore: getScore,
+        getLives: getLives,
         getSelectedTowerType: getSelectedTowerType,
         canAfford: canAfford,
         addGold: addGold,
@@ -595,6 +725,8 @@ var Game = (function () {
         setDifficulty: setDifficulty,
         getDifficulty: getDifficulty,
         getDifficultyName: getDifficultyName,
+        getGameStateForSave: getGameStateForSave,
+        loadFromSave: loadFromSave,
         STATES: STATES,
         DIFFICULTIES: DIFFICULTIES
     };

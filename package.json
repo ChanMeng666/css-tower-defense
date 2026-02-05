@@ -6,10 +6,22 @@
   "scripts": {
     "watch": "gulp watch",
     "build": "gulp build",
-    "compile": "gulp compile"
+    "compile": "gulp compile",
+    "dev": "concurrently \"npm run watch\" \"cd worker && npx wrangler dev\"",
+    "deploy": "npm run compile && cd worker && npx wrangler deploy",
+    "db:generate": "drizzle-kit generate --config worker/drizzle.config.ts",
+    "db:migrate": "drizzle-kit migrate --config worker/drizzle.config.ts",
+    "db:studio": "drizzle-kit studio --config worker/drizzle.config.ts"
   },
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "hono": "^4.7.0",
+    "@neondatabase/serverless": "^1.0.0",
+    "drizzle-orm": "^0.41.0",
+    "better-auth": "^1.2.0",
+    "zod": "^3.24.0"
+  },
   "devDependencies": {
     "gulp": "^4.0.2",
     "gulp-less": "^5.0.0",
@@ -17,6 +29,11 @@
     "gulp-concat": "^2.6.1",
     "gulp-clean-css": "^4.3.0",
     "gulp-inject": "^5.0.5",
-    "gulp-rename": "^2.0.0"
+    "gulp-rename": "^2.0.0",
+    "wrangler": "^4.0.0",
+    "drizzle-kit": "^0.31.4",
+    "typescript": "^5.7.0",
+    "@cloudflare/workers-types": "^4.20250109.0",
+    "concurrently": "^9.1.0"
   }
 }

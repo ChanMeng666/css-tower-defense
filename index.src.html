@@ -39,12 +39,22 @@
             <button class="difficulty-btn" data-difficulty="expert">Expert</button>
         </div>
         <button class="loading-start" id="startBtn">START GAME</button>
+        <!-- Leaderboard Preview -->
+        <div class="leaderboard-preview" id="leaderboardPreview">
+            <h3 class="leaderboard-title">Top Scores</h3>
+            <div class="leaderboard-list" id="leaderboardList">
+                <div class="leaderboard-loading">Loading...</div>
+            </div>
+        </div>
     </div>
 
     <!-- Game Over Screen -->
     <div class="game-over-screen hidden" id="gameOverScreen">
         <h1 class="game-over-title" id="gameOverTitle">Game Over</h1>
         <p class="final-score">Score: <span id="finalScore">0</span></p>
+        <div class="game-over-stats hidden" id="gameOverStats">
+            <p class="game-over-rank">Rank: <span id="gameOverRank">-</span></p>
+        </div>
         <button class="restart-btn" id="restartBtn">Play Again</button>
     </div>
 
@@ -154,6 +164,7 @@
         <!-- Tech Tree Button -->
         <div class="tech-control">
             <button class="tech-btn" id="techBtn">Tech Tree</button>
+            <button class="tech-btn save-game-btn hidden" id="saveGameBtn">Save (F5)</button>
         </div>
     </div>
 

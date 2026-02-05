@@ -199,6 +199,11 @@ var Achievements = (function() {
         achievement.unlocked = true;
         saveProgress();
 
+        // Sync to server
+        if (typeof API !== 'undefined' && API.unlockAchievement) {
+            API.unlockAchievement(id);
+        }
+
         // Award gold
         if (typeof Game !== 'undefined' && Game.addGold) {
             Game.addGold(achievement.reward);

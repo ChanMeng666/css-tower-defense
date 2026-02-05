@@ -647,6 +647,14 @@ var Wave = (function() {
         };
     }
 
+    /**
+     * Set current wave (for loading saved games)
+     * @param {number} wave - 1-indexed wave number
+     */
+    function setCurrentWave(wave) {
+        currentWave = Math.max(0, Math.min(wave - 1, waveData.length));
+    }
+
     // Public API
     return {
         init: init,
@@ -659,6 +667,7 @@ var Wave = (function() {
         getProgress: getProgress,
         getNextWaveInfo: getNextWaveInfo,
         getActiveEvent: getActiveEvent,
+        setCurrentWave: setCurrentWave,
         EVENT_TYPES: EVENT_TYPES
     };
 })();

@@ -19,6 +19,8 @@ const scriptFiles = [
     './scripts/path.js',
     './scripts/weather.js',   // Weather System
     './scripts/seasons.js',   // Seasonal System
+    './scripts/auth.js',      // Auth UI + session management
+    './scripts/api.js',       // Backend API client
     './scripts/progression.js', // Progression System
     './scripts/inventory.js', // Inventory/Loot System (Terraria-inspired)
     './scripts/enemy.js',

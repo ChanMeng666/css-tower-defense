@@ -22,3 +22,7 @@ npm-debug.log*
 # Environment
 .env
 .env.local
+worker/.dev.vars
+
+# Worker build output
+worker/dist/

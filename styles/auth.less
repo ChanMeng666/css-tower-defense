@@ -1,0 +1,473 @@
+// ===========================================
+// CSS Tower Defense - Auth & Backend UI Styles
+// ===========================================
+
+// ── Auth Container (on start screen) ──
+.auth-container {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 20;
+}
+
+.auth-btn {
+    font-family: @font-title;
+    font-size: 16px;
+    padding: 6px 16px;
+    background: @color-cyan;
+    color: @color-white;
+    border: 2px solid @color-dark;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+    .pop-shadow();
+
+    &:hover {
+        background: lighten(@color-cyan, 10%);
+    }
+
+    &.auth-btn-small {
+        font-size: 13px;
+        padding: 4px 10px;
+        background: @color-danger;
+
+        &:hover {
+            background: lighten(@color-danger, 10%);
+        }
+    }
+}
+
+.auth-user {
+    font-family: @font-title;
+    font-size: 16px;
+    color: @color-yellow;
+    text-shadow: 1px 1px 0 @color-dark;
+}
+
+// ── Auth Modal ──
+.auth-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.auth-modal-content {
+    background: @color-dark;
+    border: 3px solid @color-cyan;
+    border-radius: 8px;
+    padding: 30px;
+    width: 360px;
+    max-width: 90vw;
+    position: relative;
+    .pop-shadow();
+}
+
+.auth-modal-title {
+    font-family: @font-title;
+    font-size: 28px;
+    color: @color-yellow;
+    text-align: center;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.auth-error {
+    background: rgba(232, 99, 90, 0.2);
+    border: 1px solid @color-danger;
+    color: @color-danger;
+    font-family: @font-main;
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    label {
+        font-family: @font-title;
+        font-size: 14px;
+        color: @color-white;
+    }
+
+    input {
+        font-family: @font-main;
+        font-size: 15px;
+        padding: 8px 12px;
+        background: #2A2420;
+        color: @color-white;
+        border: 2px solid #444;
+        border-radius: 4px;
+        outline: none;
+        transition: border-color 0.2s;
+
+        &:focus {
+            border-color: @color-cyan;
+        }
+
+        &::placeholder {
+            color: #666;
+        }
+    }
+}
+
+.auth-submit {
+    font-family: @font-title;
+    font-size: 18px;
+    padding: 10px;
+    margin-top: 8px;
+    background: @color-cyan;
+    color: @color-white;
+    border: 2px solid @color-dark;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+    .pop-shadow();
+
+    &:hover {
+        background: lighten(@color-cyan, 10%);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 15px;
+    font-family: @font-main;
+    font-size: 13px;
+    color: #888;
+
+    a {
+        color: @color-cyan;
+        text-decoration: none;
+        font-weight: bold;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.auth-close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+
+    &:hover {
+        color: @color-white;
+    }
+}
+
+// ── Leaderboard Preview (start screen) ──
+.leaderboard-preview {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    max-height: 200px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid rgba(45, 138, 138, 0.5);
+    border-radius: 6px;
+    padding: 12px;
+    z-index: 10;
+}
+
+.leaderboard-title {
+    font-family: @font-title;
+    font-size: 18px;
+    color: @color-yellow;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.leaderboard-list {
+    font-family: @font-main;
+    font-size: 13px;
+    color: @color-white;
+    max-height: 140px;
+    overflow-y: auto;
+}
+
+.leaderboard-loading {
+    text-align: center;
+    color: #888;
+    padding: 10px;
+}
+
+.leaderboard-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &.my-row {
+        background: rgba(45, 138, 138, 0.2);
+        font-weight: bold;
+    }
+}
+
+.leaderboard-rank {
+    width: 30px;
+    color: @color-yellow;
+}
+
+.leaderboard-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.leaderboard-score {
+    width: 60px;
+    text-align: right;
+    color: @color-yellow;
+}
+
+// ── Leaderboard Tabs ──
+.lb-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.lb-tab {
+    flex: 1;
+    font-family: @font-title;
+    font-size: 14px;
+    padding: 6px 8px;
+    background: #2A2420;
+    color: #888;
+    border: 1px solid #444;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &.selected {
+        background: @color-cyan;
+        color: @color-white;
+        border-color: @color-cyan;
+    }
+
+    &:hover:not(.selected) {
+        border-color: @color-cyan;
+        color: @color-white;
+    }
+}
+
+.lb-full-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.lb-my-rank {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.lb-my-rank-text {
+    font-family: @font-title;
+    font-size: 16px;
+    color: @color-white;
+
+    strong {
+        color: @color-yellow;
+    }
+}
+
+// ── Save/Load Modal ──
+.save-load-content {
+    width: 420px;
+}
+
+.save-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.save-slot {
+    background: #2A2420;
+    border: 2px solid #444;
+    border-radius: 4px;
+    padding: 12px;
+    transition: border-color 0.2s;
+
+    &:hover {
+        border-color: @color-cyan;
+    }
+
+    &.save-slot-empty {
+        opacity: 0.5;
+        border-style: dashed;
+
+        &:hover {
+            border-color: #444;
+        }
+    }
+}
+
+.save-slot-name {
+    font-family: @font-title;
+    font-size: 16px;
+    color: @color-yellow;
+    margin-bottom: 4px;
+}
+
+.save-slot-info {
+    font-family: @font-main;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.save-slot-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.save-slot-btn {
+    font-family: @font-title;
+    font-size: 13px;
+    padding: 4px 12px;
+    border: 1px solid #444;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &.load-btn {
+        background: @color-cyan;
+        color: @color-white;
+
+        &:hover {
+            background: lighten(@color-cyan, 10%);
+        }
+    }
+
+    &.delete-btn {
+        background: transparent;
+        color: @color-danger;
+        border-color: @color-danger;
+
+        &:hover {
+            background: rgba(232, 99, 90, 0.2);
+        }
+    }
+}
+
+.save-slot-loading {
+    text-align: center;
+    color: #888;
+    padding: 20px;
+    font-family: @font-main;
+}
+
+// ── Save Game Button (in-game) ──
+.save-game-btn {
+    margin-left: 8px;
+    font-size: 13px !important;
+    padding: 4px 10px !important;
+}
+
+// ── Game Over Stats ──
+.game-over-stats {
+    font-family: @font-main;
+    font-size: 14px;
+    color: @color-white;
+    margin-bottom: 10px;
+}
+
+.game-over-rank {
+    font-family: @font-title;
+    font-size: 18px;
+    color: @color-yellow;
+}
+
+// ── Player Stats Dashboard ──
+.stats-panel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: @color-dark;
+    border: 3px solid @color-cyan;
+    border-radius: 8px;
+    padding: 30px;
+    width: 500px;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 1000;
+    .pop-shadow();
+}
+
+.stats-title {
+    font-family: @font-title;
+    font-size: 28px;
+    color: @color-yellow;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: #2A2420;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 12px;
+    text-align: center;
+}
+
+.stat-card-label {
+    font-family: @font-main;
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.stat-card-value {
+    font-family: @font-title;
+    font-size: 22px;
+    color: @color-yellow;
+}
