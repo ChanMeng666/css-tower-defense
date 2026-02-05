@@ -109,7 +109,7 @@ var Weather = (function () {
         document.addEventListener('waveStarted', function (e) {
             var waveNum = e.detail.wave; // 1-indexed
             var isNightWave = (waveNum % 2 === 0); // Even waves = night
-            setDayNight(isNightWave);
+            setDayNight(isNightWave, waveNum);
 
             // Pick weather for the wave using seasonal weights
             pickSeasonalWeather();
@@ -118,8 +118,11 @@ var Weather = (function () {
 
     /**
      * Set day/night state based on wave number
+     * Sun is at top (12 o'clock), moon at bottom (6 o'clock) in the container.
+     * 0° = sun at top (day), 180° = moon at top (night).
+     * Cumulative rotation ensures smooth continuous clockwise animation.
      */
-    function setDayNight(isNight) {
+    function setDayNight(isNight, waveNum) {
         nightState = isNight;
 
         if (scene) {
@@ -132,10 +135,10 @@ var Weather = (function () {
             }
         }
 
-        // Set sky rotation with CSS transition for smooth dawn/dusk
+        // Cumulative rotation: wave 1 = 0°, wave 2 = 180°, wave 3 = 360°, ...
+        // Always increasing so CSS transition animates forward smoothly
         if (skyContainer) {
-            // Day: 90deg (sun at top), Night: 270deg (moon at top)
-            var rotation = isNight ? 270 : 90;
+            var rotation = ((waveNum || 1) - 1) * 180;
             skyContainer.style.transform = 'rotate(' + rotation + 'deg)';
         }
     }
