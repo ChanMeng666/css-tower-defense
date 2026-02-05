@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Tower Defense</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&display=swap"
+        rel="stylesheet">
+    <!-- inject:css -->
+    <link rel="stylesheet" href="assets/app.css">
+    <!-- endinject -->
+    <script src="vendor/prefixfree.min.js"></script>
+    <script src="vendor/howler.min.js"></script>
+</head>
+
+<body>
+    <!-- Unified Start Screen (Loading + Start combined) -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-bg"></div>
+        <div class="loading-tower">
+            <div class="loading-tower-base"></div>
+            <div class="loading-tower-body"></div>
+            <div class="loading-tower-top"></div>
+        </div>
+        <div class="loading-dots">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+        </div>
+        <div class="loading-progress">
+            <div class="loading-progress-fill"></div>
+        </div>
+        <div class="difficulty-select" id="difficultySelect">
+            <span class="difficulty-label">Difficulty:</span>
+            <button class="difficulty-btn selected" data-difficulty="normal">Normal</button>
+            <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+            <button class="difficulty-btn" data-difficulty="expert">Expert</button>
+        </div>
+        <button class="loading-start" id="startBtn">START GAME</button>
+        <!-- Leaderboard Preview -->
+        <div class="leaderboard-preview" id="leaderboardPreview">
+            <h3 class="leaderboard-title">Top Scores</h3>
+            <div class="leaderboard-list" id="leaderboardList">
+                <div class="leaderboard-loading">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div class="game-over-screen hidden" id="gameOverScreen">
+        <h1 class="game-over-title" id="gameOverTitle">Game Over</h1>
+        <p class="final-score">Score: <span id="finalScore">0</span></p>
+        <div class="game-over-stats hidden" id="gameOverStats">
+            <p class="game-over-rank">Rank: <span id="gameOverRank">-</span></p>
+        </div>
+        <button class="restart-btn" id="restartBtn">Play Again</button>
+    </div>
+
+    <!-- Game UI -->
+    <div class="game-ui" id="gameUI">
+        <div class="top-bar">
+            <div class="stat">
+                <span class="stat-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#E8635A" stroke="#1A1614" stroke-width="1.5"/><ellipse cx="8.5" cy="8" rx="2.5" ry="3" fill="rgba(255,255,255,0.3)" transform="rotate(-15 8.5 8)"/></svg></span>
+                <span class="stat-value" id="lives">20</span>
+            </div>
+            <div class="stat">
+                <span class="stat-icon"><svg viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="12" r="10" fill="#F2D864" stroke="#1A1614" stroke-width="1.5"/><circle cx="12" cy="12" r="7" fill="none" stroke="#C4A030" stroke-width="1.5"/><text x="12" y="16" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="11" font-weight="bold" fill="#C4A030">G</text></svg></span>
+                <span class="stat-value" id="gold">100</span>
+            </div>
+            <div class="stat">
+                <span class="stat-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M2 16c2-3 4-5 6-5s3 3 5 3 3-3 5-3 4 2 5 5" fill="none" stroke="#4A90C4" stroke-width="2.5" stroke-linecap="round"/><path d="M2 12c2-3 4-5 6-5s3 3 5 3 3-3 5-3 4 2 5 5" fill="none" stroke="#4A90C4" stroke-width="2" stroke-linecap="round" opacity="0.5"/><circle cx="8" cy="9" r="1" fill="#FFF8F0" opacity="0.7"/><circle cx="13" cy="12" r="0.8" fill="#FFF8F0" opacity="0.5"/></svg></span>
+                <span class="stat-value">Wave <span id="wave">1</span>/<span id="totalWaves">10</span></span>
+            </div>
+            <div class="stat">
+                <span class="stat-icon"><svg viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="12" r="9" fill="none" stroke="#FFF8F0" stroke-width="2"/><circle cx="12" cy="12" r="5" fill="none" stroke="#FFF8F0" stroke-width="1.5"/><circle cx="12" cy="12" r="2" fill="#E8635A"/><line x1="12" y1="0" x2="12" y2="7" stroke="#FFF8F0" stroke-width="2"/><line x1="12" y1="17" x2="12" y2="24" stroke="#FFF8F0" stroke-width="2"/><line x1="0" y1="12" x2="7" y2="12" stroke="#FFF8F0" stroke-width="2"/><line x1="17" y1="12" x2="24" y2="12" stroke="#FFF8F0" stroke-width="2"/></svg></span>
+                <span class="stat-value" id="score">0</span>
+            </div>
+            <div class="stat inventory-stat">
+                <span class="stat-icon"><svg viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="12" r="5" fill="#888" stroke="#1A1614" stroke-width="1.5"/><circle cx="12" cy="12" r="2" fill="#FFF8F0" stroke="#1A1614" stroke-width="1"/><rect x="11" y="1" width="2" height="5" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8"/><rect x="11" y="18" width="2" height="5" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8"/><rect x="1" y="11" width="5" height="2" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8"/><rect x="18" y="11" width="5" height="2" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8"/><rect x="4.5" y="3.5" width="2" height="4" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8" transform="rotate(45 5.5 5.5)"/><rect x="17.5" y="16.5" width="2" height="4" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8" transform="rotate(45 18.5 18.5)"/><rect x="16.5" y="3.5" width="2" height="4" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8" transform="rotate(-45 17.5 5.5)"/><rect x="3.5" y="16.5" width="2" height="4" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8" transform="rotate(-45 4.5 18.5)"/></svg></span>
+                <span class="stat-value" id="invScrap">0</span>
+                <span class="stat-icon"><svg viewBox="0 0 24 24" width="24" height="24"><polygon points="12,1 14.5,9 8,9 13,15 10.5,15 15,22 9,22 12,15 8,15 11,9 7.5,9" fill="#F2D864" stroke="#1A1614" stroke-width="1"/><polygon points="12,3 13.5,9.5 9.5,9.5 13,14 11.5,14 14,20 10.5,20 12,14.5 9.5,14.5 11.5,9.5 9,9.5" fill="#FFF8F0" opacity="0.4"/></svg></span>
+                <span class="stat-value" id="invCore">0</span>
+                <span class="stat-icon"><svg viewBox="0 0 24 24" width="24" height="24"><polygon points="12,1 17,8 22,8 18,14 20,22 12,17 4,22 6,14 2,8 7,8" fill="#4A90C4" stroke="#1A1614" stroke-width="1.2"/><polygon points="12,4 9,8 7,8 8,12 6,16 12,14" fill="rgba(255,255,255,0.3)"/><line x1="10" y1="6" x2="8" y2="10" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/></svg></span>
+                <span class="stat-value" id="invCrystal">0</span>
+            </div>
+        </div>
+
+        <!-- Environment Bar -->
+        <div class="env-bar" id="envBar">
+            <div class="env-pill env-time" id="envTime" title="Time of Day">
+                <svg class="env-icon" id="envTimeIcon" viewBox="0 0 24 24" width="18" height="18"></svg>
+                <span class="env-label" id="envTimeLabel">Day</span>
+            </div>
+            <div class="env-pill env-weather" id="envWeather" title="Weather">
+                <svg class="env-icon" id="envWeatherIcon" viewBox="0 0 24 24" width="18" height="18"></svg>
+                <span class="env-label" id="envWeatherLabel">Clear</span>
+            </div>
+            <div class="env-pill env-season" id="envSeason" title="Season">
+                <svg class="env-icon" id="envSeasonIcon" viewBox="0 0 24 24" width="18" height="18"></svg>
+                <span class="env-label" id="envSeasonLabel">Summer</span>
+            </div>
+            <div class="env-pill env-event hidden" id="envEvent" title="Special Event">
+                <span class="env-label" id="envEventLabel"></span>
+            </div>
+        </div>
+
+        <!-- Tower Shop -->
+        <div class="shop-panel" id="shopPanel">
+            <div class="shop-title">Towers</div>
+            <div class="tower-options">
+                <div class="tower-option" data-tower="arrow" data-cost="50">
+                    <div class="tower-preview tower-arrow-preview"></div>
+                    <div class="tower-info">
+                        <span class="tower-name">Arrow</span>
+                        <span class="tower-cost">50g</span>
+                    </div>
+                </div>
+                <div class="tower-option" data-tower="cannon" data-cost="100">
+                    <div class="tower-preview tower-cannon-preview"></div>
+                    <div class="tower-info">
+                        <span class="tower-name">Cannon</span>
+                        <span class="tower-cost">100g</span>
+                    </div>
+                </div>
+                <div class="tower-option" data-tower="ice" data-cost="75">
+                    <div class="tower-preview tower-ice-preview"></div>
+                    <div class="tower-info">
+                        <span class="tower-name">Ice</span>
+                        <span class="tower-cost">75g</span>
+                    </div>
+                </div>
+                <div class="tower-option" data-tower="magic" data-cost="150">
+                    <div class="tower-preview tower-magic-preview"></div>
+                    <div class="tower-info">
+                        <span class="tower-name">Magic</span>
+                        <span class="tower-cost">150g</span>
+                    </div>
+                </div>
+                <!-- NEW WEAPONS -->
+                <div class="tower-option" data-tower="tesla" data-cost="200">
+                    <div class="tower-preview tower-tesla-preview"></div>
+                    <div class="tower-info">
+                        <span class="tower-name">Tesla</span>
+                        <span class="tower-cost">200g</span>
+                    </div>
+                </div>
+                <div class="tower-option" data-tower="flame" data-cost="250">
+                    <div class="tower-preview tower-flame-preview"></div>
+                    <div class="tower-info">
+                        <span class="tower-name">Flame</span>
+                        <span class="tower-cost">250g</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wave Control -->
+        <div class="wave-control">
+            <button class="wave-btn" id="startWaveBtn">Start Wave</button>
+        </div>
+
+        <!-- Tech Tree Button -->
+        <div class="tech-control">
+            <button class="tech-btn" id="techBtn">Tech Tree</button>
+            <button class="tech-btn save-game-btn hidden" id="saveGameBtn">Save (F5)</button>
+        </div>
+    </div>
+
+    <!-- Tech Tree Modal -->
+    <div class="tech-modal hidden" id="techModal">
+        <div class="tech-content">
+            <h2 class="tech-title">R&D LAB</h2>
+            <div class="tech-stats">
+                <span>Level: <span id="playerLevel">1</span></span>
+                <span>SP: <span id="skillPoints">0</span></span>
+            </div>
+            <div class="tech-grid" id="techGrid">
+                <!-- Upgrades injected by JS -->
+            </div>
+            <button class="close-tech-btn" id="closeTechBtn">CLOSE</button>
+        </div>
+    </div>
+
+
+    <!-- Announcement Overlay -->
+    <div class="announcement-overlay" id="announcer">
+        <div class="announcement-content">
+            <h1 class="announcement-title"></h1>
+            <p class="announcement-subtitle"></p>
+        </div>
+    </div>
+
+    <!-- Game Scene -->
+    <div class="scene" id="scene">
+        <!-- Day/Night Sky Cycle -->
+        <div class="sky-cycle">
+            <div class="sky-body-container">
+                <div class="sun"></div>
+                <div class="moon-comic"></div>
+            </div>
+        </div>
+
+        <!-- Weather Overlay -->
+        <div class="weather-overlay" id="weatherOverlay">
+            <div class="rain-container hidden"></div>
+            <div class="snow-container hidden"></div>
+            <div class="wind-container hidden"></div>
+        </div>
+
+        <!-- Floating Particles -->
+        <div class="particles"></div>
+
+        <div class="map" id="map">
+            <!-- Grid cells will be generated by JavaScript -->
+
+            <!-- Enemy container (inside map for 3D transform) -->
+            <div class="enemies" id="enemies"></div>
+
+            <!-- Projectile container (inside map for 3D transform) -->
+            <div class="projectiles" id="projectiles"></div>
+
+            <!-- Tower container (inside map for 3D transform) -->
+            <div class="towers" id="towers"></div>
+
+            <!-- Ground Shadow -->
+            <div class="ground-shadow"></div>
+        </div>
+    </div>
+
+    <!-- Templates -->
+    <div class="templates" style="display: none;">
+        <!-- Enemy template -->
+        <div class="enemy-template">
+            <div class="enemy">
+                <div class="enemy-body"></div>
+                <div class="enemy-face"></div>
+                <div class="health-bar">
+                    <div class="health-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tower templates -->
+        <div class="tower-arrow-template">
+            <div class="tower tower-arrow">
+                <div class="tower-base"></div>
+                <div class="tower-body"></div>
+                <div class="tower-top"></div>
+                <div class="tower-turret"></div>
+            </div>
+        </div>
+
+        <div class="tower-cannon-template">
+            <div class="tower tower-cannon">
+                <div class="tower-base"></div>
+                <div class="tower-body"></div>
+                <div class="tower-barrel"></div>
+            </div>
+        </div>
+
+        <div class="tower-ice-template">
+            <div class="tower tower-ice">
+                <div class="tower-base"></div>
+                <div class="tower-crystal"></div>
+                <div class="tower-glow"></div>
+            </div>
+        </div>
+
+        <div class="tower-magic-template">
+            <div class="tower tower-magic">
+                <div class="tower-base"></div>
+                <div class="tower-orb"></div>
+                <div class="tower-ring"></div>
+            </div>
+        </div>
+
+        <!-- NEW TEMPLATES -->
+        <div class="tower-tesla-template">
+            <div class="tower tower-tesla">
+                <div class="tower-base"></div>
+                <div class="tower-coil"></div>
+                <div class="tower-spark"></div>
+            </div>
+        </div>
+
+        <div class="tower-flame-template">
+            <div class="tower tower-flame">
+                <div class="tower-base"></div>
+                <div class="tower-tank"></div>
+                <div class="tower-nozzle"></div>
+            </div>
+        </div>
+
+        <!-- Projectile template -->
+        <div class="projectile-template">
+            <div class="projectile"></div>
+        </div>
+    </div>
+
+    <!-- inject:js -->
+    <script src="assets/script.js"></script>
+    <!-- endinject -->
+</body>
+
+</html>
