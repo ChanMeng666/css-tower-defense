@@ -1,5 +1,5 @@
 import { createMiddleware } from 'hono/factory';
-import { getAuth } from '../routes/auth';
+import { createAuth } from '../routes/auth';
 
 type Env = {
   Bindings: {
@@ -17,7 +17,10 @@ type Env = {
  * Does NOT reject unauthenticated requests (use requireAuth for that).
  */
 export const authMiddleware = createMiddleware<Env>(async (c, next) => {
-  const auth = getAuth(c.env.DATABASE_URL, c.env.BETTER_AUTH_SECRET);
+  const url = new URL(c.req.url);
+  const baseURL = `${url.protocol}//${url.host}`;
+  const auth = createAuth(c.env.DATABASE_URL, c.env.BETTER_AUTH_SECRET, baseURL);
+
   const session = await auth.api.getSession({
     headers: c.req.raw.headers,
   });
@@ -35,7 +38,10 @@ export const authMiddleware = createMiddleware<Env>(async (c, next) => {
  * Require authentication - returns 401 if not logged in.
  */
 export const requireAuth = createMiddleware<Env>(async (c, next) => {
-  const auth = getAuth(c.env.DATABASE_URL, c.env.BETTER_AUTH_SECRET);
+  const url = new URL(c.req.url);
+  const baseURL = `${url.protocol}//${url.host}`;
+  const auth = createAuth(c.env.DATABASE_URL, c.env.BETTER_AUTH_SECRET, baseURL);
+
   const session = await auth.api.getSession({
     headers: c.req.raw.headers,
   });

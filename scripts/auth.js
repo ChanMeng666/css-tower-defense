@@ -104,32 +104,56 @@ var Auth = (function() {
      * Sign out
      */
     function signOut() {
+        console.log('[Auth] Starting sign out...');
+
         return fetch(API_BASE + '/auth/sign-out', {
             method: 'POST',
             credentials: 'include'
         })
         .then(function(r) {
+            console.log('[Auth] Sign out response:', r.status, r.statusText);
             if (!r.ok) {
                 console.error('[Auth] Sign out request failed:', r.status);
             }
-            // Always clear local state
+            return r;
+        })
+        .then(function() {
+            // Always clear local state first
             currentUser = null;
             guestMode = false;
             updateAuthUI();
             emitGameEvent('authStateChanged', { user: currentUser });
 
-            // Verify session is actually cleared
-            return fetch(API_BASE + '/auth/get-session', { credentials: 'include' })
-                .then(function(r) { return r.ok ? r.json() : null; })
+            // Verify session is actually cleared after a short delay
+            return new Promise(function(resolve) { setTimeout(resolve, 500); })
+                .then(function() {
+                    console.log('[Auth] Verifying session cleared...');
+                    return fetch(API_BASE + '/auth/get-session', { credentials: 'include' });
+                })
+                .then(function(r) {
+                    console.log('[Auth] Session check response:', r.status);
+                    return r.ok ? r.json() : null;
+                })
                 .then(function(data) {
+                    console.log('[Auth] Session check result:', data);
                     if (data && data.user) {
-                        console.warn('[Auth] Session still active after sign-out, forcing clear');
-                        // Session cookie still valid - this shouldn't happen
-                        // but we'll force guest mode to prevent score submission
+                        console.error('[Auth] SESSION STILL ACTIVE after sign-out!');
+                        console.error('[Auth] User still logged in as:', data.user.email);
+                        // Force guest mode to prevent score submission
                         guestMode = true;
+                        if (typeof Display !== 'undefined' && Display.showToast) {
+                            Display.showToast('Sign out incomplete - playing as guest', 'error');
+                        }
+                    } else {
+                        console.log('[Auth] Sign out successful, session cleared');
+                        if (typeof Display !== 'undefined' && Display.showToast) {
+                            Display.showToast('Signed out successfully', 'success');
+                        }
                     }
                 })
-                .catch(function() { /* ignore verification errors */ });
+                .catch(function(err) {
+                    console.log('[Auth] Session verify error (probably ok):', err);
+                });
         })
         .catch(function(err) {
             console.error('[Auth] Sign out error:', err);
@@ -138,6 +162,9 @@ var Auth = (function() {
             guestMode = true; // Force guest mode if sign-out failed
             updateAuthUI();
             emitGameEvent('authStateChanged', { user: currentUser });
+            if (typeof Display !== 'undefined' && Display.showToast) {
+                Display.showToast('Sign out failed - playing as guest', 'error');
+            }
         });
     }
 

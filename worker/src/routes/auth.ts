@@ -12,16 +12,12 @@ type Env = {
   };
 };
 
-// Cache auth instance per DATABASE_URL to avoid re-creating on every request
-let cachedAuth: ReturnType<typeof betterAuth> | null = null;
-let cachedUrl: string | null = null;
-
-export function getAuth(databaseUrl: string, secret: string) {
-  if (cachedAuth && cachedUrl === databaseUrl) {
-    return cachedAuth;
-  }
+// Create auth instance dynamically per request to handle different origins
+export function createAuth(databaseUrl: string, secret: string, baseURL: string) {
   const db = getDb(databaseUrl);
-  cachedAuth = betterAuth({
+  return betterAuth({
+    baseURL,
+    basePath: '/api/auth',
     database: drizzleAdapter(db, {
       provider: 'pg',
       schema: {
@@ -36,21 +32,35 @@ export function getAuth(databaseUrl: string, secret: string) {
       enabled: true,
     },
     session: {
+      expiresIn: 60 * 60 * 24 * 7, // 7 days
+      updateAge: 60 * 60 * 24, // Update session every 24 hours
       cookieCache: {
         enabled: true,
-        maxAge: 5 * 60, // 5 minutes
+        maxAge: 5 * 60, // 5 minutes cache
       },
     },
+    advanced: {
+      cookiePrefix: 'td',
+      useSecureCookies: true, // Always use secure cookies (HTTPS)
+    },
+    trustedOrigins: [
+      'https://css-tower-defense.chanmeng-dev.workers.dev',
+      'https://css-tower-defense.pages.dev',
+      'http://localhost:8080',
+      'http://127.0.0.1:8080',
+    ],
   });
-  cachedUrl = databaseUrl;
-  return cachedAuth;
 }
 
 const authRoutes = new Hono<Env>();
 
 // Mount Better Auth as a catch-all under /api/auth/*
 authRoutes.all('/*', async (c) => {
-  const auth = getAuth(c.env.DATABASE_URL, c.env.BETTER_AUTH_SECRET);
+  // Get the origin from the request to set proper baseURL
+  const url = new URL(c.req.url);
+  const baseURL = `${url.protocol}//${url.host}`;
+
+  const auth = createAuth(c.env.DATABASE_URL, c.env.BETTER_AUTH_SECRET, baseURL);
   return auth.handler(c.req.raw);
 });
 
