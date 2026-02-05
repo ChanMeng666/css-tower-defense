@@ -15,12 +15,12 @@
   height: 100%;
   background: repeating-conic-gradient(from 0deg, #2D8A8A 0deg 15deg, #37a9a9 15deg 30deg);
   display: flex;
-  justify-content: center;
   align-items: center;
   flex-direction: column;
   z-index: 100000;
   transition: opacity 0.5s ease, visibility 0.5s ease;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .loading-screen::before {
   content: '';
@@ -119,10 +119,12 @@
   width: 200px;
   height: 200px;
   margin: 30px 0;
+  margin-top: auto;
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 2;
+  flex-shrink: 0;
 }
 .loading-tower-base {
   position: absolute;
@@ -423,12 +425,12 @@
   z-index: 2;
   width: 90%;
   max-width: 360px;
-  max-height: 40vh;
-  overflow-y: auto;
-  margin-top: 10px;
+  margin: 10px 0 auto;
+  padding-bottom: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  flex-shrink: 0;
   opacity: 0;
   animation: instructions-appear 0.5s ease forwards;
   animation-delay: 2.2s;
@@ -436,16 +438,6 @@
 .ready .start-screen-bottom {
   opacity: 1;
   animation: none;
-}
-.start-screen-bottom::-webkit-scrollbar {
-  width: 6px;
-}
-.start-screen-bottom::-webkit-scrollbar-track {
-  background: transparent;
-}
-.start-screen-bottom::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
 }
 .difficulty-select {
   display: flex;
