@@ -1,6 +1,7 @@
 /**
  * CSS Tower Defense - Progression System
  * Manages XP, Levels, and Tech Tree Upgrades
+ * Persists to localStorage and syncs to server when logged in
  */
 
 var Progression = (function () {
@@ -14,6 +15,11 @@ var Progression = (function () {
     // Config
     var XP_PER_LEVEL_BASE = 100;
     var XP_SCALING = 1.5;
+    var LS_KEY = 'td_progression';
+
+    // Debounce timer for server saves
+    var serverSaveTimer = null;
+    var SERVER_SAVE_DEBOUNCE = 5000;
 
     // Upgrades
     var UPGRADES = {
@@ -44,6 +50,9 @@ var Progression = (function () {
         if (openBtn) openBtn.addEventListener('click', toggleModal);
         if (closeBtn) closeBtn.addEventListener('click', toggleModal);
 
+        // Load from localStorage
+        loadFromLocalStorage();
+
         // Listen for game events
         document.addEventListener('enemyKilled', function (e) {
             gainXP(e.detail.reward * 2);
@@ -51,6 +60,13 @@ var Progression = (function () {
 
         document.addEventListener('waveComplete', function (e) {
             gainXP(e.detail.reward);
+        });
+
+        // Sync on login
+        document.addEventListener('authStateChanged', function (e) {
+            if (e.detail && e.detail.user) {
+                loadFromServer();
+            }
         });
 
         renderUI();
@@ -68,6 +84,8 @@ var Progression = (function () {
         xp += amount;
         checkLevelUp();
         updateUI();
+        saveToLocalStorage();
+        debouncedServerSave();
     }
 
     function checkLevelUp() {
@@ -93,9 +111,99 @@ var Progression = (function () {
             skillPoints -= tech.cost;
             tech.currentLevel++;
             updateUI();
+            saveToLocalStorage();
+            debouncedServerSave();
             return true;
         }
         return false;
+    }
+
+    // ── Persistence helpers ──
+
+    function getUpgradeState() {
+        var state = {};
+        for (var id in UPGRADES) {
+            state[id] = UPGRADES[id].currentLevel;
+        }
+        return state;
+    }
+
+    function applyUpgradeState(state) {
+        if (!state) return;
+        for (var id in state) {
+            if (UPGRADES[id] && typeof state[id] === 'number') {
+                UPGRADES[id].currentLevel = Math.min(state[id], UPGRADES[id].maxLevel);
+            }
+        }
+    }
+
+    function saveToLocalStorage() {
+        try {
+            var data = {
+                xp: xp,
+                level: level,
+                skillPoints: skillPoints,
+                upgrades: getUpgradeState()
+            };
+            localStorage.setItem(LS_KEY, JSON.stringify(data));
+        } catch (e) { /* ignore */ }
+    }
+
+    function loadFromLocalStorage() {
+        try {
+            var saved = localStorage.getItem(LS_KEY);
+            if (saved) {
+                var data = JSON.parse(saved);
+                xp = data.xp || 0;
+                level = data.level || 1;
+                skillPoints = data.skillPoints || 0;
+                applyUpgradeState(data.upgrades);
+            }
+        } catch (e) { /* ignore */ }
+    }
+
+    function saveToServer() {
+        if (typeof API === 'undefined' || typeof Auth === 'undefined' || !Auth.isLoggedIn()) return;
+        API.saveProgression({
+            xp: xp,
+            level: level,
+            skillPoints: skillPoints,
+            upgrades: getUpgradeState()
+        });
+    }
+
+    function loadFromServer() {
+        if (typeof API === 'undefined' || typeof Auth === 'undefined' || !Auth.isLoggedIn()) return;
+        API.getProgression().then(function (data) {
+            if (!data) return;
+            // Merge: take max level/xp, merge upgrade levels (take max per upgrade)
+            if (data.level > level || (data.level === level && (data.xp || 0) > xp)) {
+                xp = data.xp || 0;
+                level = data.level || 1;
+                skillPoints = data.skillPoints || 0;
+            }
+            if (data.upgrades) {
+                var localUpgrades = getUpgradeState();
+                for (var id in data.upgrades) {
+                    if (UPGRADES[id]) {
+                        var serverLevel = data.upgrades[id] || 0;
+                        var localLevel = localUpgrades[id] || 0;
+                        UPGRADES[id].currentLevel = Math.min(Math.max(serverLevel, localLevel), UPGRADES[id].maxLevel);
+                    }
+                }
+            }
+            saveToLocalStorage();
+            saveToServer(); // Push merged state back
+            renderUI();
+        });
+    }
+
+    function debouncedServerSave() {
+        if (serverSaveTimer) clearTimeout(serverSaveTimer);
+        serverSaveTimer = setTimeout(function () {
+            saveToServer();
+            serverSaveTimer = null;
+        }, SERVER_SAVE_DEBOUNCE);
     }
 
     // Getters for other systems to apply effects
@@ -233,7 +341,12 @@ var Progression = (function () {
         getSplashRadiusMultiplier: getSplashRadiusMultiplier,
         getExtraLives: getExtraLives,
         getLevel: function () { return level; },
+        getXP: function () { return xp; },
         getSkillPoints: function () { return skillPoints; },
-        getUpgrades: function () { return UPGRADES; }
+        getUpgrades: function () { return UPGRADES; },
+        getUpgradeState: getUpgradeState,
+        applyUpgradeState: applyUpgradeState,
+        loadFromServer: loadFromServer,
+        saveToServer: saveToServer
     };
 })();

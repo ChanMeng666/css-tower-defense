@@ -127,13 +127,26 @@ var Auth = (function() {
             if (saved) achievements = JSON.parse(saved);
         } catch(e) { /* ignore */ }
 
-        if (highScore > 0 || achievements.length > 0) {
+        // Read actual progression from localStorage
+        var progressionData = { xp: 0, level: 1, skillPoints: 0, upgrades: {} };
+        try {
+            var savedProg = localStorage.getItem('td_progression');
+            if (savedProg) {
+                var parsed = JSON.parse(savedProg);
+                progressionData.xp = parsed.xp || 0;
+                progressionData.level = parsed.level || 1;
+                progressionData.skillPoints = parsed.skillPoints || 0;
+                progressionData.upgrades = parsed.upgrades || {};
+            }
+        } catch(e) { /* ignore */ }
+
+        if (highScore > 0 || achievements.length > 0 || progressionData.level > 1) {
             if (typeof API !== 'undefined' && API.syncProgression) {
                 API.syncProgression({
-                    xp: 0,
-                    level: 1,
-                    skillPoints: 0,
-                    upgrades: {},
+                    xp: progressionData.xp,
+                    level: progressionData.level,
+                    skillPoints: progressionData.skillPoints,
+                    upgrades: progressionData.upgrades,
                     highScore: highScore,
                     achievements: achievements
                 });

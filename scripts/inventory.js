@@ -183,6 +183,7 @@ var Inventory = (function() {
         removeMaterial: removeMaterial,
         hasMaterials: hasMaterials,
         getInventory: getInventory,
+        getState: getInventory,
         setDropMultiplier: setDropMultiplier,
         MATERIALS: MATERIALS
     };

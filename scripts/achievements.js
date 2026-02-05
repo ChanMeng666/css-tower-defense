@@ -145,8 +145,8 @@ var Achievements = (function() {
         // Wave tracking
         document.addEventListener('waveStarted', function(e) {
             // Track lives at wave start for perfect wave check
-            if (typeof Game !== 'undefined') {
-                livesAtWaveStart = 20; // TODO: Get actual lives
+            if (typeof Game !== 'undefined' && Game.getLives) {
+                livesAtWaveStart = Game.getLives();
             }
         });
 
@@ -154,6 +154,11 @@ var Achievements = (function() {
             // Wave 5 achievement
             if (e.detail.wave >= 5) {
                 unlock('wave_5');
+            }
+
+            // Perfect wave - no damage taken
+            if (typeof Game !== 'undefined' && Game.getLives && Game.getLives() >= livesAtWaveStart && livesAtWaveStart > 0) {
+                unlock('perfect_wave');
             }
 
             // Survivor achievement
@@ -284,6 +289,31 @@ var Achievements = (function() {
     }
 
     /**
+     * Load achievements from server and merge with local
+     */
+    function loadFromServer() {
+        if (typeof API === 'undefined' || typeof Auth === 'undefined' || !Auth.isLoggedIn()) return;
+        API.getAchievements().then(function(data) {
+            if (!data || !data.achievements) return;
+            var changed = false;
+            data.achievements.forEach(function(a) {
+                if (ACHIEVEMENTS[a.achievementId] && !ACHIEVEMENTS[a.achievementId].unlocked) {
+                    ACHIEVEMENTS[a.achievementId].unlocked = true;
+                    changed = true;
+                }
+            });
+            if (changed) saveProgress();
+        });
+    }
+
+    // Sync on login
+    document.addEventListener('authStateChanged', function(e) {
+        if (e.detail && e.detail.user) {
+            loadFromServer();
+        }
+    });
+
+    /**
      * Get all achievements
      */
     function getAll() {
@@ -309,6 +339,8 @@ var Achievements = (function() {
         checkReforgeAchievement: checkReforgeAchievement,
         getAll: getAll,
         getUnlockedCount: getUnlockedCount,
-        ACHIEVEMENTS: ACHIEVEMENTS
+        loadFromServer: loadFromServer,
+        ACHIEVEMENTS: ACHIEVEMENTS,
+        ACHIEVEMENT_SVGS: ACHIEVEMENT_SVGS
     };
 })();
