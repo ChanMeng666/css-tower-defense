@@ -108,7 +108,9 @@ var Auth = (function() {
 
         return fetch(API_BASE + '/auth/sign-out', {
             method: 'POST',
-            credentials: 'include'
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: '{}'
         })
         .then(function(r) {
             console.log('[Auth] Sign out response:', r.status, r.statusText);
