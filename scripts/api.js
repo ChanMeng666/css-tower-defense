@@ -38,7 +38,12 @@ var API = (function() {
      * Silent request - catches errors and returns null (for non-critical calls)
      */
     function silentRequest(path, options) {
+        // Check both login status AND guest mode
         if (!Auth.isLoggedIn()) return Promise.resolve(null);
+        if (Auth.isGuestMode && Auth.isGuestMode()) {
+            console.log('[API] Skipping request in guest mode:', path);
+            return Promise.resolve(null);
+        }
         return request(path, options).catch(function(err) {
             console.error('[API] Silent request failed:', path, err);
             return null;

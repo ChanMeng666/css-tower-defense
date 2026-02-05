@@ -145,9 +145,12 @@
             }
         });
 
-        // Skip button
+        // Skip button - explicitly set guest mode
         document.getElementById('loginPromptSkip').addEventListener('click', function() {
             modal.remove();
+            if (typeof Auth !== 'undefined' && Auth.setGuestMode) {
+                Auth.setGuestMode(true);
+            }
             callback();
         });
 
@@ -155,6 +158,9 @@
         modal.addEventListener('click', function(ev) {
             if (ev.target === modal) {
                 modal.remove();
+                if (typeof Auth !== 'undefined' && Auth.setGuestMode) {
+                    Auth.setGuestMode(true);
+                }
                 callback();
             }
         });

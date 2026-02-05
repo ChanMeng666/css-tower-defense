@@ -7,6 +7,7 @@ var Auth = (function() {
     'use strict';
 
     var currentUser = null;
+    var guestMode = false; // Track if user explicitly chose to play as guest
     var API_BASE = '/api';
     var modal = null;
     var onAuthCallbacks = [];
@@ -56,6 +57,7 @@ var Auth = (function() {
         })
         .then(function(data) {
             currentUser = data.user || null;
+            guestMode = false; // Clear guest mode on successful login
             updateAuthUI();
             hideModal();
             emitGameEvent('authStateChanged', { user: currentUser });
@@ -85,6 +87,7 @@ var Auth = (function() {
         })
         .then(function(data) {
             currentUser = data.user || null;
+            guestMode = false; // Clear guest mode on successful sign up
             updateAuthUI();
             hideModal();
             emitGameEvent('authStateChanged', { user: currentUser });
@@ -105,14 +108,36 @@ var Auth = (function() {
             method: 'POST',
             credentials: 'include'
         })
-        .then(function() {
+        .then(function(r) {
+            if (!r.ok) {
+                console.error('[Auth] Sign out request failed:', r.status);
+            }
+            // Always clear local state
             currentUser = null;
+            guestMode = false;
             updateAuthUI();
             emitGameEvent('authStateChanged', { user: currentUser });
+
+            // Verify session is actually cleared
+            return fetch(API_BASE + '/auth/get-session', { credentials: 'include' })
+                .then(function(r) { return r.ok ? r.json() : null; })
+                .then(function(data) {
+                    if (data && data.user) {
+                        console.warn('[Auth] Session still active after sign-out, forcing clear');
+                        // Session cookie still valid - this shouldn't happen
+                        // but we'll force guest mode to prevent score submission
+                        guestMode = true;
+                    }
+                })
+                .catch(function() { /* ignore verification errors */ });
         })
-        .catch(function() {
+        .catch(function(err) {
+            console.error('[Auth] Sign out error:', err);
+            // Still clear local state on error
             currentUser = null;
+            guestMode = true; // Force guest mode if sign-out failed
             updateAuthUI();
+            emitGameEvent('authStateChanged', { user: currentUser });
         });
     }
 
@@ -353,8 +378,39 @@ var Auth = (function() {
         }
     }
 
-    function isLoggedIn() { return !!currentUser; }
+    function isLoggedIn() { return !!currentUser && !guestMode; }
     function getUser() { return currentUser; }
+
+    /**
+     * Set guest mode - prevents score submission even if session exists
+     */
+    function setGuestMode(enabled) {
+        guestMode = !!enabled;
+        console.log('[Auth] Guest mode:', guestMode);
+    }
+
+    /**
+     * Check if in guest mode
+     */
+    function isGuestMode() { return guestMode; }
+
+    /**
+     * Show login modal with optional callback on success
+     */
+    function showLoginModal(callback) {
+        showModal(false);
+        if (callback) {
+            // Store callback to be called after successful login
+            var originalSignIn = signIn;
+            signIn = function(email, password) {
+                return originalSignIn(email, password).then(function(user) {
+                    signIn = originalSignIn; // Restore original
+                    if (user) callback();
+                    return user;
+                });
+            };
+        }
+    }
 
     return {
         init: init,
@@ -363,6 +419,9 @@ var Auth = (function() {
         signOut: signOut,
         isLoggedIn: isLoggedIn,
         getUser: getUser,
-        checkSession: checkSession
+        checkSession: checkSession,
+        setGuestMode: setGuestMode,
+        isGuestMode: isGuestMode,
+        showLoginModal: showLoginModal
     };
 })();
