@@ -40,6 +40,14 @@
             <button class="difficulty-btn" data-difficulty="expert">Expert</button>
         </div>
         <button class="loading-start" id="startBtn">START GAME</button>
+        <!-- Daily Challenge -->
+        <div class="challenge-section" id="challengeSection" style="display:none;">
+            <div class="challenge-title">Daily Challenge</div>
+            <div class="challenge-name" id="challengeName">-</div>
+            <div class="challenge-desc" id="challengeDesc">-</div>
+            <button class="challenge-play-btn" id="challengePlayBtn">Play Challenge</button>
+            <div class="challenge-lb" id="challengeLb"></div>
+        </div>
         <!-- Leaderboard Preview -->
         <div class="leaderboard-preview" id="leaderboardPreview">
             <h3 class="leaderboard-title">Top Scores</h3>
@@ -54,7 +62,14 @@
         <h1 class="game-over-title" id="gameOverTitle">Game Over</h1>
         <p class="final-score">Score: <span id="finalScore">0</span></p>
         <div class="game-over-stats hidden" id="gameOverStats">
-            <p class="game-over-rank">Rank: <span id="gameOverRank">-</span></p>
+            <div class="post-game-grid">
+                <div class="post-stat"><span class="post-label">Waves</span><span class="post-value" id="goWaves">-</span></div>
+                <div class="post-stat"><span class="post-label">Enemies</span><span class="post-value" id="goEnemies">-</span></div>
+                <div class="post-stat"><span class="post-label">Towers</span><span class="post-value" id="goTowers">-</span></div>
+                <div class="post-stat"><span class="post-label">Gold Earned</span><span class="post-value" id="goGold">-</span></div>
+                <div class="post-stat"><span class="post-label">Time</span><span class="post-value" id="goDuration">-</span></div>
+                <div class="post-stat"><span class="post-label">Rank</span><span class="post-value" id="goRank">-</span></div>
+            </div>
         </div>
         <button class="restart-btn" id="restartBtn">Play Again</button>
     </div>
@@ -162,9 +177,10 @@
             <button class="wave-btn" id="startWaveBtn">Start Wave</button>
         </div>
 
-        <!-- Tech Tree Button -->
+        <!-- Tech Tree + Craft Buttons -->
         <div class="tech-control">
             <button class="tech-btn" id="techBtn">Tech Tree</button>
+            <button class="tech-btn" id="craftBtn">Craft</button>
             <button class="tech-btn save-game-btn hidden" id="saveGameBtn">Save (F5)</button>
         </div>
     </div>
@@ -310,8 +326,10 @@
     <script src="scripts/seasons.js"></script>
     <script src="scripts/auth.js"></script>
     <script src="scripts/api.js"></script>
+    <script src="scripts/challenge.js"></script>
     <script src="scripts/progression.js"></script>
     <script src="scripts/inventory.js"></script>
+    <script src="scripts/crafting.js"></script>
     <script src="scripts/enemy.js"></script>
     <script src="scripts/tower.js"></script>
     <script src="scripts/projectile.js"></script>

@@ -1486,6 +1486,267 @@ body.blood-moon .sky-cycle {
 .env-label {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
+.game-over-stats {
+  z-index: 1;
+  margin-bottom: 20px;
+}
+.game-over-stats.hidden {
+  display: none;
+}
+.post-game-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.post-stat {
+  background: rgba(255, 248, 240, 0.1);
+  padding: 8px 12px;
+  border-radius: 4px;
+  text-align: center;
+  border: 1px solid rgba(255, 248, 240, 0.15);
+}
+.post-label {
+  display: block;
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.75rem;
+  color: rgba(255, 248, 240, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.post-value {
+  display: block;
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 1.5rem;
+  color: #F2D864;
+  margin-top: 2px;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 15px;
+}
+.stat-card {
+  background: #f0f0f0;
+  padding: 12px;
+  border: 2px solid #1A1614;
+  text-align: center;
+}
+.stat-card-label {
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.8rem;
+  color: #666;
+  text-transform: uppercase;
+}
+.stat-card-value {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 2rem;
+  color: #D4738A;
+}
+.ach-content {
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.ach-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 15px;
+}
+.ach-card {
+  background: #f0f0f0;
+  padding: 12px;
+  border: 2px solid #1A1614;
+  text-align: center;
+  transition: transform 0.1s;
+}
+.ach-card:hover {
+  transform: scale(1.03);
+}
+.ach-locked {
+  opacity: 0.4;
+  filter: grayscale(1);
+}
+.ach-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 6px;
+  background: #F2D864;
+  border: 2px solid #1A1614;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ach-name {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 1.1rem;
+  color: #D4738A;
+}
+.ach-desc {
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.8rem;
+  color: #666;
+  margin: 4px 0;
+}
+.ach-reward {
+  font-family: 'Comic Neue', cursive;
+  font-weight: bold;
+  font-size: 0.85rem;
+  color: #5EA65E;
+}
+.ach-global {
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.7rem;
+  color: #4A90C4;
+  margin-top: 4px;
+}
+.profile-card {
+  text-align: center;
+}
+.profile-name {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 2rem;
+  color: #F2D864;
+  -webkit-text-stroke: 2px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
+  margin-bottom: 15px;
+}
+.craft-content {
+  max-width: 550px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.craft-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 15px;
+}
+.craft-card {
+  background: #f0f0f0;
+  padding: 12px;
+  border: 2px solid #1A1614;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+.craft-card:hover:not(.craft-disabled) {
+  background: #F2D864;
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0 #1A1614;
+}
+.craft-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.craft-name {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 1rem;
+  color: #D4738A;
+}
+.craft-effect {
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.8rem;
+  color: #666;
+  margin: 4px 0;
+}
+.craft-cost {
+  font-family: 'Comic Neue', cursive;
+  font-weight: bold;
+  font-size: 0.8rem;
+  color: #1A1614;
+}
+.craft-cost .mat-scrap {
+  color: #888;
+}
+.craft-cost .mat-core {
+  color: #0088FF;
+}
+.craft-cost .mat-crystal {
+  color: #AA00FF;
+}
+.active-buffs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.buff-pill {
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #2D8A8A;
+  color: #1A1614;
+  border: 1px solid #1A1614;
+}
+.challenge-section {
+  margin-top: 15px;
+  padding: 12px;
+  background: rgba(255, 248, 240, 0.05);
+  border: 2px solid rgba(255, 248, 240, 0.15);
+  border-radius: 8px;
+  text-align: center;
+  z-index: 1;
+  position: relative;
+}
+.challenge-title {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 1.2rem;
+  color: #F2D864;
+  margin-bottom: 6px;
+}
+.challenge-name {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 1.5rem;
+  color: #D4738A;
+  -webkit-text-stroke: 2px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
+}
+.challenge-desc {
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.85rem;
+  color: #FFF8F0;
+  margin: 6px 0;
+}
+.challenge-play-btn {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 1rem;
+  padding: 6px 20px;
+  background: #5EA65E;
+  color: #FFF8F0;
+  border: none;
+  border: 2px solid #1A1614;
+  cursor: pointer;
+  margin-top: 8px;
+}
+.challenge-play-btn:hover {
+  transform: translateY(-2px);
+}
+.challenge-lb {
+  margin-top: 10px;
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.8rem;
+  color: rgba(255, 248, 240, 0.7);
+}
+.challenge-banner {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 0.9rem;
+  color: #F2D864;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 4px 16px;
+  border-radius: 4px;
+  z-index: 150;
+  pointer-events: none;
+}
 .scene {
   position: fixed;
   top: 0;
