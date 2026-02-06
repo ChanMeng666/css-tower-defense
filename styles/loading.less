@@ -95,6 +95,25 @@
     }
 }
 
+// Brand Logo
+.loading-logo {
+    width: 120px;
+    height: 120px;
+    z-index: 2;
+    filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.5));
+    animation: logo-float 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes logo-float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
 // Title Area - Prominent above gateway
 .loading-title-area {
     text-align: center;
@@ -843,6 +862,11 @@
 
 // Responsive Design
 @media (max-width: 600px) {
+    .loading-logo {
+        width: 90px;
+        height: 90px;
+    }
+
     .loading-game-title {
         font-size: 3.5rem;
     }
@@ -876,6 +900,11 @@
 }
 
 @media (max-width: 400px) {
+    .loading-logo {
+        width: 70px;
+        height: 70px;
+    }
+
     .loading-game-title {
         font-size: 2.5rem;
     }
@@ -896,6 +925,7 @@
 
 // Reduced Motion Support
 @media (prefers-reduced-motion: reduce) {
+    .loading-logo,
     .loading-tower-turret,
     .loading-dot,
     .loading-game-title {

@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Te Pā Tiaki - Guardians of Aotearoa</title>
+    <link rel="icon" type="image/svg+xml" href="assets/images/tower-defense-logo.svg">
+    <link rel="apple-touch-icon" href="assets/images/tower-defense-logo.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&display=swap"
@@ -19,6 +21,9 @@
     <!-- Unified Start Screen (Loading + Start combined) -->
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-bg"></div>
+
+        <!-- Brand Logo -->
+        <img src="assets/images/tower-defense-logo.svg" alt="Te Pā Tiaki" class="loading-logo">
 
         <!-- Game Title - Prominent above gateway -->
         <div class="loading-title-area">
@@ -147,6 +152,7 @@
 
     <!-- Game Over Screen -->
     <div class="game-over-screen hidden" id="gameOverScreen">
+        <img src="assets/images/tower-defense-logo.svg" alt="Te Pā Tiaki" class="game-over-logo">
         <h1 class="game-over-title" id="gameOverTitle">Game Over</h1>
         <p class="final-score">Score: <span id="finalScore">0</span></p>
         <div class="game-over-stats hidden" id="gameOverStats">

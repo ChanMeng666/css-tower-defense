@@ -1,6 +1,10 @@
-# CSS Tower Defense
+<p align="center">
+  <img src="assets/images/tower-defense-logo.svg" alt="Te Pā Tiaki Logo" width="200">
+</p>
 
-A 3D tower defense game rendered entirely with CSS 3D transforms and vanilla JavaScript. No Canvas, no WebGL -- just pure CSS.
+<h1 align="center">Te Pā Tiaki — CSS Tower Defense</h1>
+
+<p align="center">A 3D tower defense game rendered entirely with CSS 3D transforms and vanilla JavaScript. No Canvas, no WebGL -- just pure CSS.</p>
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Play%20Now-brightgreen?style=for-the-badge&logo=github)](https://chanmeng666.github.io/css-tower-defense/)
 ![CSS Tower Defense](https://img.shields.io/badge/CSS-3D%20Transforms-blue?style=for-the-badge&logo=css3)
