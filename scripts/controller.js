@@ -75,6 +75,12 @@
 
         if (!loadingScreen || !startBtn) return;
 
+        // Add 'ready' class after loading animation completes (2s progress bar)
+        // This hides the loading dots and progress bar
+        setTimeout(function() {
+            loadingScreen.classList.add('ready');
+        }, 2100);
+
         // Start menu music after user interaction (for autoplay policy)
         var musicStarted = false;
         function startMenuMusic() {
