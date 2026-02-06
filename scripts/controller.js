@@ -15,6 +15,11 @@
      * Initialize everything when DOM is ready
      */
     document.addEventListener('DOMContentLoaded', function() {
+        // Clear old localStorage data (all data now comes from server)
+        localStorage.removeItem('td_achievements');
+        localStorage.removeItem('td_progression');
+        localStorage.removeItem('towerDefenseHighScore');
+
         // Initialize all systems
         Sfx.init();
         Display.init();
@@ -101,7 +106,7 @@
         startBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             Sfx.playEffect('button');
-            promptLoginForLeaderboard(function() {
+            requireLogin(function() {
                 loadingScreen.classList.add('hidden');
                 Game.start();
             });
@@ -109,9 +114,9 @@
     }
 
     /**
-     * Prompt user to login for leaderboard before starting game
+     * Require user to login before playing (no guest mode)
      */
-    function promptLoginForLeaderboard(callback) {
+    function requireLogin(callback) {
         // Skip prompt if already logged in
         if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
             callback();
@@ -121,49 +126,28 @@
         // Create modal
         var modal = document.createElement('div');
         modal.className = 'auth-modal';
-        modal.id = 'loginPromptModal';
+        modal.id = 'loginRequiredModal';
         modal.innerHTML =
             '<div class="auth-modal-content">' +
-                '<h2 class="auth-modal-title">Login for Leaderboard?</h2>' +
+                '<h2 class="auth-modal-title">Login Required</h2>' +
                 '<p style="font-family: Comic Neue, sans-serif; color: #FFF8F0; margin-bottom: 20px; text-align: center;">' +
-                    'Sign in to have your score appear on the leaderboard.' +
+                    'Please sign in to play the game. Your progress will be saved to your account.' +
                 '</p>' +
                 '<div style="display: flex; gap: 12px; justify-content: center;">' +
-                    '<button class="auth-btn" id="loginPromptYes">Login</button>' +
-                    '<button class="auth-btn secondary" id="loginPromptSkip">Play as Guest</button>' +
+                    '<button class="auth-btn" id="loginRequiredBtn">Login / Sign Up</button>' +
                 '</div>' +
             '</div>';
         document.body.appendChild(modal);
 
-        // Login button
-        document.getElementById('loginPromptYes').addEventListener('click', function() {
+        // Login button - opens auth modal
+        document.getElementById('loginRequiredBtn').addEventListener('click', function() {
             modal.remove();
             if (typeof Auth !== 'undefined' && Auth.showLoginModal) {
                 Auth.showLoginModal(callback);
-            } else {
-                callback();
             }
         });
 
-        // Skip button - explicitly set guest mode
-        document.getElementById('loginPromptSkip').addEventListener('click', function() {
-            modal.remove();
-            if (typeof Auth !== 'undefined' && Auth.setGuestMode) {
-                Auth.setGuestMode(true);
-            }
-            callback();
-        });
-
-        // Click backdrop to close and play as guest
-        modal.addEventListener('click', function(ev) {
-            if (ev.target === modal) {
-                modal.remove();
-                if (typeof Auth !== 'undefined' && Auth.setGuestMode) {
-                    Auth.setGuestMode(true);
-                }
-                callback();
-            }
-        });
+        // Clicking backdrop does nothing - must login
     }
     
     /**

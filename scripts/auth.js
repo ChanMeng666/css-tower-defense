@@ -11,6 +11,7 @@ var Auth = (function() {
     var API_BASE = '/api';
     var modal = null;
     var onAuthCallbacks = [];
+    var pendingVerificationEmail = null;
 
     /**
      * Initialize auth - check for existing session
@@ -33,12 +34,34 @@ var Auth = (function() {
                 currentUser = data && data.user ? data.user : null;
                 updateAuthUI();
                 emitGameEvent('authStateChanged', { user: currentUser });
+                // Check for pending scores if verified
+                if (currentUser && currentUser.emailVerified) {
+                    checkAndProcessPendingScores();
+                }
                 return currentUser;
             })
             .catch(function() {
                 currentUser = null;
                 updateAuthUI();
             });
+    }
+
+    /**
+     * Check for and process pending scores after email verification
+     */
+    function checkAndProcessPendingScores() {
+        if (typeof API === 'undefined' || !API.processPendingScores) return;
+
+        API.processPendingScores().then(function(result) {
+            if (result && result.movedCount > 0) {
+                console.log('[Auth] Processed pending scores:', result.movedCount);
+                if (typeof Display !== 'undefined' && Display.showToast) {
+                    Display.showToast(result.message, 'success');
+                }
+            }
+        }).catch(function(err) {
+            console.error('[Auth] Failed to process pending scores:', err);
+        });
     }
 
     /**
@@ -57,16 +80,10 @@ var Auth = (function() {
         })
         .then(function(data) {
             currentUser = data.user || null;
-            guestMode = false; // Clear guest mode on successful login
+            guestMode = false;
             updateAuthUI();
             hideModal();
             emitGameEvent('authStateChanged', { user: currentUser });
-
-            // Trigger sync prompt on first login
-            if (currentUser) {
-                promptLocalSync();
-            }
-
             return currentUser;
         });
     }
@@ -87,15 +104,10 @@ var Auth = (function() {
         })
         .then(function(data) {
             currentUser = data.user || null;
-            guestMode = false; // Clear guest mode on successful sign up
+            guestMode = false;
             updateAuthUI();
             hideModal();
             emitGameEvent('authStateChanged', { user: currentUser });
-
-            if (currentUser) {
-                promptLocalSync();
-            }
-
             return currentUser;
         });
     }
@@ -170,50 +182,6 @@ var Auth = (function() {
         });
     }
 
-    /**
-     * Prompt user to sync localStorage data on first login
-     */
-    function promptLocalSync() {
-        var highScore = parseInt(localStorage.getItem('towerDefenseHighScore')) || 0;
-        var achievements = [];
-        try {
-            var saved = localStorage.getItem('td_achievements');
-            if (saved) achievements = JSON.parse(saved);
-        } catch(e) { /* ignore */ }
-
-        // Read actual progression from localStorage
-        var progressionData = { xp: 0, level: 1, skillPoints: 0, upgrades: {} };
-        try {
-            var savedProg = localStorage.getItem('td_progression');
-            if (savedProg) {
-                var parsed = JSON.parse(savedProg);
-                progressionData.xp = parsed.xp || 0;
-                progressionData.level = parsed.level || 1;
-                progressionData.skillPoints = parsed.skillPoints || 0;
-                progressionData.upgrades = parsed.upgrades || {};
-            }
-        } catch(e) { /* ignore */ }
-
-        if (highScore > 0 || achievements.length > 0 || progressionData.level > 1) {
-            if (typeof API !== 'undefined' && API.syncProgression) {
-                API.syncProgression({
-                    xp: progressionData.xp,
-                    level: progressionData.level,
-                    skillPoints: progressionData.skillPoints,
-                    upgrades: progressionData.upgrades,
-                    highScore: highScore,
-                    achievements: achievements
-                });
-
-                // Sync achievements individually
-                if (achievements.length > 0 && API.unlockAchievement) {
-                    achievements.forEach(function(id) {
-                        API.unlockAchievement(id);
-                    });
-                }
-            }
-        }
-    }
 
     /**
      * Create auth UI elements
@@ -230,6 +198,7 @@ var Auth = (function() {
         authContainer.innerHTML =
             '<button class="auth-btn" id="authBtn">Sign In</button>' +
             '<span class="auth-user hidden" id="authUser"></span>' +
+            '<span class="auth-verify-badge hidden" id="authVerifyBadge" title="Click to verify email">Unverified</span>' +
             '<button class="auth-btn auth-btn-small hidden" id="authOutBtn">Sign Out</button>';
         loadingScreen.appendChild(authContainer);
 
@@ -241,6 +210,15 @@ var Auth = (function() {
             '<div class="auth-modal-content">' +
                 '<h2 class="auth-modal-title" id="authModalTitle">Sign In</h2>' +
                 '<div class="auth-error hidden" id="authError"></div>' +
+                // Email verification pending view
+                '<div class="auth-verify-pending hidden" id="authVerifyPending">' +
+                    '<div class="auth-verify-icon">&#9993;</div>' +
+                    '<p>Check your email for a verification link.</p>' +
+                    '<p class="auth-verify-email" id="authVerifyEmail"></p>' +
+                    '<button class="auth-btn auth-btn-small" id="authResendBtn">Resend Email</button>' +
+                    '<p class="auth-verify-hint">Already verified? <a href="#" id="authRefreshLink">Refresh</a></p>' +
+                '</div>' +
+                // Login form
                 '<form class="auth-form" id="authForm">' +
                     '<div class="auth-field hidden" id="authNameField">' +
                         '<label for="authName">Display Name</label>' +
@@ -256,6 +234,12 @@ var Auth = (function() {
                     '</div>' +
                     '<button type="submit" class="auth-submit" id="authSubmit">Sign In</button>' +
                 '</form>' +
+                // OAuth divider and Google button
+                '<div class="auth-divider" id="authDivider"><span>or</span></div>' +
+                '<button class="auth-google-btn" id="authGoogleBtn">' +
+                    '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>' +
+                    'Continue with Google' +
+                '</button>' +
                 '<div class="auth-switch">' +
                     '<span id="authSwitchText">No account?</span> ' +
                     '<a href="#" id="authSwitchLink">Sign Up</a>' +
@@ -270,6 +254,9 @@ var Auth = (function() {
         var authClose = document.getElementById('authClose');
         var authForm = document.getElementById('authForm');
         var authSwitchLink = document.getElementById('authSwitchLink');
+        var authGoogleBtn = document.getElementById('authGoogleBtn');
+        var authResendBtn = document.getElementById('authResendBtn');
+        var authRefreshLink = document.getElementById('authRefreshLink');
         var isSignUp = false;
 
         if (authBtn) {
@@ -302,6 +289,72 @@ var Auth = (function() {
             });
         }
 
+        // Google OAuth sign-in
+        if (authGoogleBtn) {
+            authGoogleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                // Redirect to Google OAuth endpoint
+                window.location.href = API_BASE + '/auth/google';
+            });
+        }
+
+        // Resend verification email
+        if (authResendBtn) {
+            authResendBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var email = pendingVerificationEmail;
+                if (!email) return;
+
+                authResendBtn.disabled = true;
+                authResendBtn.textContent = 'Sending...';
+
+                fetch(API_BASE + '/auth/send-verification-email', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                })
+                .then(function(r) {
+                    if (!r.ok) throw new Error('Failed to resend');
+                    if (typeof Display !== 'undefined' && Display.showToast) {
+                        Display.showToast('Verification email sent!', 'success');
+                    }
+                })
+                .catch(function(err) {
+                    console.error('[Auth] Resend error:', err);
+                    if (typeof Display !== 'undefined' && Display.showToast) {
+                        Display.showToast('Failed to resend email', 'error');
+                    }
+                })
+                .finally(function() {
+                    authResendBtn.disabled = false;
+                    authResendBtn.textContent = 'Resend Email';
+                });
+            });
+        }
+
+        // Refresh after verification
+        if (authRefreshLink) {
+            authRefreshLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                checkSession().then(function(user) {
+                    if (user && user.emailVerified) {
+                        hideModal();
+                        if (typeof Display !== 'undefined' && Display.showToast) {
+                            Display.showToast('Email verified!', 'success');
+                        }
+                        // Process any pending scores
+                        checkAndProcessPendingScores();
+                    } else {
+                        if (typeof Display !== 'undefined' && Display.showToast) {
+                            Display.showToast('Email not verified yet', 'error');
+                        }
+                    }
+                });
+            });
+        }
+
         if (authForm) {
             authForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -327,9 +380,13 @@ var Auth = (function() {
                 }
 
                 promise
-                    .then(function() {
+                    .then(function(user) {
                         submitBtn.disabled = false;
                         submitBtn.textContent = isSignUp ? 'Sign Up' : 'Sign In';
+                        // Check if email needs verification
+                        if (user && !user.emailVerified) {
+                            showVerificationPending(email);
+                        }
                     })
                     .catch(function(err) {
                         errorEl.textContent = err.message || 'Something went wrong';
@@ -379,7 +436,42 @@ var Auth = (function() {
     function hideModal() {
         if (modal) {
             modal.classList.add('hidden');
+            // Reset to form view when closing
+            var verifyPending = document.getElementById('authVerifyPending');
+            var authForm = document.getElementById('authForm');
+            var authDivider = document.getElementById('authDivider');
+            var authGoogleBtn = document.getElementById('authGoogleBtn');
+            var authSwitch = modal.querySelector('.auth-switch');
+            if (verifyPending) verifyPending.classList.add('hidden');
+            if (authForm) authForm.classList.remove('hidden');
+            if (authDivider) authDivider.classList.remove('hidden');
+            if (authGoogleBtn) authGoogleBtn.classList.remove('hidden');
+            if (authSwitch) authSwitch.classList.remove('hidden');
         }
+    }
+
+    /**
+     * Show email verification pending view
+     */
+    function showVerificationPending(email) {
+        pendingVerificationEmail = email;
+
+        var verifyPending = document.getElementById('authVerifyPending');
+        var verifyEmail = document.getElementById('authVerifyEmail');
+        var authForm = document.getElementById('authForm');
+        var authDivider = document.getElementById('authDivider');
+        var authGoogleBtn = document.getElementById('authGoogleBtn');
+        var authSwitch = modal.querySelector('.auth-switch');
+        var title = document.getElementById('authModalTitle');
+
+        // Hide form, show verification pending
+        if (authForm) authForm.classList.add('hidden');
+        if (authDivider) authDivider.classList.add('hidden');
+        if (authGoogleBtn) authGoogleBtn.classList.add('hidden');
+        if (authSwitch) authSwitch.classList.add('hidden');
+        if (verifyPending) verifyPending.classList.remove('hidden');
+        if (verifyEmail) verifyEmail.textContent = email;
+        if (title) title.textContent = 'Verify Email';
     }
 
     /**
@@ -389,6 +481,7 @@ var Auth = (function() {
         var authBtn = document.getElementById('authBtn');
         var authOutBtn = document.getElementById('authOutBtn');
         var authUser = document.getElementById('authUser');
+        var authVerifyBadge = document.getElementById('authVerifyBadge');
         var saveLoadBtn = document.getElementById('saveLoadBtn');
 
         if (currentUser) {
@@ -399,9 +492,25 @@ var Auth = (function() {
             }
             if (authOutBtn) authOutBtn.classList.remove('hidden');
             if (saveLoadBtn) saveLoadBtn.classList.remove('hidden');
+
+            // Show/hide verification badge
+            if (authVerifyBadge) {
+                if (currentUser.emailVerified) {
+                    authVerifyBadge.classList.add('hidden');
+                } else {
+                    authVerifyBadge.classList.remove('hidden');
+                    // Click to show verification pending modal
+                    authVerifyBadge.onclick = function(e) {
+                        e.stopPropagation();
+                        showVerificationPending(currentUser.email);
+                        modal.classList.remove('hidden');
+                    };
+                }
+            }
         } else {
             if (authBtn) authBtn.classList.remove('hidden');
             if (authUser) authUser.classList.add('hidden');
+            if (authVerifyBadge) authVerifyBadge.classList.add('hidden');
             if (authOutBtn) authOutBtn.classList.add('hidden');
             if (saveLoadBtn) saveLoadBtn.classList.add('hidden');
         }
@@ -409,6 +518,7 @@ var Auth = (function() {
 
     function isLoggedIn() { return !!currentUser && !guestMode; }
     function getUser() { return currentUser; }
+    function isEmailVerified() { return currentUser && currentUser.emailVerified; }
 
     /**
      * Set guest mode - prevents score submission even if session exists
@@ -447,6 +557,7 @@ var Auth = (function() {
         signUp: signUp,
         signOut: signOut,
         isLoggedIn: isLoggedIn,
+        isEmailVerified: isEmailVerified,
         getUser: getUser,
         checkSession: checkSession,
         setGuestMode: setGuestMode,

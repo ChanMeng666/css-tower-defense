@@ -72,11 +72,70 @@ var Game = (function () {
     var selectedTowerType = null;
 
     /**
+     * Show verification prompt when score is pending
+     */
+    function showVerificationPrompt() {
+        // Remove existing modal if any
+        var existing = document.getElementById('verifyEmailModal');
+        if (existing) existing.remove();
+
+        var modal = document.createElement('div');
+        modal.id = 'verifyEmailModal';
+        modal.className = 'verify-modal';
+        modal.innerHTML =
+            '<div class="verify-modal-content">' +
+                '<h3>Verify Your Email</h3>' +
+                '<p>Your score has been saved! To appear on the leaderboard, please verify your email address.</p>' +
+                '<p class="verify-email-hint">Check your inbox for the verification link.</p>' +
+                '<div class="verify-buttons">' +
+                    '<button class="btn-primary" id="resendVerifyBtn">Resend Email</button>' +
+                    '<button class="btn-secondary" id="closeVerifyBtn">Close</button>' +
+                '</div>' +
+                '<p class="verify-note">Your pending scores will automatically appear on the leaderboard once verified.</p>' +
+            '</div>';
+        document.body.appendChild(modal);
+
+        // Resend button handler
+        document.getElementById('resendVerifyBtn').onclick = function() {
+            var btn = this;
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+
+            if (typeof API !== 'undefined' && API.resendVerificationEmail) {
+                API.resendVerificationEmail()
+                    .then(function(result) {
+                        btn.textContent = 'Email Sent!';
+                        setTimeout(function() {
+                            btn.disabled = false;
+                            btn.textContent = 'Resend Email';
+                        }, 3000);
+                    })
+                    .catch(function(err) {
+                        btn.textContent = 'Failed - Try Again';
+                        btn.disabled = false;
+                    });
+            }
+        };
+
+        // Close button handler
+        document.getElementById('closeVerifyBtn').onclick = function() {
+            modal.remove();
+        };
+
+        // Close on click outside
+        modal.onclick = function(e) {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        };
+    }
+
+    /**
      * Initialize the game
      */
     function init() {
-        // Load high score from localStorage
-        highScore = parseInt(localStorage.getItem('towerDefenseHighScore')) || 0;
+        // High score starts at 0 - will load from server when user logs in
+        highScore = 0;
 
         // Initialize utilities and object pool
         if (typeof Utils !== 'undefined') {
@@ -406,10 +465,9 @@ var Game = (function () {
             animationFrameId = null;
         }
 
-        // Update high score
+        // Update high score (local session only, server is source of truth)
         if (score > highScore) {
             highScore = score;
-            localStorage.setItem('towerDefenseHighScore', highScore);
         }
 
         // Submit to backend
@@ -427,24 +485,30 @@ var Game = (function () {
         if (typeof API !== 'undefined') {
             API.submitScore(gameData).then(function(result) {
                 if (result && result.success) {
-                    console.log('[Leaderboard] Score submitted successfully');
-                    if (typeof Display !== 'undefined' && Display.showToast) {
-                        Display.showToast('Score submitted!', 'success');
+                    if (result.pending) {
+                        // Score saved but needs email verification
+                        console.log('[Leaderboard] Score pending - awaiting email verification');
+                        showVerificationPrompt();
+                    } else {
+                        console.log('[Leaderboard] Score submitted successfully');
+                        if (typeof Display !== 'undefined' && Display.showToast) {
+                            Display.showToast('Score submitted!', 'success');
+                        }
+                        // Fetch rank after successful submission
+                        if (API.getMyRank) {
+                            API.getMyRank(difficulty).then(function(data) {
+                                if (data && data.rank) {
+                                    var goRank = document.getElementById('goRank');
+                                    if (goRank) goRank.textContent = '#' + data.rank;
+                                }
+                            });
+                        }
                     }
                 } else if (result === null && typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
                     console.warn('[Leaderboard] Submission failed silently');
                     if (typeof Display !== 'undefined' && Display.showToast) {
                         Display.showToast('Score submission failed', 'error');
                     }
-                }
-                // Fetch rank after submission
-                if (API.getMyRank) {
-                    API.getMyRank(difficulty).then(function(data) {
-                        if (data && data.rank) {
-                            var goRank = document.getElementById('goRank');
-                            if (goRank) goRank.textContent = '#' + data.rank;
-                        }
-                    });
                 }
             });
             API.recordGame(gameData);
@@ -489,10 +553,9 @@ var Game = (function () {
         var bonusScore = lives * 100;
         score += bonusScore;
 
-        // Update high score
+        // Update high score (local session only, server is source of truth)
         if (score > highScore) {
             highScore = score;
-            localStorage.setItem('towerDefenseHighScore', highScore);
         }
 
         // Submit to backend
@@ -510,24 +573,30 @@ var Game = (function () {
         if (typeof API !== 'undefined') {
             API.submitScore(gameData).then(function(result) {
                 if (result && result.success) {
-                    console.log('[Leaderboard] Score submitted successfully');
-                    if (typeof Display !== 'undefined' && Display.showToast) {
-                        Display.showToast('Score submitted!', 'success');
+                    if (result.pending) {
+                        // Score saved but needs email verification
+                        console.log('[Leaderboard] Score pending - awaiting email verification');
+                        showVerificationPrompt();
+                    } else {
+                        console.log('[Leaderboard] Score submitted successfully');
+                        if (typeof Display !== 'undefined' && Display.showToast) {
+                            Display.showToast('Score submitted!', 'success');
+                        }
+                        // Fetch rank after successful submission
+                        if (API.getMyRank) {
+                            API.getMyRank(difficulty).then(function(data) {
+                                if (data && data.rank) {
+                                    var goRank = document.getElementById('goRank');
+                                    if (goRank) goRank.textContent = '#' + data.rank;
+                                }
+                            });
+                        }
                     }
                 } else if (result === null && typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
                     console.warn('[Leaderboard] Submission failed silently');
                     if (typeof Display !== 'undefined' && Display.showToast) {
                         Display.showToast('Score submission failed', 'error');
                     }
-                }
-                // Fetch rank after submission
-                if (API.getMyRank) {
-                    API.getMyRank(difficulty).then(function(data) {
-                        if (data && data.rank) {
-                            var goRank = document.getElementById('goRank');
-                            if (goRank) goRank.textContent = '#' + data.rank;
-                        }
-                    });
                 }
             });
             API.recordGame(gameData);

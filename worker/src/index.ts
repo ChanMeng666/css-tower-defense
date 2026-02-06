@@ -10,6 +10,9 @@ import { challengeRoutes } from './routes/challenges';
 type Bindings = {
   DATABASE_URL: string;
   BETTER_AUTH_SECRET: string;
+  RESEND_API_KEY?: string;
+  GOOGLE_CLIENT_ID?: string;
+  GOOGLE_CLIENT_SECRET?: string;
   ASSETS: Fetcher;
 };
 

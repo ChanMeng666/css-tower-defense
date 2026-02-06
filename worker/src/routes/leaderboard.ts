@@ -2,18 +2,22 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { desc, eq, and, sql } from 'drizzle-orm';
 import { getDb } from '../db';
-import { leaderboardEntries, profiles } from '../db/schema';
+import { leaderboardEntries, profiles, pendingScores } from '../db/schema';
 import { requireAuth } from '../middleware/auth';
 import { validateScore } from '../services/anticheat';
+import { movePendingScoresToLeaderboard } from '../services/pending-scores';
 
 type Env = {
   Bindings: {
     DATABASE_URL: string;
     BETTER_AUTH_SECRET: string;
+    RESEND_API_KEY?: string;
+    GOOGLE_CLIENT_ID?: string;
+    GOOGLE_CLIENT_SECRET?: string;
     ASSETS: Fetcher;
   };
   Variables: {
-    user: { id: string; name: string; email: string };
+    user: { id: string; name: string; email: string; emailVerified: boolean };
   };
 };
 
@@ -124,7 +128,7 @@ leaderboardRoutes.get('/me', requireAuth, async (c) => {
   });
 });
 
-// POST /api/leaderboard - Submit score
+// POST /api/leaderboard - Submit score (verified = leaderboard, unverified = pending)
 leaderboardRoutes.post('/', requireAuth, async (c) => {
   const user = c.get('user');
   const body = await c.req.json();
@@ -154,21 +158,82 @@ leaderboardRoutes.post('/', requireAuth, async (c) => {
     displayName = profile[0].displayName;
   }
 
-  const [entry] = await db
-    .insert(leaderboardEntries)
-    .values({
-      userId: user.id,
-      displayName,
-      score: parsed.data.score,
-      difficulty: parsed.data.difficulty,
-      waveReached: parsed.data.waveReached,
-      towersBuilt: parsed.data.towersBuilt || 0,
-      enemiesKilled: parsed.data.enemiesKilled || 0,
-      durationSeconds: parsed.data.durationSeconds,
-    })
+  const scoreData = {
+    userId: user.id,
+    displayName,
+    score: parsed.data.score,
+    difficulty: parsed.data.difficulty,
+    waveReached: parsed.data.waveReached,
+    towersBuilt: parsed.data.towersBuilt || 0,
+    enemiesKilled: parsed.data.enemiesKilled || 0,
+    durationSeconds: parsed.data.durationSeconds,
+  };
+
+  // If email is verified, submit directly to leaderboard
+  if (user.emailVerified) {
+    const [entry] = await db
+      .insert(leaderboardEntries)
+      .values(scoreData)
+      .returning();
+
+    return c.json({ success: true, entry }, 201);
+  }
+
+  // Otherwise, store in pending scores (will be moved on verification)
+  const [pending] = await db
+    .insert(pendingScores)
+    .values(scoreData)
     .returning();
 
-  return c.json({ success: true, entry }, 201);
+  return c.json({
+    success: true,
+    pending: true,
+    message: 'Score saved! Verify your email to appear on the leaderboard.',
+    entry: pending
+  }, 201);
+});
+
+// GET /api/leaderboard/pending - Get user's pending scores count
+leaderboardRoutes.get('/pending', requireAuth, async (c) => {
+  const user = c.get('user');
+  const db = getDb(c.env.DATABASE_URL);
+
+  const pending = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(pendingScores)
+    .where(eq(pendingScores.userId, user.id));
+
+  return c.json({
+    count: Number(pending[0].count),
+    emailVerified: user.emailVerified
+  });
+});
+
+// POST /api/leaderboard/process-pending - Move pending scores to leaderboard after email verification
+leaderboardRoutes.post('/process-pending', requireAuth, async (c) => {
+  const user = c.get('user');
+
+  // Must be verified to process pending scores
+  if (!user.emailVerified) {
+    return c.json({
+      error: 'Email not verified',
+      code: 'EMAIL_NOT_VERIFIED'
+    }, 403);
+  }
+
+  // Move pending scores to leaderboard
+  const movedCount = await movePendingScoresToLeaderboard(
+    c.env.DATABASE_URL,
+    user.id
+  );
+
+  return c.json({
+    success: true,
+    movedCount,
+    message: movedCount > 0
+      ? `${movedCount} score${movedCount > 1 ? 's' : ''} added to the leaderboard!`
+      : 'No pending scores to process.'
+  });
 });
 
 export { leaderboardRoutes };

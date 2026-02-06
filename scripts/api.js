@@ -7,6 +7,7 @@ var API = (function() {
     'use strict';
 
     var BASE = '/api';
+    var lastScoreSubmission = null; // Prevent duplicate submissions
 
     /**
      * Generic fetch wrapper with auth and error handling
@@ -64,6 +65,15 @@ var API = (function() {
     }
 
     function submitScore(data) {
+        // Prevent duplicate submissions within 5 seconds
+        var now = Date.now();
+        var key = data.score + '-' + data.difficulty + '-' + data.waveReached;
+        if (lastScoreSubmission && lastScoreSubmission.key === key && (now - lastScoreSubmission.time) < 5000) {
+            console.log('[API] Duplicate score submission prevented:', key);
+            return Promise.resolve(null);
+        }
+        lastScoreSubmission = { key: key, time: now };
+
         return silentRequest('/leaderboard', {
             method: 'POST',
             body: data
@@ -166,6 +176,26 @@ var API = (function() {
         return silentRequest('/challenges/me');
     }
 
+    // ── Pending Scores ──
+
+    function getPendingScores() {
+        return silentRequest('/leaderboard/pending');
+    }
+
+    function processPendingScores() {
+        return silentRequest('/leaderboard/process-pending', {
+            method: 'POST'
+        });
+    }
+
+    // ── Auth Helpers ──
+
+    function resendVerificationEmail() {
+        return request('/auth/resend-verification', {
+            method: 'POST'
+        });
+    }
+
     return {
         getLeaderboard: getLeaderboard,
         getMyRank: getMyRank,
@@ -185,6 +215,9 @@ var API = (function() {
         getDailyChallenge: getDailyChallenge,
         completeDailyChallenge: completeDailyChallenge,
         getChallengeLeaderboard: getChallengeLeaderboard,
-        getMyChallenges: getMyChallenges
+        getMyChallenges: getMyChallenges,
+        getPendingScores: getPendingScores,
+        processPendingScores: processPendingScores,
+        resendVerificationEmail: resendVerificationEmail
     };
 })();

@@ -47,6 +47,26 @@
     text-shadow: 1px 1px 0 @color-dark;
 }
 
+.auth-verify-badge {
+    font-family: @font-main;
+    font-size: 11px;
+    padding: 2px 6px;
+    background: @color-danger;
+    color: @color-white;
+    border-radius: 3px;
+    cursor: pointer;
+    animation: pulse 2s infinite;
+
+    &:hover {
+        background: lighten(@color-danger, 10%);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
 // ── Auth Modal ──
 .auth-modal {
     position: fixed;
@@ -184,6 +204,96 @@
 
     &:hover {
         color: @color-white;
+    }
+}
+
+// ── OAuth Divider ──
+.auth-divider {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+    color: #666;
+    font-family: @font-main;
+    font-size: 12px;
+
+    &::before,
+    &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #444;
+    }
+
+    span {
+        padding: 0 12px;
+    }
+}
+
+// ── Google Sign-In Button ──
+.auth-google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    font-family: @font-main;
+    font-size: 14px;
+    padding: 10px;
+    background: @color-white;
+    color: #333;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        background: #f5f5f5;
+        border-color: #ccc;
+    }
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
+// ── Email Verification Pending ──
+.auth-verify-pending {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.auth-verify-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    color: @color-cyan;
+}
+
+.auth-verify-pending p {
+    font-family: @font-main;
+    font-size: 14px;
+    color: @color-white;
+    margin-bottom: 10px;
+}
+
+.auth-verify-email {
+    font-family: @font-main;
+    font-size: 13px;
+    color: @color-cyan;
+    word-break: break-all;
+}
+
+.auth-verify-hint {
+    font-size: 12px !important;
+    color: #888 !important;
+    margin-top: 15px !important;
+
+    a {
+        color: @color-cyan;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
 }
 
@@ -456,4 +566,96 @@
     font-family: @font-title;
     font-size: 22px;
     color: @color-yellow;
+}
+
+// ── Email Verification Prompt Modal ──
+.verify-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100002;
+}
+
+.verify-modal-content {
+    background: @color-dark;
+    border: 3px solid @color-yellow;
+    border-radius: 8px;
+    padding: 30px;
+    width: 400px;
+    max-width: 90vw;
+    text-align: center;
+    .pop-shadow();
+
+    h3 {
+        font-family: @font-title;
+        font-size: 24px;
+        color: @color-yellow;
+        margin: 0 0 15px;
+    }
+
+    p {
+        font-family: @font-main;
+        font-size: 14px;
+        color: @color-white;
+        margin: 0 0 12px;
+        line-height: 1.5;
+    }
+
+    .verify-email-hint {
+        color: @color-cyan;
+        font-weight: bold;
+    }
+
+    .verify-note {
+        font-size: 12px;
+        color: #888;
+        margin-top: 15px;
+    }
+}
+
+.verify-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+
+    button {
+        font-family: @font-title;
+        font-size: 16px;
+        padding: 10px 20px;
+        border: 2px solid @color-dark;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        .pop-shadow();
+
+        &.btn-primary {
+            background: @color-cyan;
+            color: @color-white;
+
+            &:hover {
+                background: lighten(@color-cyan, 10%);
+            }
+
+            &:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+        }
+
+        &.btn-secondary {
+            background: #444;
+            color: @color-white;
+
+            &:hover {
+                background: #555;
+            }
+        }
+    }
 }

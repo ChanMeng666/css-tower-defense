@@ -139,3 +139,19 @@ export const gameHistory = pgTable('game_history', {
 }, (t) => ({
   userIdx: index('idx_gh_user').on(t.userId, t.playedAt),
 }));
+
+// Pending scores for unverified users - auto-moved to leaderboard on email verification
+export const pendingScores = pgTable('pending_scores', {
+  id: serial('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => user.id),
+  displayName: varchar('display_name', { length: 30 }).notNull(),
+  score: integer('score').notNull(),
+  difficulty: varchar('difficulty', { length: 10 }).notNull(),
+  waveReached: integer('wave_reached').notNull(),
+  towersBuilt: integer('towers_built').default(0),
+  enemiesKilled: integer('enemies_killed').default(0),
+  durationSeconds: integer('duration_seconds'),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (t) => ({
+  userIdx: index('idx_ps_user').on(t.userId),
+}));

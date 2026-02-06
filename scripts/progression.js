@@ -15,7 +15,6 @@ var Progression = (function () {
     // Config
     var XP_PER_LEVEL_BASE = 100;
     var XP_SCALING = 1.5;
-    var LS_KEY = 'td_progression';
 
     // Debounce timer for server saves
     var serverSaveTimer = null;
@@ -50,8 +49,8 @@ var Progression = (function () {
         if (openBtn) openBtn.addEventListener('click', toggleModal);
         if (closeBtn) closeBtn.addEventListener('click', toggleModal);
 
-        // Load from localStorage
-        loadFromLocalStorage();
+        // Reset progression - will load from server when user logs in
+        resetProgression();
 
         // Listen for game events
         document.addEventListener('enemyKilled', function (e) {
@@ -62,10 +61,12 @@ var Progression = (function () {
             gainXP(e.detail.reward);
         });
 
-        // Sync on login
+        // Sync on auth state change
         document.addEventListener('authStateChanged', function (e) {
             if (e.detail && e.detail.user) {
                 loadFromServer();
+            } else {
+                resetProgression();
             }
         });
 
@@ -84,7 +85,6 @@ var Progression = (function () {
         xp += amount;
         checkLevelUp();
         updateUI();
-        saveToLocalStorage();
         debouncedServerSave();
     }
 
@@ -111,7 +111,6 @@ var Progression = (function () {
             skillPoints -= tech.cost;
             tech.currentLevel++;
             updateUI();
-            saveToLocalStorage();
             debouncedServerSave();
             return true;
         }
@@ -137,29 +136,13 @@ var Progression = (function () {
         }
     }
 
-    function saveToLocalStorage() {
-        try {
-            var data = {
-                xp: xp,
-                level: level,
-                skillPoints: skillPoints,
-                upgrades: getUpgradeState()
-            };
-            localStorage.setItem(LS_KEY, JSON.stringify(data));
-        } catch (e) { /* ignore */ }
-    }
-
-    function loadFromLocalStorage() {
-        try {
-            var saved = localStorage.getItem(LS_KEY);
-            if (saved) {
-                var data = JSON.parse(saved);
-                xp = data.xp || 0;
-                level = data.level || 1;
-                skillPoints = data.skillPoints || 0;
-                applyUpgradeState(data.upgrades);
-            }
-        } catch (e) { /* ignore */ }
+    function resetProgression() {
+        xp = 0;
+        level = 1;
+        skillPoints = 0;
+        for (var id in UPGRADES) {
+            UPGRADES[id].level = 0;
+        }
     }
 
     function saveToServer() {
@@ -173,27 +156,21 @@ var Progression = (function () {
     }
 
     function loadFromServer() {
-        if (typeof API === 'undefined' || typeof Auth === 'undefined' || !Auth.isLoggedIn()) return;
+        if (typeof API === 'undefined' || typeof Auth === 'undefined' || !Auth.isLoggedIn()) {
+            resetProgression();
+            renderUI();
+            return;
+        }
         API.getProgression().then(function (data) {
-            if (!data) return;
-            // Merge: take max level/xp, merge upgrade levels (take max per upgrade)
-            if (data.level > level || (data.level === level && (data.xp || 0) > xp)) {
+            resetProgression(); // Always reset first
+            if (data) {
                 xp = data.xp || 0;
                 level = data.level || 1;
                 skillPoints = data.skillPoints || 0;
-            }
-            if (data.upgrades) {
-                var localUpgrades = getUpgradeState();
-                for (var id in data.upgrades) {
-                    if (UPGRADES[id]) {
-                        var serverLevel = data.upgrades[id] || 0;
-                        var localLevel = localUpgrades[id] || 0;
-                        UPGRADES[id].currentLevel = Math.min(Math.max(serverLevel, localLevel), UPGRADES[id].maxLevel);
-                    }
+                if (data.upgrades) {
+                    applyUpgradeState(data.upgrades);
                 }
             }
-            saveToLocalStorage();
-            saveToServer(); // Push merged state back
             renderUI();
         });
     }

@@ -108,8 +108,8 @@ var Achievements = (function() {
         towersPlaced = 0;
         killCount = 0;
 
-        // Load unlocked achievements from localStorage
-        loadProgress();
+        // Reset achievements - will load from server when user logs in
+        resetAll();
 
         // Set up event listeners
         setupListeners();
@@ -257,59 +257,40 @@ var Achievements = (function() {
     }
 
     /**
-     * Save progress to localStorage
+     * Reset all achievements to locked state
      */
-    function saveProgress() {
-        var unlocked = [];
+    function resetAll() {
         for (var id in ACHIEVEMENTS) {
-            if (ACHIEVEMENTS[id].unlocked) {
-                unlocked.push(id);
-            }
+            ACHIEVEMENTS[id].unlocked = false;
         }
-        localStorage.setItem('td_achievements', JSON.stringify(unlocked));
     }
 
     /**
-     * Load progress from localStorage
+     * Load achievements from server (only source of truth)
      */
-    function loadProgress() {
-        try {
-            var saved = localStorage.getItem('td_achievements');
-            if (saved) {
-                var unlocked = JSON.parse(saved);
-                unlocked.forEach(function(id) {
-                    if (ACHIEVEMENTS[id]) {
-                        ACHIEVEMENTS[id].unlocked = true;
+    function loadFromServer() {
+        if (typeof API === 'undefined' || typeof Auth === 'undefined' || !Auth.isLoggedIn()) {
+            resetAll();
+            return;
+        }
+        API.getAchievements().then(function(data) {
+            resetAll(); // Always reset first
+            if (data && data.achievements) {
+                data.achievements.forEach(function(a) {
+                    if (ACHIEVEMENTS[a.achievementId]) {
+                        ACHIEVEMENTS[a.achievementId].unlocked = true;
                     }
                 });
             }
-        } catch (e) {
-            // Ignore errors
-        }
-    }
-
-    /**
-     * Load achievements from server and merge with local
-     */
-    function loadFromServer() {
-        if (typeof API === 'undefined' || typeof Auth === 'undefined' || !Auth.isLoggedIn()) return;
-        API.getAchievements().then(function(data) {
-            if (!data || !data.achievements) return;
-            var changed = false;
-            data.achievements.forEach(function(a) {
-                if (ACHIEVEMENTS[a.achievementId] && !ACHIEVEMENTS[a.achievementId].unlocked) {
-                    ACHIEVEMENTS[a.achievementId].unlocked = true;
-                    changed = true;
-                }
-            });
-            if (changed) saveProgress();
         });
     }
 
-    // Sync on login
+    // Sync on auth state change
     document.addEventListener('authStateChanged', function(e) {
         if (e.detail && e.detail.user) {
             loadFromServer();
+        } else {
+            resetAll();
         }
     });
 
