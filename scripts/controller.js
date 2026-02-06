@@ -43,6 +43,9 @@
         // Setup crafting button
         setupCraftButton();
 
+        // Setup developer modal
+        setupDeveloperModal();
+
         // Load leaderboard preview and daily challenge on start screen
         loadLeaderboardPreview();
         loadDailyChallenge();
@@ -227,7 +230,61 @@
             });
         }
 
+        // Developer button
+        var developerBtn = document.getElementById('developerBtn');
+        if (developerBtn) {
+            developerBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                moreMenu.classList.add('hidden');
+                moreBtn.classList.remove('open');
+                showDeveloperModal();
+            });
+        }
+
         // Challenge button is wired up separately by loadDailyChallenge()
+    }
+
+    /**
+     * Show developer info modal
+     */
+    function showDeveloperModal() {
+        var modal = document.getElementById('devModal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            Sfx.playEffect('button');
+        }
+    }
+
+    /**
+     * Setup developer modal close handlers
+     */
+    function setupDeveloperModal() {
+        var modal = document.getElementById('devModal');
+        var closeBtn = document.getElementById('devModalClose');
+
+        if (!modal) return;
+
+        // Close button
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                modal.classList.add('hidden');
+            });
+        }
+
+        // Click backdrop to close
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+
+        // ESC key to close
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                modal.classList.add('hidden');
+            }
+        });
     }
 
     /**

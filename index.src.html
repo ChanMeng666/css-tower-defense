@@ -86,30 +86,10 @@
                     <svg class="menu-icon" viewBox="0 0 18 18" width="18" height="18"><circle cx="9" cy="7" r="5" fill="#F2D864" stroke="currentColor" stroke-width="1"/><path d="M6 12 L5 17 L9 15 L13 17 L12 12" fill="#D4738A" stroke="currentColor" stroke-width="1"/><path d="M7 6 L8 8 L10 8 L8.5 9.5 L9 11 L7.5 9.5 L6 11 L6.5 9 L5 8 L7 8 Z" fill="currentColor" transform="translate(1.5, -1.5) scale(0.8)"/></svg>
                     Achievements
                 </button>
-            </div>
-        </div>
-
-        <!-- Developer Branding (subtle footer) -->
-        <div class="dev-brand">
-            <div class="dev-brand-inner">
-                <a href="https://github.com/ChanMeng666" target="_blank" rel="noopener" class="dev-brand-logo" title="Chan Meng - Portfolio">
-                    <img src="assets/images/chan_logo.svg" alt="Chan Meng" class="dev-logo-img">
-                </a>
-                <div class="dev-brand-text">
-                    <span class="dev-brand-name">Built by Chan Meng</span>
-                    <span class="dev-brand-cta">Custom web development available</span>
-                </div>
-                <div class="dev-brand-links">
-                    <a href="mailto:chanmeng.dev@gmail.com" class="dev-link" title="Email Chan Meng">
-                        <svg viewBox="0 0 20 20" width="18" height="18"><rect x="1" y="4" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M1 6 L10 12 L19 6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
-                    </a>
-                    <a href="https://github.com/ChanMeng666" target="_blank" rel="noopener" class="dev-link" title="GitHub Portfolio">
-                        <svg viewBox="0 0 20 20" width="18" height="18"><path d="M10 1C5.03 1 1 5.03 1 10c0 3.98 2.58 7.35 6.16 8.54.45.08.62-.2.62-.43v-1.5c-2.51.55-3.04-1.21-3.04-1.21-.41-1.04-1-1.32-1-1.32-.82-.56.06-.55.06-.55.9.06 1.38.93 1.38.93.8 1.38 2.1.98 2.62.75.08-.58.31-.98.57-1.2-2-.23-4.1-1-4.1-4.45 0-.98.35-1.79.93-2.42-.1-.23-.4-1.15.08-2.39 0 0 .76-.24 2.48.93a8.6 8.6 0 0 1 4.5 0c1.72-1.17 2.48-.93 2.48-.93.49 1.24.18 2.16.09 2.39.58.63.92 1.44.92 2.42 0 3.46-2.1 4.22-4.11 4.44.32.28.61.83.61 1.67v2.48c0 .24.16.52.62.43A9 9 0 0 0 19 10c0-4.97-4.03-9-9-9z" fill="currentColor"/></svg>
-                    </a>
-                    <a href="https://github.com/ChanMeng666/css-tower-defense" target="_blank" rel="noopener" class="dev-link" title="Project Source Code">
-                        <svg viewBox="0 0 20 20" width="18" height="18"><rect x="3" y="1" width="14" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 5h6M7 8h6M7 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-                    </a>
-                </div>
+                <button id="developerBtn">
+                    <svg class="menu-icon" viewBox="0 0 18 18" width="18" height="18"><circle cx="9" cy="5" r="3" fill="#4A90C4" stroke="currentColor" stroke-width="1"/><path d="M3 16 C3 12 6 10 9 10 C12 10 15 12 15 16" fill="#2D8A8A" stroke="currentColor" stroke-width="1"/><path d="M7 14 L8 15 L11 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    Developer
+                </button>
             </div>
         </div>
 
@@ -123,6 +103,38 @@
         <div class="start-menu-row" id="startMenuRow">
             <button class="start-menu-btn">Leaderboard</button>
             <button class="start-menu-btn start-menu-btn-challenge hidden">Daily Challenge</button>
+        </div>
+    </div>
+
+    <!-- Developer Modal -->
+    <div class="dev-modal hidden" id="devModal">
+        <div class="dev-modal-content">
+            <button class="dev-modal-close" id="devModalClose">&times;</button>
+            <div class="dev-modal-header">
+                <img src="assets/images/chan_logo.svg" alt="Chan Meng" class="dev-modal-logo">
+                <div class="dev-modal-title">
+                    <h2>Chan Meng</h2>
+                    <p>Full-Stack Developer</p>
+                </div>
+            </div>
+            <div class="dev-modal-body">
+                <p class="dev-modal-cta">Need a custom website or web application?</p>
+                <p class="dev-modal-desc">I build modern, responsive, and performant web experiences. Let's bring your ideas to life!</p>
+                <div class="dev-modal-links">
+                    <a href="mailto:chanmeng.dev@gmail.com" class="dev-modal-link dev-modal-link-primary">
+                        <svg viewBox="0 0 20 20" width="18" height="18"><rect x="1" y="4" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M1 6 L10 12 L19 6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+                        Contact Me
+                    </a>
+                    <a href="https://github.com/ChanMeng666" target="_blank" rel="noopener" class="dev-modal-link">
+                        <svg viewBox="0 0 20 20" width="18" height="18"><path d="M10 1C5.03 1 1 5.03 1 10c0 3.98 2.58 7.35 6.16 8.54.45.08.62-.2.62-.43v-1.5c-2.51.55-3.04-1.21-3.04-1.21-.41-1.04-1-1.32-1-1.32-.82-.56.06-.55.06-.55.9.06 1.38.93 1.38.93.8 1.38 2.1.98 2.62.75.08-.58.31-.98.57-1.2-2-.23-4.1-1-4.1-4.45 0-.98.35-1.79.93-2.42-.1-.23-.4-1.15.08-2.39 0 0 .76-.24 2.48.93a8.6 8.6 0 0 1 4.5 0c1.72-1.17 2.48-.93 2.48-.93.49 1.24.18 2.16.09 2.39.58.63.92 1.44.92 2.42 0 3.46-2.1 4.22-4.11 4.44.32.28.61.83.61 1.67v2.48c0 .24.16.52.62.43A9 9 0 0 0 19 10c0-4.97-4.03-9-9-9z" fill="currentColor"/></svg>
+                        Portfolio
+                    </a>
+                    <a href="https://github.com/ChanMeng666/css-tower-defense" target="_blank" rel="noopener" class="dev-modal-link">
+                        <svg viewBox="0 0 20 20" width="18" height="18"><path d="M10 1 L13 7 L19 7 L14 11 L16 18 L10 14 L4 18 L6 11 L1 7 L7 7 Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                        Star Project
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
