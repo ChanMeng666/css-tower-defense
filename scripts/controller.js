@@ -930,13 +930,20 @@
         if (rankEl) rankEl.innerHTML = '';
 
         var dateStr = dateOverride || new Date().toISOString().slice(0, 10);
+        var isLoggedIn = typeof Auth !== 'undefined' && Auth.isLoggedIn();
 
-        Promise.all([
+        var fetches = [
             API.getDailyChallenge(),
             API.getChallengeLeaderboard(dateStr)
-        ]).then(function(results) {
+        ];
+        if (isLoggedIn) {
+            fetches.push(API.getMyChallenges());
+        }
+
+        Promise.all(fetches).then(function(results) {
             var challengeData = results[0];
             var lbData = results[1];
+            var myData = results[2] || null;
 
             if (!lbData) {
                 listEl.innerHTML = '<div class="leaderboard-loading">Failed to load</div>';
@@ -992,28 +999,61 @@
             if (!lbData.entries || lbData.entries.length === 0) {
                 var empty = document.createElement('div');
                 empty.className = 'leaderboard-loading';
-                empty.textContent = 'No scores yet';
+                empty.textContent = isToday ? 'Be the first to complete today\'s challenge!' : 'No scores for this date';
                 listEl.appendChild(empty);
-                return;
+            } else {
+                lbData.entries.forEach(function(entry) {
+                    var row = document.createElement('div');
+                    row.className = 'leaderboard-row';
+                    var durationStr = '';
+                    if (entry.durationSeconds) {
+                        var mins = Math.floor(entry.durationSeconds / 60);
+                        var secs = entry.durationSeconds % 60;
+                        durationStr = '<span class="leaderboard-duration">' +
+                            mins + ':' + (secs < 10 ? '0' : '') + secs + '</span>';
+                    }
+                    row.innerHTML =
+                        '<span class="leaderboard-rank">#' + entry.rank + '</span>' +
+                        '<span class="leaderboard-name">' + escapeHtml(entry.displayName) + '</span>' +
+                        durationStr +
+                        '<span class="leaderboard-score">' + entry.score + '</span>';
+                    listEl.appendChild(row);
+                });
             }
 
-            lbData.entries.forEach(function(entry) {
-                var row = document.createElement('div');
-                row.className = 'leaderboard-row';
-                var durationStr = '';
-                if (entry.durationSeconds) {
-                    var mins = Math.floor(entry.durationSeconds / 60);
-                    var secs = entry.durationSeconds % 60;
-                    durationStr = '<span class="leaderboard-duration">' +
-                        mins + ':' + (secs < 10 ? '0' : '') + secs + '</span>';
+            // Show player's own challenge stats in the rank section
+            if (rankEl && myData && myData.completions) {
+                var myCompletion = null;
+                for (var i = 0; i < myData.completions.length; i++) {
+                    if (myData.completions[i].date === dateStr) {
+                        myCompletion = myData.completions[i];
+                        break;
+                    }
                 }
-                row.innerHTML =
-                    '<span class="leaderboard-rank">#' + entry.rank + '</span>' +
-                    '<span class="leaderboard-name">' + escapeHtml(entry.displayName) + '</span>' +
-                    durationStr +
-                    '<span class="leaderboard-score">' + entry.score + '</span>';
-                listEl.appendChild(row);
-            });
+
+                var rankHtml = '';
+                if (myCompletion) {
+                    // Find player's rank in the leaderboard entries
+                    var myRank = '--';
+                    if (lbData.entries) {
+                        for (var j = 0; j < lbData.entries.length; j++) {
+                            if (lbData.entries[j].score === myCompletion.score) {
+                                myRank = '#' + lbData.entries[j].rank;
+                                break;
+                            }
+                        }
+                    }
+                    rankHtml = '<div class="lb-my-rank-text">Your rank: <strong>' + myRank + '</strong> &mdash; Score: <strong>' + myCompletion.score + '</strong></div>';
+                } else if (isToday) {
+                    rankHtml = '<div class="lb-my-rank-text" style="color:#999">Not yet completed today</div>';
+                }
+
+                if (myData.streak > 0) {
+                    rankHtml += '<div class="lb-my-streak">' + myData.streak + ' day streak</div>';
+                }
+
+                rankEl.innerHTML = rankHtml;
+            }
         }).catch(function() {
             listEl.innerHTML = '<div class="leaderboard-loading">Failed to load</div>';
         });

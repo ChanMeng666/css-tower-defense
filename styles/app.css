@@ -5657,6 +5657,12 @@ body.blood-moon .sky-cycle {
   color: #aaa;
   font-size: 11px;
 }
+.lb-my-streak {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 13px;
+  color: #E88A42;
+  margin-top: 4px;
+}
 .save-load-content {
   width: 420px;
 }
