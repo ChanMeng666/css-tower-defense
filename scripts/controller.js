@@ -845,6 +845,7 @@
                     '<button class="lb-tab selected" data-diff="normal">Normal</button>' +
                     '<button class="lb-tab" data-diff="hard">Hard</button>' +
                     '<button class="lb-tab" data-diff="expert">Expert</button>' +
+                    '<button class="lb-tab" data-diff="challenge">Challenge</button>' +
                 '</div>' +
                 '<div class="leaderboard-list lb-full-list" id="lbFullList">' +
                     '<div class="leaderboard-loading">Loading...</div>' +
@@ -863,7 +864,11 @@
             tab.addEventListener('click', function() {
                 tabs.forEach(function(t) { t.classList.remove('selected'); });
                 tab.classList.add('selected');
-                loadLeaderboardData(tab.dataset.diff);
+                if (tab.dataset.diff === 'challenge') {
+                    loadChallengeLeaderboard();
+                } else {
+                    loadLeaderboardData(tab.dataset.diff);
+                }
             });
         });
 
@@ -914,6 +919,104 @@
                 }
             });
         }
+    }
+
+    function loadChallengeLeaderboard(dateOverride) {
+        var listEl = document.getElementById('lbFullList');
+        var rankEl = document.getElementById('lbMyRank');
+        if (!listEl) return;
+
+        listEl.innerHTML = '<div class="leaderboard-loading">Loading...</div>';
+        if (rankEl) rankEl.innerHTML = '';
+
+        var dateStr = dateOverride || new Date().toISOString().slice(0, 10);
+
+        Promise.all([
+            API.getDailyChallenge(),
+            API.getChallengeLeaderboard(dateStr)
+        ]).then(function(results) {
+            var challengeData = results[0];
+            var lbData = results[1];
+
+            if (!lbData) {
+                listEl.innerHTML = '<div class="leaderboard-loading">Failed to load</div>';
+                return;
+            }
+
+            listEl.innerHTML = '';
+
+            // Date navigation
+            var dateNav = document.createElement('div');
+            dateNav.className = 'lb-date-nav';
+            var prevDate = new Date(dateStr);
+            prevDate.setDate(prevDate.getDate() - 1);
+            var nextDate = new Date(dateStr);
+            nextDate.setDate(nextDate.getDate() + 1);
+            var today = new Date().toISOString().slice(0, 10);
+            var isToday = dateStr === today;
+
+            dateNav.innerHTML =
+                '<button class="lb-date-arrow" id="lbDatePrev">&larr;</button>' +
+                '<span class="lb-date-label">' + (isToday ? 'Today' : dateStr) + '</span>' +
+                '<button class="lb-date-arrow' + (isToday ? ' disabled' : '') + '" id="lbDateNext"' +
+                    (isToday ? ' disabled' : '') + '>&rarr;</button>';
+            listEl.appendChild(dateNav);
+
+            document.getElementById('lbDatePrev').addEventListener('click', function() {
+                loadChallengeLeaderboard(prevDate.toISOString().slice(0, 10));
+            });
+            if (!isToday) {
+                document.getElementById('lbDateNext').addEventListener('click', function() {
+                    loadChallengeLeaderboard(nextDate.toISOString().slice(0, 10));
+                });
+            }
+
+            // Challenge info header (only for today)
+            if (isToday && challengeData && challengeData.challenge) {
+                var ch = challengeData.challenge;
+                var catColors = {
+                    constraint: '#4A90C4', survival: '#E8635A', speed: '#F2D864',
+                    boss: '#D4A8E8', themed: '#5EA65E', economy: '#E88A42'
+                };
+                var info = document.createElement('div');
+                info.className = 'lb-challenge-info';
+                info.innerHTML =
+                    '<span class="lb-challenge-name">' + escapeHtml(ch.name) + '</span>' +
+                    '<span class="challenge-category" style="background:' +
+                        (catColors[ch.category] || '#888') + '">' + escapeHtml(ch.category) + '</span>' +
+                    '<span class="lb-challenge-desc">' + escapeHtml(ch.description) + '</span>';
+                listEl.appendChild(info);
+            }
+
+            // Leaderboard entries
+            if (!lbData.entries || lbData.entries.length === 0) {
+                var empty = document.createElement('div');
+                empty.className = 'leaderboard-loading';
+                empty.textContent = 'No scores yet';
+                listEl.appendChild(empty);
+                return;
+            }
+
+            lbData.entries.forEach(function(entry) {
+                var row = document.createElement('div');
+                row.className = 'leaderboard-row';
+                var durationStr = '';
+                if (entry.durationSeconds) {
+                    var mins = Math.floor(entry.durationSeconds / 60);
+                    var secs = entry.durationSeconds % 60;
+                    durationStr = '<span class="leaderboard-duration">' +
+                        mins + ':' + (secs < 10 ? '0' : '') + secs + '</span>';
+                }
+                row.innerHTML =
+                    '<span class="leaderboard-rank">#' + entry.rank + '</span>' +
+                    '<span class="leaderboard-name">' + escapeHtml(entry.displayName) + '</span>' +
+                    durationStr +
+                    '<span class="leaderboard-score">' + entry.score + '</span>';
+                listEl.appendChild(row);
+            });
+        }).catch(function() {
+            listEl.innerHTML = '<div class="leaderboard-loading">Failed to load</div>';
+        });
     }
 
     /**

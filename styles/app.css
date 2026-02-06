@@ -5566,8 +5566,8 @@ body.blood-moon .sky-cycle {
 .lb-tab {
   flex: 1;
   font-family: 'Bangers', 'Impact', cursive;
-  font-size: 14px;
-  padding: 6px 8px;
+  font-size: 12px;
+  padding: 6px 4px;
   background: #2A2420;
   color: #888;
   border: 1px solid #444;
@@ -5599,6 +5599,63 @@ body.blood-moon .sky-cycle {
 }
 .lb-my-rank-text strong {
   color: #F2D864;
+}
+.lb-date-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.lb-date-arrow {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 16px;
+  background: #2A2420;
+  border: 2px solid #444;
+  border-radius: 3px;
+  color: #F2D864;
+  cursor: pointer;
+  padding: 2px 8px;
+  transition: border-color 0.2s;
+}
+.lb-date-arrow:hover:not(.disabled) {
+  border-color: #F2D864;
+}
+.lb-date-arrow.disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.lb-date-label {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 14px;
+  color: #FFF8F0;
+  min-width: 80px;
+  text-align: center;
+}
+.lb-challenge-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+.lb-challenge-name {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 14px;
+  color: #F2D864;
+}
+.lb-challenge-desc {
+  font-size: 11px;
+  color: #999;
+  width: 100%;
+}
+.leaderboard-duration {
+  width: 45px;
+  text-align: right;
+  color: #aaa;
+  font-size: 11px;
 }
 .save-load-content {
   width: 420px;
