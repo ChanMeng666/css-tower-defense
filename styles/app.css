@@ -505,6 +505,111 @@
   height: 18px;
   flex-shrink: 0;
 }
+.dev-brand {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  opacity: 0;
+  animation: button-appear 0.5s ease forwards;
+  animation-delay: 2.5s;
+}
+.ready .dev-brand {
+  opacity: 1;
+  animation: none;
+}
+.dev-brand-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: rgba(26, 22, 20, 0.75);
+  border: 1px solid rgba(255, 248, 240, 0.2);
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+}
+.dev-brand-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+.dev-brand-logo:hover {
+  transform: scale(1.1);
+}
+.dev-logo-img {
+  width: 32px;
+  height: 32px;
+  filter: invert(1);
+}
+.dev-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.dev-brand-name {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 0.85rem;
+  color: #FFF8F0;
+  letter-spacing: 0.5px;
+}
+.dev-brand-cta {
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.7rem;
+  color: #2D8A8A;
+  letter-spacing: 0.3px;
+}
+.dev-brand-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 8px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 248, 240, 0.2);
+}
+.dev-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: rgba(255, 248, 240, 0.7);
+  background: rgba(255, 248, 240, 0.1);
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.dev-link:hover {
+  color: #2D8A8A;
+  background: rgba(45, 138, 138, 0.2);
+  transform: translateY(-2px);
+}
+.dev-link svg {
+  width: 16px;
+  height: 16px;
+}
+@media (max-width: 500px) {
+  .dev-brand-inner {
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 14px;
+  }
+  .dev-brand-links {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 248, 240, 0.2);
+  }
+  .dev-brand-text {
+    text-align: center;
+  }
+}
+@media (max-width: 350px) {
+  .dev-brand {
+    display: none;
+  }
+}
 .difficulty-select {
   display: none;
 }
