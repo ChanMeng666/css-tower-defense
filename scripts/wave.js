@@ -21,26 +21,26 @@ var Wave = (function() {
         // Wave 1 - Tutorial wave
         {
             events: [
-                { time: 0, type: 'announcement', data: { title: 'Wave 1', subtitle: 'The slimes approach...' } },
-                { time: 2000, type: 'spawn', data: [{ type: 'slime', count: 5, interval: 1500 }] }
+                { time: 0, type: 'announcement', data: { title: 'Wave 1', subtitle: 'The kehua spirits approach...' } },
+                { time: 2000, type: 'spawn', data: [{ type: 'kehua', count: 5, interval: 1500 }] }
             ],
             reward: 25
         },
         // Wave 2
         {
             events: [
-                { time: 0, type: 'announcement', data: { title: 'Wave 2', subtitle: 'More slimes incoming!' } },
-                { time: 2000, type: 'spawn', data: [{ type: 'slime', count: 8, interval: 1200 }] }
+                { time: 0, type: 'announcement', data: { title: 'Wave 2', subtitle: 'More kehua incoming!' } },
+                { time: 2000, type: 'spawn', data: [{ type: 'kehua', count: 8, interval: 1200 }] }
             ],
             reward: 30
         },
-        // Wave 3 - Introduce goblins
+        // Wave 3 - Introduce patupaiarehe
         {
             events: [
-                { time: 0, type: 'announcement', data: { title: 'Wave 3', subtitle: 'Goblins join the fray!' } },
+                { time: 0, type: 'announcement', data: { title: 'Wave 3', subtitle: 'Patupaiarehe join the fray!' } },
                 { time: 2000, type: 'spawn', data: [
-                    { type: 'slime', count: 5, interval: 1500 },
-                    { type: 'goblin', count: 3, interval: 2000 }
+                    { type: 'kehua', count: 5, interval: 1500 },
+                    { type: 'patupaiarehe', count: 3, interval: 2000 }
                 ] }
             ],
             reward: 40
@@ -48,84 +48,84 @@ var Wave = (function() {
         // Wave 4
         {
             events: [
-                { time: 0, type: 'announcement', data: { title: 'Wave 4', subtitle: 'Goblin raiders!' } },
+                { time: 0, type: 'announcement', data: { title: 'Wave 4', subtitle: 'Forest spirits emerge!' } },
                 { time: 2000, type: 'spawn', data: [
-                    { type: 'goblin', count: 6, interval: 1200 },
-                    { type: 'slime', count: 4, interval: 1000 }
+                    { type: 'patupaiarehe', count: 6, interval: 1200 },
+                    { type: 'kehua', count: 4, interval: 1000 }
                 ] }
             ],
             reward: 50
         },
-        // Wave 5 - Introduce knights
+        // Wave 5 - Introduce toa warriors
         {
             events: [
-                { time: 0, type: 'announcement', data: { title: 'Wave 5', subtitle: 'Armored knights approach!' } },
-                { time: 1500, type: 'warning', data: { message: 'Knights have high armor!' } },
+                { time: 0, type: 'announcement', data: { title: 'Wave 5', subtitle: 'Toa warriors approach!' } },
+                { time: 1500, type: 'warning', data: { message: 'Toa have high armor!' } },
                 { time: 3000, type: 'spawn', data: [
-                    { type: 'slime', count: 8, interval: 1000 },
-                    { type: 'goblin', count: 5, interval: 1500 },
-                    { type: 'knight', count: 2, interval: 3000 }
+                    { type: 'kehua', count: 8, interval: 1000 },
+                    { type: 'patupaiarehe', count: 5, interval: 1500 },
+                    { type: 'toa', count: 2, interval: 3000 }
                 ] }
             ],
             reward: 75
         },
-        // Wave 6 - Can trigger repair if low on lives
+        // Wave 6 - Can trigger Te Rongoā if low on lives
         {
             events: [
                 { time: 0, type: 'announcement', data: { title: 'Wave 6', subtitle: 'The assault continues' } },
                 { time: 2000, type: 'spawn', data: [
-                    { type: 'goblin', count: 8, interval: 1000 },
-                    { type: 'knight', count: 4, interval: 2500 }
+                    { type: 'patupaiarehe', count: 8, interval: 1000 },
+                    { type: 'toa', count: 4, interval: 2500 }
                 ] }
             ],
             reward: 80
         },
-        // Wave 7 - Special event
+        // Wave 7 - Special event: Te Haumi (Abundance)
         {
             events: [
-                { time: 0, type: 'announcement', data: { title: 'Wave 7', subtitle: 'Gold rush!' } },
-                { time: 1000, type: 'specialEvent', data: { type: 'goldRush', bonus: 50 } },
+                { time: 0, type: 'announcement', data: { title: 'Wave 7', subtitle: 'Te Haumi! (Abundance)' } },
+                { time: 1000, type: 'specialEvent', data: { type: 'teHaumi', bonus: 50 } },
                 { time: 2500, type: 'spawn', data: [
-                    { type: 'slime', count: 10, interval: 800, variant: 'speedy' },
-                    { type: 'goblin', count: 6, interval: 1200 },
-                    { type: 'knight', count: 5, interval: 2000 }
+                    { type: 'kehua', count: 10, interval: 800, variant: 'tere' },
+                    { type: 'patupaiarehe', count: 6, interval: 1200 },
+                    { type: 'toa', count: 5, interval: 2000 }
                 ] }
             ],
             reward: 100
         },
-        // Wave 8 - Heavy wave
+        // Wave 8 - Rangatira forces
         {
             events: [
-                { time: 0, type: 'announcement', data: { title: 'Wave 8', subtitle: 'Elite forces!' } },
+                { time: 0, type: 'announcement', data: { title: 'Wave 8', subtitle: 'Rangatira forces!' } },
                 { time: 2000, type: 'spawn', data: [
-                    { type: 'knight', count: 8, interval: 1500 },
-                    { type: 'goblin', count: 10, interval: 1000, variant: 'elite' }
+                    { type: 'toa', count: 8, interval: 1500 },
+                    { type: 'patupaiarehe', count: 10, interval: 1000, variant: 'rangatira' }
                 ] }
             ],
             reward: 120
         },
-        // Wave 9 - Pre-boss
+        // Wave 9 - Pre-boss: Te Taua (War Party)
         {
             events: [
-                { time: 0, type: 'announcement', data: { title: 'Wave 9', subtitle: 'The horde approaches!' } },
-                { time: 1500, type: 'warning', data: { message: 'Prepare for the boss!' } },
+                { time: 0, type: 'announcement', data: { title: 'Wave 9', subtitle: 'Te Taua approaches!' } },
+                { time: 1500, type: 'warning', data: { message: 'Prepare for the Taniwha!' } },
                 { time: 3000, type: 'spawn', data: [
-                    { type: 'slime', count: 15, interval: 600 },
-                    { type: 'goblin', count: 10, interval: 800 },
-                    { type: 'knight', count: 6, interval: 1800 }
+                    { type: 'kehua', count: 15, interval: 600 },
+                    { type: 'patupaiarehe', count: 10, interval: 800 },
+                    { type: 'toa', count: 6, interval: 1800 }
                 ] }
             ],
             reward: 150
         },
-        // Wave 10 - Boss wave
+        // Wave 10 - Boss wave: Taniwha
         {
             events: [
-                { time: 0, type: 'announcement', data: { title: 'FINAL WAVE', subtitle: 'The Dark Lord awakens!' } },
-                { time: 2500, type: 'warning', data: { message: 'BOSS INCOMING!' } },
+                { time: 0, type: 'announcement', data: { title: 'FINAL WAVE', subtitle: 'The Taniwha awakens!' } },
+                { time: 2500, type: 'warning', data: { message: 'TANIWHA INCOMING!' } },
                 { time: 4000, type: 'spawn', data: [
-                    { type: 'knight', count: 4, interval: 2000 }
+                    { type: 'toa', count: 4, interval: 2000 }
                 ] },
-                { time: 10000, type: 'bossSpawn', data: { type: 'boss' } }
+                { time: 10000, type: 'bossSpawn', data: { type: 'taniwha' } }
             ],
             reward: 200
         }
@@ -338,44 +338,44 @@ var Wave = (function() {
     var eventTimer = 0;
 
     /**
-     * Handle special event (gold rush, etc.)
+     * Handle special event (Māori-themed)
      */
     function handleSpecialEvent(data) {
         switch (data.type) {
-            case 'goldRush':
-                // Award bonus gold
+            case 'teHaumi':
+                // Te Haumi (Abundance) - bonus gold
                 if (typeof Game !== 'undefined' && Game.addGold) {
                     Game.addGold(data.bonus);
                 }
                 if (typeof Display !== 'undefined') {
-                    Display.showMessage('Gold Rush!');
+                    Display.showMessage('Te Haumi! (Abundance)');
                 }
                 break;
 
-            case 'speedBoost':
-                // Temporary tower fire rate boost
-                activeEvent = { type: 'speedBoost', duration: 10 };
+            case 'teHau':
+                // Te Hau (Wind Blessing) - tower fire rate boost
+                activeEvent = { type: 'teHau', duration: 10 };
                 eventTimer = 10;
                 if (typeof Display !== 'undefined') {
-                    Display.showAnnouncement('SPEED BOOST!', 'All towers fire 50% faster!');
+                    Display.showAnnouncement('TE HAU!', 'Wind Blessing - towers fire 50% faster!');
                 }
                 break;
 
-            case 'repair':
-                // Restore lives
+            case 'teRongoa':
+                // Te Rongoā (Healing) - restore lives
                 if (typeof Game !== 'undefined') {
                     Game.addLives(5);
                 }
                 if (typeof Display !== 'undefined') {
-                    Display.showMessage('Repair Drone! +5 lives!');
+                    Display.showMessage('Te Rongoā! (Healing) +5 lives!');
                 }
                 break;
 
-            case 'bloodMoon':
-                // Blood Moon - enemies stronger but more gold (night-only event)
-                activeEvent = { type: 'bloodMoon' };
+            case 'maramaToto':
+                // Marama Toto (Blood Moon) - enemies stronger but more gold
+                activeEvent = { type: 'maramaToto' };
                 if (typeof Display !== 'undefined') {
-                    Display.showAnnouncement('BLOOD MOON!', 'Enemies +30% HP, +50% gold!');
+                    Display.showAnnouncement('MARAMA TOTO!', 'Blood Moon - Enemies +30% HP, +50% gold!');
                 }
                 // Apply to map visual
                 document.body.classList.add('blood-moon');
@@ -385,24 +385,44 @@ var Wave = (function() {
                 }
                 break;
 
-            case 'eliteSwarm':
-                // All enemies in this wave are elite
-                activeEvent = { type: 'eliteSwarm' };
+            case 'teTaua':
+                // Te Taua (War Party) - all enemies are rangatira
+                activeEvent = { type: 'teTaua' };
                 if (typeof Display !== 'undefined') {
-                    Display.showAnnouncement('ELITE SWARM!', 'All enemies are Elite!');
+                    Display.showAnnouncement('TE TAUA!', 'War Party - All enemies are Rangatira!');
                 }
                 break;
 
-            case 'luckyStar':
-                // Double drop rate for next wave
+            case 'matariki':
+                // Matariki (Pleiades/Māori New Year) - double drop rate
                 if (typeof Inventory !== 'undefined') {
                     Inventory.setDropMultiplier(2.0);
                 }
-                activeEvent = { type: 'luckyStar' };
+                activeEvent = { type: 'matariki' };
                 if (typeof Display !== 'undefined') {
-                    Display.showMessage('Lucky Star! Double drop rate!');
+                    Display.showMessage('Matariki! Double drop rate!');
                 }
                 break;
+
+            // Keep backwards compatibility for old event names
+            case 'goldRush':
+                handleSpecialEvent({ type: 'teHaumi', bonus: data.bonus });
+                return;
+            case 'speedBoost':
+                handleSpecialEvent({ type: 'teHau' });
+                return;
+            case 'repair':
+                handleSpecialEvent({ type: 'teRongoa' });
+                return;
+            case 'bloodMoon':
+                handleSpecialEvent({ type: 'maramaToto' });
+                return;
+            case 'eliteSwarm':
+                handleSpecialEvent({ type: 'teTaua' });
+                return;
+            case 'luckyStar':
+                handleSpecialEvent({ type: 'matariki' });
+                return;
         }
 
         // Emit event
@@ -416,37 +436,37 @@ var Wave = (function() {
      */
     function rollRandomEvents(waveNum) {
         // Clear previous event
-        if (activeEvent && activeEvent.type === 'bloodMoon') {
+        if (activeEvent && activeEvent.type === 'maramaToto') {
             document.body.classList.remove('blood-moon');
             if (typeof Weather !== 'undefined' && Weather.setBloodMoon) {
                 Weather.setBloodMoon(false);
             }
         }
-        if (activeEvent && activeEvent.type === 'luckyStar' && typeof Inventory !== 'undefined') {
+        if (activeEvent && activeEvent.type === 'matariki' && typeof Inventory !== 'undefined') {
             Inventory.setDropMultiplier(1.0);
         }
         activeEvent = null;
 
-        // Blood Moon - night waves only (even), scaling probability
+        // Marama Toto (Blood Moon) - night waves only (even), scaling probability
         var isNightWave = (waveNum % 2 === 0);
         if (isNightWave && waveNum >= 2) {
             // Wave 2: 5%, Wave 4: 10%, Wave 6: 15%, Wave 8: 20%, Wave 10: 25%
             var bloodMoonChance = waveNum * 0.025;
             if (Math.random() < bloodMoonChance) {
-                handleSpecialEvent({ type: 'bloodMoon' });
+                handleSpecialEvent({ type: 'maramaToto' });
                 return;
             }
         }
 
-        // Elite Swarm - wave 5+, 10% chance
+        // Te Taua (War Party) - wave 5+, 10% chance
         if (waveNum >= 5 && Math.random() < 0.10) {
-            handleSpecialEvent({ type: 'eliteSwarm' });
+            handleSpecialEvent({ type: 'teTaua' });
             return;
         }
 
-        // Lucky Star - 10% chance after wave 4
+        // Matariki (Māori New Year) - 10% chance after wave 4
         if (waveNum >= 4 && Math.random() < 0.10) {
-            handleSpecialEvent({ type: 'luckyStar' });
+            handleSpecialEvent({ type: 'matariki' });
             return;
         }
     }
@@ -469,7 +489,7 @@ var Wave = (function() {
     }
 
     /**
-     * Handle boss spawn event
+     * Handle boss spawn event - Taniwha
      */
     function handleBossSpawn(data) {
         // Trigger boss entrance visual effect
@@ -477,7 +497,7 @@ var Wave = (function() {
 
         // Show boss warning
         if (typeof Display !== 'undefined' && Display.showAnnouncement) {
-            Display.showAnnouncement('BOSS', 'The Dark Lord has arrived!');
+            Display.showAnnouncement('TANIWHA', 'The water guardian emerges!');
         }
 
         // Add boss to spawn queue with delay (respects pause, unlike setTimeout)
@@ -511,7 +531,7 @@ var Wave = (function() {
         if (!warningText) {
             warningText = document.createElement('div');
             warningText.className = 'boss-warning-text';
-            warningText.textContent = 'BOSS!';
+            warningText.textContent = 'TANIWHA!';
             document.body.appendChild(warningText);
         }
 

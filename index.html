@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSS Tower Defense</title>
+    <title>Te Pā Tiaki - Guardians of Aotearoa</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&display=swap"
@@ -83,12 +83,15 @@
                 <span class="stat-value" id="score">0</span>
             </div>
             <div class="stat inventory-stat">
-                <span class="stat-icon"><svg viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="12" r="5" fill="#888" stroke="#1A1614" stroke-width="1.5"/><circle cx="12" cy="12" r="2" fill="#FFF8F0" stroke="#1A1614" stroke-width="1"/><rect x="11" y="1" width="2" height="5" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8"/><rect x="11" y="18" width="2" height="5" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8"/><rect x="1" y="11" width="5" height="2" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8"/><rect x="18" y="11" width="5" height="2" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8"/><rect x="4.5" y="3.5" width="2" height="4" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8" transform="rotate(45 5.5 5.5)"/><rect x="17.5" y="16.5" width="2" height="4" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8" transform="rotate(45 18.5 18.5)"/><rect x="16.5" y="3.5" width="2" height="4" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8" transform="rotate(-45 17.5 5.5)"/><rect x="3.5" y="16.5" width="2" height="4" rx="1" fill="#888" stroke="#1A1614" stroke-width="0.8" transform="rotate(-45 4.5 18.5)"/></svg></span>
-                <span class="stat-value" id="invScrap">0</span>
-                <span class="stat-icon"><svg viewBox="0 0 24 24" width="24" height="24"><polygon points="12,1 14.5,9 8,9 13,15 10.5,15 15,22 9,22 12,15 8,15 11,9 7.5,9" fill="#F2D864" stroke="#1A1614" stroke-width="1"/><polygon points="12,3 13.5,9.5 9.5,9.5 13,14 11.5,14 14,20 10.5,20 12,14.5 9.5,14.5 11.5,9.5 9,9.5" fill="#FFF8F0" opacity="0.4"/></svg></span>
-                <span class="stat-value" id="invCore">0</span>
-                <span class="stat-icon"><svg viewBox="0 0 24 24" width="24" height="24"><polygon points="12,1 17,8 22,8 18,14 20,22 12,17 4,22 6,14 2,8 7,8" fill="#4A90C4" stroke="#1A1614" stroke-width="1.2"/><polygon points="12,4 9,8 7,8 8,12 6,16 12,14" fill="rgba(255,255,255,0.3)"/><line x1="10" y1="6" x2="8" y2="10" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/></svg></span>
-                <span class="stat-value" id="invCrystal">0</span>
+                <!-- Pipi (Shell) - Common -->
+                <span class="stat-icon" title="Pipi (Shell)"><svg viewBox="0 0 24 24" width="24" height="24"><ellipse cx="12" cy="14" rx="8" ry="6" fill="#F5F5DC" stroke="#1A1614" stroke-width="1.5"/><path d="M4 14 Q12 8 20 14" fill="none" stroke="#D4C4A8" stroke-width="1.5"/><path d="M6 14 Q12 10 18 14" fill="none" stroke="#D4C4A8" stroke-width="1"/><ellipse cx="12" cy="14" rx="3" ry="2" fill="rgba(255,255,255,0.3)"/></svg></span>
+                <span class="stat-value" id="invPipi">0</span>
+                <!-- Koiwi (Bone) - Rare -->
+                <span class="stat-icon" title="Koiwi (Carved Bone)"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M6 4 C4 4 3 6 4 8 L4 16 C3 18 4 20 6 20 C8 20 9 18 8 16 L8 8 C9 6 8 4 6 4" fill="#FFFFF0" stroke="#1A1614" stroke-width="1.2"/><path d="M18 4 C16 4 15 6 16 8 L16 16 C15 18 16 20 18 20 C20 20 21 18 20 16 L20 8 C21 6 20 4 18 4" fill="#FFFFF0" stroke="#1A1614" stroke-width="1.2"/><rect x="7" y="10" width="10" height="4" fill="#FFFFF0" stroke="#1A1614" stroke-width="1.2"/></svg></span>
+                <span class="stat-value" id="invKoiwi">0</span>
+                <!-- Pounamu (Greenstone) - Epic -->
+                <span class="stat-icon" title="Pounamu (Greenstone)"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2 L20 10 L16 22 L8 22 L4 10 Z" fill="#3CB371" stroke="#1A1614" stroke-width="1.5"/><path d="M12 4 L8 10 L10 20" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><ellipse cx="11" cy="10" rx="2" ry="3" fill="rgba(255,255,255,0.25)" transform="rotate(-15 11 10)"/></svg></span>
+                <span class="stat-value" id="invPounamu">0</span>
             </div>
         </div>
 
@@ -111,50 +114,50 @@
             </div>
         </div>
 
-        <!-- Tower Shop -->
+        <!-- Tower Shop - Māori Weapons & Deities -->
         <div class="shop-panel" id="shopPanel">
-            <div class="shop-title">Towers</div>
+            <div class="shop-title">Tū Atu (Defenders)</div>
             <div class="tower-options">
-                <div class="tower-option" data-tower="arrow" data-cost="50">
+                <div class="tower-option" data-tower="taiaha" data-cost="50">
                     <div class="tower-preview tower-arrow-preview"></div>
                     <div class="tower-info">
-                        <span class="tower-name">Arrow</span>
+                        <span class="tower-name">Taiaha</span>
                         <span class="tower-cost">50g</span>
                     </div>
                 </div>
-                <div class="tower-option" data-tower="cannon" data-cost="100">
+                <div class="tower-option" data-tower="mere" data-cost="100">
                     <div class="tower-preview tower-cannon-preview"></div>
                     <div class="tower-info">
-                        <span class="tower-name">Cannon</span>
+                        <span class="tower-name">Mere</span>
                         <span class="tower-cost">100g</span>
                     </div>
                 </div>
-                <div class="tower-option" data-tower="ice" data-cost="75">
+                <div class="tower-option" data-tower="tangaroa" data-cost="75">
                     <div class="tower-preview tower-ice-preview"></div>
                     <div class="tower-info">
-                        <span class="tower-name">Ice</span>
+                        <span class="tower-name">Tangaroa</span>
                         <span class="tower-cost">75g</span>
                     </div>
                 </div>
-                <div class="tower-option" data-tower="magic" data-cost="150">
+                <div class="tower-option" data-tower="tohunga" data-cost="150">
                     <div class="tower-preview tower-magic-preview"></div>
                     <div class="tower-info">
-                        <span class="tower-name">Magic</span>
+                        <span class="tower-name">Tohunga</span>
                         <span class="tower-cost">150g</span>
                     </div>
                 </div>
-                <!-- NEW WEAPONS -->
-                <div class="tower-option" data-tower="tesla" data-cost="200">
+                <!-- Māori Deities -->
+                <div class="tower-option" data-tower="tawhiri" data-cost="200">
                     <div class="tower-preview tower-tesla-preview"></div>
                     <div class="tower-info">
-                        <span class="tower-name">Tesla</span>
+                        <span class="tower-name">Tāwhiri</span>
                         <span class="tower-cost">200g</span>
                     </div>
                 </div>
-                <div class="tower-option" data-tower="flame" data-cost="250">
+                <div class="tower-option" data-tower="mahuika" data-cost="250">
                     <div class="tower-preview tower-flame-preview"></div>
                     <div class="tower-info">
-                        <span class="tower-name">Flame</span>
+                        <span class="tower-name">Mahuika</span>
                         <span class="tower-cost">250g</span>
                     </div>
                 </div>

@@ -1,23 +1,23 @@
 /**
- * CSS Tower Defense - Daily Challenge System
+ * Te Pā Tiaki - Daily Challenge System
  * Client-side challenge constraint tracker
  */
 
 var Challenge = (function() {
     'use strict';
 
-    // Challenge templates (mirrors server definitions)
+    // Challenge templates (mirrors server definitions) - Māori themed
     var TEMPLATES = {
-        speed_run: { name: 'Speed Run', description: 'Complete in under 15 minutes', constraint: 'time_limit' },
-        arrow_only: { name: "Archer's Path", description: 'Arrow towers only', allowedTowers: ['arrow'], scoreBonus: 1.5 },
-        no_sell: { name: 'No Refunds', description: 'Cannot sell towers', scoreBonus: 1.25 },
-        budget: { name: 'Penny Pincher', description: 'Start with only 50 gold', startGold: 50, scoreBonus: 2.0 },
-        fragile: { name: 'Glass Cannon', description: 'Only 5 starting lives', startLives: 5 },
-        boss_rush: { name: 'Boss Rush', description: 'Start at wave 8 with 500 gold', startWave: 8, startGold: 500, scoreBonus: 2.0 },
-        ice_age: { name: 'Ice Age', description: 'Arrow and Ice towers only', allowedTowers: ['arrow', 'ice'], scoreBonus: 1.75 },
-        material_hunter: { name: 'Scavenger', description: 'Score based on materials collected' },
-        combo_master: { name: 'Combo Frenzy', description: 'Bonus for combos of 5+' },
-        tower_limit: { name: 'Minimalist', description: 'Maximum 6 towers', maxTowers: 6, scoreBonus: 2.5 }
+        speed_run: { name: 'Te Oma Tere', description: 'Complete in under 15 minutes', constraint: 'time_limit' },
+        taiaha_only: { name: "Ara Taiaha", description: 'Taiaha towers only', allowedTowers: ['taiaha'], scoreBonus: 1.5 },
+        no_sell: { name: 'Kore Hoko', description: 'Cannot sell towers', scoreBonus: 1.25 },
+        budget: { name: 'Pēneti Iti', description: 'Start with only 50 gold', startGold: 50, scoreBonus: 2.0 },
+        fragile: { name: 'Maroro', description: 'Only 5 starting lives', startLives: 5 },
+        taniwha_rush: { name: 'Taniwha Rush', description: 'Start at wave 8 with 500 gold', startWave: 8, startGold: 500, scoreBonus: 2.0 },
+        moana: { name: 'Te Moana', description: 'Taiaha and Tangaroa towers only', allowedTowers: ['taiaha', 'tangaroa'], scoreBonus: 1.75 },
+        taonga_hunter: { name: 'Kaikohi Taonga', description: 'Score based on taonga collected' },
+        combo_master: { name: 'Kaiwhakatū', description: 'Bonus for combos of 5+' },
+        tower_limit: { name: 'Ngāwari', description: 'Maximum 6 towers', maxTowers: 6, scoreBonus: 2.5 }
     };
 
     var active = false;

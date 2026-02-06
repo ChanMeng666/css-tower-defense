@@ -6,10 +6,10 @@
 var Tower = (function () {
     'use strict';
 
-    // Tower type definitions
+    // Tower type definitions - Māori weapons & deities
     var TOWER_TYPES = {
-        arrow: {
-            name: 'Arrow Tower',
+        taiaha: {
+            name: 'Taiaha',
             cost: 50,
             damage: 15,
             range: 120,          // pixels
@@ -17,10 +17,11 @@ var Tower = (function () {
             projectileType: 'arrow',
             projectileSpeed: 400,
             className: 'tower-arrow',
-            description: 'Fast single-target attacks'
+            description: 'Traditional fighting staff',
+            lore: 'The taiaha is a traditional Māori fighting staff, embodying the warrior spirit.'
         },
-        cannon: {
-            name: 'Cannon Tower',
+        mere: {
+            name: 'Mere',
             cost: 100,
             damage: 30,
             range: 150,
@@ -28,11 +29,12 @@ var Tower = (function () {
             projectileType: 'cannon',
             projectileSpeed: 300,
             className: 'tower-cannon',
-            description: 'Splash damage area attack',
-            splashRadius: 60
+            description: 'Pounamu greenstone club',
+            splashRadius: 60,
+            lore: 'The mere is a short, flat club made of pounamu (greenstone), a symbol of chieftainship.'
         },
-        ice: {
-            name: 'Ice Tower',
+        tangaroa: {
+            name: 'Tangaroa',
             cost: 75,
             damage: 10,
             range: 100,
@@ -40,12 +42,13 @@ var Tower = (function () {
             projectileType: 'ice',
             projectileSpeed: 350,
             className: 'tower-ice',
-            description: 'Slows enemies',
+            description: 'Ocean deity\'s blessing',
             slowEffect: 0.5,
-            slowDuration: 2
+            slowDuration: 2,
+            lore: 'Tangaroa is the god of the sea. His waters slow all who pass through.'
         },
-        magic: {
-            name: 'Magic Tower',
+        tohunga: {
+            name: 'Tohunga',
             cost: 150,
             damage: 50,
             range: 200,
@@ -53,11 +56,12 @@ var Tower = (function () {
             projectileType: 'magic',
             projectileSpeed: 250,
             className: 'tower-magic',
-            description: 'High damage long range',
-            ignoreArmor: true
+            description: 'Spiritual leader\'s power',
+            ignoreArmor: true,
+            lore: 'Tohunga were expert priests and healers, wielding spiritual power that pierces all defenses.'
         },
-        tesla: {
-            name: 'Tesla Tower',
+        tawhiri: {
+            name: 'Tāwhiri',
             cost: 200,
             damage: 40,
             range: 140,
@@ -65,12 +69,13 @@ var Tower = (function () {
             projectileType: 'tesla',
             projectileSpeed: 1000,
             className: 'tower-tesla',
-            description: 'Zaps enemies instantly',
+            description: 'Storm god\'s wrath',
             chainTargets: 3,
-            chainDamageFalloff: 0.7
+            chainDamageFalloff: 0.7,
+            lore: 'Tāwhirimātea is the god of weather and storms, whose lightning strikes many foes.'
         },
-        flame: {
-            name: 'Flame Tower',
+        mahuika: {
+            name: 'Mahuika',
             cost: 250,
             damage: 5,
             range: 100,
@@ -78,10 +83,11 @@ var Tower = (function () {
             projectileType: 'flame',
             projectileSpeed: 400,
             className: 'tower-flame',
-            description: 'Burns enemies rapidly',
+            description: 'Sacred fire goddess',
             burnDamage: 3,
             burnDuration: 3,
-            burnInterval: 0.5
+            burnInterval: 0.5,
+            lore: 'Mahuika is the goddess of fire. Her flames were gifted to humanity by the hero Māui.'
         }
     };
 
@@ -233,36 +239,36 @@ var Tower = (function () {
 
         // Create tower parts based on type (with new particle elements)
         switch (this.type) {
-            case 'arrow':
+            case 'taiaha':
                 el.innerHTML = '<div class="tower-base"></div>' +
                     '<div class="tower-body"></div>' +
                     '<div class="tower-top"></div>' +
                     '<div class="tower-turret"></div>';
                 break;
-            case 'cannon':
+            case 'mere':
                 el.innerHTML = '<div class="tower-base"></div>' +
                     '<div class="tower-body"></div>' +
                     '<div class="tower-barrel"></div>';
                 break;
-            case 'ice':
+            case 'tangaroa':
                 el.innerHTML = '<div class="tower-base"></div>' +
                     '<div class="tower-crystal"></div>' +
                     '<div class="tower-glow"></div>' +
                     '<div class="ice-particles"></div>';
                 break;
-            case 'magic':
+            case 'tohunga':
                 el.innerHTML = '<div class="tower-base"></div>' +
                     '<div class="tower-orb"></div>' +
                     '<div class="tower-ring"></div>' +
                     '<div class="magic-energy"></div>';
                 break;
-            case 'tesla':
+            case 'tawhiri':
                 el.innerHTML = '<div class="tower-base"></div>' +
                     '<div class="tower-coil"></div>' +
                     '<div class="tower-spark"></div>' +
                     '<div class="tesla-arc"></div>';
                 break;
-            case 'flame':
+            case 'mahuika':
                 el.innerHTML = '<div class="tower-base"></div>' +
                     '<div class="tower-tank"></div>' +
                     '<div class="tower-nozzle"></div>' +
@@ -414,9 +420,9 @@ var Tower = (function () {
         var self = this;
 
         // Remove firing class after animation completes
-        var animationDuration = this.type === 'magic' ? 400 :
-            this.type === 'ice' ? 500 :
-                this.type === 'cannon' ? 400 : 200;
+        var animationDuration = this.type === 'tohunga' ? 400 :
+            this.type === 'tangaroa' ? 500 :
+                this.type === 'mere' ? 400 : 200;
         setTimeout(function () {
             self.element.classList.remove('firing');
         }, animationDuration);

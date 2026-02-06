@@ -6,77 +6,81 @@
 var Enemy = (function() {
     'use strict';
     
-    // Enemy type definitions
+    // Enemy type definitions - Māori mythology creatures
     var ENEMY_TYPES = {
-        slime: {
-            name: 'Slime',
+        kehua: {
+            name: 'Kehua',
             health: 50,
             speed: 40,           // pixels per second
             reward: 10,          // gold on kill
             damage: 1,           // damage to player on reaching end
-            className: 'enemy-slime'
+            className: 'enemy-slime',
+            lore: 'Kehua are wandering spirits of the departed, restless souls seeking passage.'
         },
-        goblin: {
-            name: 'Goblin',
+        patupaiarehe: {
+            name: 'Patupaiarehe',
             health: 80,
             speed: 60,
             reward: 15,
             damage: 1,
-            className: 'enemy-goblin'
+            className: 'enemy-goblin',
+            lore: 'Patupaiarehe are mischievous fairy folk who dwell in the misty forests.'
         },
-        knight: {
-            name: 'Knight',
+        toa: {
+            name: 'Toa',
             health: 200,
             speed: 30,
             reward: 25,
             damage: 2,
             armor: 5,            // damage reduction
-            className: 'enemy-knight'
+            className: 'enemy-knight',
+            lore: 'Toa are fierce Māori warriors, skilled in combat and protected by their mana.'
         },
-        boss: {
-            name: 'Boss',
+        taniwha: {
+            name: 'Taniwha',
             health: 1000,
             speed: 20,
             reward: 100,
             damage: 5,
             armor: 10,
             className: 'enemy-boss',
+            lore: 'Taniwha are powerful water guardians, sometimes dangerous, sometimes protective.',
             // Boss skill configuration
             skills: {
-                summon: { cooldown: 10000, count: 3 },       // Summon 3 slimes every 10s
-                shield: { cooldown: 15000, armor: 50, duration: 5000 }, // +50 armor for 5s
-                enrage: { healthThreshold: 0.3, speedBoost: 0.5, damageMultiplier: 2 } // At 30% HP
+                karanga: { cooldown: 10000, count: 3 },       // "The Call" - summons 3 kehua every 10s
+                kaitiaki: { cooldown: 15000, armor: 50, duration: 5000 }, // "Guardian Shield" +50 armor for 5s
+                teRiri: { healthThreshold: 0.3, speedBoost: 0.5, damageMultiplier: 2 } // "The Rage" at 30% HP
             }
         }
     };
 
-    // Enemy variant modifiers (elite, armored, speedy, toxic)
+    // Enemy variant modifiers - Māori terms
     var ENEMY_VARIANTS = {
-        elite: {
-            name: 'Elite',
+        rangatira: {
+            name: 'Rangatira',  // Chief
             healthMultiplier: 2.0,
             speedMultiplier: 1.3,
             rewardMultiplier: 2.5,
             damageMultiplier: 1.5,
             className: 'elite'
         },
-        armored: {
-            name: 'Armored',
+        pakanga: {
+            name: 'Pakanga',    // Battle-ready
             healthMultiplier: 1.5,
             speedMultiplier: 0.8,
             rewardMultiplier: 1.8,
             armorBonus: 10,
             className: 'armored'
         },
-        speedy: {
-            name: 'Speedy',
+        tere: {
+            name: 'Tere',       // Swift
             healthMultiplier: 0.7,
             speedMultiplier: 2.0,
             rewardMultiplier: 1.5,
             className: 'speedy'
         },
-        toxic: {
-            name: 'Toxic',
+        mate: {
+            name: 'Mate',       // Deadly
             healthMultiplier: 1.2,
             speedMultiplier: 1.0,
             rewardMultiplier: 2.0,
@@ -146,12 +150,12 @@ var Enemy = (function() {
         this.slowed = false;
         this.slowTimer = 0;
 
-        // Noise-based movement (for speedy and boss types)
-        this.useNoiseMovement = (type === 'boss' || variant === 'speedy');
+        // Noise-based movement (for tere variant and taniwha boss)
+        this.useNoiseMovement = (type === 'taniwha' || variant === 'tere');
         this.noiseTime = Math.random() * 1000; // Random start offset
 
-        // Boss-specific state
-        if (type === 'boss') {
+        // Boss-specific state (Taniwha)
+        if (type === 'taniwha') {
             this.isBoss = true;
             this.bossPhase = 1;
             this.summonCooldown = 0;
@@ -192,16 +196,16 @@ var Enemy = (function() {
         
         // Type-specific elements
         switch(this.type) {
-            case 'slime':
+            case 'kehua':
                 this.createSlimeElements(el);
                 break;
-            case 'goblin':
+            case 'patupaiarehe':
                 this.createGoblinElements(el);
                 break;
-            case 'knight':
+            case 'toa':
                 this.createKnightElements(el);
                 break;
-            case 'boss':
+            case 'taniwha':
                 this.createBossElements(el);
                 break;
             default:
@@ -480,13 +484,13 @@ var Enemy = (function() {
     };
 
     /**
-     * Update Boss-specific behavior (skills, phases)
+     * Update Boss-specific behavior (skills, phases) - Taniwha
      */
     EnemyEntity.prototype.updateBoss = function(dt) {
         var dtMs = dt * 1000;
-        var skills = ENEMY_TYPES.boss.skills;
+        var skills = ENEMY_TYPES.taniwha.skills;
 
-        // Update shield timer
+        // Update Kaitiaki (shield) timer
         if (this.shieldActive) {
             this.shieldTimer -= dtMs;
             if (this.shieldTimer <= 0) {
@@ -494,7 +498,7 @@ var Enemy = (function() {
                 this.armor = this.baseArmor;
                 this.element.classList.remove('shielded');
                 if (typeof emitGameEvent === 'function') {
-                    emitGameEvent(EVENTS.BOSS_SKILL_USED, { skill: 'shieldEnd', boss: this });
+                    emitGameEvent(EVENTS.BOSS_SKILL_USED, { skill: 'kaitiakiEnd', boss: this });
                 }
             }
         }
@@ -503,49 +507,49 @@ var Enemy = (function() {
         this.summonCooldown -= dtMs;
         this.shieldCooldown -= dtMs;
 
-        // Check for enrage (30% health threshold)
-        if (!this.enraged && this.health <= this.maxHealth * skills.enrage.healthThreshold) {
+        // Check for Te Riri (enrage) at 30% health threshold
+        if (!this.enraged && this.health <= this.maxHealth * skills.teRiri.healthThreshold) {
             this.enraged = true;
-            this.baseSpeed *= (1 + skills.enrage.speedBoost);
+            this.baseSpeed *= (1 + skills.teRiri.speedBoost);
             this.speed = this.baseSpeed;
-            this.damage *= skills.enrage.damageMultiplier;
+            this.damage *= skills.teRiri.damageMultiplier;
             this.element.classList.add('enraged');
 
             // Phase change event
             this.bossPhase = 2;
             if (typeof emitGameEvent === 'function') {
                 emitGameEvent(EVENTS.BOSS_PHASE_CHANGE, { phase: 2, boss: this });
-                emitGameEvent(EVENTS.BOSS_SKILL_USED, { skill: 'enrage', boss: this });
+                emitGameEvent(EVENTS.BOSS_SKILL_USED, { skill: 'teRiri', boss: this });
             }
         }
 
-        // Use Summon skill
+        // Use Karanga (summon) skill
         if (this.summonCooldown <= 0) {
             this.useSummonSkill();
-            this.summonCooldown = skills.summon.cooldown;
+            this.summonCooldown = skills.karanga.cooldown;
         }
 
-        // Use Shield skill (only when below 70% health)
+        // Use Kaitiaki (shield) skill (only when below 70% health)
         if (this.shieldCooldown <= 0 && !this.shieldActive && this.health < this.maxHealth * 0.7) {
             this.useShieldSkill();
-            this.shieldCooldown = skills.shield.cooldown;
+            this.shieldCooldown = skills.kaitiaki.cooldown;
         }
     };
 
     /**
-     * Boss Summon skill - spawn minions
+     * Boss Karanga skill (The Call) - spawn kehua minions
      */
     EnemyEntity.prototype.useSummonSkill = function() {
-        var skills = ENEMY_TYPES.boss.skills;
-        var count = skills.summon.count;
+        var skills = ENEMY_TYPES.taniwha.skills;
+        var count = skills.karanga.count;
 
-        // Spawn slimes near the boss position
+        // Spawn kehua near the taniwha position
         for (var i = 0; i < count; i++) {
             // Delay each spawn slightly
             (function(index) {
                 setTimeout(function() {
                     if (Enemy.count() < 50) { // Limit total enemies
-                        Enemy.spawn('slime');
+                        Enemy.spawn('kehua');
                     }
                 }, index * 200);
             })(i);
@@ -562,24 +566,24 @@ var Enemy = (function() {
 
         // Emit event
         if (typeof emitGameEvent === 'function') {
-            emitGameEvent(EVENTS.BOSS_SKILL_USED, { skill: 'summon', boss: this, count: count });
+            emitGameEvent(EVENTS.BOSS_SKILL_USED, { skill: 'karanga', boss: this, count: count });
         }
     };
 
     /**
-     * Boss Shield skill - temporary armor boost
+     * Boss Kaitiaki skill (Guardian Shield) - temporary armor boost
      */
     EnemyEntity.prototype.useShieldSkill = function() {
-        var skills = ENEMY_TYPES.boss.skills;
+        var skills = ENEMY_TYPES.taniwha.skills;
 
         this.shieldActive = true;
-        this.shieldTimer = skills.shield.duration;
-        this.armor = this.baseArmor + skills.shield.armor;
+        this.shieldTimer = skills.kaitiaki.duration;
+        this.armor = this.baseArmor + skills.kaitiaki.armor;
         this.element.classList.add('shielded');
 
         // Emit event
         if (typeof emitGameEvent === 'function') {
-            emitGameEvent(EVENTS.BOSS_SKILL_USED, { skill: 'shield', boss: this, armor: skills.shield.armor });
+            emitGameEvent(EVENTS.BOSS_SKILL_USED, { skill: 'kaitiaki', boss: this, armor: skills.kaitiaki.armor });
         }
     };
     
@@ -675,9 +679,9 @@ var Enemy = (function() {
         });
         document.dispatchEvent(event);
         
-        // Remove element after animation (boss takes longer)
+        // Remove element after animation (taniwha boss takes longer)
         var self = this;
-        var deathDuration = this.type === 'boss' ? 1000 : 600;
+        var deathDuration = this.type === 'taniwha' ? 1000 : 600;
         setTimeout(function() {
             self.destroy();
         }, deathDuration);
@@ -722,16 +726,16 @@ var Enemy = (function() {
     
     /**
      * Spawn a new enemy with optional variant
-     * @param {string} type - Enemy type (slime, goblin, knight, boss)
-     * @param {string} variant - Optional variant (elite, armored, speedy, toxic)
+     * @param {string} type - Enemy type (kehua, patupaiarehe, toa, taniwha)
+     * @param {string} variant - Optional variant (rangatira, pakanga, tere, mate)
      */
     function spawn(type, variant) {
         var path = Path.getPathWaypoints();
         var enemy = new EnemyEntity(type, path, variant);
         enemies.push(enemy);
 
-        // Emit boss spawned event
-        if (type === 'boss' && typeof emitGameEvent === 'function') {
+        // Emit boss (taniwha) spawned event
+        if (type === 'taniwha' && typeof emitGameEvent === 'function') {
             emitGameEvent(EVENTS.BOSS_SPAWNED, { boss: enemy });
         }
 

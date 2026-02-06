@@ -552,7 +552,7 @@ var Display = (function() {
     // Environment Bar
     // =========================================
 
-    // SVG icon paths for environment indicators
+    // SVG icon paths for environment indicators - Māori seasons
     var ENV_ICONS = {
         sun: '<circle cx="12" cy="12" r="5" fill="#F2D864" stroke="#1A1614" stroke-width="1.5"/>' +
              '<line x1="12" y1="2" x2="12" y2="5" stroke="#F2D864" stroke-width="2" stroke-linecap="round"/>' +
@@ -572,6 +572,20 @@ var Display = (function() {
               '<line x1="5" y1="8" x2="19" y2="16" stroke="#4A90C4" stroke-width="1.5"/>' +
               '<line x1="5" y1="16" x2="19" y2="8" stroke="#4A90C4" stroke-width="1.5"/>',
         wind: '<path d="M5 12h14M5 8h10a3 3 0 0 0 0-6M5 16h8a3 3 0 0 1 0 6" fill="none" stroke="#A0AAB4" stroke-width="2" stroke-linecap="round"/>',
+        // Māori seasons
+        raumati: '<circle cx="12" cy="12" r="6" fill="#F2D864" stroke="#E88A42" stroke-width="2"/>', // Summer
+        ngahuru: '<path d="M12 2C9 7 5 10 5 14a7 7 0 0 0 14 0c0-4-4-7-7-12z" fill="#D4884A" stroke="#1A1614" stroke-width="1.5"/>', // Autumn
+        takurua: '<circle cx="12" cy="12" r="2" fill="#FFF8F0"/>' + // Winter
+                '<line x1="12" y1="3" x2="12" y2="21" stroke="#4A90C4" stroke-width="1.5"/>' +
+                '<line x1="4" y1="7.5" x2="20" y2="16.5" stroke="#4A90C4" stroke-width="1.5"/>' +
+                '<line x1="4" y1="16.5" x2="20" y2="7.5" stroke="#4A90C4" stroke-width="1.5"/>',
+        koanga: '<circle cx="12" cy="12" r="4" fill="#F2D864" stroke="#1A1614" stroke-width="1"/>' + // Spring
+                '<ellipse cx="12" cy="5" rx="3" ry="2" fill="#8BC34A" stroke="#1A1614" stroke-width="0.8"/>' +
+                '<ellipse cx="18" cy="10" rx="3" ry="2" fill="#8BC34A" stroke="#1A1614" stroke-width="0.8" transform="rotate(60 18 10)"/>' +
+                '<ellipse cx="16" cy="17" rx="3" ry="2" fill="#8BC34A" stroke="#1A1614" stroke-width="0.8" transform="rotate(120 16 17)"/>' +
+                '<ellipse cx="8" cy="17" rx="3" ry="2" fill="#8BC34A" stroke="#1A1614" stroke-width="0.8" transform="rotate(60 8 17)"/>' +
+                '<ellipse cx="6" cy="10" rx="3" ry="2" fill="#8BC34A" stroke="#1A1614" stroke-width="0.8" transform="rotate(120 6 10)"/>',
+        // Legacy aliases
         summer: '<circle cx="12" cy="12" r="6" fill="#F2D864" stroke="#E88A42" stroke-width="2"/>',
         autumn: '<path d="M12 2C9 7 5 10 5 14a7 7 0 0 0 14 0c0-4-4-7-7-12z" fill="#D4884A" stroke="#1A1614" stroke-width="1.5"/>',
         winter: '<circle cx="12" cy="12" r="2" fill="#FFF8F0"/>' +
@@ -624,19 +638,19 @@ var Display = (function() {
             seasonLabel.textContent = seasonName;
         }
 
-        // Special event
+        // Special event - Māori names
         if (envEvent && envEventLabel) {
             var activeEvt = (typeof Wave !== 'undefined' && Wave.getActiveEvent) ? Wave.getActiveEvent() : null;
             var isBloodMoon = (typeof Weather !== 'undefined' && Weather.isBloodMoon) ? Weather.isBloodMoon() : false;
-            if (isBloodMoon || (activeEvt && activeEvt.type === 'bloodMoon')) {
+            if (isBloodMoon || (activeEvt && (activeEvt.type === 'maramaToto' || activeEvt.type === 'bloodMoon'))) {
                 envEvent.classList.remove('hidden');
-                envEventLabel.textContent = 'Blood Moon';
-            } else if (activeEvt && activeEvt.type === 'eliteSwarm') {
+                envEventLabel.textContent = 'Marama Toto';
+            } else if (activeEvt && (activeEvt.type === 'teTaua' || activeEvt.type === 'eliteSwarm')) {
                 envEvent.classList.remove('hidden');
-                envEventLabel.textContent = 'Elite Swarm';
-            } else if (activeEvt && activeEvt.type === 'luckyStar') {
+                envEventLabel.textContent = 'Te Taua';
+            } else if (activeEvt && (activeEvt.type === 'matariki' || activeEvt.type === 'luckyStar')) {
                 envEvent.classList.remove('hidden');
-                envEventLabel.textContent = 'Lucky Star';
+                envEventLabel.textContent = 'Matariki';
             } else {
                 envEvent.classList.add('hidden');
             }

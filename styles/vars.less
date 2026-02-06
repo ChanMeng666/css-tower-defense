@@ -1,6 +1,6 @@
 // ===========================================
-// CSS Tower Defense - Variables & Mixins
-// THEME: POP-ART / CEL-SHADED
+// Te Pā Tiaki - Variables & Mixins
+// THEME: MĀORI CULTURAL / EARTHY TONES
 // ===========================================
 
 // Grid Configuration
@@ -61,23 +61,47 @@
 @color-grid-valid: fade(@color-success, 60%);
 @color-grid-invalid: fade(@color-danger, 60%);
 
-// TOWERS (Static)
-@color-tower-arrow: #C47832;
-@color-tower-arrow-glow: #F5C882;
-@color-tower-cannon: #4A4A4A;
-@color-tower-cannon-glow: #E8635A;
-@color-tower-ice: #7EC8D9;
-@color-tower-ice-glow: #E0F4F8;
-@color-tower-magic: #9B59B6;
-@color-tower-magic-glow: #D4A8E8;
-@color-tower-tesla: #E8C84A;
-@color-tower-flame: #D4512A;
+// TOWERS (Static) - Māori weapons & deities
+@color-tower-taiaha: #8B4513;        // Carved wood brown
+@color-tower-taiaha-glow: #D4A87A;
+@color-tower-arrow: @color-tower-taiaha; // Alias for CSS class compatibility
+@color-tower-arrow-glow: @color-tower-taiaha-glow;
 
-// ENEMIES (Static)
-@color-enemy-slime: #8BC34A;
-@color-enemy-goblin: #D46A4A;
-@color-enemy-knight: #5A7CB5;
-@color-enemy-boss: #7B2D8E;
+@color-tower-mere: #3CB371;          // Pounamu green
+@color-tower-mere-glow: #7AE8A8;
+@color-tower-cannon: @color-tower-mere; // Alias
+@color-tower-cannon-glow: @color-tower-mere-glow;
+
+@color-tower-tangaroa: #1E90FF;      // Ocean blue
+@color-tower-tangaroa-glow: #87CEEB;
+@color-tower-ice: @color-tower-tangaroa; // Alias
+@color-tower-ice-glow: @color-tower-tangaroa-glow;
+
+@color-tower-tohunga: #4B0082;       // Spiritual purple
+@color-tower-tohunga-glow: #9B7BB8;
+@color-tower-magic: @color-tower-tohunga; // Alias
+@color-tower-magic-glow: @color-tower-tohunga-glow;
+
+@color-tower-tawhiri: #708090;       // Storm gray
+@color-tower-tawhiri-glow: #B0C4DE;
+@color-tower-tesla: @color-tower-tawhiri; // Alias
+
+@color-tower-mahuika: #B22222;       // Fire red
+@color-tower-mahuika-glow: #E8635A;
+@color-tower-flame: @color-tower-mahuika; // Alias
+
+// ENEMIES (Static) - Māori mythology
+@color-enemy-kehua: #C8E8C8;         // Ghostly pale green
+@color-enemy-slime: @color-enemy-kehua; // Alias
+
+@color-enemy-patupaiarehe: #A8D8F0;  // Misty blue
+@color-enemy-goblin: @color-enemy-patupaiarehe; // Alias
+
+@color-enemy-toa: #8B4513;           // Warrior brown
+@color-enemy-knight: @color-enemy-toa; // Alias
+
+@color-enemy-taniwha: #1A5276;       // Deep water blue
+@color-enemy-boss: @color-enemy-taniwha; // Alias
 
 // TYPOGRAPHY
 @font-main: 'Comic Neue', 'Comic Sans MS', sans-serif;

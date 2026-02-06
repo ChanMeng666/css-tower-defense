@@ -1,27 +1,36 @@
 // ===========================================
-// CSS Tower Defense - Unified Start Screen
-// THEME: POP-ART / CEL-SHADED
+// Te Pā Tiaki - Unified Start Screen
+// THEME: MĀORI CULTURAL / EARTHY TONES
 // Combines loading and start functionality
 // ===========================================
 
-// Main Container - Comic Cover Style
+// Māori-inspired earthy colors
+@color-earth-brown: #8B4513;
+@color-pounamu-green: #3CB371;
+@color-ocean-blue: #1E90FF;
+@color-flax-gold: #DAA520;
+@color-koru-cream: #F5E6D3;
+
+// Main Container - Earthy Māori Style
 .loading-screen {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    // Sunburst background (matching game theme)
-    background: repeating-conic-gradient(from 0deg,
-            @color-cyan 0deg 15deg,
-            lighten(@color-cyan, 8%) 15deg 30deg);
+    // Earthy gradient background (whenua/earth inspired)
+    background: linear-gradient(180deg,
+            #87CEEB 0%,        // Sky blue (Rangi)
+            #B8D8E8 30%,
+            #D4C4A8 60%,       // Sand/earth
+            @color-earth-brown 100%);
     .flex-center();
     flex-direction: column;
     z-index: 100000;
     transition: opacity 0.5s ease, visibility 0.5s ease;
     overflow: hidden;
 
-    // Halftone overlay
+    // Koru pattern overlay (subtle)
     &::before {
         content: '';
         position: absolute;
@@ -29,7 +38,10 @@
         left: 0;
         width: 100%;
         height: 100%;
-        .halftone-bg(fade(@color-white, 30%), 3px);
+        background-image:
+            radial-gradient(circle at 20% 30%, fade(@color-pounamu-green, 8%) 0%, transparent 20%),
+            radial-gradient(circle at 80% 70%, fade(@color-earth-brown, 8%) 0%, transparent 20%),
+            radial-gradient(circle at 50% 50%, fade(@color-flax-gold, 5%) 0%, transparent 30%);
         pointer-events: none;
     }
 
@@ -40,7 +52,7 @@
     }
 }
 
-// Background decorations
+// Background decorations - Māori greetings
 .loading-bg {
     position: absolute;
     top: 0;
@@ -50,29 +62,29 @@
     pointer-events: none;
     overflow: hidden;
 
-    // Floating comic elements
+    // Māori greetings
     &::before {
-        content: 'POW!';
+        content: 'Kia Ora!';
         position: absolute;
         top: 10%;
         left: 5%;
         font-family: @font-title;
         font-size: 2rem;
-        color: @color-yellow;
-        .text-outline();
+        color: @color-flax-gold;
+        .text-outline(@color-earth-brown, 2px);
         transform: rotate(-15deg);
         animation: float-decoration 3s ease-in-out infinite;
     }
 
     &::after {
-        content: 'BOOM!';
+        content: 'Haere Mai!';
         position: absolute;
         bottom: 15%;
         right: 5%;
         font-family: @font-title;
         font-size: 2rem;
-        color: @color-magenta;
-        .text-outline();
+        color: @color-pounamu-green;
+        .text-outline(@color-earth-brown, 2px);
         transform: rotate(10deg);
         animation: float-decoration 3s ease-in-out infinite reverse;
     }
@@ -92,21 +104,23 @@
     display: none;
 }
 
-// Subtitle (shows when loading complete)
+// Game title (shows when loading complete)
 .loading-screen::after {
-    content: 'CSS TOWER DEFENSE';
+    content: 'TE PĀ TIAKI';
     position: absolute;
-    top: 20%;
+    top: 18%;
     font-family: @font-title;
-    font-size: 5rem;
-    color: @color-yellow;
-    .text-outline(@color-black, 4px);
-    .pop-shadow(10px, 10px, @color-black);
+    font-size: 4.5rem;
+    color: @color-flax-gold;
+    .text-outline(@color-earth-brown, 4px);
+    .pop-shadow(8px, 8px, @color-earth-brown);
     animation: title-wobble 2s infinite ease-in-out;
-    transform: rotate(-3deg);
+    transform: rotate(-2deg);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.5s ease;
+    text-align: center;
+    line-height: 1.1;
 
     .ready & {
         opacity: 1;
@@ -122,108 +136,132 @@
     }
 }
 
-// Animated Tower Container
+// Animated Waharoa (Gateway) Container
 .loading-tower {
     position: relative;
-    width: 200px;
-    height: 200px;
+    width: 220px;
+    height: 220px;
     margin: 30px 0;
     .flex-center();
     z-index: 2;
 }
 
-// Tower Base - Wooden Platform
+// Waharoa Base - Ground platform
 .loading-tower-base {
     position: absolute;
     bottom: 0;
-    width: 120px;
-    height: 25px;
-    background: @color-tower-arrow;
-    .comic-border();
-    .pop-shadow(4px, 4px);
-    transform: perspective(200px) rotateX(-20deg);
+    width: 180px;
+    height: 20px;
+    background: @color-earth-brown;
+    .comic-border(3px, darken(@color-earth-brown, 20%));
+    .pop-shadow(4px, 4px, darken(@color-earth-brown, 30%));
+    transform: perspective(200px) rotateX(-15deg);
 
-    // Wood grain
-    background-image: repeating-linear-gradient(
+    // Earth texture
+    background-image: linear-gradient(
         90deg,
-        transparent,
-        transparent 15px,
-        darken(@color-tower-arrow, 10%) 15px,
-        darken(@color-tower-arrow, 10%) 17px
+        @color-earth-brown 0%,
+        lighten(@color-earth-brown, 10%) 50%,
+        @color-earth-brown 100%
     );
 }
 
-// Tower Body - Main Structure
+// Waharoa Body - Gateway arch with pou (posts)
 .loading-tower-body {
     position: absolute;
-    bottom: 25px;
-    width: 80px;
-    height: 100px;
-    background: linear-gradient(
-        180deg,
-        lighten(@color-tower-arrow, 10%) 0%,
-        @color-tower-arrow 50%,
-        darken(@color-tower-arrow, 10%) 100%
-    );
-    .comic-border();
-    .pop-shadow(5px, 5px);
+    bottom: 20px;
+    width: 140px;
+    height: 130px;
+    background: transparent;
 
-    // Window decoration
+    // Left Pou (post)
     &::before {
         content: '';
         position: absolute;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 30px;
-        height: 35px;
-        background: @color-cyan;
-        .comic-border(2px);
-        border-radius: 50% 50% 0 0;
+        bottom: 0;
+        left: 0;
+        width: 35px;
+        height: 130px;
+        background: linear-gradient(
+            90deg,
+            darken(@color-earth-brown, 5%) 0%,
+            @color-earth-brown 30%,
+            lighten(@color-earth-brown, 8%) 50%,
+            @color-earth-brown 70%,
+            darken(@color-earth-brown, 5%) 100%
+        );
+        border: 3px solid darken(@color-earth-brown, 20%);
+        border-radius: 5px 5px 0 0;
+        box-shadow: 3px 3px 0 darken(@color-earth-brown, 30%);
     }
 
-    // Door decoration
+    // Right Pou (post)
     &::after {
         content: '';
         position: absolute;
         bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 25px;
-        height: 30px;
-        background: darken(@color-tower-arrow, 20%);
-        .comic-border(2px);
+        right: 0;
+        width: 35px;
+        height: 130px;
+        background: linear-gradient(
+            90deg,
+            darken(@color-earth-brown, 5%) 0%,
+            @color-earth-brown 30%,
+            lighten(@color-earth-brown, 8%) 50%,
+            @color-earth-brown 70%,
+            darken(@color-earth-brown, 5%) 100%
+        );
+        border: 3px solid darken(@color-earth-brown, 20%);
         border-radius: 5px 5px 0 0;
+        box-shadow: 3px 3px 0 darken(@color-earth-brown, 30%);
     }
 }
 
-// Tower Top - Turret Platform
+// Waharoa Top - Carved lintel (pare)
 .loading-tower-top {
     position: absolute;
-    bottom: 125px;
-    width: 100px;
-    height: 20px;
-    background: @color-tower-arrow;
-    .comic-border();
-    .pop-shadow(3px, 3px);
+    bottom: 150px;
+    width: 160px;
+    height: 35px;
+    background: linear-gradient(
+        180deg,
+        lighten(@color-earth-brown, 5%) 0%,
+        @color-earth-brown 40%,
+        darken(@color-earth-brown, 10%) 100%
+    );
+    .comic-border(3px, darken(@color-earth-brown, 20%));
+    .pop-shadow(4px, 4px, darken(@color-earth-brown, 30%));
+    border-radius: 8px 8px 0 0;
 
-    // Battlements
+    // Koru carving pattern
     &::before {
         content: '';
         position: absolute;
-        top: -15px;
-        left: 5px;
-        right: 5px;
-        height: 15px;
-        background: repeating-linear-gradient(
-            90deg,
-            @color-tower-arrow 0px,
-            @color-tower-arrow 12px,
-            transparent 12px,
-            transparent 18px
-        );
-        border: 2px solid @color-black;
-        border-bottom: none;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 18px;
+        background:
+            radial-gradient(circle at 20% 50%, @color-pounamu-green 4px, transparent 4px),
+            radial-gradient(circle at 40% 50%, @color-pounamu-green 4px, transparent 4px),
+            radial-gradient(circle at 60% 50%, @color-pounamu-green 4px, transparent 4px),
+            radial-gradient(circle at 80% 50%, @color-pounamu-green 4px, transparent 4px);
+    }
+
+    // Pounamu (greenstone) eye decoration
+    &::after {
+        content: '';
+        position: absolute;
+        top: 5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 10px;
+        background: @color-pounamu-green;
+        border: 2px solid darken(@color-pounamu-green, 20%);
+        border-radius: 50%;
+        box-shadow: inset 2px 2px 4px rgba(255,255,255,0.4);
     }
 }
 
@@ -435,18 +473,18 @@
     }
 }
 
-// Corner Speech Bubbles
+// Speech bubble - Māori greeting
 .loading-tower::before {
-    content: 'READY?';
+    content: 'Tēnā koe!';
     position: absolute;
-    top: -40px;
-    right: -80px;
+    top: -50px;
+    right: -90px;
     font-family: @font-title;
-    font-size: 1.5rem;
-    color: @color-black;
-    background: @color-white;
+    font-size: 1.3rem;
+    color: @color-earth-brown;
+    background: @color-koru-cream;
     padding: 8px 15px;
-    .comic-border(2px);
+    .comic-border(2px, @color-earth-brown);
     border-radius: 20px;
     opacity: 0;
     animation: speech-appear 0.5s ease forwards;
@@ -460,7 +498,7 @@
         left: 20px;
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
-        border-top: 12px solid @color-black;
+        border-top: 12px solid @color-earth-brown;
     }
 }
 

@@ -6,22 +6,23 @@
 var Seasons = (function () {
     'use strict';
 
-    var SEASON_TYPES = ['spring', 'summer', 'autumn', 'winter'];
-    var currentSeasonIndex = 1; // Start in Summer
+    // Māori calendar seasons
+    var SEASON_TYPES = ['koanga', 'raumati', 'ngahuru', 'takurua'];
+    var currentSeasonIndex = 1; // Start in Raumati (Summer)
 
-    // Wave-to-season mapping: waves 1-2 Summer, 3-4 Autumn, 5-6 Winter, 7-8 Spring, 9-10 Summer
+    // Wave-to-season mapping: waves 1-2 Raumati, 3-4 Ngahuru, 5-6 Takurua, 7-8 Kōanga, 9-10 Raumati
     var WAVE_SEASON_MAP = {
-        1: 'summer', 2: 'summer',
-        3: 'autumn', 4: 'autumn',
-        5: 'winter', 6: 'winter',
-        7: 'spring', 8: 'spring',
-        9: 'summer', 10: 'summer'
+        1: 'raumati', 2: 'raumati',
+        3: 'ngahuru', 4: 'ngahuru',
+        5: 'takurua', 6: 'takurua',
+        7: 'koanga', 8: 'koanga',
+        9: 'raumati', 10: 'raumati'
     };
 
-    // Configuration per Season
+    // Configuration per Season - Māori calendar
     var SEASON_CONFIG = {
-        spring: {
-            name: 'Spring',
+        koanga: {
+            name: 'Kōanga',  // Spring - time of planting
             colors: {
                 '--color-bg': '#B8D8E8',
                 '--color-grass': '#8BC34A',
@@ -38,13 +39,13 @@ var Seasons = (function () {
                 gold: 1.0,
                 waveReward: 1.0,
                 tower: {
-                    magic: { damage: 1.15 },
-                    tesla: { chainTargets: 1 }  // +1 chain target during rain (applied conditionally)
+                    tohunga: { damage: 1.15 },
+                    tawhiri: { chainTargets: 1 }  // +1 chain target during rain (applied conditionally)
                 }
             }
         },
-        summer: {
-            name: 'Summer',
+        raumati: {
+            name: 'Raumati',  // Summer - warm season
             colors: {
                 '--color-bg': '#7EC8D9',
                 '--color-grass': '#5EA65E',
@@ -61,13 +62,13 @@ var Seasons = (function () {
                 gold: 1.0,
                 waveReward: 1.0,
                 tower: {
-                    flame: { damage: 1.15 },
-                    ice: { slowDuration: 0.90 }
+                    mahuika: { damage: 1.15 },
+                    tangaroa: { slowDuration: 0.90 }
                 }
             }
         },
-        autumn: {
-            name: 'Autumn',
+        ngahuru: {
+            name: 'Ngahuru',  // Autumn - harvest time
             colors: {
                 '--color-bg': '#E8B87A',
                 '--color-grass': '#D4884A',
@@ -84,12 +85,12 @@ var Seasons = (function () {
                 gold: 1.15,
                 waveReward: 1.20,
                 tower: {
-                    arrow: { range: 1.10 }
+                    taiaha: { range: 1.10 }
                 }
             }
         },
-        winter: {
-            name: 'Winter',
+        takurua: {
+            name: 'Takurua',  // Winter - cold season
             colors: {
                 '--color-bg': '#D4E4EC',
                 '--color-grass': '#E8E0D8',
@@ -106,15 +107,15 @@ var Seasons = (function () {
                 gold: 1.0,
                 waveReward: 1.0,
                 tower: {
-                    ice: { slowDuration: 1.25, slowAmount: 1.10 },
-                    flame: { damage: 0.85 }
+                    tangaroa: { slowDuration: 1.25, slowAmount: 1.10 },
+                    mahuika: { damage: 0.85 }
                 }
             }
         }
     };
 
     function init() {
-        // Set initial season (Summer)
+        // Set initial season (Raumati/Summer)
         currentSeasonIndex = 1;
         setSeason(SEASON_TYPES[currentSeasonIndex]);
 

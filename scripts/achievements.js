@@ -20,73 +20,73 @@ var Achievements = (function() {
         'achievement-icon-gold': '<svg viewBox="0 0 24 24" width="28" height="28"><ellipse cx="12" cy="16" rx="8" ry="4" fill="#C4A030" stroke="#1A1614" stroke-width="1"/><ellipse cx="12" cy="14" rx="8" ry="4" fill="#F2D864" stroke="#1A1614" stroke-width="1"/><ellipse cx="12" cy="12" rx="8" ry="4" fill="#C4A030" stroke="#1A1614" stroke-width="1"/><ellipse cx="12" cy="10" rx="8" ry="4" fill="#F2D864" stroke="#1A1614" stroke-width="1"/><ellipse cx="10" cy="9" rx="2.5" ry="1.5" fill="rgba(255,255,255,0.3)" transform="rotate(-5 10 9)"/></svg>'
     };
 
-    // Achievement definitions
+    // Achievement definitions - Te Pā Tiaki themed
     var ACHIEVEMENTS = {
         first_blood: {
-            name: 'First Blood',
-            description: 'Kill your first enemy',
+            name: 'Toto Tuatahi',  // First Blood
+            description: 'Defeat your first enemy',
             reward: 10,
             icon: 'achievement-icon-blood',
             unlocked: false
         },
         wave_5: {
-            name: 'Veteran',
+            name: 'Toa Tawhito',  // Experienced Warrior
             description: 'Reach wave 5',
             reward: 25,
             icon: 'achievement-icon-medal',
             unlocked: false
         },
         survivor: {
-            name: 'Survivor',
+            name: 'Kaitiaki',  // Guardian
             description: 'Complete all 10 waves',
             reward: 100,
             icon: 'achievement-icon-trophy',
             unlocked: false
         },
         perfect_wave: {
-            name: 'Perfect Wave',
+            name: 'Tino Pai',  // Very Good/Perfect
             description: 'Complete a wave without taking damage',
             reward: 50,
             icon: 'achievement-icon-star',
             unlocked: false
         },
         combo_5: {
-            name: 'Combo Master',
+            name: 'Kaiwhakatū',  // Combo Master
             description: 'Achieve a 5x combo',
             reward: 30,
             icon: 'achievement-icon-fire',
             unlocked: false
         },
         combo_10: {
-            name: 'Combo Legend',
+            name: 'Kaiwero Nui',  // Great Striker
             description: 'Achieve a 10x combo',
             reward: 75,
             icon: 'achievement-icon-explosion',
             unlocked: false
         },
-        boss_slayer: {
-            name: 'Boss Slayer',
-            description: 'Defeat the boss',
+        taniwha_slayer: {
+            name: 'Taniwha Slayer',
+            description: 'Defeat the Taniwha',
             reward: 50,
             icon: 'achievement-icon-crown',
             unlocked: false
         },
-        tower_master: {
-            name: 'Tower Master',
-            description: 'Place 10 towers in one game',
+        pā_master: {
+            name: 'Rangatira Pā',  // Pā Master
+            description: 'Place 10 defenders in one game',
             reward: 25,
             icon: 'achievement-icon-castle',
             unlocked: false
         },
         reforger: {
-            name: 'Lucky Reforge',
+            name: 'Mahi Whakahou',  // Lucky Reforge
             description: 'Get a Legendary prefix',
             reward: 50,
             icon: 'achievement-icon-sparkle',
             unlocked: false
         },
         rich: {
-            name: 'Wealthy',
+            name: 'Rangatira Koura',  // Gold Chief
             description: 'Have 500 gold at once',
             reward: 25,
             icon: 'achievement-icon-gold',
@@ -126,9 +126,9 @@ var Achievements = (function() {
                 unlock('first_blood');
             }
 
-            // Boss Slayer
-            if (e.detail.enemy && e.detail.enemy.type === 'boss') {
-                unlock('boss_slayer');
+            // Taniwha Slayer
+            if (e.detail.enemy && e.detail.enemy.type === 'taniwha') {
+                unlock('taniwha_slayer');
             }
         });
 
@@ -171,7 +171,7 @@ var Achievements = (function() {
         document.addEventListener('towerPlaced', function(e) {
             towersPlaced++;
             if (towersPlaced >= 10) {
-                unlock('tower_master');
+                unlock('pā_master');
             }
         });
     }

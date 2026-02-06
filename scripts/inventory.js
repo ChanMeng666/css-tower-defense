@@ -6,34 +6,34 @@
 var Inventory = (function() {
     'use strict';
 
-    // Material types with rarity
+    // Material types with rarity - Māori treasures (taonga)
     var MATERIALS = {
-        scrap: { name: 'Scrap Metal', rarity: 'common', color: '#888888' },
-        core: { name: 'Power Core', rarity: 'rare', color: '#0088FF' },
-        crystal: { name: 'Magic Crystal', rarity: 'epic', color: '#AA00FF' }
+        pipi: { name: 'Pipi', rarity: 'common', color: '#F5F5DC' },     // Shell - coastal gathering
+        koiwi: { name: 'Koiwi', rarity: 'rare', color: '#FFFFF0' },     // Carved bone - ancestral power
+        pounamu: { name: 'Pounamu', rarity: 'epic', color: '#3CB371' }  // Greenstone - sacred treasure
     };
 
     // Drop chances by enemy type
     var DROP_CHANCES = {
-        slime: { scrap: 0.10, core: 0.01, crystal: 0 },
-        goblin: { scrap: 0.15, core: 0.03, crystal: 0 },
-        knight: { scrap: 0.20, core: 0.05, crystal: 0.01 },
-        boss: { scrap: 1.0, core: 1.0, crystal: 1.0 }
+        kehua: { pipi: 0.10, koiwi: 0.01, pounamu: 0 },
+        patupaiarehe: { pipi: 0.15, koiwi: 0.03, pounamu: 0 },
+        toa: { pipi: 0.20, koiwi: 0.05, pounamu: 0.01 },
+        taniwha: { pipi: 1.0, koiwi: 1.0, pounamu: 1.0 }
     };
 
     // Variant modifiers
     var VARIANT_MULTIPLIERS = {
-        elite: { scrap: 1.5, core: 2.0, crystal: 1.5 },
-        armored: { scrap: 1.3, core: 1.5, crystal: 1.2 },
-        speedy: { scrap: 1.2, core: 1.2, crystal: 1.0 },
-        toxic: { scrap: 1.4, core: 1.8, crystal: 1.3 }
+        rangatira: { pipi: 1.5, koiwi: 2.0, pounamu: 1.5 },
+        pakanga: { pipi: 1.3, koiwi: 1.5, pounamu: 1.2 },
+        tere: { pipi: 1.2, koiwi: 1.2, pounamu: 1.0 },
+        mate: { pipi: 1.4, koiwi: 1.8, pounamu: 1.3 }
     };
 
     // Player inventory
     var inventory = {
-        scrap: 0,
-        core: 0,
-        crystal: 0
+        pipi: 0,
+        koiwi: 0,
+        pounamu: 0
     };
 
     // Drop rate multiplier (for Lucky Star event)
@@ -43,7 +43,7 @@ var Inventory = (function() {
      * Initialize the inventory system
      */
     function init() {
-        inventory = { scrap: 0, core: 0, crystal: 0 };
+        inventory = { pipi: 0, koiwi: 0, pounamu: 0 };
         dropRateMultiplier = 1.0;
 
         // Listen for enemy kills
@@ -59,7 +59,7 @@ var Inventory = (function() {
      * Roll for loot drops when an enemy dies
      */
     function rollForDrops(enemy) {
-        var chances = DROP_CHANCES[enemy.type] || DROP_CHANCES.slime;
+        var chances = DROP_CHANCES[enemy.type] || DROP_CHANCES.kehua;
         var variantMult = enemy.variant ? VARIANT_MULTIPLIERS[enemy.variant] : null;
 
         var dropped = [];
@@ -167,13 +167,13 @@ var Inventory = (function() {
      * Update inventory UI display
      */
     function updateUI() {
-        var scrapEl = document.getElementById('invScrap');
-        var coreEl = document.getElementById('invCore');
-        var crystalEl = document.getElementById('invCrystal');
+        var pipiEl = document.getElementById('invPipi');
+        var koiwiEl = document.getElementById('invKoiwi');
+        var pounamuEl = document.getElementById('invPounamu');
 
-        if (scrapEl) scrapEl.textContent = inventory.scrap;
-        if (coreEl) coreEl.textContent = inventory.core;
-        if (crystalEl) crystalEl.textContent = inventory.crystal;
+        if (pipiEl) pipiEl.textContent = inventory.pipi;
+        if (koiwiEl) koiwiEl.textContent = inventory.koiwi;
+        if (pounamuEl) pounamuEl.textContent = inventory.pounamu;
     }
 
     // Public API

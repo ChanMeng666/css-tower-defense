@@ -1,16 +1,16 @@
 /**
- * CSS Tower Defense - Crafting System
- * Consumable items crafted from materials (scrap, core, crystal)
+ * Te Pā Tiaki - Crafting System
+ * Consumable items crafted from taonga (treasures): pipi, koiwi, pounamu
  */
 
 var Crafting = (function() {
     'use strict';
 
     var RECIPES = {
-        iron_skin: {
-            name: 'Iron Skin',
+        kiri_rino: {
+            name: 'Kiri Rino',  // Iron Skin
             description: '+3 lives (permanent)',
-            cost: { scrap: 5 },
+            cost: { pipi: 5 },
             type: 'instant',
             effect: function() {
                 if (typeof Game !== 'undefined' && Game.addLives) {
@@ -19,38 +19,38 @@ var Crafting = (function() {
                 }
             }
         },
-        overcharge: {
-            name: 'Overcharge',
+        ihi_nui: {
+            name: 'Ihi Nui',  // Great Power (Overcharge)
             description: '+25% tower damage (1 wave)',
-            cost: { core: 3 },
+            cost: { koiwi: 3 },
             type: 'wave_buff',
             buff: { damage_mult: 1.25 }
         },
-        frost_trap: {
-            name: 'Frost Trap',
+        mahana_rere: {
+            name: 'Mahana Rere',  // Frost Trap (Freezing Flight)
             description: 'Enemies 30% slower (1 wave)',
-            cost: { scrap: 2, core: 1 },
+            cost: { pipi: 2, koiwi: 1 },
             type: 'wave_buff',
             buff: { slow_enemies: 0.7 }
         },
-        gold_magnet: {
-            name: 'Gold Magnet',
+        koura_kukume: {
+            name: 'Koura Kukume',  // Gold Magnet
             description: '+50% gold (1 wave)',
-            cost: { scrap: 3, core: 2 },
+            cost: { pipi: 3, koiwi: 2 },
             type: 'wave_buff',
             buff: { gold_mult: 1.5 }
         },
-        crystal_shield: {
-            name: 'Crystal Shield',
+        pounamu_tiaki: {
+            name: 'Pounamu Tiaki',  // Greenstone Shield
             description: 'Block next 3 hits',
-            cost: { crystal: 1, scrap: 2 },
+            cost: { pounamu: 1, pipi: 2 },
             type: 'shield',
             charges: 3
         },
-        arcane_barrage: {
-            name: 'Arcane Barrage',
+        karakia_tere: {
+            name: 'Karakia Tere',  // Swift Incantation (Arcane Barrage)
             description: '+50% attack speed (1 wave)',
-            cost: { crystal: 2, core: 1 },
+            cost: { pounamu: 2, koiwi: 1 },
             type: 'wave_buff',
             buff: { attack_speed_mult: 1.5 }
         }

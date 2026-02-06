@@ -261,18 +261,24 @@
             }
             
             switch (e.key.toLowerCase()) {
-                // Tower hotkeys
+                // Tower hotkeys (Māori weapons)
                 case '1':
-                    Game.selectTowerType('arrow');
+                    Game.selectTowerType('taiaha');
                     break;
                 case '2':
-                    Game.selectTowerType('cannon');
+                    Game.selectTowerType('mere');
                     break;
                 case '3':
-                    Game.selectTowerType('ice');
+                    Game.selectTowerType('tangaroa');
                     break;
                 case '4':
-                    Game.selectTowerType('magic');
+                    Game.selectTowerType('tohunga');
+                    break;
+                case '5':
+                    Game.selectTowerType('tawhiri');
+                    break;
+                case '6':
+                    Game.selectTowerType('mahuika');
                     break;
                     
                 // Cancel selection

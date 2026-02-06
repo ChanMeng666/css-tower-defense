@@ -25,7 +25,7 @@ var Weather = (function () {
         }
     };
 
-    // Weather gameplay modifiers
+    // Weather gameplay modifiers - Māori tower names
     var WEATHER_MODIFIERS = {
         clear: {
             towerRange: 1.05,
@@ -38,8 +38,8 @@ var Weather = (function () {
             enemySpeed: 0.95,
             gold: 1.0,
             tower: {
-                flame: { fireRate: 0.85 },
-                tesla: { chainRange: 1.20 }
+                mahuika: { fireRate: 0.85 },
+                tawhiri: { chainRange: 1.20 }
             }
         },
         snow: {
@@ -47,8 +47,8 @@ var Weather = (function () {
             enemySpeed: 0.85,
             gold: 1.10,
             tower: {
-                flame: { damage: 0.90 },
-                ice: { slowDuration: 1.20 }
+                mahuika: { damage: 0.90 },
+                tangaroa: { slowDuration: 1.20 }
             }
         },
         wind: {
@@ -56,9 +56,9 @@ var Weather = (function () {
             enemySpeed: 1.05,
             gold: 1.0,
             tower: {
-                arrow: { range: 1.20 },
-                cannon: { splashRadius: 1.15 },
-                magic: { range: 0.90 }
+                taiaha: { range: 1.20 },
+                mere: { splashRadius: 1.15 },
+                tohunga: { range: 0.90 }
             }
         }
     };
