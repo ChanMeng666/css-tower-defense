@@ -490,6 +490,49 @@ var Game = (function () {
     }
 
     /**
+     * Return to main menu with full state cleanup
+     */
+    function returnToMenu() {
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+        Enemy.clear();
+        Tower.clear();
+        Projectile.clear();
+        Path.init();
+        Path.render();
+        Wave.init();
+        if (typeof Pool !== 'undefined') Pool.clear();
+
+        // End challenge if active
+        if (typeof Challenge !== 'undefined' && Challenge.isActive()) Challenge.end();
+        var timer = document.getElementById('challengeTimer');
+        if (timer) timer.remove();
+        var banner = document.querySelector('.challenge-banner');
+        if (banner) banner.remove();
+
+        // Reset game variables
+        gold = 100;
+        lives = 20;
+        score = 0;
+        selectedTowerType = null;
+        totalEnemiesKilled = 0;
+        totalTowersBuilt = 0;
+        totalGoldEarned = 0;
+        comboCount = 0;
+
+        // UI transitions
+        Display.hideGameUI();
+        Display.hideGameOverScreen();
+        Display.showStartScreen();
+
+        state = STATES.MENU;
+        Sfx.stopMusic();
+        Sfx.playMusic('menu');
+    }
+
+    /**
      * Game over
      */
     function gameOver() {
@@ -938,6 +981,7 @@ var Game = (function () {
         start: start,
         pause: pause,
         resume: resume,
+        returnToMenu: returnToMenu,
         selectTowerType: selectTowerType,
         placeTower: placeTower,
         startNextWave: startNextWave,

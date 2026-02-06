@@ -2150,6 +2150,138 @@ body.blood-moon .sky-cycle {
   background: #E8635A;
   color: #FFF8F0;
 }
+.pause-menu-content {
+  width: 320px;
+  text-align: center;
+}
+.pause-menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+.pause-menu-btn {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 1.3rem;
+  padding: 12px 24px;
+  background: #F2D864;
+  color: #1A1614;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  border: 2px solid #1A1614;
+  box-shadow: 5px 5px 0 #1A1614;
+  transition: all 0.1s;
+}
+.pause-menu-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 #1A1614;
+}
+.pause-menu-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 #1A1614;
+}
+.pause-menu-btn-danger {
+  background: #E8635A;
+  color: #FFF8F0;
+}
+.settings-content {
+  width: 360px;
+  text-align: center;
+}
+.settings-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0;
+}
+.settings-label {
+  font-family: 'Comic Neue', cursive;
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: #FFF8F0;
+  width: 100px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.settings-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  background: #2A2420;
+  border-radius: 4px;
+  border: 2px solid #1A1614;
+  outline: none;
+}
+.settings-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #F2D864;
+  border: 2px solid #1A1614;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.settings-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #F2D864;
+  border: 2px solid #1A1614;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.settings-value {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 1rem;
+  color: #F2D864;
+  width: 40px;
+  text-align: left;
+  flex-shrink: 0;
+}
+.settings-mute-btn {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 1rem;
+  padding: 8px 20px;
+  background: #2D8A8A;
+  color: #1A1614;
+  border: none;
+  cursor: pointer;
+  border: 2px solid #1A1614;
+  margin: 12px auto;
+  display: block;
+  transition: all 0.1s;
+}
+.settings-mute-btn:hover {
+  transform: translateY(-2px);
+}
+.settings-mute-btn.muted {
+  background: #E8635A;
+  color: #FFF8F0;
+}
+.quit-confirm-content {
+  width: 300px;
+  text-align: center;
+}
+.quit-confirm-text {
+  font-family: 'Comic Neue', cursive;
+  font-size: 1rem;
+  color: #FFF8F0;
+  margin-bottom: 20px;
+}
+.quit-confirm-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+.return-menu-btn {
+  background: #FFF8F0;
+  color: #1A1614;
+  font-size: 1.3rem;
+  padding: 10px 30px;
+  margin-top: 10px;
+}
 .scene {
   position: fixed;
   top: 0;

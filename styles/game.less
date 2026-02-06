@@ -1595,3 +1595,167 @@ body.blood-moon {
     background: @color-danger;
     color: @color-white;
 }
+
+// ===========================================
+// Pause Menu
+// ===========================================
+.pause-menu-content {
+    width: 320px;
+    text-align: center;
+}
+
+.pause-menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.pause-menu-btn {
+    font-family: @font-title;
+    font-size: 1.3rem;
+    padding: 12px 24px;
+    background: @color-yellow;
+    color: @color-black;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    .comic-border(2px);
+    .pop-shadow(5px, 5px);
+    transition: all 0.1s;
+
+    &:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 7px 7px 0 @color-black;
+    }
+
+    &:active {
+        transform: translate(2px, 2px);
+        box-shadow: 3px 3px 0 @color-black;
+    }
+}
+
+.pause-menu-btn-danger {
+    background: @color-danger;
+    color: @color-white;
+}
+
+// ===========================================
+// Settings Panel
+// ===========================================
+.settings-content {
+    width: 360px;
+    text-align: center;
+}
+
+.settings-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 14px 0;
+}
+
+.settings-label {
+    font-family: @font-comic;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: @color-white;
+    width: 100px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.settings-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    background: #2A2420;
+    border-radius: 4px;
+    border: 2px solid @color-black;
+    outline: none;
+
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: @color-yellow;
+        border: 2px solid @color-black;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    &::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: @color-yellow;
+        border: 2px solid @color-black;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+}
+
+.settings-value {
+    font-family: @font-title;
+    font-size: 1rem;
+    color: @color-yellow;
+    width: 40px;
+    text-align: left;
+    flex-shrink: 0;
+}
+
+.settings-mute-btn {
+    font-family: @font-title;
+    font-size: 1rem;
+    padding: 8px 20px;
+    background: @color-cyan;
+    color: @color-black;
+    border: none;
+    cursor: pointer;
+    .comic-border(2px);
+    margin: 12px auto;
+    display: block;
+    transition: all 0.1s;
+
+    &:hover {
+        transform: translateY(-2px);
+    }
+
+    &.muted {
+        background: @color-danger;
+        color: @color-white;
+    }
+}
+
+// ===========================================
+// Quit Confirmation Dialog
+// ===========================================
+.quit-confirm-content {
+    width: 300px;
+    text-align: center;
+}
+
+.quit-confirm-text {
+    font-family: @font-comic;
+    font-size: 1rem;
+    color: @color-white;
+    margin-bottom: 20px;
+}
+
+.quit-confirm-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+// ===========================================
+// Return to Menu Button (Game Over Screen)
+// ===========================================
+.return-menu-btn {
+    background: @color-white;
+    color: @color-black;
+    font-size: 1.3rem;
+    padding: 10px 30px;
+    margin-top: 10px;
+}

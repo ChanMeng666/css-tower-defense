@@ -10,6 +10,10 @@
     var mouseX = 0;
     var mouseY = 0;
     var hoveredCell = null;
+
+    // Pause menu state
+    var pauseMenuOpen = false;
+    var autoPaused = false;
     
     /**
      * Initialize everything when DOM is ready
@@ -230,6 +234,17 @@
             });
         }
 
+        // Settings button
+        var settingsMenuBtn = document.getElementById('settingsMenuBtn');
+        if (settingsMenuBtn) {
+            settingsMenuBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                moreMenu.classList.add('hidden');
+                moreBtn.classList.remove('open');
+                showSettingsPanel('menu');
+            });
+        }
+
         // Developer button
         var developerBtn = document.getElementById('developerBtn');
         if (developerBtn) {
@@ -333,6 +348,14 @@
             restartBtn.addEventListener('click', function() {
                 Sfx.playEffect('button');
                 Game.start();
+            });
+        }
+
+        var menuBtn = document.getElementById('returnMenuBtn');
+        if (menuBtn) {
+            menuBtn.addEventListener('click', function() {
+                Sfx.playEffect('button');
+                Game.returnToMenu();
             });
         }
     }
@@ -455,11 +478,19 @@
                     Game.selectTowerType('mahuika');
                     break;
                     
-                // Cancel selection
+                // Cancel selection or open pause menu
                 case 'escape':
-                    Game.selectTowerType(null);
-                    Shop.deselectTower();
-                    Display.clearHighlights();
+                    if (Game.getState() === Game.STATES.PLAYING) {
+                        if (Game.getSelectedTowerType()) {
+                            Game.selectTowerType(null);
+                            Shop.deselectTower();
+                            Display.clearHighlights();
+                        } else {
+                            showPauseMenu();
+                        }
+                    } else if (Game.getState() === Game.STATES.PAUSED && pauseMenuOpen) {
+                        closePauseMenu();
+                    }
                     break;
                     
                 // Start wave
@@ -476,10 +507,9 @@
                 // Pause (P key)
                 case 'p':
                     if (Game.getState() === Game.STATES.PLAYING) {
-                        Game.pause();
-                        Display.showMessage('Paused - Press P to resume');
-                    } else if (Game.getState() === Game.STATES.PAUSED) {
-                        Game.resume();
+                        showPauseMenu();
+                    } else if (Game.getState() === Game.STATES.PAUSED && pauseMenuOpen) {
+                        closePauseMenu();
                     }
                     break;
                     
@@ -1223,6 +1253,183 @@
     }
 
     /**
+     * Show pause menu overlay
+     */
+    function showPauseMenu() {
+        if (pauseMenuOpen) return;
+
+        // Pause the game if playing
+        if (Game.getState() === Game.STATES.PLAYING) {
+            Game.pause();
+        }
+
+        pauseMenuOpen = true;
+        autoPaused = false;
+
+        // Remove any existing pause menu
+        var existing = document.getElementById('pauseMenuModal');
+        if (existing) existing.remove();
+
+        var modal = document.createElement('div');
+        modal.className = 'auth-modal';
+        modal.id = 'pauseMenuModal';
+        modal.innerHTML =
+            '<div class="auth-modal-content pause-menu-content">' +
+                '<h2 class="auth-modal-title">Paused</h2>' +
+                '<div class="pause-menu-buttons">' +
+                    '<button class="pause-menu-btn" id="pauseResumeBtn">Resume</button>' +
+                    '<button class="pause-menu-btn" id="pauseSettingsBtn">Settings</button>' +
+                    '<button class="pause-menu-btn pause-menu-btn-danger" id="pauseQuitBtn">Return to Menu</button>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(modal);
+
+        // Resume button
+        document.getElementById('pauseResumeBtn').addEventListener('click', function() {
+            Sfx.playEffect('button');
+            closePauseMenu();
+        });
+
+        // Settings button
+        document.getElementById('pauseSettingsBtn').addEventListener('click', function() {
+            Sfx.playEffect('button');
+            showSettingsPanel('pause');
+        });
+
+        // Return to Menu button
+        document.getElementById('pauseQuitBtn').addEventListener('click', function() {
+            Sfx.playEffect('button');
+            showQuitConfirmation();
+        });
+    }
+
+    /**
+     * Close pause menu and resume game
+     */
+    function closePauseMenu() {
+        pauseMenuOpen = false;
+
+        var modal = document.getElementById('pauseMenuModal');
+        if (modal) modal.remove();
+
+        // Also remove any settings/confirmation sub-modals
+        var settings = document.getElementById('settingsModal');
+        if (settings) settings.remove();
+        var confirm = document.getElementById('quitConfirmModal');
+        if (confirm) confirm.remove();
+
+        Game.resume();
+    }
+
+    /**
+     * Show settings panel with volume controls
+     */
+    function showSettingsPanel(source) {
+        var existing = document.getElementById('settingsModal');
+        if (existing) existing.remove();
+
+        var sfxVol = Math.round(Sfx.getVolume() * 100);
+        var musicVol = Math.round(Sfx.getMusicVolume() * 100);
+        var muted = Sfx.isMuted();
+
+        var modal = document.createElement('div');
+        modal.className = 'auth-modal';
+        modal.id = 'settingsModal';
+        modal.innerHTML =
+            '<div class="auth-modal-content settings-content">' +
+                '<h2 class="auth-modal-title">Settings</h2>' +
+                '<div class="settings-slider-row">' +
+                    '<label class="settings-label">SFX Volume</label>' +
+                    '<input type="range" class="settings-slider" id="sfxSlider" min="0" max="100" value="' + sfxVol + '">' +
+                    '<span class="settings-value" id="sfxValue">' + sfxVol + '%</span>' +
+                '</div>' +
+                '<div class="settings-slider-row">' +
+                    '<label class="settings-label">Music Volume</label>' +
+                    '<input type="range" class="settings-slider" id="musicSlider" min="0" max="100" value="' + musicVol + '">' +
+                    '<span class="settings-value" id="musicValue">' + musicVol + '%</span>' +
+                '</div>' +
+                '<button class="settings-mute-btn' + (muted ? ' muted' : '') + '" id="muteToggleBtn">' +
+                    (muted ? 'Unmute All' : 'Mute All') +
+                '</button>' +
+                '<button class="pause-menu-btn" id="settingsBackBtn">Back</button>' +
+            '</div>';
+        document.body.appendChild(modal);
+
+        // SFX slider
+        document.getElementById('sfxSlider').addEventListener('input', function() {
+            Sfx.setVolume(this.value / 100);
+            document.getElementById('sfxValue').textContent = this.value + '%';
+        });
+
+        // Music slider
+        document.getElementById('musicSlider').addEventListener('input', function() {
+            Sfx.setMusicVolume(this.value / 100);
+            document.getElementById('musicValue').textContent = this.value + '%';
+        });
+
+        // Mute toggle
+        document.getElementById('muteToggleBtn').addEventListener('click', function() {
+            var nowMuted = Sfx.toggleMute();
+            this.textContent = nowMuted ? 'Unmute All' : 'Mute All';
+            this.classList.toggle('muted', nowMuted);
+        });
+
+        // Back button
+        document.getElementById('settingsBackBtn').addEventListener('click', function() {
+            Sfx.playEffect('button');
+            modal.remove();
+        });
+
+        // Click backdrop to close
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    }
+
+    /**
+     * Show quit confirmation dialog
+     */
+    function showQuitConfirmation() {
+        var existing = document.getElementById('quitConfirmModal');
+        if (existing) existing.remove();
+
+        var modal = document.createElement('div');
+        modal.className = 'auth-modal';
+        modal.id = 'quitConfirmModal';
+        modal.innerHTML =
+            '<div class="auth-modal-content quit-confirm-content">' +
+                '<h2 class="auth-modal-title">Leave Game?</h2>' +
+                '<p class="quit-confirm-text">Your progress will be lost.</p>' +
+                '<div class="quit-confirm-buttons">' +
+                    '<button class="pause-menu-btn pause-menu-btn-danger" id="quitLeaveBtn">Leave</button>' +
+                    '<button class="pause-menu-btn" id="quitStayBtn">Stay</button>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(modal);
+
+        // Leave button
+        document.getElementById('quitLeaveBtn').addEventListener('click', function() {
+            Sfx.playEffect('button');
+            // Remove all modals
+            var pauseModal = document.getElementById('pauseMenuModal');
+            if (pauseModal) pauseModal.remove();
+            var settingsModal = document.getElementById('settingsModal');
+            if (settingsModal) settingsModal.remove();
+            modal.remove();
+            pauseMenuOpen = false;
+            Game.returnToMenu();
+        });
+
+        // Stay button
+        document.getElementById('quitStayBtn').addEventListener('click', function() {
+            Sfx.playEffect('button');
+            modal.remove();
+        });
+    }
+
+    /**
      * Setup buttons on start screen (stats, achievements, craft)
      * Note: These buttons are now in the More Options menu HTML, wired by setupMoreOptionsMenu()
      */
@@ -1344,16 +1551,18 @@
      */
     window.addEventListener('blur', function() {
         if (Game.getState() === Game.STATES.PLAYING) {
+            autoPaused = true;
             Game.pause();
             Display.showMessage('Paused');
         }
     });
 
     /**
-     * Handle window focus (auto-resume)
+     * Handle window focus (auto-resume only if pause menu is not open)
      */
     window.addEventListener('focus', function() {
-        if (Game.getState() === Game.STATES.PAUSED) {
+        if (Game.getState() === Game.STATES.PAUSED && autoPaused && !pauseMenuOpen) {
+            autoPaused = false;
             Game.resume();
         }
     });
