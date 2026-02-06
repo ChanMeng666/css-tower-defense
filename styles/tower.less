@@ -9,8 +9,9 @@
     .preserve-3d();
     transform-origin: center bottom;
     pointer-events: none;
-    transform: translate(-50%, -100%) rotateX(-@map-rotation);
-    .gpu-accelerate();
+    transform: translate(-50%, -100%) rotateX(-@map-rotation) translateZ(0);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
 
     // Idle Bob
     &:not(.firing):not(.targeting) {

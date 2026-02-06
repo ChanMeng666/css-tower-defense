@@ -2471,8 +2471,7 @@ body.blood-moon .sky-cycle {
   transform-style: preserve-3d;
   transform-origin: center bottom;
   pointer-events: none;
-  transform: translate(-50%, -100%) rotateX(-45deg);
-  transform: translateZ(0);
+  transform: translate(-50%, -100%) rotateX(-45deg) translateZ(0);
   will-change: transform, opacity;
   backface-visibility: hidden;
 }
@@ -3398,7 +3397,17 @@ body.blood-moon .sky-cycle {
   background: #D4512A;
   animation: health-critical-pulse 0.5s infinite;
 }
+.enemy-slime > .health-bar {
+  top: -40px;
+}
+.enemy-goblin > .health-bar {
+  top: -52px;
+}
+.enemy-knight > .health-bar {
+  top: -54px;
+}
 .enemy-boss > .health-bar {
+  top: -80px;
   width: 60px;
   height: 14px;
   border-color: #1E6B47;

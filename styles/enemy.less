@@ -46,8 +46,12 @@
     }
 }
 
-// Boss health bar - larger and more dramatic
+// Per-type health bar positioning (above each enemy's body)
+.enemy-slime > .health-bar { top: -40px; }        // body 32px + gap
+.enemy-goblin > .health-bar { top: -52px; }       // body 38px + hair 6px + gap
+.enemy-knight > .health-bar { top: -54px; }       // body 46px + gap
 .enemy-boss > .health-bar {
+    top: -80px;                                    // body 70px + gap
     width: 60px;
     height: 14px;
     border-color: @color-pounamu-deep;
