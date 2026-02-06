@@ -316,7 +316,32 @@
 // PERFORMANCE & ACCESSIBILITY
 // ===========================================
 
-// Low performance mode - simplified effects
+// Medium performance — keep structural changes, disable rotating auras and secondary pseudo-elements
+.performance-medium {
+    // Disable orbiting water droplets, magic energy rings, flame particles
+    .ice-particles,
+    .magic-energy,
+    .flame-particles,
+    .tesla-arc {
+        &::before,
+        &::after {
+            animation: none !important;
+        }
+    }
+
+    // Simplify tower level 3 effects
+    .tower.level-3 {
+        .tower-base { animation: none !important; }
+    }
+
+    // Disable enemy variant pseudo-element overlays
+    .enemy.elite::before { display: none !important; }
+    .enemy.armored::after { display: none !important; }
+    .enemy.speedy::after { display: none !important; }
+    .enemy.toxic::after { display: none !important; }
+}
+
+// Low performance mode — keep only colors and basic shapes
 .performance-low {
     .aurora-sky,
     .aurora-particles,
@@ -348,6 +373,53 @@
         &::after {
             display: none;
         }
+    }
+
+    // Disable all tower decorative animations
+    .tower {
+        &:not(.firing):not(.targeting) { animation: none !important; }
+
+        .tower-orb { animation: none !important; }
+        .tower-ring { animation: none !important; }
+        .tower-spark { animation: none !important; }
+    }
+
+    .tesla-arc,
+    .flame-particles,
+    .ice-particles,
+    .magic-energy {
+        display: none !important;
+    }
+
+    // Disable enemy decorative effects
+    .enemy-slime .enemy-body {
+        animation: none !important;
+        box-shadow: none !important;
+    }
+
+    .enemy-goblin .enemy-body::after { display: none !important; }
+
+    .enemy-boss .energy-rings { animation: none !important; }
+
+    // Disable all variant pseudo-elements
+    .enemy.elite::before,
+    .enemy.armored::after,
+    .enemy.speedy::after,
+    .enemy.toxic::after {
+        display: none !important;
+    }
+
+    // Disable SVG patterns (keep solid colors)
+    .tower-arrow.level-2 .tower-body,
+    .tower-arrow.level-3 .tower-body,
+    .tower-cannon.level-3 .tower-body::before,
+    .tower-ice.level-2 .tower-crystal,
+    .tower-ice.level-3 .tower-crystal::before,
+    .tower-magic.level-2 .tower-base,
+    .tower-magic.level-3 .tower-base,
+    .tower-flame.level-2 .tower-tank::before,
+    .tower-flame.level-3 .tower-tank::before {
+        background-image: none !important;
     }
 }
 
@@ -400,6 +472,34 @@
         animation: none !important;
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
+    }
+
+    // Disable all new tower/enemy animations
+    .tower,
+    .tower .tower-orb,
+    .tower .tower-ring,
+    .tower .tower-spark,
+    .tower .tower-coil,
+    .tower .tower-base {
+        animation: none !important;
+    }
+
+    .tesla-arc,
+    .flame-particles,
+    .ice-particles,
+    .magic-energy {
+        &,
+        &::before,
+        &::after {
+            animation: none !important;
+        }
+    }
+
+    .enemy,
+    .enemy .enemy-body,
+    .enemy .cape,
+    .enemy .energy-rings {
+        animation: none !important;
     }
 }
 

@@ -1,21 +1,26 @@
 // ===========================================
-// CSS Tower Defense - Enemies
-// THEME: POP-ART / CEL-SHADED
+// Te Pā Tiaki - Enemies
+// THEME: MĀORI CULTURAL / BOLD POP-ART
 // ===========================================
 
 .enemy {
     position: absolute;
     .preserve-3d();
+    .contain-paint();
     transform-origin: center bottom;
     transform: translate(-50%, -100%) rotateX(-@map-rotation);
     transition: all 0.2s;
 
     // Hit flash reaction
     &.hit {
-        filter: brightness(2) contrast(200%) grayscale(100%); // Flash white-ish
+        filter: brightness(2) contrast(200%) grayscale(100%);
         transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.1);
     }
 }
+
+// ===========================================
+// HEALTH BARS
+// ===========================================
 
 .health-bar {
     position: absolute;
@@ -29,103 +34,156 @@
 
     .health-fill {
         height: 100%;
-        background: @color-danger;
+        background: @color-health-high;
         border-right: 2px solid @color-black;
+        transition: background-color 0.3s;
+
+        &.health-medium { background: @color-health-medium; }
+        &.health-low { background: @color-health-low; }
+        &.health-critical {
+            background: @color-health-critical;
+            animation: health-critical-pulse 0.5s infinite;
+        }
     }
 }
 
-// 1. SLIME (Green Blob)
+// Boss health bar - larger and more dramatic
+.enemy-boss > .health-bar {
+    width: 60px;
+    height: 14px;
+    border-color: @color-pounamu-deep;
+    box-shadow: 0 0 6px fade(@color-pounamu-deep, 50%);
+}
+
+// ===========================================
+// 1. KEHUA (Spirit / Slime) — Ghostly Form
+// ===========================================
+
 .enemy-slime {
     .enemy-body {
         position: absolute;
         bottom: 0;
         left: 50%;
         width: 40px;
-        height: 30px;
-        background: @color-enemy-slime;
+        height: 32px;
+        background: radial-gradient(
+            ellipse at 50% 40%,
+            rgba(200, 232, 200, 0.85) 0%,
+            rgba(200, 232, 200, 0.5) 50%,
+            rgba(200, 232, 200, 0.15) 80%,
+            transparent 100%
+        );
         transform: translateX(-50%);
-        border-radius: 50% 50% 10% 10%;
-        .comic-border();
-        box-shadow: inset -5px -5px 0 rgba(0, 0, 0, 0.2);
-        animation: wobble 0.5s infinite alternate;
+        border-radius: 40% 40% 20% 20%;
+        border: 2px solid fade(@color-enemy-kehua, 60%);
+        box-shadow: 0 0 8px rgba(200, 232, 200, 0.5);
+        animation: spirit-float 1.2s ease-in-out infinite;
 
-        // Drip appendage
+        // Trailing wisp (bottom taper)
         &::after {
             content: '';
             position: absolute;
-            bottom: -8px;
-            right: 8px;
-            width: 8px;
-            height: 12px;
-            background: @color-enemy-slime;
+            bottom: -10px;
+            left: 50%;
+            width: 14px;
+            height: 14px;
+            background: radial-gradient(
+                ellipse at top,
+                rgba(200, 232, 200, 0.5) 0%,
+                transparent 70%
+            );
+            transform: translateX(-50%);
             border-radius: 0 0 50% 50%;
-            border: 2px solid @color-black;
-            border-top: none;
-            animation: drip 1.5s ease-in-out infinite;
+            animation: wisp-trail 1.5s ease-in-out infinite;
         }
     }
 
     .enemy-face {
         position: absolute;
-        bottom: 10px;
+        bottom: 12px;
         left: 50%;
         transform: translateX(-50%);
         width: 20px;
         display: flex;
         justify-content: space-between;
 
+        // Hollow ring eyes
         &::before,
         &::after {
-            // Eyes
             content: '';
-            width: 6px;
-            height: 6px;
-            background: @color-black;
+            width: 7px;
+            height: 7px;
+            background: transparent;
+            border: 2px solid @color-black;
             border-radius: 50%;
         }
     }
 
-    .tentacles {
-        display: none;
-    }
+    .tentacles { display: none; }
 
-    // Simplify
-}
-
-@keyframes wobble {
-    from {
-        transform: translateX(-50%) scale(1, 1);
-    }
-
-    to {
-        transform: translateX(-50%) scale(1.1, 0.9);
+    // Low health — fading spirit
+    &.low-health {
+        .enemy-body {
+            animation: spirit-flicker 0.8s infinite;
+            filter: saturate(0.5);
+            box-shadow: 0 0 4px rgba(180, 180, 180, 0.3);
+        }
     }
 }
 
-@keyframes drip {
-    0%, 100% {
-        height: 8px;
-        opacity: 1;
-    }
-    50% {
-        height: 14px;
-        opacity: 0.8;
-    }
+@keyframes wisp-trail {
+    0%, 100% { opacity: 0.6; transform: translateX(-50%) scaleY(1); }
+    50% { opacity: 0.3; transform: translateX(-50%) scaleY(1.3); }
 }
 
-// 2. GOBLIN (Red Imp)
+// ===========================================
+// 2. PATUPAIAREHE (Forest Fairy / Goblin)
+// ===========================================
+
 .enemy-goblin {
     .enemy-body {
         position: absolute;
         bottom: 0;
         left: 50%;
-        width: 25px;
-        height: 40px;
+        width: 26px;
+        height: 38px;
         background: @color-enemy-goblin;
         transform: translateX(-50%);
-        border-radius: 5px;
-        .comic-border();
-        animation: hop 0.3s infinite;
+        clip-path: polygon(20% 0%, 80% 0%, 90% 25%, 85% 100%, 15% 100%, 10% 25%);
+        filter: drop-shadow(2px 0 0 @color-black) drop-shadow(-2px 0 0 @color-black) drop-shadow(0 2px 0 @color-black) drop-shadow(0 -2px 0 @color-black);
+        animation: hop 0.4s ease-in-out infinite;
+
+        // Wild reddish-brown hair tuft
+        &::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            width: 18px;
+            height: 10px;
+            background: #8B5A3A;
+            transform: translateX(-50%);
+            border-radius: 50% 50% 20% 20%;
+            clip-path: polygon(10% 100%, 0% 30%, 20% 0%, 40% 20%, 50% 0%, 60% 20%, 80% 0%, 100% 30%, 90% 100%);
+        }
+
+        // Mist trail behind body
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 40px;
+            height: 25px;
+            background: radial-gradient(
+                ellipse at center,
+                rgba(168, 216, 240, 0.3) 0%,
+                transparent 70%
+            );
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: -1;
+        }
     }
 
     .enemy-face {
@@ -135,113 +193,190 @@
         transform: translateX(-50%);
         width: 100%;
 
+        // Pointed ears (angled outward)
         &::before,
         &::after {
-            // Pitchfork Horns (Eyes actually)
             content: '';
             position: absolute;
-            top: -10px;
+            top: -4px;
             width: 0;
             height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-bottom: 15px solid @color-black;
+            border-bottom: 10px solid @color-enemy-goblin;
         }
 
         &::before {
-            left: 0;
+            left: -6px;
+            border-left: 8px solid transparent;
+            border-right: 2px solid transparent;
+            transform: rotate(-15deg);
         }
 
         &::after {
-            right: 0;
+            right: -6px;
+            border-left: 2px solid transparent;
+            border-right: 8px solid transparent;
+            transform: rotate(15deg);
         }
     }
 
+    // Glowing green eyes via enemy-eyes div
     .enemy-eyes {
-        display: none;
+        position: absolute;
+        top: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 14px;
+        display: flex;
+        justify-content: space-between;
+
+        &::before,
+        &::after {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: #7BFF7B;
+            border-radius: 50%;
+            box-shadow: 0 0 3px #7BFF7B;
+        }
     }
 
-    .arms {
-        display: none;
+    .arms { display: none; }
+
+    // Low health — mist fades, colors dim
+    &.low-health {
+        .enemy-body::after { opacity: 0; }
+        .enemy-body { filter: drop-shadow(2px 0 0 @color-black) drop-shadow(-2px 0 0 @color-black) drop-shadow(0 2px 0 @color-black) drop-shadow(0 -2px 0 @color-black) saturate(0.5) brightness(0.8); }
+        .enemy-body { animation-duration: 0.6s; }
     }
 }
 
 @keyframes hop {
-    0% {
-        transform: translateX(-50%) translateY(0);
-    }
-
-    50% {
-        transform: translateX(-50%) translateY(-10px);
-    }
-
-    100% {
-        transform: translateX(-50%) translateY(0);
-    }
+    0% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-8px) scaleX(0.95); }
+    100% { transform: translateX(-50%) translateY(0); }
 }
 
-// 3. KNIGHT (Blue Square)
+// ===========================================
+// 3. TOA (Warrior / Knight) — Māori Warrior
+// ===========================================
+
 .enemy-knight {
     .enemy-body {
         position: absolute;
         bottom: 0;
         left: 50%;
-        width: 35px;
-        height: 45px;
+        width: 36px;
+        height: 46px;
         background: @color-enemy-knight;
         transform: translateX(-50%);
-        .comic-border();
+        clip-path: polygon(25% 0%, 75% 0%, 85% 30%, 80% 100%, 20% 100%, 15% 30%);
+        filter: drop-shadow(2px 0 0 @color-black) drop-shadow(-2px 0 0 @color-black) drop-shadow(0 2px 0 @color-black) drop-shadow(0 -2px 0 @color-black);
 
-        // Helmet visor slit
+        // Tā moko facial lines (three curved marks)
         &::before {
             content: '';
             position: absolute;
-            top: 8px;
+            top: 6px;
             left: 50%;
-            width: 20px;
-            height: 5px;
-            background: @color-black;
+            width: 16px;
+            height: 14px;
             transform: translateX(-50%);
-            border-radius: 2px;
+            background:
+                linear-gradient(@color-black, @color-black) no-repeat center 0 / 2px 12px,
+                linear-gradient(@color-black, @color-black) no-repeat 2px 2px / 2px 10px,
+                linear-gradient(@color-black, @color-black) no-repeat calc(100% - 2px) 2px / 2px 10px;
         }
 
-        // Armor Shine
+        // Pounamu pendant at chest
         &::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 5px;
-            width: 10px;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.3);
+            top: 22px;
+            left: 50%;
+            width: 8px;
+            height: 10px;
+            background: @color-pounamu-deep;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 4px fade(@color-pounamu-deep, 50%);
         }
     }
 
+    // Piupiu (flax skirt) replaces cape
     .cape {
         position: absolute;
-        top: 5px;
+        bottom: 0;
         left: 50%;
         width: 40px;
-        height: 40px;
-        background: @color-danger;
+        height: 18px;
+        background: repeating-linear-gradient(
+            90deg,
+            @color-flax-gold 0px, @color-flax-gold 3px,
+            darken(@color-flax-gold, 15%) 3px, darken(@color-flax-gold, 15%) 5px
+        );
         transform: translateX(-50%) translateZ(-1px);
-        .comic-border();
+        border: 2px solid @color-black;
+        border-top: none;
         z-index: -1;
-        animation: cape-flap 0.5s infinite alternate;
+        animation: piupiu-sway 0.6s infinite alternate;
+        border-radius: 0 0 3px 3px;
+    }
+
+    .enemy-face { display: none; }
+
+    // Weapon shape via sword element
+    .sword {
+        position: absolute;
+        top: 10px;
+        right: -8px;
+        width: 4px;
+        height: 30px;
+        background: @color-obsidian;
+        transform: rotate(25deg);
+        border-radius: 2px;
+        border: 1px solid @color-black;
+
+        // Weapon tip
+        &::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 8px solid @color-obsidian;
+            transform: translateX(-50%);
+        }
+    }
+
+    // Low health — armor darkens, stagger
+    &.low-health {
+        .enemy-body {
+            filter: drop-shadow(2px 0 0 @color-black) drop-shadow(-2px 0 0 @color-black) drop-shadow(0 2px 0 @color-black) drop-shadow(0 -2px 0 @color-black) brightness(0.7);
+        }
+        .cape {
+            clip-path: polygon(0 0, 15% 100%, 30% 60%, 50% 100%, 70% 70%, 85% 100%, 100% 0);
+        }
+        animation: stagger 0.3s ease-in-out infinite;
     }
 }
 
-@keyframes cape-flap {
-    from {
-        transform: translateX(-50%) rotate(5deg);
-    }
-
-    to {
-        transform: translateX(-50%) rotate(-5deg);
-    }
+@keyframes piupiu-sway {
+    from { transform: translateX(-50%) translateZ(-1px) rotate(2deg); }
+    to { transform: translateX(-50%) translateZ(-1px) rotate(-2deg); }
 }
 
-// 4. BOSS (Big Purple)
+@keyframes stagger {
+    0%, 100% { transform: translate(-50%, -100%) rotateX(-@map-rotation) rotate(0deg); }
+    50% { transform: translate(-50%, -100%) rotateX(-@map-rotation) rotate(3deg); }
+}
+
+// ===========================================
+// 4. TANIWHA (Water Guardian / Boss)
+// ===========================================
+
 .enemy-boss {
     transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.5);
 
@@ -253,62 +388,333 @@
         height: 70px;
         background: @color-enemy-boss;
         transform: translateX(-50%);
-        .comic-border(4px);
+        clip-path: polygon(20% 0%, 80% 0%, 95% 20%, 90% 50%, 85% 100%, 15% 100%, 10% 50%, 5% 20%);
+        filter: drop-shadow(3px 0 0 @color-black) drop-shadow(-3px 0 0 @color-black) drop-shadow(0 3px 0 @color-black) drop-shadow(0 -3px 0 @color-black);
 
-        // Angry Eyebrows
+        // Scale texture overlay
+        background-image: radial-gradient(
+            circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px
+        );
+        background-size: 6px 6px;
+
+        // Elaborate brow ridges with spiral ends (manaia style)
         &::before {
             content: '';
             position: absolute;
-            top: 20px;
-            left: 5px;
-            right: 5px;
+            top: 14px;
+            left: 8px;
+            right: 8px;
             height: 10px;
             background: @color-black;
-            transform: rotate(10deg); // Angry slant
-            clip-path: polygon(0 0, 100% 40%, 100% 60%, 0 100%); // V shape roughly
+            clip-path: polygon(
+                0% 50%, 5% 0%, 15% 30%, 25% 0%, 35% 20%,
+                50% 40%,
+                65% 20%, 75% 0%, 85% 30%, 95% 0%, 100% 50%,
+                90% 100%, 10% 100%
+            );
+        }
+
+        // Jagged jaw/teeth
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            width: 30px;
+            height: 10px;
+            background: @color-koru-cream;
+            transform: translateX(-50%);
+            clip-path: polygon(0 0, 15% 100%, 30% 0, 45% 100%, 60% 0, 75% 100%, 90% 0, 100% 100%, 100% 0);
         }
     }
 
+    // Enhanced eyes with iris ring and glow
     .enemy-face {
         position: absolute;
-        top: 35px;
+        top: 28px;
         left: 50%;
         transform: translateX(-50%);
-        width: 30px;
+        width: 34px;
         display: flex;
         justify-content: space-between;
 
         &::before,
         &::after {
             content: '';
-            width: 8px;
-            height: 4px;
+            width: 10px;
+            height: 8px;
             background: @color-danger;
-            box-shadow: 0 0 4px @color-danger;
+            border-radius: 50%;
+            border: 2px solid darken(@color-danger, 20%);
+            box-shadow: 0 0 8px @color-danger;
         }
     }
 
+    // Ocean-themed energy rings
     .energy-rings {
         position: absolute;
         top: 50%;
         left: 50%;
         width: 100px;
         height: 100px;
-        border: 4px dashed @color-black;
+        border: 3px solid @color-tower-tangaroa;
         border-radius: 50%;
         transform: translate(-50%, -50%);
-        animation: spin-slow 10s linear infinite;
+        animation: spin-slow 8s linear infinite;
         pointer-events: none;
+        box-shadow: 0 0 6px fade(@color-tower-tangaroa, 40%);
+    }
+
+    // Dorsal fin spikes (shoulder spikes reshaped)
+    .spikes {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 70px;
+        transform: translateX(-50%);
+
+        .spike {
+            position: absolute;
+            top: -5px;
+            width: 0;
+            height: 0;
+
+            &.left {
+                left: 0;
+                border-left: 5px solid transparent;
+                border-right: 8px solid transparent;
+                border-bottom: 18px solid darken(@color-enemy-boss, 10%);
+                transform: rotate(-15deg);
+            }
+
+            &.right {
+                right: 0;
+                border-left: 8px solid transparent;
+                border-right: 5px solid transparent;
+                border-bottom: 18px solid darken(@color-enemy-boss, 10%);
+                transform: rotate(15deg);
+            }
+        }
+    }
+
+    .enemy-eyes { display: none; }
+
+    // === BOSS PHASES ===
+
+    // Te Riri (enraged at 30% HP)
+    &.enraged {
+        .enemy-body {
+            animation: enrage-pulse 0.8s infinite;
+            background-color: darken(@color-enemy-boss, 5%);
+        }
+        .enemy-face::before,
+        .enemy-face::after {
+            background: #FF3333;
+            box-shadow: 0 0 12px #FF3333, 0 0 20px rgba(255, 50, 50, 0.5);
+        }
+        .energy-rings {
+            border-color: @color-danger;
+            box-shadow: 0 0 10px fade(@color-danger, 60%);
+            animation: spin-slow 3s linear infinite;
+        }
+    }
+
+    // Kaitiaki (guardian shield)
+    &.shielded {
+        .energy-rings {
+            border-width: 5px;
+            border-color: @color-tower-tangaroa;
+            box-shadow: 0 0 15px @color-tower-tangaroa, inset 0 0 10px fade(@color-tower-tangaroa, 30%);
+        }
+    }
+
+    // Karanga (summoning)
+    &.summoning {
+        .enemy-face::before,
+        .enemy-face::after {
+            animation: boss-eye-flash 0.3s ease-out;
+        }
+    }
+
+    // Low health
+    &.low-health:not(.enraged) {
+        .enemy-body {
+            filter: drop-shadow(3px 0 0 @color-black) drop-shadow(-3px 0 0 @color-black) drop-shadow(0 3px 0 @color-black) drop-shadow(0 -3px 0 @color-black) brightness(0.8);
+        }
     }
 }
 
 @keyframes spin-slow {
-    to {
-        transform: translate(-50%, -50%) rotate(360deg);
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes boss-eye-flash {
+    0% { transform: scale(1); box-shadow: 0 0 8px @color-danger; }
+    50% { transform: scale(2); box-shadow: 0 0 20px @color-white; }
+    100% { transform: scale(1); box-shadow: 0 0 8px @color-danger; }
+}
+
+// ===========================================
+// ENEMY VARIANT STYLES
+// ===========================================
+
+// --- RANGATIRA (Elite / Chief) ---
+.enemy.elite {
+    transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.15);
+    filter: brightness(1.1);
+
+    // Gold crown/feather crest
+    &::before {
+        content: '';
+        position: absolute;
+        top: -14px;
+        left: 50%;
+        width: 16px;
+        height: 10px;
+        background: @color-flax-gold;
+        transform: translateX(-50%);
+        clip-path: polygon(20% 100%, 0% 30%, 30% 0%, 50% 40%, 70% 0%, 100% 30%, 80% 100%);
+        filter: drop-shadow(1px 1px 0 @color-black);
+        z-index: 10;
     }
 }
 
-// Status Effects
+// Boss doesn't get extra scaling from elite
+.enemy-boss.elite {
+    transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.5);
+}
+
+// Per-type elite refinements
+.enemy-slime.elite {
+    .enemy-body {
+        box-shadow: 0 0 12px rgba(196, 160, 53, 0.5);
+        border-color: @color-flax-gold;
+    }
+}
+
+.enemy-knight.elite {
+    .cape {
+        background: repeating-linear-gradient(
+            90deg,
+            @color-flax-gold 0px, @color-flax-gold 3px,
+            darken(@color-flax-gold, 10%) 3px, darken(@color-flax-gold, 10%) 5px
+        );
+    }
+}
+
+// --- PAKANGA (Armored / Battle-ready) ---
+.enemy.armored {
+    // Thicker border + metallic sheen
+    .enemy-body {
+        border: 4px solid @color-obsidian !important;
+    }
+
+    // Dark overlay layer
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            135deg,
+            rgba(80, 70, 60, 0.25) 0%,
+            rgba(200, 200, 200, 0.15) 50%,
+            rgba(80, 70, 60, 0.25) 100%
+        );
+        pointer-events: none;
+        z-index: 5;
+    }
+}
+
+.enemy-slime.armored {
+    .enemy-body {
+        filter: drop-shadow(2px 0 0 @color-obsidian) drop-shadow(-2px 0 0 @color-obsidian);
+    }
+}
+
+.enemy-knight.armored {
+    .enemy-body {
+        background: darken(@color-enemy-knight, 15%);
+    }
+}
+
+// --- TERE (Speedy / Swift) ---
+.enemy.speedy {
+    transform: translate(-50%, -100%) rotateX(-@map-rotation) scaleX(0.85);
+
+    // Motion trail
+    &::after {
+        content: '';
+        position: absolute;
+        top: 10%;
+        left: -20px;
+        width: 25px;
+        height: 80%;
+        background: linear-gradient(
+            to right,
+            transparent 0%,
+            rgba(200, 200, 255, 0.2) 50%,
+            rgba(200, 200, 255, 0.3) 100%
+        );
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    .enemy-body {
+        animation-duration: 0.2s !important;
+    }
+}
+
+// Boss speedy keeps its scale
+.enemy-boss.speedy {
+    transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.5) scaleX(0.85);
+}
+
+// --- MATE (Toxic / Deadly) ---
+.enemy.toxic {
+    filter: hue-rotate(40deg);
+
+    // Toxic aura
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        width: 50px;
+        height: 30px;
+        background: radial-gradient(
+            ellipse at center,
+            rgba(120, 200, 50, 0.35) 0%,
+            rgba(120, 200, 50, 0.1) 60%,
+            transparent 80%
+        );
+        transform: translateX(-50%);
+        pointer-events: none;
+        z-index: -1;
+    }
+}
+
+.enemy-slime.toxic {
+    .enemy-face::before,
+    .enemy-face::after {
+        border-color: @color-danger;
+        background: rgba(255, 50, 50, 0.3);
+    }
+}
+
+.enemy-knight.toxic {
+    .enemy-body::after {
+        background: @color-danger;
+        box-shadow: 0 0 4px @color-danger;
+    }
+}
+
+// ===========================================
+// STATUS EFFECTS
+// ===========================================
+
 .enemy.slowed {
     filter: hue-rotate(180deg) brightness(1.2);
 

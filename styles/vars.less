@@ -103,6 +103,19 @@
 @color-enemy-taniwha: #1A5276;       // Deep water blue
 @color-enemy-boss: @color-enemy-taniwha; // Alias
 
+// CULTURAL PALETTE - Māori art colors
+@color-pounamu-deep: #1E6B47;        // Deep jade
+@color-flax-gold: #C4A035;           // Flax/harakeke gold
+@color-koru-cream: #F5E6C8;          // Bone/ivory for carvings
+@color-obsidian: #2A1A10;            // Volcanic glass black
+@color-earth-ochre: #C4763A;         // Red ochre clay
+
+// HEALTH BAR COLORS
+@color-health-high: #5EA65E;         // Green (>75%)
+@color-health-medium: #F2D864;       // Yellow (50-75%)
+@color-health-low: #E8635A;          // Red (25-50%)
+@color-health-critical: #D4512A;     // Deep red (<25%)
+
 // TYPOGRAPHY
 @font-main: 'Comic Neue', 'Comic Sans MS', sans-serif;
 @font-title: 'Bangers', 'Impact', cursive;
@@ -186,4 +199,79 @@
 
 .contain-paint() {
     contain: layout style paint;
+}
+
+// ===========================================
+// MĀORI CULTURAL PATTERN MIXINS
+// ===========================================
+
+// Tāniko weave pattern (diagonal stripes)
+.taniko-pattern(@c1, @c2, @size: 6px) {
+    background-image: repeating-linear-gradient(
+        45deg, @c1 0px, @c1 @size, @c2 @size, @c2 (@size * 2)
+    );
+}
+
+// Jade/pounamu shine effect
+.jade-shine() {
+    background-image: linear-gradient(
+        135deg, transparent 35%, rgba(255,255,255,0.35) 45%,
+        rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.35) 55%, transparent 65%
+    );
+}
+
+// Spirit/mana glow
+.spirit-glow(@color, @size: 8px) {
+    box-shadow: 0 0 @size fade(@color, 50%);
+}
+
+// Carved groove lines (for tower/enemy body details)
+.carving-lines(@color: @color-obsidian, @spacing: 8px) {
+    background-image: repeating-linear-gradient(
+        0deg, transparent, transparent (@spacing - 1px),
+        fade(@color, 30%) (@spacing - 1px), fade(@color, 30%) @spacing
+    );
+}
+
+// ===========================================
+// CULTURAL KEYFRAMES
+// ===========================================
+
+// Gentle spirit floating
+@keyframes spirit-float {
+    0% { transform: translateX(-50%) translateY(0) scale(1, 1); }
+    50% { transform: translateX(-50%) translateY(-4px) scale(1.02, 0.98); }
+    100% { transform: translateX(-50%) translateY(0) scale(1, 1); }
+}
+
+// Health critical pulse
+@keyframes health-critical-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+// Spirit flicker (low health)
+@keyframes spirit-flicker {
+    0%, 100% { opacity: 0.6; }
+    25% { opacity: 0.3; }
+    50% { opacity: 0.7; }
+    75% { opacity: 0.4; }
+}
+
+// Mana aura rotation
+@keyframes mana-rotate {
+    from { transform: translateX(-50%) rotate(0deg); }
+    to { transform: translateX(-50%) rotate(360deg); }
+}
+
+// Jade shine sweep
+@keyframes jade-sweep {
+    0% { background-position: -100% 0; }
+    100% { background-position: 200% 0; }
+}
+
+// Boss enrage pulse
+@keyframes enrage-pulse {
+    0%, 100% { filter: hue-rotate(0deg) brightness(1.2); }
+    50% { filter: hue-rotate(15deg) brightness(1.5); }
 }

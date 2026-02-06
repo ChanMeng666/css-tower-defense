@@ -7,6 +7,66 @@
   --color-path-light: #F2DD8A;
   --color-path-dark: #C4A642;
 }
+@keyframes spirit-float {
+  0% {
+    transform: translateX(-50%) translateY(0) scale(1, 1);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-4px) scale(1.02, 0.98);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) scale(1, 1);
+  }
+}
+@keyframes health-critical-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+@keyframes spirit-flicker {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  25% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  75% {
+    opacity: 0.4;
+  }
+}
+@keyframes mana-rotate {
+  from {
+    transform: translateX(-50%) rotate(0deg);
+  }
+  to {
+    transform: translateX(-50%) rotate(360deg);
+  }
+}
+@keyframes jade-sweep {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+@keyframes enrage-pulse {
+  0%,
+  100% {
+    filter: hue-rotate(0deg) brightness(1.2);
+  }
+  50% {
+    filter: hue-rotate(15deg) brightness(1.5);
+  }
+}
 .loading-screen {
   position: fixed;
   top: 0;
@@ -2409,6 +2469,7 @@ body.blood-moon .sky-cycle {
 .tower {
   position: absolute;
   transform-style: preserve-3d;
+  contain: layout style paint;
   transform-origin: center bottom;
   pointer-events: none;
   transform: translate(-50%, -100%) rotateX(-45deg);
@@ -2491,12 +2552,27 @@ body.blood-moon .sky-cycle {
   position: absolute;
   bottom: 10px;
   left: 50%;
-  width: 30px;
+  width: 28px;
   height: 50px;
   background: #b85b19;
   transform: translateX(-50%);
   border: 3px solid #1A1614;
-  background-image: repeating-linear-gradient(0deg, transparent, transparent 9px, #1A1614 10px);
+  background-image: linear-gradient(0deg, #ce661c 0%, #af5718 20%, #c1601a 40%, #a65217 60%, #ca641c 80%, #b85b19 100%);
+  clip-path: polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);
+  border: none;
+  filter: drop-shadow(2px 0 0 #1A1614) drop-shadow(-2px 0 0 #1A1614) drop-shadow(0 2px 0 #1A1614) drop-shadow(0 -2px 0 #1A1614);
+}
+.tower-arrow .tower-body::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #C4763A;
+  border-radius: 50% 0 50% 50%;
+  border-right-color: transparent;
+  transform: translateX(-50%) rotate(45deg);
 }
 .tower-arrow .tower-top {
   position: absolute;
@@ -2518,14 +2594,14 @@ body.blood-moon .sky-cycle {
 .tower-arrow .tower-turret::after {
   content: '';
   position: absolute;
-  top: -20px;
+  top: -22px;
   left: 50%;
-  width: 20px;
+  width: 8px;
   height: 20px;
-  border: 3px solid #1A1614;
-  border-radius: 0 50% 50% 0;
-  border-left: none;
+  background: #8B4513;
   transform: translateX(-50%);
+  clip-path: polygon(50% 0%, 100% 30%, 100% 100%, 0% 100%, 0% 30%);
+  filter: drop-shadow(1px 0 0 #1A1614) drop-shadow(-1px 0 0 #1A1614) drop-shadow(0 -1px 0 #1A1614);
 }
 .tower-arrow .tower-turret::before {
   content: '';
@@ -2537,13 +2613,34 @@ body.blood-moon .sky-cycle {
   background: #1A1614;
   transform: translateX(-50%);
 }
+.tower-arrow.level-2 .tower-body {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M10 2C6 2 4 5 4 8s2 4 4 5c-1-1-2-2-2-4s1-4 4-4' fill='none' stroke='%23C4763A' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat center 30%, linear-gradient(0deg, #ce661c 0%, #af5718 20%, #c1601a 40%, #a65217 60%, #ca641c 80%, #b85b19 100%);
+}
+.tower-arrow.level-2 .tower-top {
+  background-image: repeating-linear-gradient(45deg, #8B4513 0px, #8B4513 4px, #48240a 4px, #48240a 8px);
+}
+.tower-arrow.level-2 .tower-turret::after {
+  box-shadow: 0 8px 0 0 #1E6B47;
+}
+.tower-arrow.level-3 .tower-body {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='40'%3E%3Cpath d='M12 4C8 4 6 7 6 10s2 5 5 6c-2-1-3-3-3-5s2-5 4-5M12 18c-3 0-5 2-5 5s1 4 3 5c-1-1-1-2-1-4s1-4 3-4' fill='none' stroke='%23C4763A' stroke-width='1.5'/%3E%3Cpath d='M8 14h8M6 16h12' stroke='%23C4763A' stroke-width='0.8'/%3E%3C/svg%3E") no-repeat center center / 90% 90%, linear-gradient(0deg, #ce661c 0%, #a65217 50%, #ca641c 100%);
+}
+.tower-arrow.level-3 .tower-top {
+  background-image: repeating-linear-gradient(45deg, #C4763A 0px, #C4763A 3px, #DAA520 3px, #DAA520 6px);
+  box-shadow: 0 0 6px rgba(196, 118, 58, 0.4);
+}
+.tower-arrow.level-3 .tower-turret::after {
+  height: 26px;
+  background: linear-gradient(to top, #8B4513 40%, #1E6B47 60%);
+  box-shadow: 0 0 6px rgba(30, 107, 71, 0.5);
+}
 .tower-cannon .tower-base {
   position: absolute;
   bottom: 0;
   left: 50%;
   width: 50px;
   height: 50px;
-  background: #1A1614;
+  background: #226741;
   border-radius: 50%;
   transform: translateX(-50%) rotateX(-90deg);
   border: 3px solid #1A1614;
@@ -2554,41 +2651,88 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 45px;
   height: 30px;
-  background: #444;
+  background: linear-gradient(135deg, #6dce98 0%, #3CB371 30%, #2f8d59 60%, #3CB371 80%, #5ac88b 100%);
   transform: translateX(-50%);
   border: 3px solid #1A1614;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 .tower-cannon .tower-body::after {
   content: '';
   position: absolute;
-  top: 4px;
-  left: 4px;
-  right: 4px;
-  bottom: 4px;
-  background: radial-gradient(#fff 20%, transparent 20%);
-  background-size: 10px 10px;
+  top: 3px;
+  left: 8px;
+  width: 6px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 3px;
+  transform: skewX(-5deg);
 }
 .tower-cannon .tower-barrel {
   position: absolute;
   bottom: 25px;
   left: 50%;
-  width: 20px;
-  height: 50px;
-  background: #1A1614;
+  width: 18px;
+  height: 45px;
+  background: #297a4d;
   transform-origin: center bottom;
   transform: translateX(-50%);
-  border: 2px solid #fff;
+  border-radius: 6px 6px 3px 3px;
+  border: 2px solid #1A1614;
+  box-shadow: inset -3px 0 0 rgba(0, 0, 0, 0.2);
 }
 .tower-cannon .tower-barrel::before {
   content: '';
   position: absolute;
-  left: 4px;
+  left: 3px;
   top: 5px;
   width: 4px;
-  height: 30px;
-  background: #FFF8F0;
+  height: 25px;
+  background: rgba(255, 255, 255, 0.4);
   border-radius: 2px;
+}
+.tower-cannon.level-2 .tower-body {
+  background-image: linear-gradient(0deg, transparent 0%, transparent 8px, rgba(0, 0, 0, 0.15) 8px, rgba(0, 0, 0, 0.15) 9px, transparent 9px, transparent 18px, rgba(0, 0, 0, 0.15) 18px, rgba(0, 0, 0, 0.15) 19px, transparent 19px);
+  box-shadow: 0 0 8px rgba(60, 179, 113, 0.4);
+}
+.tower-cannon.level-2 .tower-barrel::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -2px;
+  right: -2px;
+  height: 6px;
+  background: #DAA520;
+  border-radius: 3px;
+  border: 1px solid #1A1614;
+}
+.tower-cannon.level-3 .tower-body {
+  background: linear-gradient(135deg, rgba(60, 179, 113, 0.9) 0%, rgba(30, 107, 71, 0.95) 30%, rgba(60, 179, 113, 0.85) 50%, rgba(30, 107, 71, 0.9) 70%, rgba(60, 179, 113, 0.95) 100%);
+  box-shadow: 0 0 12px rgba(60, 179, 113, 0.5), inset 0 0 8px rgba(255, 255, 255, 0.1);
+}
+.tower-cannon.level-3 .tower-body::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translateX(-50%);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cellipse cx='6' cy='7' rx='3' ry='4' fill='none' stroke='%23F5E6C8' stroke-width='1.2'/%3E%3Cellipse cx='14' cy='7' rx='3' ry='4' fill='none' stroke='%23F5E6C8' stroke-width='1.2'/%3E%3Cpath d='M5 14h10M7 16h6' stroke='%23F5E6C8' stroke-width='1'/%3E%3C/svg%3E") no-repeat center;
+}
+.tower-cannon.level-3 .tower-barrel::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -2px;
+  right: -2px;
+  height: 6px;
+  background: #DAA520;
+  border-radius: 3px;
+  border: 1px solid #1A1614;
+  box-shadow: 0 15px 0 0 #DAA520, 0 30px 0 0 #DAA520;
+}
+.tower-cannon.level-3 .tower-base {
+  box-shadow: 0 0 10px rgba(60, 179, 113, 0.5);
 }
 .tower-ice .tower-base {
   position: absolute;
@@ -2596,34 +2740,122 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 40px;
   height: 40px;
-  background: #1E90FF;
+  background: radial-gradient(circle, #84c2ff 0%, #1E90FF 60%, #0077ea 100%);
   transform: translateX(-50%) rotateX(-90deg);
   border: 3px solid #1A1614;
+  border-radius: 50%;
 }
 .tower-ice .tower-crystal {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: 0;
-  height: 0;
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  border-bottom: 70px solid #1E90FF;
+  width: 30px;
+  height: 65px;
+  background: linear-gradient(180deg, #84c2ff 0%, #1E90FF 30%, #006ad1 70%, #005db7 100%);
   transform: translateX(-50%);
-  filter: drop-shadow(3px 3px 0 #1A1614);
+  clip-path: polygon(30% 0%, 70% 0%, 85% 15%, 80% 40%, 90% 60%, 85% 80%, 100% 100%, 0% 100%, 15% 80%, 10% 60%, 20% 40%, 15% 15%);
+  filter: drop-shadow(2px 0 0 #1A1614) drop-shadow(-2px 0 0 #1A1614) drop-shadow(0 2px 0 #1A1614) drop-shadow(0 -2px 0 #1A1614);
 }
 .tower-ice .tower-crystal::after {
   content: '';
   position: absolute;
-  top: 20px;
-  left: -5px;
-  width: 10px;
-  height: 30px;
-  background: rgba(255, 255, 255, 0.7);
-  transform: skewX(-15deg);
+  top: 10px;
+  left: 5px;
+  right: 5px;
+  bottom: 10px;
+  background: repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(255, 255, 255, 0.2) 8px, rgba(255, 255, 255, 0.2) 10px);
 }
 .tower-ice .tower-glow {
   display: none;
+}
+.tower-ice.level-2 .tower-crystal {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath d='M4 12c4-6 8-6 12 0s8 6 12 0' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-size: 24px 24px;
+}
+.tower-ice.level-2 .tower-base {
+  box-shadow: 0 0 8px rgba(30, 144, 255, 0.4);
+}
+.tower-ice.level-2 .ice-particles {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.tower-ice.level-2 .ice-particles::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: #b7dbff;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  animation: water-orbit 2s linear infinite;
+  box-shadow: 0 0 4px #84c2ff;
+}
+.tower-ice.level-3 .tower-crystal {
+  background: linear-gradient(180deg, rgba(135, 206, 235, 0.85) 0%, rgba(30, 144, 255, 0.7) 30%, rgba(30, 144, 255, 0.9) 70%, rgba(10, 80, 180, 0.95) 100%);
+}
+.tower-ice.level-3 .tower-crystal::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 18px;
+  height: 22px;
+  transform: translateX(-50%);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22'%3E%3Cellipse cx='5' cy='8' rx='2.5' ry='3' fill='none' stroke='rgba(255,255,255,0.6)' stroke-width='1.2'/%3E%3Cellipse cx='13' cy='8' rx='2.5' ry='3' fill='none' stroke='rgba(255,255,255,0.6)' stroke-width='1.2'/%3E%3Cpath d='M3 4c3-3 9-3 12 0' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='1.5'/%3E%3Cpath d='M5 16h8M6 18h6' stroke='rgba(255,255,255,0.4)' stroke-width='1'/%3E%3C/svg%3E") no-repeat center;
+  z-index: 2;
+}
+.tower-ice.level-3 .tower-base {
+  box-shadow: 0 0 12px #1E90FF;
+  animation: tide-pulse 3s ease-in-out infinite;
+}
+.tower-ice.level-3 .ice-particles {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.tower-ice.level-3 .ice-particles::before,
+.tower-ice.level-3 .ice-particles::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: #b7dbff;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #84c2ff;
+}
+.tower-ice.level-3 .ice-particles::before {
+  animation: water-orbit 2s linear infinite;
+}
+.tower-ice.level-3 .ice-particles::after {
+  animation: water-orbit 2s linear infinite reverse;
+}
+@keyframes water-orbit {
+  0% {
+    transform: rotate(0deg) translateX(20px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(20px) rotate(-360deg);
+  }
+}
+@keyframes tide-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(30, 144, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 16px #1E90FF;
+  }
 }
 .tower-magic .tower-base {
   position: absolute;
@@ -2633,22 +2865,31 @@ body.blood-moon .sky-cycle {
   height: 60px;
   background: #4B0082;
   transform: translateX(-50%);
-  border: 3px solid #1A1614;
   clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
   border: none;
   filter: drop-shadow(2px 0 0 #1A1614) drop-shadow(-2px 0 0 #1A1614) drop-shadow(0 -2px 0 #1A1614) drop-shadow(0 2px 0 #1A1614);
+}
+.tower-magic .tower-base::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 14px;
+  height: 30px;
+  transform: translateX(-50%);
+  background: repeating-linear-gradient(0deg, transparent 0px, transparent 6px, rgba(255, 255, 255, 0.15) 6px, rgba(255, 255, 255, 0.15) 8px);
 }
 .tower-magic .tower-orb {
   position: absolute;
   bottom: 65px;
   left: 50%;
-  width: 30px;
-  height: 30px;
-  background: #FFF8F0;
+  width: 28px;
+  height: 28px;
+  background: radial-gradient(circle at 40% 35%, #FFF8F0 0%, #9f1cff 30%, #4B0082 70%);
   border-radius: 50%;
   transform: translateX(-50%);
-  border: 4px solid #4B0082;
-  box-shadow: 4px 4px 0 #1A1614;
+  border: 3px solid #4B0082;
+  box-shadow: 4px 4px 0 #1A1614, 0 0 8px rgba(155, 123, 184, 0.5);
   animation: orb-hop 0.5s infinite alternate;
 }
 .tower-magic .tower-ring {
@@ -2657,10 +2898,75 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 60px;
   height: 10px;
-  border: 4px solid #D4738A;
+  border: 3px solid #D4738A;
   border-radius: 50%;
   transform: translateX(-50%);
   animation: spin-flat 2s linear infinite;
+}
+.tower-magic .magic-energy {
+  display: none;
+}
+.tower-magic.level-2 .tower-base {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='40'%3E%3Cpath d='M10 5C6 5 5 9 5 12s2 5 4 6M10 20c-3 0-4 3-4 5s1 4 3 5' fill='none' stroke='%239B7BB8' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 80% 80%;
+}
+.tower-magic.level-2 .tower-orb {
+  background: conic-gradient(from 0deg, #FFF8F0, #9f1cff, #FFF8F0, #8600e8, #FFF8F0);
+  animation: orb-hop 0.5s infinite alternate, orb-energy-spin 3s linear infinite;
+}
+.tower-magic.level-2 .magic-energy {
+  display: block;
+  position: absolute;
+  bottom: 72px;
+  left: 50%;
+  width: 40px;
+  height: 8px;
+  border: 2px solid rgba(155, 123, 184, 0.6);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  animation: spin-flat 1.5s linear infinite reverse;
+  pointer-events: none;
+}
+.tower-magic.level-3 .tower-base {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='50'%3E%3Cpath d='M12 5C8 5 6 8 6 11s2 5 5 6c-2-1-3-3-3-5s2-5 4-5M12 22c-3 0-5 3-5 6s2 5 4 6c-1-1-2-3-2-5s1-5 3-5' fill='none' stroke='%239B7BB8' stroke-width='1.5'/%3E%3Cpath d='M8 18h8M6 20h12M8 36h8' stroke='%239B7BB8' stroke-width='0.8'/%3E%3Cellipse cx='12' cy='42' rx='3' ry='3' fill='none' stroke='%239B7BB8' stroke-width='1'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 90% 90%;
+  box-shadow: 0 0 8px rgba(75, 0, 130, 0.4);
+}
+.tower-magic.level-3 .tower-orb {
+  width: 32px;
+  height: 32px;
+  background: radial-gradient(circle at 40% 35%, #FFF8F0 0%, #E8D0FF 20%, #9f1cff 50%, #4B0082 80%);
+  box-shadow: 4px 4px 0 #1A1614, 0 0 15px #9B7BB8, 0 0 30px rgba(155, 123, 184, 0.3);
+  animation: orb-hop 0.5s infinite alternate, orb-energy-spin 2s linear infinite;
+}
+.tower-magic.level-3 .tower-ring {
+  border-color: #9B7BB8;
+  box-shadow: 0 0 6px rgba(155, 123, 184, 0.4);
+}
+.tower-magic.level-3 .magic-energy {
+  display: block;
+  position: absolute;
+  bottom: 68px;
+  left: 50%;
+  width: 75px;
+  height: 12px;
+  border: 2px solid rgba(212, 115, 138, 0.4);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  animation: spin-flat 4s linear infinite;
+  pointer-events: none;
+}
+@keyframes orb-energy-spin {
+  from {
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
+  }
 }
 .tower-tesla .tower-base {
   position: absolute;
@@ -2676,9 +2982,10 @@ body.blood-moon .sky-cycle {
   position: absolute;
   bottom: 15px;
   left: 50%;
-  width: 20px;
-  height: 40px;
-  background: repeating-linear-gradient(0deg, #708090, #708090 5px, #1A1614 5px, #1A1614 8px);
+  width: 22px;
+  height: 42px;
+  background: linear-gradient(0deg, #4e5a65 0%, #708090 25%, #8d9aa6 50%, #708090 75%, #5a6673 100%);
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 4px, rgba(0, 0, 0, 0.3) 4px, rgba(0, 0, 0, 0.3) 6px);
   transform: translateX(-50%);
   border: 2px solid #1A1614;
 }
@@ -2705,16 +3012,6 @@ body.blood-moon .sky-cycle {
   background: #708090;
   clip-path: polygon(40% 0%, 100% 40%, 55% 45%, 70% 100%, 0% 55%, 45% 50%);
   transform: translate(-50%, -50%);
-}
-@keyframes spark-pulse {
-  from {
-    transform: translateX(-50%) scale(1);
-    opacity: 0.8;
-  }
-  to {
-    transform: translateX(-50%) scale(1.2);
-    opacity: 1;
-  }
 }
 .tesla-arc {
   position: absolute;
@@ -2746,6 +3043,16 @@ body.blood-moon .sky-cycle {
   transform: translate(-50%, -50%) rotate(-30deg);
   animation-delay: 0.4s;
 }
+@keyframes spark-pulse {
+  from {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.8;
+  }
+  to {
+    transform: translateX(-50%) scale(1.2);
+    opacity: 1;
+  }
+}
 @keyframes tesla-arc-flash {
   0%,
   80%,
@@ -2755,6 +3062,51 @@ body.blood-moon .sky-cycle {
   10%,
   30% {
     opacity: 1;
+  }
+}
+.tower-tesla.level-2 .tower-coil {
+  background: conic-gradient(from 0deg, #4e5a65, #9ba6b1, #5a6673, #8d9aa6, #4e5a65);
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 4px, rgba(0, 0, 0, 0.25) 4px, rgba(0, 0, 0, 0.25) 6px);
+}
+.tower-tesla.level-2 .tower-spark {
+  box-shadow: 0 0 14px #708090, 0 0 4px #FFF8F0;
+}
+.tower-tesla.level-2 .tesla-arc::before {
+  width: 35px;
+}
+.tower-tesla.level-2 .tesla-arc::after {
+  width: 35px;
+}
+.tower-tesla.level-3 .tower-coil {
+  background: conic-gradient(from 0deg, #434d57, #a9b3bd, #FFF8F0, #9ba6b1, #434d57);
+  animation: storm-vortex 3s linear infinite;
+}
+.tower-tesla.level-3 .tower-spark {
+  width: 35px;
+  height: 35px;
+  box-shadow: 0 0 20px #708090, 0 0 8px #FFF8F0;
+  animation: spark-pulse 0.08s infinite alternate;
+}
+.tower-tesla.level-3 .tower-spark::after {
+  width: 16px;
+  height: 20px;
+}
+.tower-tesla.level-3 .tesla-arc::before,
+.tower-tesla.level-3 .tesla-arc::after {
+  width: 40px;
+  height: 3px;
+  box-shadow: 0 0 6px #708090, 0 0 12px #FFF8F0;
+  animation: tesla-arc-flash 0.3s ease-out infinite;
+}
+.tower-tesla.level-3 .tower-base {
+  box-shadow: 0 0 8px rgba(112, 128, 144, 0.4);
+}
+@keyframes storm-vortex {
+  from {
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
   }
 }
 .tower-flame .tower-base {
@@ -2777,7 +3129,17 @@ body.blood-moon .sky-cycle {
   border-radius: 10px;
   transform: translateX(-50%);
   border: 3px solid #1A1614;
-  background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(0, 0, 0, 0.2) 5px, rgba(0, 0, 0, 0.2) 10px);
+  background-image: repeating-linear-gradient(0deg, transparent 0px, transparent 7px, rgba(255, 200, 50, 0.2) 7px, rgba(255, 200, 50, 0.2) 9px);
+}
+.tower-flame .tower-tank::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  width: 16px;
+  height: 25px;
+  transform: translateX(-50%);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='25'%3E%3Cpath d='M2 25L5 20L8 25L11 20L14 25M2 18L5 13L8 18L11 13L14 18M2 11L5 6L8 11L11 6L14 11' fill='none' stroke='rgba(255,200,50,0.3)' stroke-width='1'/%3E%3C/svg%3E") no-repeat center;
 }
 .tower-flame .tower-nozzle {
   position: absolute;
@@ -2876,21 +3238,44 @@ body.blood-moon .sky-cycle {
     opacity: 0;
   }
 }
-@keyframes orb-hop {
-  from {
-    transform: translateX(-50%) translateY(0);
-  }
-  to {
-    transform: translateX(-50%) translateY(-10px);
-  }
+.tower-flame.level-2 .tower-tank {
+  box-shadow: 0 0 6px rgba(212, 81, 42, 0.4);
 }
-@keyframes spin-flat {
-  from {
-    transform: translateX(-50%) scaleY(0.3) rotate(0deg);
-  }
-  to {
-    transform: translateX(-50%) scaleY(0.3) rotate(360deg);
-  }
+.tower-flame.level-2 .tower-tank::before {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='25'%3E%3Cpath d='M8 2c-3 4-5 8-5 12s3 6 5 7c2-1 5-3 5-7s-2-8-5-12' fill='none' stroke='rgba(255,200,50,0.4)' stroke-width='1.5'/%3E%3Cpath d='M8 8c-1 2-2 4-2 6s1 3 2 4c1-1 2-2 2-4s-1-4-2-6' fill='none' stroke='rgba(255,150,30,0.5)' stroke-width='1'/%3E%3C/svg%3E") no-repeat center;
+}
+.tower-flame.level-2 .tower-nozzle::after {
+  width: 15px;
+  height: 22px;
+}
+.tower-flame.level-2 .tower-base {
+  box-shadow: 0 0 6px rgba(232, 138, 66, 0.3);
+}
+.tower-flame.level-3 .tower-tank {
+  background: linear-gradient(180deg, #2A1A10 0%, #5c1212 40%, #B22222 80%, #E88A42 100%);
+  box-shadow: 0 0 12px rgba(212, 81, 42, 0.5), inset 0 0 6px rgba(232, 138, 66, 0.3);
+}
+.tower-flame.level-3 .tower-tank::before {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='28'%3E%3Cpath d='M9 2c-4 5-7 10-7 16s4 7 7 8c3-1 7-4 7-8s-3-11-7-16' fill='none' stroke='%23C4A035' stroke-width='1.5'/%3E%3Cpath d='M9 8c-2 3-3 6-3 9s2 4 3 5c1-1 3-2 3-5s-1-6-3-9' fill='none' stroke='%23C4A035' stroke-width='1'/%3E%3Ccircle cx='9' cy='18' r='2' fill='%23C4A035' opacity='0.6'/%3E%3C/svg%3E") no-repeat center;
+}
+.tower-flame.level-3 .tower-nozzle {
+  width: 8px;
+  border-radius: 4px 4px 0 0;
+}
+.tower-flame.level-3 .tower-nozzle::after {
+  width: 18px;
+  height: 26px;
+  filter: drop-shadow(0 0 6px #E88A42) drop-shadow(0 0 12px #D4512A);
+}
+.tower-flame.level-3 .tower-base {
+  background: #2A1A10;
+  box-shadow: 0 0 10px rgba(212, 81, 42, 0.4);
+}
+.tower-flame.level-3 .flame-particles::before,
+.tower-flame.level-3 .flame-particles::after {
+  width: 6px;
+  height: 6px;
+  box-shadow: 0 0 4px #F2D864;
 }
 .tower-level {
   position: absolute;
@@ -2908,72 +3293,10 @@ body.blood-moon .sky-cycle {
   filter: drop-shadow(1px 1px 0 #1A1614);
 }
 .tower.level-2 {
-  filter: brightness(1.1) saturate(1.1);
-}
-.tower.level-2 .tower-body,
-.tower.level-2 .tower-base {
-  box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+  filter: brightness(1.05) saturate(1.05);
 }
 .tower.level-3 {
-  filter: brightness(1.2) saturate(1.2);
-}
-.tower.level-3 .tower-body,
-.tower.level-3 .tower-base {
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
-}
-.tower.level-3::before {
-  content: '';
-  position: absolute;
-  top: -15px;
-  left: -15px;
-  right: -15px;
-  bottom: -15px;
-  background: radial-gradient(ellipse at center bottom, rgba(255, 215, 0, 0.4) 0%, rgba(255, 180, 0, 0.2) 40%, transparent 70%);
-  animation: max-level-glow 2s ease-in-out infinite;
-  pointer-events: none;
-  transform: translateZ(0);
-  will-change: transform, opacity;
-  backface-visibility: hidden;
-}
-.tower.level-3::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 80px;
-  height: 80px;
-  transform: translate(-50%, -50%);
-  border: 2px solid rgba(255, 215, 0, 0.3);
-  border-radius: 50%;
-  animation: level3-ring-pulse 3s ease-in-out infinite;
-  pointer-events: none;
-  transform: translateZ(0);
-  will-change: transform, opacity;
-  backface-visibility: hidden;
-}
-@keyframes level3-ring-pulse {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0.5;
-    border-width: 2px;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.2);
-    opacity: 0;
-    border-width: 1px;
-  }
-}
-@keyframes max-level-glow {
-  0%,
-  100% {
-    opacity: 0.5;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.1);
-  }
+  filter: brightness(1.1) saturate(1.1);
 }
 .tower.upgrading {
   animation: upgrade-pulse 0.6s ease-out;
@@ -3023,9 +3346,26 @@ body.blood-moon .sky-cycle {
     opacity: 0;
   }
 }
+@keyframes orb-hop {
+  from {
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+@keyframes spin-flat {
+  from {
+    transform: translateX(-50%) scaleY(0.3) rotate(0deg);
+  }
+  to {
+    transform: translateX(-50%) scaleY(0.3) rotate(360deg);
+  }
+}
 .enemy {
   position: absolute;
   transform-style: preserve-3d;
+  contain: layout style paint;
   transform-origin: center bottom;
   transform: translate(-50%, -100%) rotateX(-45deg);
   transition: all 0.2s;
@@ -3046,38 +3386,54 @@ body.blood-moon .sky-cycle {
 }
 .health-bar .health-fill {
   height: 100%;
-  background: #E8635A;
+  background: #5EA65E;
   border-right: 2px solid #1A1614;
+  transition: background-color 0.3s;
+}
+.health-bar .health-fill.health-medium {
+  background: #F2D864;
+}
+.health-bar .health-fill.health-low {
+  background: #E8635A;
+}
+.health-bar .health-fill.health-critical {
+  background: #D4512A;
+  animation: health-critical-pulse 0.5s infinite;
+}
+.enemy-boss > .health-bar {
+  width: 60px;
+  height: 14px;
+  border-color: #1E6B47;
+  box-shadow: 0 0 6px rgba(30, 107, 71, 0.5);
 }
 .enemy-slime .enemy-body {
   position: absolute;
   bottom: 0;
   left: 50%;
   width: 40px;
-  height: 30px;
-  background: #C8E8C8;
+  height: 32px;
+  background: radial-gradient(ellipse at 50% 40%, rgba(200, 232, 200, 0.85) 0%, rgba(200, 232, 200, 0.5) 50%, rgba(200, 232, 200, 0.15) 80%, transparent 100%);
   transform: translateX(-50%);
-  border-radius: 50% 50% 10% 10%;
-  border: 3px solid #1A1614;
-  box-shadow: inset -5px -5px 0 rgba(0, 0, 0, 0.2);
-  animation: wobble 0.5s infinite alternate;
+  border-radius: 40% 40% 20% 20%;
+  border: 2px solid rgba(200, 232, 200, 0.6);
+  box-shadow: 0 0 8px rgba(200, 232, 200, 0.5);
+  animation: spirit-float 1.2s ease-in-out infinite;
 }
 .enemy-slime .enemy-body::after {
   content: '';
   position: absolute;
-  bottom: -8px;
-  right: 8px;
-  width: 8px;
-  height: 12px;
-  background: #C8E8C8;
+  bottom: -10px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(ellipse at top, rgba(200, 232, 200, 0.5) 0%, transparent 70%);
+  transform: translateX(-50%);
   border-radius: 0 0 50% 50%;
-  border: 2px solid #1A1614;
-  border-top: none;
-  animation: drip 1.5s ease-in-out infinite;
+  animation: wisp-trail 1.5s ease-in-out infinite;
 }
 .enemy-slime .enemy-face {
   position: absolute;
-  bottom: 10px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
   width: 20px;
@@ -3087,44 +3443,66 @@ body.blood-moon .sky-cycle {
 .enemy-slime .enemy-face::before,
 .enemy-slime .enemy-face::after {
   content: '';
-  width: 6px;
-  height: 6px;
-  background: #1A1614;
+  width: 7px;
+  height: 7px;
+  background: transparent;
+  border: 2px solid #1A1614;
   border-radius: 50%;
 }
 .enemy-slime .tentacles {
   display: none;
 }
-@keyframes wobble {
-  from {
-    transform: translateX(-50%) scale(1, 1);
-  }
-  to {
-    transform: translateX(-50%) scale(1.1, 0.9);
-  }
+.enemy-slime.low-health .enemy-body {
+  animation: spirit-flicker 0.8s infinite;
+  filter: saturate(0.5);
+  box-shadow: 0 0 4px rgba(180, 180, 180, 0.3);
 }
-@keyframes drip {
+@keyframes wisp-trail {
   0%,
   100% {
-    height: 8px;
-    opacity: 1;
+    opacity: 0.6;
+    transform: translateX(-50%) scaleY(1);
   }
   50% {
-    height: 14px;
-    opacity: 0.8;
+    opacity: 0.3;
+    transform: translateX(-50%) scaleY(1.3);
   }
 }
 .enemy-goblin .enemy-body {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: 25px;
-  height: 40px;
+  width: 26px;
+  height: 38px;
   background: #A8D8F0;
   transform: translateX(-50%);
-  border-radius: 5px;
-  border: 3px solid #1A1614;
-  animation: hop 0.3s infinite;
+  clip-path: polygon(20% 0%, 80% 0%, 90% 25%, 85% 100%, 15% 100%, 10% 25%);
+  filter: drop-shadow(2px 0 0 #1A1614) drop-shadow(-2px 0 0 #1A1614) drop-shadow(0 2px 0 #1A1614) drop-shadow(0 -2px 0 #1A1614);
+  animation: hop 0.4s ease-in-out infinite;
+}
+.enemy-goblin .enemy-body::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 18px;
+  height: 10px;
+  background: #8B5A3A;
+  transform: translateX(-50%);
+  border-radius: 50% 50% 20% 20%;
+  clip-path: polygon(10% 100%, 0% 30%, 20% 0%, 40% 20%, 50% 0%, 60% 20%, 80% 0%, 100% 30%, 90% 100%);
+}
+.enemy-goblin .enemy-body::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  width: 40px;
+  height: 25px;
+  background: radial-gradient(ellipse at center, rgba(168, 216, 240, 0.3) 0%, transparent 70%);
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: -1;
 }
 .enemy-goblin .enemy-face {
   position: absolute;
@@ -3137,31 +3515,59 @@ body.blood-moon .sky-cycle {
 .enemy-goblin .enemy-face::after {
   content: '';
   position: absolute;
-  top: -10px;
+  top: -4px;
   width: 0;
   height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 15px solid #1A1614;
+  border-bottom: 10px solid #A8D8F0;
 }
 .enemy-goblin .enemy-face::before {
-  left: 0;
+  left: -6px;
+  border-left: 8px solid transparent;
+  border-right: 2px solid transparent;
+  transform: rotate(-15deg);
 }
 .enemy-goblin .enemy-face::after {
-  right: 0;
+  right: -6px;
+  border-left: 2px solid transparent;
+  border-right: 8px solid transparent;
+  transform: rotate(15deg);
 }
 .enemy-goblin .enemy-eyes {
-  display: none;
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+.enemy-goblin .enemy-eyes::before,
+.enemy-goblin .enemy-eyes::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: #7BFF7B;
+  border-radius: 50%;
+  box-shadow: 0 0 3px #7BFF7B;
 }
 .enemy-goblin .arms {
   display: none;
+}
+.enemy-goblin.low-health .enemy-body::after {
+  opacity: 0;
+}
+.enemy-goblin.low-health .enemy-body {
+  filter: drop-shadow(2px 0 0 #1A1614) drop-shadow(-2px 0 0 #1A1614) drop-shadow(0 2px 0 #1A1614) drop-shadow(0 -2px 0 #1A1614) saturate(0.5) brightness(0.8);
+}
+.enemy-goblin.low-health .enemy-body {
+  animation-duration: 0.6s;
 }
 @keyframes hop {
   0% {
     transform: translateX(-50%) translateY(0);
   }
   50% {
-    transform: translateX(-50%) translateY(-10px);
+    transform: translateX(-50%) translateY(-8px) scaleX(0.95);
   }
   100% {
     transform: translateX(-50%) translateY(0);
@@ -3171,50 +3577,99 @@ body.blood-moon .sky-cycle {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: 35px;
-  height: 45px;
+  width: 36px;
+  height: 46px;
   background: #8B4513;
   transform: translateX(-50%);
-  border: 3px solid #1A1614;
+  clip-path: polygon(25% 0%, 75% 0%, 85% 30%, 80% 100%, 20% 100%, 15% 30%);
+  filter: drop-shadow(2px 0 0 #1A1614) drop-shadow(-2px 0 0 #1A1614) drop-shadow(0 2px 0 #1A1614) drop-shadow(0 -2px 0 #1A1614);
 }
 .enemy-knight .enemy-body::before {
   content: '';
   position: absolute;
-  top: 8px;
+  top: 6px;
   left: 50%;
-  width: 20px;
-  height: 5px;
-  background: #1A1614;
+  width: 16px;
+  height: 14px;
   transform: translateX(-50%);
-  border-radius: 2px;
+  background: linear-gradient(#1A1614, #1A1614) no-repeat center 0 / 2px 12px, linear-gradient(#1A1614, #1A1614) no-repeat 2px 2px / 2px 10px, linear-gradient(#1A1614, #1A1614) no-repeat calc(100% - 2px) 2px / 2px 10px;
 }
 .enemy-knight .enemy-body::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 5px;
-  width: 10px;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.3);
+  top: 22px;
+  left: 50%;
+  width: 8px;
+  height: 10px;
+  background: #1E6B47;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 4px rgba(30, 107, 71, 0.5);
 }
 .enemy-knight .cape {
   position: absolute;
-  top: 5px;
+  bottom: 0;
   left: 50%;
   width: 40px;
-  height: 40px;
-  background: #E8635A;
+  height: 18px;
+  background: repeating-linear-gradient(90deg, #DAA520 0px, #DAA520 3px, #977316 3px, #977316 5px);
   transform: translateX(-50%) translateZ(-1px);
-  border: 3px solid #1A1614;
+  border: 2px solid #1A1614;
+  border-top: none;
   z-index: -1;
-  animation: cape-flap 0.5s infinite alternate;
+  animation: piupiu-sway 0.6s infinite alternate;
+  border-radius: 0 0 3px 3px;
 }
-@keyframes cape-flap {
+.enemy-knight .enemy-face {
+  display: none;
+}
+.enemy-knight .sword {
+  position: absolute;
+  top: 10px;
+  right: -8px;
+  width: 4px;
+  height: 30px;
+  background: #2A1A10;
+  transform: rotate(25deg);
+  border-radius: 2px;
+  border: 1px solid #1A1614;
+}
+.enemy-knight .sword::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 8px solid #2A1A10;
+  transform: translateX(-50%);
+}
+.enemy-knight.low-health {
+  animation: stagger 0.3s ease-in-out infinite;
+}
+.enemy-knight.low-health .enemy-body {
+  filter: drop-shadow(2px 0 0 #1A1614) drop-shadow(-2px 0 0 #1A1614) drop-shadow(0 2px 0 #1A1614) drop-shadow(0 -2px 0 #1A1614) brightness(0.7);
+}
+.enemy-knight.low-health .cape {
+  clip-path: polygon(0 0, 15% 100%, 30% 60%, 50% 100%, 70% 70%, 85% 100%, 100% 0);
+}
+@keyframes piupiu-sway {
   from {
-    transform: translateX(-50%) rotate(5deg);
+    transform: translateX(-50%) translateZ(-1px) rotate(2deg);
   }
   to {
-    transform: translateX(-50%) rotate(-5deg);
+    transform: translateX(-50%) translateZ(-1px) rotate(-2deg);
+  }
+}
+@keyframes stagger {
+  0%,
+  100% {
+    transform: translate(-50%, -100%) rotateX(-45deg) rotate(0deg);
+  }
+  50% {
+    transform: translate(-50%, -100%) rotateX(-45deg) rotate(3deg);
   }
 }
 .enemy-boss {
@@ -3228,35 +3683,50 @@ body.blood-moon .sky-cycle {
   height: 70px;
   background: #1A5276;
   transform: translateX(-50%);
-  border: 4px solid #1A1614;
+  clip-path: polygon(20% 0%, 80% 0%, 95% 20%, 90% 50%, 85% 100%, 15% 100%, 10% 50%, 5% 20%);
+  filter: drop-shadow(3px 0 0 #1A1614) drop-shadow(-3px 0 0 #1A1614) drop-shadow(0 3px 0 #1A1614) drop-shadow(0 -3px 0 #1A1614);
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 6px 6px;
 }
 .enemy-boss .enemy-body::before {
   content: '';
   position: absolute;
-  top: 20px;
-  left: 5px;
-  right: 5px;
+  top: 14px;
+  left: 8px;
+  right: 8px;
   height: 10px;
   background: #1A1614;
-  transform: rotate(10deg);
-  clip-path: polygon(0 0, 100% 40%, 100% 60%, 0 100%);
+  clip-path: polygon(0% 50%, 5% 0%, 15% 30%, 25% 0%, 35% 20%, 50% 40%, 65% 20%, 75% 0%, 85% 30%, 95% 0%, 100% 50%, 90% 100%, 10% 100%);
+}
+.enemy-boss .enemy-body::after {
+  content: '';
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  width: 30px;
+  height: 10px;
+  background: #F5E6D3;
+  transform: translateX(-50%);
+  clip-path: polygon(0 0, 15% 100%, 30% 0, 45% 100%, 60% 0, 75% 100%, 90% 0, 100% 100%, 100% 0);
 }
 .enemy-boss .enemy-face {
   position: absolute;
-  top: 35px;
+  top: 28px;
   left: 50%;
   transform: translateX(-50%);
-  width: 30px;
+  width: 34px;
   display: flex;
   justify-content: space-between;
 }
 .enemy-boss .enemy-face::before,
 .enemy-boss .enemy-face::after {
   content: '';
-  width: 8px;
-  height: 4px;
+  width: 10px;
+  height: 8px;
   background: #E8635A;
-  box-shadow: 0 0 4px #E8635A;
+  border-radius: 50%;
+  border: 2px solid #c1251b;
+  box-shadow: 0 0 8px #E8635A;
 }
 .enemy-boss .energy-rings {
   position: absolute;
@@ -3264,16 +3734,178 @@ body.blood-moon .sky-cycle {
   left: 50%;
   width: 100px;
   height: 100px;
-  border: 4px dashed #1A1614;
+  border: 3px solid #1E90FF;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  animation: spin-slow 10s linear infinite;
+  animation: spin-slow 8s linear infinite;
   pointer-events: none;
+  box-shadow: 0 0 6px rgba(30, 144, 255, 0.4);
+}
+.enemy-boss .spikes {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 70px;
+  transform: translateX(-50%);
+}
+.enemy-boss .spikes .spike {
+  position: absolute;
+  top: -5px;
+  width: 0;
+  height: 0;
+}
+.enemy-boss .spikes .spike.left {
+  left: 0;
+  border-left: 5px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 18px solid #11354c;
+  transform: rotate(-15deg);
+}
+.enemy-boss .spikes .spike.right {
+  right: 0;
+  border-left: 8px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 18px solid #11354c;
+  transform: rotate(15deg);
+}
+.enemy-boss .enemy-eyes {
+  display: none;
+}
+.enemy-boss.enraged .enemy-body {
+  animation: enrage-pulse 0.8s infinite;
+  background-color: #154361;
+}
+.enemy-boss.enraged .enemy-face::before,
+.enemy-boss.enraged .enemy-face::after {
+  background: #FF3333;
+  box-shadow: 0 0 12px #FF3333, 0 0 20px rgba(255, 50, 50, 0.5);
+}
+.enemy-boss.enraged .energy-rings {
+  border-color: #E8635A;
+  box-shadow: 0 0 10px rgba(232, 99, 90, 0.6);
+  animation: spin-slow 3s linear infinite;
+}
+.enemy-boss.shielded .energy-rings {
+  border-width: 5px;
+  border-color: #1E90FF;
+  box-shadow: 0 0 15px #1E90FF, inset 0 0 10px rgba(30, 144, 255, 0.3);
+}
+.enemy-boss.summoning .enemy-face::before,
+.enemy-boss.summoning .enemy-face::after {
+  animation: boss-eye-flash 0.3s ease-out;
+}
+.enemy-boss.low-health:not(.enraged) .enemy-body {
+  filter: drop-shadow(3px 0 0 #1A1614) drop-shadow(-3px 0 0 #1A1614) drop-shadow(0 3px 0 #1A1614) drop-shadow(0 -3px 0 #1A1614) brightness(0.8);
 }
 @keyframes spin-slow {
   to {
     transform: translate(-50%, -50%) rotate(360deg);
   }
+}
+@keyframes boss-eye-flash {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 8px #E8635A;
+  }
+  50% {
+    transform: scale(2);
+    box-shadow: 0 0 20px #FFF8F0;
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 8px #E8635A;
+  }
+}
+.enemy.elite {
+  transform: translate(-50%, -100%) rotateX(-45deg) scale(1.15);
+  filter: brightness(1.1);
+}
+.enemy.elite::before {
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  width: 16px;
+  height: 10px;
+  background: #DAA520;
+  transform: translateX(-50%);
+  clip-path: polygon(20% 100%, 0% 30%, 30% 0%, 50% 40%, 70% 0%, 100% 30%, 80% 100%);
+  filter: drop-shadow(1px 1px 0 #1A1614);
+  z-index: 10;
+}
+.enemy-boss.elite {
+  transform: translate(-50%, -100%) rotateX(-45deg) scale(1.5);
+}
+.enemy-slime.elite .enemy-body {
+  box-shadow: 0 0 12px rgba(196, 160, 53, 0.5);
+  border-color: #DAA520;
+}
+.enemy-knight.elite .cape {
+  background: repeating-linear-gradient(90deg, #DAA520 0px, #DAA520 3px, #ae8319 3px, #ae8319 5px);
+}
+.enemy.armored .enemy-body {
+  border: 4px solid #2A1A10 !important;
+}
+.enemy.armored::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(80, 70, 60, 0.25) 0%, rgba(200, 200, 200, 0.15) 50%, rgba(80, 70, 60, 0.25) 100%);
+  pointer-events: none;
+  z-index: 5;
+}
+.enemy-slime.armored .enemy-body {
+  filter: drop-shadow(2px 0 0 #2A1A10) drop-shadow(-2px 0 0 #2A1A10);
+}
+.enemy-knight.armored .enemy-body {
+  background: #48240a;
+}
+.enemy.speedy {
+  transform: translate(-50%, -100%) rotateX(-45deg) scaleX(0.85);
+}
+.enemy.speedy::after {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: -20px;
+  width: 25px;
+  height: 80%;
+  background: linear-gradient(to right, transparent 0%, rgba(200, 200, 255, 0.2) 50%, rgba(200, 200, 255, 0.3) 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+.enemy.speedy .enemy-body {
+  animation-duration: 0.2s !important;
+}
+.enemy-boss.speedy {
+  transform: translate(-50%, -100%) rotateX(-45deg) scale(1.5) scaleX(0.85);
+}
+.enemy.toxic {
+  filter: hue-rotate(40deg);
+}
+.enemy.toxic::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  width: 50px;
+  height: 30px;
+  background: radial-gradient(ellipse at center, rgba(120, 200, 50, 0.35) 0%, rgba(120, 200, 50, 0.1) 60%, transparent 80%);
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: -1;
+}
+.enemy-slime.toxic .enemy-face::before,
+.enemy-slime.toxic .enemy-face::after {
+  border-color: #E8635A;
+  background: rgba(255, 50, 50, 0.3);
+}
+.enemy-knight.toxic .enemy-body::after {
+  background: #E8635A;
+  box-shadow: 0 0 4px #E8635A;
 }
 .enemy.slowed {
   filter: hue-rotate(180deg) brightness(1.2);
@@ -4359,6 +4991,31 @@ body.blood-moon .sky-cycle {
     opacity: 0.7;
   }
 }
+.performance-medium .ice-particles::before,
+.performance-medium .magic-energy::before,
+.performance-medium .flame-particles::before,
+.performance-medium .tesla-arc::before,
+.performance-medium .ice-particles::after,
+.performance-medium .magic-energy::after,
+.performance-medium .flame-particles::after,
+.performance-medium .tesla-arc::after {
+  animation: none !important;
+}
+.performance-medium .tower.level-3 .tower-base {
+  animation: none !important;
+}
+.performance-medium .enemy.elite::before {
+  display: none !important;
+}
+.performance-medium .enemy.armored::after {
+  display: none !important;
+}
+.performance-medium .enemy.speedy::after {
+  display: none !important;
+}
+.performance-medium .enemy.toxic::after {
+  display: none !important;
+}
 .performance-low .aurora-sky,
 .performance-low .aurora-particles,
 .performance-low .palette-aura,
@@ -4381,6 +5038,51 @@ body.blood-moon .sky-cycle {
 }
 .performance-low .burning::after {
   display: none;
+}
+.performance-low .tower:not(.firing):not(.targeting) {
+  animation: none !important;
+}
+.performance-low .tower .tower-orb {
+  animation: none !important;
+}
+.performance-low .tower .tower-ring {
+  animation: none !important;
+}
+.performance-low .tower .tower-spark {
+  animation: none !important;
+}
+.performance-low .tesla-arc,
+.performance-low .flame-particles,
+.performance-low .ice-particles,
+.performance-low .magic-energy {
+  display: none !important;
+}
+.performance-low .enemy-slime .enemy-body {
+  animation: none !important;
+  box-shadow: none !important;
+}
+.performance-low .enemy-goblin .enemy-body::after {
+  display: none !important;
+}
+.performance-low .enemy-boss .energy-rings {
+  animation: none !important;
+}
+.performance-low .enemy.elite::before,
+.performance-low .enemy.armored::after,
+.performance-low .enemy.speedy::after,
+.performance-low .enemy.toxic::after {
+  display: none !important;
+}
+.performance-low .tower-arrow.level-2 .tower-body,
+.performance-low .tower-arrow.level-3 .tower-body,
+.performance-low .tower-cannon.level-3 .tower-body::before,
+.performance-low .tower-ice.level-2 .tower-crystal,
+.performance-low .tower-ice.level-3 .tower-crystal::before,
+.performance-low .tower-magic.level-2 .tower-base,
+.performance-low .tower-magic.level-3 .tower-base,
+.performance-low .tower-flame.level-2 .tower-tank::before,
+.performance-low .tower-flame.level-3 .tower-tank::before {
+  background-image: none !important;
 }
 @media (prefers-reduced-motion: reduce) {
   .aurora-sky,
@@ -4429,6 +5131,34 @@ body.blood-moon .sky-cycle {
     animation: none !important;
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
+  }
+  .tower,
+  .tower .tower-orb,
+  .tower .tower-ring,
+  .tower .tower-spark,
+  .tower .tower-coil,
+  .tower .tower-base {
+    animation: none !important;
+  }
+  .tesla-arc,
+  .flame-particles,
+  .ice-particles,
+  .magic-energy,
+  .tesla-arc::before,
+  .flame-particles::before,
+  .ice-particles::before,
+  .magic-energy::before,
+  .tesla-arc::after,
+  .flame-particles::after,
+  .ice-particles::after,
+  .magic-energy::after {
+    animation: none !important;
+  }
+  .enemy,
+  .enemy .enemy-body,
+  .enemy .cape,
+  .enemy .energy-rings {
+    animation: none !important;
   }
 }
 .screen-flash {

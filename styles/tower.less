@@ -1,12 +1,13 @@
 // ===========================================
-// CSS Tower Defense - Towers
-// THEME: POP-ART / CEL-SHADED
+// Te Pā Tiaki - Towers
+// THEME: MĀORI CULTURAL / BOLD POP-ART
 // ===========================================
 
 // Base Tower
 .tower {
     position: absolute;
     .preserve-3d();
+    .contain-paint();
     transform-origin: center bottom;
     pointer-events: none;
     transform: translate(-50%, -100%) rotateX(-@map-rotation);
@@ -17,11 +18,10 @@
         animation: comic-idle 1s infinite alternate;
     }
 
-    // Targeting State - Tower has locked onto an enemy
+    // Targeting State
     &.targeting {
         animation: tower-targeting 0.5s ease-in-out infinite alternate;
 
-        // Subtle glow when targeting
         &::after {
             content: '';
             position: absolute;
@@ -41,58 +41,38 @@
         }
     }
 
-    // Firing State - Tower is actively shooting
+    // Firing State
     &.firing {
         animation: tower-recoil 0.15s ease-out;
     }
 }
 
-// Targeting micro-movement
+// Base keyframes
 @keyframes tower-targeting {
-    0% {
-        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1);
-    }
-    100% {
-        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.02);
-    }
+    0% { transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1); }
+    100% { transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.02); }
 }
 
-// Target acquisition glow
 @keyframes target-glow {
-    0% {
-        opacity: 0.3;
-        transform: scale(0.9);
-    }
-    100% {
-        opacity: 0.6;
-        transform: scale(1.1);
-    }
+    0% { opacity: 0.3; transform: scale(0.9); }
+    100% { opacity: 0.6; transform: scale(1.1); }
 }
 
-// Firing recoil animation
 @keyframes tower-recoil {
-    0% {
-        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1);
-    }
-    30% {
-        transform: translate(-50%, -98%) rotateX(-@map-rotation) scale(0.95);
-    }
-    100% {
-        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1);
-    }
+    0% { transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1); }
+    30% { transform: translate(-50%, -98%) rotateX(-@map-rotation) scale(0.95); }
+    100% { transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1); }
 }
 
 @keyframes comic-idle {
-    from {
-        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1) rotate(0deg);
-    }
-
-    to {
-        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.03) rotate(1.5deg);
-    }
+    from { transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1) rotate(0deg); }
+    to { transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.03) rotate(1.5deg); }
 }
 
-// 1. ARROW TOWER (Wooden Watchtower)
+// ===========================================
+// 1. TAIAHA (Arrow) — Carved Wooden Post
+// ===========================================
+
 .tower-arrow {
     .tower-base {
         position: absolute;
@@ -109,17 +89,39 @@
         position: absolute;
         bottom: 10px;
         left: 50%;
-        width: 30px;
+        width: 28px;
         height: 50px;
         background: lighten(@color-tower-arrow, 10%);
         transform: translateX(-50%);
         .comic-border();
+        // Wood grain gradient (replaces plank lines)
+        background-image: linear-gradient(
+            0deg,
+            lighten(@color-tower-arrow, 15%) 0%,
+            lighten(@color-tower-arrow, 8%) 20%,
+            lighten(@color-tower-arrow, 12%) 40%,
+            lighten(@color-tower-arrow, 6%) 60%,
+            lighten(@color-tower-arrow, 14%) 80%,
+            lighten(@color-tower-arrow, 10%) 100%
+        );
+        // Tapered post shape
+        clip-path: polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);
+        border: none;
+        filter: drop-shadow(2px 0 0 @color-black) drop-shadow(-2px 0 0 @color-black) drop-shadow(0 2px 0 @color-black) drop-shadow(0 -2px 0 @color-black);
 
-        // Wood planks (horizontal lines)
-        background-image: repeating-linear-gradient(0deg,
-                transparent,
-                transparent 9px,
-                @color-black 10px);
+        // Koru spiral accent at bottom
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            border: 2px solid @color-earth-ochre;
+            border-radius: 50% 0 50% 50%;
+            border-right-color: transparent;
+            transform: translateX(-50%) rotate(45deg);
+        }
     }
 
     .tower-top {
@@ -139,23 +141,19 @@
         left: 50%;
         width: 20px;
         height: 40px;
-        // Invisible container for rotation, visualised via pseudo if needed
-        // Or if the script rotates it, we style it here.
-        // Assuming script creates .tower-turret but doesn't put content in it except via CSS classes?
-        // Actually script structure is: <div class="tower-turret"></div>
-        // Let's add a visual crossbow or arrow
 
+        // Arero (tongue) blade shape
         &::after {
             content: '';
             position: absolute;
-            top: -20px;
+            top: -22px;
             left: 50%;
-            width: 20px;
+            width: 8px;
             height: 20px;
-            border: 3px solid @color-black;
-            border-radius: 0 50% 50% 0;
-            border-left: none;
+            background: @color-tower-arrow;
             transform: translateX(-50%);
+            clip-path: polygon(50% 0%, 100% 30%, 100% 100%, 0% 100%, 0% 30%);
+            filter: drop-shadow(1px 0 0 @color-black) drop-shadow(-1px 0 0 @color-black) drop-shadow(0 -1px 0 @color-black);
         }
 
         &::before {
@@ -171,7 +169,64 @@
     }
 }
 
-// 2. CANNON TOWER (Black Metal)
+// Taiaha Level 2 — Koru pattern, tāniko weave, pounamu gem
+.tower-arrow.level-2 {
+    .tower-body {
+        // Koru spiral SVG accent on body
+        background-image:
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M10 2C6 2 4 5 4 8s2 4 4 5c-1-1-2-2-2-4s1-4 4-4' fill='none' stroke='%23C4763A' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat center 30%,
+            linear-gradient(
+                0deg,
+                lighten(@color-tower-arrow, 15%) 0%,
+                lighten(@color-tower-arrow, 8%) 20%,
+                lighten(@color-tower-arrow, 12%) 40%,
+                lighten(@color-tower-arrow, 6%) 60%,
+                lighten(@color-tower-arrow, 14%) 80%,
+                lighten(@color-tower-arrow, 10%) 100%
+            );
+    }
+
+    .tower-top {
+        // Tāniko weave pattern on platform
+        .taniko-pattern(@color-tower-arrow, darken(@color-tower-arrow, 15%), 4px);
+    }
+
+    // Pounamu gem inset
+    .tower-turret::after {
+        box-shadow: 0 8px 0 0 @color-pounamu-deep;
+    }
+}
+
+// Taiaha Level 3 — Full whakairo, pounamu blade, mana aura
+.tower-arrow.level-3 {
+    .tower-body {
+        background-image:
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='40'%3E%3Cpath d='M12 4C8 4 6 7 6 10s2 5 5 6c-2-1-3-3-3-5s2-5 4-5M12 18c-3 0-5 2-5 5s1 4 3 5c-1-1-1-2-1-4s1-4 3-4' fill='none' stroke='%23C4763A' stroke-width='1.5'/%3E%3Cpath d='M8 14h8M6 16h12' stroke='%23C4763A' stroke-width='0.8'/%3E%3C/svg%3E") no-repeat center center / 90% 90%,
+            linear-gradient(
+                0deg,
+                lighten(@color-tower-arrow, 15%) 0%,
+                lighten(@color-tower-arrow, 6%) 50%,
+                lighten(@color-tower-arrow, 14%) 100%
+            );
+    }
+
+    .tower-top {
+        .taniko-pattern(@color-earth-ochre, @color-flax-gold, 3px);
+        box-shadow: 0 0 6px fade(@color-earth-ochre, 40%);
+    }
+
+    // Pounamu-tipped elongated blade
+    .tower-turret::after {
+        height: 26px;
+        background: linear-gradient(to top, @color-tower-arrow 40%, @color-pounamu-deep 60%);
+        box-shadow: 0 0 6px fade(@color-pounamu-deep, 50%);
+    }
+}
+
+// ===========================================
+// 2. MERE (Cannon) — Pounamu Greenstone Club
+// ===========================================
+
 .tower-cannon {
     .tower-base {
         position: absolute;
@@ -179,7 +234,7 @@
         left: 50%;
         width: 50px;
         height: 50px;
-        background: @color-dark;
+        background: darken(@color-tower-mere, 20%);
         border-radius: 50%;
         transform: translateX(-50%) rotateX(-90deg);
         .comic-border();
@@ -191,21 +246,30 @@
         left: 50%;
         width: 45px;
         height: 30px;
-        background: #444;
+        // Rich jade gradient
+        background: linear-gradient(
+            135deg,
+            lighten(@color-tower-mere, 15%) 0%,
+            @color-tower-mere 30%,
+            darken(@color-tower-mere, 10%) 60%,
+            @color-tower-mere 80%,
+            lighten(@color-tower-mere, 10%) 100%
+        );
         transform: translateX(-50%);
         .comic-border();
-        border-radius: 5px;
+        border-radius: 8px;
 
-        // Rivets
+        // Polished stone shine stripe
         &::after {
             content: '';
             position: absolute;
-            top: 4px;
-            left: 4px;
-            right: 4px;
-            bottom: 4px;
-            background: radial-gradient(#fff 20%, transparent 20%);
-            background-size: 10px 10px;
+            top: 3px;
+            left: 8px;
+            width: 6px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.35);
+            border-radius: 3px;
+            transform: skewX(-5deg);
         }
     }
 
@@ -213,28 +277,108 @@
         position: absolute;
         bottom: 25px;
         left: 50%;
-        width: 20px;
-        height: 50px;
-        background: @color-black;
+        width: 18px;
+        height: 45px;
+        // Rounded barrel shape
+        background: darken(@color-tower-mere, 15%);
         transform-origin: center bottom;
         transform: translateX(-50%);
-        .comic-border(2px, #fff); // White outline for visibility against black
+        border-radius: 6px 6px 3px 3px;
+        .comic-border(2px);
+        box-shadow: inset -3px 0 0 rgba(0, 0, 0, 0.2);
 
         // Shine
         &::before {
             content: '';
             position: absolute;
-            left: 4px;
+            left: 3px;
             top: 5px;
             width: 4px;
-            height: 30px;
-            background: @color-white;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.4);
             border-radius: 2px;
         }
     }
 }
 
-// 3. ICE TOWER (Crystal Shard)
+// Mere Level 2 — Carved grooves, jade glow, barrel mouth ring
+.tower-cannon.level-2 {
+    .tower-body {
+        // Carved groove pattern
+        background-image:
+            linear-gradient(0deg, transparent 0%, transparent 8px, rgba(0,0,0,0.15) 8px, rgba(0,0,0,0.15) 9px, transparent 9px, transparent 18px, rgba(0,0,0,0.15) 18px, rgba(0,0,0,0.15) 19px, transparent 19px);
+        box-shadow: 0 0 8px fade(@color-tower-mere, 40%);
+    }
+
+    .tower-barrel {
+        // Barrel mouth ring
+        &::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -2px;
+            right: -2px;
+            height: 6px;
+            background: @color-flax-gold;
+            border-radius: 3px;
+            border: 1px solid @color-black;
+        }
+    }
+}
+
+// Mere Level 3 — Polished translucent jade, golden bindings, tiki face
+.tower-cannon.level-3 {
+    .tower-body {
+        background: linear-gradient(
+            135deg,
+            rgba(60, 179, 113, 0.9) 0%,
+            rgba(30, 107, 71, 0.95) 30%,
+            rgba(60, 179, 113, 0.85) 50%,
+            rgba(30, 107, 71, 0.9) 70%,
+            rgba(60, 179, 113, 0.95) 100%
+        );
+        box-shadow: 0 0 12px fade(@color-tower-mere, 50%), inset 0 0 8px rgba(255, 255, 255, 0.1);
+
+        // Tiki face SVG
+        &::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            transform: translateX(-50%);
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cellipse cx='6' cy='7' rx='3' ry='4' fill='none' stroke='%23F5E6C8' stroke-width='1.2'/%3E%3Cellipse cx='14' cy='7' rx='3' ry='4' fill='none' stroke='%23F5E6C8' stroke-width='1.2'/%3E%3Cpath d='M5 14h10M7 16h6' stroke='%23F5E6C8' stroke-width='1'/%3E%3C/svg%3E") no-repeat center;
+        }
+    }
+
+    // Golden bindings on barrel
+    .tower-barrel {
+        &::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -2px;
+            right: -2px;
+            height: 6px;
+            background: @color-flax-gold;
+            border-radius: 3px;
+            border: 1px solid @color-black;
+            box-shadow:
+                0 15px 0 0 @color-flax-gold,
+                0 30px 0 0 @color-flax-gold;
+        }
+    }
+
+    .tower-base {
+        box-shadow: 0 0 10px fade(@color-tower-mere, 50%);
+    }
+}
+
+// ===========================================
+// 3. TANGAROA (Ice) — Wave Pillar / Ocean God
+// ===========================================
+
 .tower-ice {
     .tower-base {
         position: absolute;
@@ -242,42 +386,170 @@
         left: 50%;
         width: 40px;
         height: 40px;
-        background: @color-tower-ice;
+        // Tidal pool base
+        background: radial-gradient(
+            circle,
+            lighten(@color-tower-ice, 20%) 0%,
+            @color-tower-ice 60%,
+            darken(@color-tower-ice, 10%) 100%
+        );
         transform: translateX(-50%) rotateX(-90deg);
         .comic-border();
+        border-radius: 50%;
     }
 
     .tower-crystal {
         position: absolute;
         bottom: 0;
         left: 50%;
-        width: 0;
-        height: 0;
-        border-left: 20px solid transparent;
-        border-right: 20px solid transparent;
-        border-bottom: 70px solid @color-tower-ice;
+        width: 30px;
+        height: 65px;
+        // Wave-shaped column via organic clip-path
+        background: linear-gradient(
+            180deg,
+            lighten(@color-tower-ice, 20%) 0%,
+            @color-tower-ice 30%,
+            darken(@color-tower-ice, 15%) 70%,
+            darken(@color-tower-ice, 20%) 100%
+        );
         transform: translateX(-50%);
-        filter: drop-shadow(3px 3px 0 @color-black);
+        clip-path: polygon(30% 0%, 70% 0%, 85% 15%, 80% 40%, 90% 60%, 85% 80%, 100% 100%, 0% 100%, 15% 80%, 10% 60%, 20% 40%, 15% 15%);
+        filter: drop-shadow(2px 0 0 @color-black) drop-shadow(-2px 0 0 @color-black) drop-shadow(0 2px 0 @color-black) drop-shadow(0 -2px 0 @color-black);
 
-        // Shine
+        // Wave lines overlay
         &::after {
             content: '';
             position: absolute;
-            top: 20px;
-            left: -5px;
-            width: 10px;
-            height: 30px;
-            background: rgba(255, 255, 255, 0.7);
-            transform: skewX(-15deg);
+            top: 10px;
+            left: 5px;
+            right: 5px;
+            bottom: 10px;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 8px,
+                rgba(255, 255, 255, 0.2) 8px,
+                rgba(255, 255, 255, 0.2) 10px
+            );
         }
     }
 
-    .tower-glow {
-        display: none;
+    .tower-glow { display: none; }
+}
+
+// Tangaroa Level 2 — Shell spiral crown, foam at base, droplet orbits
+.tower-ice.level-2 {
+    .tower-crystal {
+        // Koru-wave pattern added
+        background-image:
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath d='M4 12c4-6 8-6 12 0s8 6 12 0' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='1.5'/%3E%3C/svg%3E");
+        background-size: 24px 24px;
+    }
+
+    .tower-base {
+        box-shadow: 0 0 8px fade(@color-tower-ice, 40%);
+    }
+
+    // Ice particles become water droplet orbits
+    .ice-particles {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        width: 50px;
+        height: 50px;
+        transform: translateX(-50%);
+        pointer-events: none;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: lighten(@color-tower-ice, 30%);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            animation: water-orbit 2s linear infinite;
+            box-shadow: 0 0 4px lighten(@color-tower-ice, 20%);
+        }
     }
 }
 
-// 4. MAGIC TOWER (Orb & Ring)
+// Tangaroa Level 3 — Translucent crystal, animated wave, Tangaroa face, tide ring
+.tower-ice.level-3 {
+    .tower-crystal {
+        background: linear-gradient(
+            180deg,
+            rgba(135, 206, 235, 0.85) 0%,
+            rgba(30, 144, 255, 0.7) 30%,
+            rgba(30, 144, 255, 0.9) 70%,
+            rgba(10, 80, 180, 0.95) 100%
+        );
+
+        // Tangaroa face SVG
+        &::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            width: 18px;
+            height: 22px;
+            transform: translateX(-50%);
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='22'%3E%3Cellipse cx='5' cy='8' rx='2.5' ry='3' fill='none' stroke='rgba(255,255,255,0.6)' stroke-width='1.2'/%3E%3Cellipse cx='13' cy='8' rx='2.5' ry='3' fill='none' stroke='rgba(255,255,255,0.6)' stroke-width='1.2'/%3E%3Cpath d='M3 4c3-3 9-3 12 0' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='1.5'/%3E%3Cpath d='M5 16h8M6 18h6' stroke='rgba(255,255,255,0.4)' stroke-width='1'/%3E%3C/svg%3E") no-repeat center;
+            z-index: 2;
+        }
+    }
+
+    .tower-base {
+        box-shadow: 0 0 12px @color-tower-ice;
+        animation: tide-pulse 3s ease-in-out infinite;
+    }
+
+    .ice-particles {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        width: 50px;
+        height: 50px;
+        transform: translateX(-50%);
+        pointer-events: none;
+
+        &::before,
+        &::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: lighten(@color-tower-ice, 30%);
+            border-radius: 50%;
+            box-shadow: 0 0 6px lighten(@color-tower-ice, 20%);
+        }
+
+        &::before {
+            animation: water-orbit 2s linear infinite;
+        }
+
+        &::after {
+            animation: water-orbit 2s linear infinite reverse;
+        }
+    }
+}
+
+@keyframes water-orbit {
+    0% { transform: rotate(0deg) translateX(20px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(20px) rotate(-360deg); }
+}
+
+@keyframes tide-pulse {
+    0%, 100% { box-shadow: 0 0 8px fade(@color-tower-ice, 40%); }
+    50% { box-shadow: 0 0 16px @color-tower-ice; }
+}
+
+// ===========================================
+// 4. TOHUNGA (Magic) — Spiritual Leader
+// ===========================================
+
 .tower-magic {
     .tower-base {
         position: absolute;
@@ -287,43 +559,158 @@
         height: 60px;
         background: @color-tower-magic;
         transform: translateX(-50%);
-        .comic-border();
-
-        // Tapered look via clip-path
         clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
-        // Warning: clip-path hides border. Use drop-shadow outline hack
         border: none;
         filter: drop-shadow(2px 0 0 @color-black) drop-shadow(-2px 0 0 @color-black) drop-shadow(0 -2px 0 @color-black) drop-shadow(0 2px 0 @color-black);
+
+        // Carved notches on staff
+        &::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            width: 14px;
+            height: 30px;
+            transform: translateX(-50%);
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0px, transparent 6px,
+                rgba(255, 255, 255, 0.15) 6px, rgba(255, 255, 255, 0.15) 8px
+            );
+        }
     }
 
     .tower-orb {
         position: absolute;
         bottom: 65px;
         left: 50%;
-        width: 30px;
-        height: 30px;
-        background: @color-white;
+        width: 28px;
+        height: 28px;
+        // Mystical gradient orb
+        background: radial-gradient(
+            circle at 40% 35%,
+            @color-white 0%,
+            lighten(@color-tower-magic, 30%) 30%,
+            @color-tower-magic 70%
+        );
         border-radius: 50%;
         transform: translateX(-50%);
-        border: 4px solid @color-tower-magic;
-        box-shadow: 4px 4px 0 @color-black;
+        border: 3px solid @color-tower-magic;
+        box-shadow: 4px 4px 0 @color-black, 0 0 8px fade(@color-tower-magic-glow, 50%);
         animation: orb-hop 0.5s infinite alternate;
     }
 
+    // Manaia-patterned ring
     .tower-ring {
         position: absolute;
         bottom: 70px;
         left: 50%;
         width: 60px;
         height: 10px;
-        border: 4px solid @color-magenta;
+        border: 3px solid @color-magenta;
         border-radius: 50%;
         transform: translateX(-50%);
         animation: spin-flat 2s linear infinite;
     }
+
+    .magic-energy { display: none; }
 }
 
-// 5. TESLA TOWER (Electric Coil)
+// Tohunga Level 2 — Koru carved SVG, conic orb, double ring, purple glow
+.tower-magic.level-2 {
+    .tower-base {
+        // Koru carving SVG on staff
+        background-image:
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='40'%3E%3Cpath d='M10 5C6 5 5 9 5 12s2 5 4 6M10 20c-3 0-4 3-4 5s1 4 3 5' fill='none' stroke='%239B7BB8' stroke-width='1.5'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 80% 80%;
+    }
+
+    .tower-orb {
+        // Conic gradient energy inside orb
+        background: conic-gradient(
+            from 0deg,
+            @color-white,
+            lighten(@color-tower-magic, 30%),
+            @color-white,
+            lighten(@color-tower-magic, 20%),
+            @color-white
+        );
+        animation: orb-hop 0.5s infinite alternate, orb-energy-spin 3s linear infinite;
+    }
+
+    // Second smaller ring
+    .magic-energy {
+        display: block;
+        position: absolute;
+        bottom: 72px;
+        left: 50%;
+        width: 40px;
+        height: 8px;
+        border: 2px solid fade(@color-tower-magic-glow, 60%);
+        border-radius: 50%;
+        transform: translateX(-50%);
+        animation: spin-flat 1.5s linear infinite reverse;
+        pointer-events: none;
+    }
+}
+
+// Tohunga Level 3 — Full whakairo pillar, brilliant orb, three rings, spirit aura
+.tower-magic.level-3 {
+    .tower-base {
+        background-image:
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='50'%3E%3Cpath d='M12 5C8 5 6 8 6 11s2 5 5 6c-2-1-3-3-3-5s2-5 4-5M12 22c-3 0-5 3-5 6s2 5 4 6c-1-1-2-3-2-5s1-5 3-5' fill='none' stroke='%239B7BB8' stroke-width='1.5'/%3E%3Cpath d='M8 18h8M6 20h12M8 36h8' stroke='%239B7BB8' stroke-width='0.8'/%3E%3Cellipse cx='12' cy='42' rx='3' ry='3' fill='none' stroke='%239B7BB8' stroke-width='1'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 90% 90%;
+        box-shadow: 0 0 8px fade(@color-tower-magic, 40%);
+    }
+
+    .tower-orb {
+        width: 32px;
+        height: 32px;
+        background: radial-gradient(
+            circle at 40% 35%,
+            @color-white 0%,
+            #E8D0FF 20%,
+            lighten(@color-tower-magic, 30%) 50%,
+            @color-tower-magic 80%
+        );
+        box-shadow: 4px 4px 0 @color-black, 0 0 15px @color-tower-magic-glow, 0 0 30px fade(@color-tower-magic-glow, 30%);
+        animation: orb-hop 0.5s infinite alternate, orb-energy-spin 2s linear infinite;
+    }
+
+    .tower-ring {
+        border-color: @color-tower-magic-glow;
+        box-shadow: 0 0 6px fade(@color-tower-magic-glow, 40%);
+    }
+
+    // Third orbit ring
+    .magic-energy {
+        display: block;
+        position: absolute;
+        bottom: 68px;
+        left: 50%;
+        width: 75px;
+        height: 12px;
+        border: 2px solid fade(@color-magenta, 40%);
+        border-radius: 50%;
+        transform: translateX(-50%);
+        animation: spin-flat 4s linear infinite;
+        pointer-events: none;
+    }
+}
+
+@keyframes orb-energy-spin {
+    from { filter: hue-rotate(0deg); }
+    to { filter: hue-rotate(360deg); }
+}
+
+// ===========================================
+// 5. TĀWHIRI (Tesla) — Storm Pillar
+// ===========================================
+
 .tower-tesla {
     .tower-base {
         position: absolute;
@@ -340,13 +727,23 @@
         position: absolute;
         bottom: 15px;
         left: 50%;
-        width: 20px;
-        height: 40px;
-        background: repeating-linear-gradient(0deg,
-                @color-tower-tesla,
-                @color-tower-tesla 5px,
-                @color-black 5px,
-                @color-black 8px);
+        width: 22px;
+        height: 42px;
+        // Multi-tone storm gradient coil
+        background: linear-gradient(
+            0deg,
+            darken(@color-tower-tesla, 15%) 0%,
+            @color-tower-tesla 25%,
+            lighten(@color-tower-tesla, 10%) 50%,
+            @color-tower-tesla 75%,
+            darken(@color-tower-tesla, 10%) 100%
+        );
+        // Coil wind lines
+        background-image: repeating-linear-gradient(
+            0deg,
+            transparent, transparent 4px,
+            rgba(0, 0, 0, 0.3) 4px, rgba(0, 0, 0, 0.3) 6px
+        );
         transform: translateX(-50%);
         .comic-border(2px);
     }
@@ -364,6 +761,7 @@
         box-shadow: 0 0 10px @color-tower-tesla;
         animation: spark-pulse 0.1s infinite alternate;
 
+        // Lightning bolt icon
         &::after {
             content: '';
             position: absolute;
@@ -378,19 +776,7 @@
     }
 }
 
-@keyframes spark-pulse {
-    from {
-        transform: translateX(-50%) scale(1);
-        opacity: 0.8;
-    }
-
-    to {
-        transform: translateX(-50%) scale(1.2);
-        opacity: 1;
-    }
-}
-
-// Tesla arc effect (idle animation)
+// Tesla arc (idle)
 .tesla-arc {
     position: absolute;
     bottom: 55px;
@@ -400,7 +786,6 @@
     transform: translateX(-50%);
     pointer-events: none;
 
-    // Random arc using clip-path
     &::before,
     &::after {
         content: '';
@@ -426,16 +811,98 @@
     }
 }
 
+@keyframes spark-pulse {
+    from { transform: translateX(-50%) scale(1); opacity: 0.8; }
+    to { transform: translateX(-50%) scale(1.2); opacity: 1; }
+}
+
 @keyframes tesla-arc-flash {
-    0%, 80%, 100% {
-        opacity: 0;
+    0%, 80%, 100% { opacity: 0; }
+    10%, 30% { opacity: 1; }
+}
+
+// Tāwhiri Level 2 — Storm conic gradient, wind spiral, storm cloud top
+.tower-tesla.level-2 {
+    .tower-coil {
+        // Swirling storm conic on coil
+        background: conic-gradient(
+            from 0deg,
+            darken(@color-tower-tesla, 15%),
+            lighten(@color-tower-tesla, 15%),
+            darken(@color-tower-tesla, 10%),
+            lighten(@color-tower-tesla, 10%),
+            darken(@color-tower-tesla, 15%)
+        );
+        background-image: repeating-linear-gradient(
+            0deg,
+            transparent, transparent 4px,
+            rgba(0, 0, 0, 0.25) 4px, rgba(0, 0, 0, 0.25) 6px
+        );
     }
-    10%, 30% {
-        opacity: 1;
+
+    .tower-spark {
+        box-shadow: 0 0 14px @color-tower-tesla, 0 0 4px @color-white;
+    }
+
+    // Wind spiral dashed ring
+    .tesla-arc {
+        &::before { width: 35px; }
+        &::after { width: 35px; }
     }
 }
 
-// 6. FLAME TOWER (Tank & Nozzle)
+// Tāwhiri Level 3 — Full storm vortex, dramatic arcs, wind streaks
+.tower-tesla.level-3 {
+    .tower-coil {
+        background: conic-gradient(
+            from 0deg,
+            darken(@color-tower-tesla, 20%),
+            lighten(@color-tower-tesla, 20%),
+            @color-white,
+            lighten(@color-tower-tesla, 15%),
+            darken(@color-tower-tesla, 20%)
+        );
+        animation: storm-vortex 3s linear infinite;
+    }
+
+    .tower-spark {
+        width: 35px;
+        height: 35px;
+        box-shadow: 0 0 20px @color-tower-tesla, 0 0 8px @color-white;
+        animation: spark-pulse 0.08s infinite alternate;
+
+        // Storm eye
+        &::after {
+            width: 16px;
+            height: 20px;
+        }
+    }
+
+    // Dramatic constant arcs
+    .tesla-arc {
+        &::before,
+        &::after {
+            width: 40px;
+            height: 3px;
+            box-shadow: 0 0 6px @color-tower-tesla, 0 0 12px @color-white;
+            animation: tesla-arc-flash 0.3s ease-out infinite;
+        }
+    }
+
+    .tower-base {
+        box-shadow: 0 0 8px fade(@color-tower-tesla, 40%);
+    }
+}
+
+@keyframes storm-vortex {
+    from { filter: hue-rotate(0deg); }
+    to { filter: hue-rotate(360deg); }
+}
+
+// ===========================================
+// 6. MAHUIKA (Flame) — Sacred Fire Goddess
+// ===========================================
+
 .tower-flame {
     .tower-base {
         position: absolute;
@@ -459,12 +926,24 @@
         transform: translateX(-50%);
         .comic-border();
 
-        // Hazard stripes
-        background-image: repeating-linear-gradient(45deg,
-                transparent,
-                transparent 5px,
-                rgba(0, 0, 0, 0.2) 5px,
-                rgba(0, 0, 0, 0.2) 10px);
+        // Sacred fire vessel — carved zigzag flame pattern (replaces hazard stripes)
+        background-image: repeating-linear-gradient(
+            0deg,
+            transparent 0px, transparent 7px,
+            rgba(255, 200, 50, 0.2) 7px, rgba(255, 200, 50, 0.2) 9px
+        );
+
+        // Zigzag flame pattern overlay
+        &::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            width: 16px;
+            height: 25px;
+            transform: translateX(-50%);
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='25'%3E%3Cpath d='M2 25L5 20L8 25L11 20L14 25M2 18L5 13L8 18L11 13L14 18M2 11L5 6L8 11L11 6L14 11' fill='none' stroke='rgba(255,200,50,0.3)' stroke-width='1'/%3E%3C/svg%3E") no-repeat center;
+        }
     }
 
     .tower-nozzle {
@@ -511,32 +990,17 @@
 }
 
 @keyframes nozzle-flame {
-    0% {
-        transform: translateX(-50%) rotate(-45deg) scaleY(1) scaleX(1);
-        opacity: 0.9;
-    }
-    100% {
-        transform: translateX(-48%) rotate(-45deg) scaleY(1.15) scaleX(0.85);
-        opacity: 1;
-    }
+    0% { transform: translateX(-50%) rotate(-45deg) scaleY(1) scaleX(1); opacity: 0.9; }
+    100% { transform: translateX(-48%) rotate(-45deg) scaleY(1.15) scaleX(0.85); opacity: 1; }
 }
 
 @keyframes nozzle-flame-burst {
-    0% {
-        transform: translateX(-50%) rotate(-45deg) scale(1);
-        filter: drop-shadow(0 0 3px @fire-mid);
-    }
-    50% {
-        transform: translateX(-50%) rotate(-45deg) scale(1.8);
-        filter: drop-shadow(0 0 10px @fire-outer) drop-shadow(0 0 20px @fire-mid);
-    }
-    100% {
-        transform: translateX(-50%) rotate(-45deg) scale(1);
-        filter: drop-shadow(0 0 3px @fire-mid);
-    }
+    0% { transform: translateX(-50%) rotate(-45deg) scale(1); filter: drop-shadow(0 0 3px @fire-mid); }
+    50% { transform: translateX(-50%) rotate(-45deg) scale(1.8); filter: drop-shadow(0 0 10px @fire-outer) drop-shadow(0 0 20px @fire-mid); }
+    100% { transform: translateX(-50%) rotate(-45deg) scale(1); filter: drop-shadow(0 0 3px @fire-mid); }
 }
 
-// Flame particles (ambient heat shimmer effect)
+// Flame particles (ambient heat shimmer)
 .flame-particles {
     position: absolute;
     bottom: 40px;
@@ -546,7 +1010,6 @@
     transform: translateX(-50%);
     pointer-events: none;
 
-    // Rising heat particles
     &::before,
     &::after {
         content: '';
@@ -559,50 +1022,86 @@
         animation: flame-particle-rise 1s ease-out infinite;
     }
 
-    &::before {
-        left: 30%;
-        animation-delay: 0s;
-    }
-
-    &::after {
-        left: 60%;
-        animation-delay: 0.5s;
-    }
+    &::before { left: 30%; animation-delay: 0s; }
+    &::after { left: 60%; animation-delay: 0.5s; }
 }
 
 @keyframes flame-particle-rise {
-    0% {
-        transform: translateY(0) scale(1);
-        opacity: 0.8;
+    0% { transform: translateY(0) scale(1); opacity: 0.8; }
+    50% { opacity: 0.5; }
+    100% { transform: translateY(-20px) scale(0.5); opacity: 0; }
+}
+
+// Mahuika Level 2 — Fire motif SVG, ember ring, larger flame, smoke wisps
+.tower-flame.level-2 {
+    .tower-tank {
+        box-shadow: 0 0 6px fade(@fire-outer, 40%);
+
+        &::before {
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='25'%3E%3Cpath d='M8 2c-3 4-5 8-5 12s3 6 5 7c2-1 5-3 5-7s-2-8-5-12' fill='none' stroke='rgba(255,200,50,0.4)' stroke-width='1.5'/%3E%3Cpath d='M8 8c-1 2-2 4-2 6s1 3 2 4c1-1 2-2 2-4s-1-4-2-6' fill='none' stroke='rgba(255,150,30,0.5)' stroke-width='1'/%3E%3C/svg%3E") no-repeat center;
+        }
     }
-    50% {
-        opacity: 0.5;
+
+    .tower-nozzle::after {
+        width: 15px;
+        height: 22px;
     }
-    100% {
-        transform: translateY(-20px) scale(0.5);
-        opacity: 0;
+
+    .tower-base {
+        box-shadow: 0 0 6px fade(@fire-mid, 30%);
     }
 }
 
-@keyframes orb-hop {
-    from {
-        transform: translateX(-50%) translateY(0);
+// Mahuika Level 3 — Obsidian body, golden flame SVG, rotating fire spiral
+.tower-flame.level-3 {
+    .tower-tank {
+        // Glowing obsidian body
+        background: linear-gradient(
+            180deg,
+            @color-obsidian 0%,
+            darken(@color-tower-flame, 20%) 40%,
+            @color-tower-flame 80%,
+            @fire-mid 100%
+        );
+        box-shadow: 0 0 12px fade(@fire-outer, 50%), inset 0 0 6px fade(@fire-mid, 30%);
+
+        // Golden Māori flame motif SVG
+        &::before {
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='28'%3E%3Cpath d='M9 2c-4 5-7 10-7 16s4 7 7 8c3-1 7-4 7-8s-3-11-7-16' fill='none' stroke='%23C4A035' stroke-width='1.5'/%3E%3Cpath d='M9 8c-2 3-3 6-3 9s2 4 3 5c1-1 3-2 3-5s-1-6-3-9' fill='none' stroke='%23C4A035' stroke-width='1'/%3E%3Ccircle cx='9' cy='18' r='2' fill='%23C4A035' opacity='0.6'/%3E%3C/svg%3E") no-repeat center;
+        }
     }
 
-    to {
-        transform: translateX(-50%) translateY(-10px);
+    // Finger-shaped nozzle
+    .tower-nozzle {
+        width: 8px;
+        border-radius: 4px 4px 0 0;
+
+        &::after {
+            width: 18px;
+            height: 26px;
+            filter: drop-shadow(0 0 6px @fire-mid) drop-shadow(0 0 12px @fire-outer);
+        }
+    }
+
+    .tower-base {
+        background: @color-obsidian;
+        box-shadow: 0 0 10px fade(@fire-outer, 40%);
+    }
+
+    // Heat haze aura
+    .flame-particles {
+        &::before,
+        &::after {
+            width: 6px;
+            height: 6px;
+            box-shadow: 0 0 4px @fire-inner;
+        }
     }
 }
 
-@keyframes spin-flat {
-    from {
-        transform: translateX(-50%) scaleY(0.3) rotate(0deg);
-    }
-
-    to {
-        transform: translateX(-50%) scaleY(0.3) rotate(360deg);
-    }
-}
+// ===========================================
+// TOWER LEVEL INDICATORS
+// ===========================================
 
 .tower-level {
     position: absolute;
@@ -621,105 +1120,32 @@
     }
 }
 
-// Tower level visual upgrades
-.tower.level-2 {
-    filter: brightness(1.1) saturate(1.1);
+// ===========================================
+// GENERIC LEVEL FALLBACK (for any tower without per-type rules)
+// ===========================================
 
-    .tower-body,
-    .tower-base {
-        box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
-    }
+.tower.level-2 {
+    filter: brightness(1.05) saturate(1.05);
 }
 
 .tower.level-3 {
-    filter: brightness(1.2) saturate(1.2);
-
-    .tower-body,
-    .tower-base {
-        box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
-    }
-
-    // Add enhanced glow animation for max level
-    &::before {
-        content: '';
-        position: absolute;
-        top: -15px;
-        left: -15px;
-        right: -15px;
-        bottom: -15px;
-        background: radial-gradient(
-            ellipse at center bottom,
-            rgba(255, 215, 0, 0.4) 0%,
-            rgba(255, 180, 0, 0.2) 40%,
-            transparent 70%
-        );
-        animation: max-level-glow 2s ease-in-out infinite;
-        pointer-events: none;
-        .gpu-accelerate();
-    }
-
-    // Additional particle ring effect
-    &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 80px;
-        height: 80px;
-        transform: translate(-50%, -50%);
-        border: 2px solid rgba(255, 215, 0, 0.3);
-        border-radius: 50%;
-        animation: level3-ring-pulse 3s ease-in-out infinite;
-        pointer-events: none;
-        .gpu-accelerate();
-    }
+    filter: brightness(1.1) saturate(1.1);
 }
 
-@keyframes level3-ring-pulse {
-    0%, 100% {
-        transform: translate(-50%, -50%) scale(0.8);
-        opacity: 0.5;
-        border-width: 2px;
-    }
-    50% {
-        transform: translate(-50%, -50%) scale(1.2);
-        opacity: 0;
-        border-width: 1px;
-    }
-}
+// ===========================================
+// UPGRADE EFFECT
+// ===========================================
 
-@keyframes max-level-glow {
-    0%, 100% {
-        opacity: 0.5;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.1);
-    }
-}
-
-// Upgrade effect animation
 .tower.upgrading {
     animation: upgrade-pulse 0.6s ease-out;
 }
 
 @keyframes upgrade-pulse {
-    0% {
-        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1);
-        filter: brightness(1);
-    }
-    30% {
-        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.3);
-        filter: brightness(2);
-    }
-    100% {
-        transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1);
-        filter: brightness(1);
-    }
+    0% { transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1); filter: brightness(1); }
+    30% { transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.3); filter: brightness(2); }
+    100% { transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1); filter: brightness(1); }
 }
 
-// Upgrade particles
 .upgrade-particles {
     position: absolute;
     top: 50%;
@@ -745,12 +1171,20 @@
 }
 
 @keyframes upgrade-particles-expand {
-    0% {
-        transform: scale(0);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(2);
-        opacity: 0;
-    }
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(2); opacity: 0; }
+}
+
+// ===========================================
+// SHARED KEYFRAMES
+// ===========================================
+
+@keyframes orb-hop {
+    from { transform: translateX(-50%) translateY(0); }
+    to { transform: translateX(-50%) translateY(-10px); }
+}
+
+@keyframes spin-flat {
+    from { transform: translateX(-50%) scaleY(0.3) rotate(0deg); }
+    to { transform: translateX(-50%) scaleY(0.3) rotate(360deg); }
 }

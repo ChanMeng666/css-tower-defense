@@ -407,6 +407,17 @@ var Enemy = (function() {
                 var healthFill = this.element.querySelector('.health-fill');
                 if (healthFill) {
                     healthFill.style.width = healthPercent + '%';
+                    // Update health color state
+                    healthFill.classList.remove('health-medium', 'health-low', 'health-critical');
+                    if (healthPercent <= 25) {
+                        healthFill.classList.add('health-critical');
+                        this.element.classList.add('low-health');
+                    } else if (healthPercent <= 50) {
+                        healthFill.classList.add('health-low');
+                        this.element.classList.add('low-health');
+                    } else if (healthPercent <= 75) {
+                        healthFill.classList.add('health-medium');
+                    }
                 }
                 if (this.health <= 0) {
                     this.die();
@@ -620,20 +631,35 @@ var Enemy = (function() {
         // Apply armor reduction
         var actualDamage = Math.max(1, amount - this.armor);
         this.health -= actualDamage;
-        
+
         // Update health bar
         var healthPercent = Math.max(0, (this.health / this.maxHealth) * 100);
         var healthFill = this.element.querySelector('.health-fill');
         if (healthFill) {
             healthFill.style.width = healthPercent + '%';
+
+            // Update health color state
+            healthFill.classList.remove('health-medium', 'health-low', 'health-critical');
+            if (healthPercent <= 25) {
+                healthFill.classList.add('health-critical');
+                this.element.classList.add('low-health');
+            } else if (healthPercent <= 50) {
+                healthFill.classList.add('health-low');
+                this.element.classList.add('low-health');
+            } else if (healthPercent <= 75) {
+                healthFill.classList.add('health-medium');
+                this.element.classList.remove('low-health');
+            } else {
+                this.element.classList.remove('low-health');
+            }
         }
-        
+
         // Check for death
         if (this.health <= 0) {
             this.die();
             return true;
         }
-        
+
         return false;
     };
     
