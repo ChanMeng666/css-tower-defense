@@ -2063,6 +2063,64 @@ body.blood-moon .sky-cycle {
   z-index: 150;
   pointer-events: none;
 }
+.challenge-details {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.challenge-category {
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 0.8rem;
+  padding: 2px 10px;
+  border-radius: 10px;
+  color: #1A1614;
+  text-transform: uppercase;
+  border: 1px solid #1A1614;
+}
+.challenge-waves,
+.challenge-time-limit,
+.challenge-multiplier {
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 2px 10px;
+  border-radius: 10px;
+  background: rgba(255, 248, 240, 0.15);
+  color: #FFF8F0;
+  border: 1px solid rgba(255, 248, 240, 0.25);
+}
+.challenge-multiplier {
+  color: #F2D864;
+}
+.challenge-timer {
+  position: fixed;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 1.8rem;
+  color: #FFF8F0;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 4px 20px;
+  border-radius: 6px;
+  z-index: 160;
+  pointer-events: none;
+  border: 2px solid #1A1614;
+}
+.challenge-timer.timer-warning {
+  color: #E8635A;
+  animation: timer-pulse 0.5s infinite alternate;
+}
+@keyframes timer-pulse {
+  0% {
+    transform: translateX(-50%) scale(1);
+  }
+  100% {
+    transform: translateX(-50%) scale(1.1);
+  }
+}
 .toast {
   position: fixed;
   bottom: 20px;

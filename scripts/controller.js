@@ -559,6 +559,37 @@
         modal.className = 'auth-modal';
         modal.id = 'challengeModal';
 
+        // Look up client-side template for extra details
+        var clientTemplate = (typeof Challenge !== 'undefined' && Challenge.TEMPLATES) ? Challenge.TEMPLATES[data.challenge.id] : null;
+        var category = (clientTemplate && clientTemplate.category) || data.challenge.category || 'constraint';
+        var waveCount = clientTemplate && clientTemplate.waves ? clientTemplate.waves.length : (data.challenge.waveCount || 10);
+        var timeLimit = clientTemplate ? (clientTemplate.timeLimit || null) : null;
+        var scoreBonus = (clientTemplate && clientTemplate.scoreBonus) || data.challenge.scoreBonus || 1.0;
+
+        // Category badge colors
+        var catColors = {
+            constraint: '#4A90C4',
+            survival: '#E8635A',
+            speed: '#F2D864',
+            boss: '#D4A8E8',
+            themed: '#5EA65E',
+            economy: '#E88A42'
+        };
+        var catColor = catColors[category] || '#4A90C4';
+        var catLabel = category.charAt(0).toUpperCase() + category.slice(1);
+
+        // Wave count label
+        var waveLabel = category === 'survival' ? 'Survival' : (category === 'boss' ? (waveCount === 1 ? 'Boss Fight' : waveCount + ' Waves') : waveCount + ' Waves');
+
+        // Build details row
+        var detailsHtml =
+            '<div class="challenge-details">' +
+                '<span class="challenge-category" style="background:' + catColor + ';">' + catLabel + '</span>' +
+                '<span class="challenge-waves">' + waveLabel + '</span>' +
+                (timeLimit ? '<span class="challenge-time-limit">' + Math.floor(timeLimit / 60) + ' min</span>' : '') +
+                (scoreBonus > 1 ? '<span class="challenge-multiplier">' + scoreBonus + 'x Score</span>' : '') +
+            '</div>';
+
         var topHtml = '';
         if (data.topScores && data.topScores.length > 0) {
             topHtml = '<div class="challenge-lb-section">';
@@ -577,6 +608,7 @@
                 '<h2 class="auth-modal-title">Daily Challenge</h2>' +
                 '<div class="challenge-modal-name">' + escapeHtml(data.challenge.name) + '</div>' +
                 '<div class="challenge-modal-desc">' + escapeHtml(data.challenge.description) + '</div>' +
+                detailsHtml +
                 topHtml +
                 '<div class="challenge-modal-status" id="challengeStatus"></div>' +
                 '<div class="challenge-modal-actions">' +

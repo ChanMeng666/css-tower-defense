@@ -131,6 +131,9 @@ var Wave = (function() {
         }
     ];
 
+    // Store default wave data for reset
+    var defaultWaveData = waveData;
+
     // Current state
     var currentWave = 0;
     var waveInProgress = false;
@@ -675,6 +678,22 @@ var Wave = (function() {
         currentWave = Math.max(0, Math.min(wave - 1, waveData.length));
     }
 
+    /**
+     * Set custom wave data (for challenges)
+     */
+    function setWaveData(customWaves) {
+        if (customWaves && customWaves.length > 0) {
+            waveData = customWaves;
+        }
+    }
+
+    /**
+     * Reset wave data to default (after challenge ends)
+     */
+    function resetWaveData() {
+        waveData = defaultWaveData;
+    }
+
     // Public API
     return {
         init: init,
@@ -688,6 +707,8 @@ var Wave = (function() {
         getNextWaveInfo: getNextWaveInfo,
         getActiveEvent: getActiveEvent,
         setCurrentWave: setCurrentWave,
+        setWaveData: setWaveData,
+        resetWaveData: resetWaveData,
         EVENT_TYPES: EVENT_TYPES
     };
 })();

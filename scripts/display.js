@@ -180,15 +180,16 @@ var Display = (function() {
      */
     function updateWaveButton() {
         if (!elements.startWaveBtn) return;
-        
+        var isChallenge = typeof Challenge !== 'undefined' && Challenge.isActive();
+
         if (Wave.isWaveInProgress()) {
             elements.startWaveBtn.disabled = true;
             elements.startWaveBtn.textContent = 'Wave in Progress...';
         } else if (Wave.getCurrentWave() > Wave.getTotalWaves()) {
             elements.startWaveBtn.disabled = true;
-            elements.startWaveBtn.textContent = 'All Waves Complete!';
+            elements.startWaveBtn.textContent = isChallenge ? 'Challenge Complete!' : 'All Waves Complete!';
         } else {
-            elements.startWaveBtn.disabled = false;
+            elements.startWaveBtn.disabled = isChallenge && Challenge.isSurvivalMode();
             elements.startWaveBtn.textContent = 'Start Wave ' + Wave.getCurrentWave();
         }
     }
@@ -278,6 +279,31 @@ var Display = (function() {
     }
 
     /**
+     * Update challenge timer display for speed challenges
+     */
+    function updateChallengeTimer(elapsed, limit) {
+        var timer = document.getElementById('challengeTimer');
+        if (!timer) {
+            timer = document.createElement('div');
+            timer.id = 'challengeTimer';
+            timer.className = 'challenge-timer';
+            document.body.appendChild(timer);
+        }
+
+        var remaining = Math.max(0, Math.ceil(limit - elapsed));
+        var mins = Math.floor(remaining / 60);
+        var secs = remaining % 60;
+        timer.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
+
+        // Warning state under 30 seconds
+        if (remaining <= 30) {
+            timer.classList.add('timer-warning');
+        } else {
+            timer.classList.remove('timer-warning');
+        }
+    }
+
+    /**
      * Show game over screen with optional stats
      */
     function showGameOverScreen(isVictory, score, stats) {
@@ -285,7 +311,15 @@ var Display = (function() {
             elements.gameOverScreen.classList.remove('hidden');
 
             if (elements.gameOverTitle) {
-                if (isVictory) {
+                var isChallenge = typeof Challenge !== 'undefined' && Challenge.isActive();
+                if (isChallenge) {
+                    elements.gameOverTitle.textContent = isVictory ? 'Challenge Complete!' : 'Challenge Failed';
+                    if (isVictory) {
+                        elements.gameOverTitle.classList.add('victory');
+                    } else {
+                        elements.gameOverTitle.classList.remove('victory');
+                    }
+                } else if (isVictory) {
                     elements.gameOverTitle.textContent = 'Victory!';
                     elements.gameOverTitle.classList.add('victory');
                 } else {
@@ -696,6 +730,7 @@ var Display = (function() {
         showCombo: showCombo,
         hideCombo: hideCombo,
         showToast: showToast,
-        updateEnvironment: updateEnvironment
+        updateEnvironment: updateEnvironment,
+        updateChallengeTimer: updateChallengeTimer
     };
 })();

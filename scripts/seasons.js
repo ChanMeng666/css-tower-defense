@@ -257,6 +257,7 @@ var Seasons = (function () {
 
     return {
         init: init,
+        setSeason: setSeason,
         getCurrentSeason: getCurrentSeason,
         getSeasonName: getSeasonName,
         getWeatherWeights: getWeatherWeights,

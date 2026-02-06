@@ -125,13 +125,27 @@ var Enemy = (function() {
         var armorBonus = variantConfig ? (variantConfig.armorBonus || 0) : 0;
         
         // Stats with variant modifiers
-        this.health = Math.round(config.health * healthMult);
+        var health = Math.round(config.health * healthMult);
+        var speed = config.speed * speedMult;
+        var armor = (config.armor || 0) + armorBonus;
+
+        // Apply challenge enemy modifiers
+        if (typeof Challenge !== 'undefined' && Challenge.isActive()) {
+            var mods = Challenge.getEnemyMods();
+            if (mods) {
+                if (mods.healthMult) health = Math.round(health * mods.healthMult);
+                if (mods.speedMult) speed *= mods.speedMult;
+                if (mods.armorBonus) armor += mods.armorBonus;
+            }
+        }
+
+        this.health = health;
         this.maxHealth = this.health;
-        this.speed = config.speed * speedMult;
+        this.speed = speed;
         this.baseSpeed = this.speed;
         this.reward = Math.round(config.reward * rewardMult);
         this.damage = Math.round(config.damage * damageMult);
-        this.armor = (config.armor || 0) + armorBonus;
+        this.armor = armor;
         
         // Path following
         this.path = path;

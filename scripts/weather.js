@@ -358,6 +358,7 @@ var Weather = (function () {
         init: init,
         update: update,
         isNight: isNight,
+        setWeather: setWeather,
         setBloodMoon: setBloodMoon,
         isBloodMoon: isBloodMoon,
         getRangeMultiplier: getRangeMultiplier,

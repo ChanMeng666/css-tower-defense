@@ -205,6 +205,11 @@ var Game = (function () {
             var craftGold = (typeof Crafting !== 'undefined' && Crafting.getMultiplier) ? Crafting.getMultiplier('gold_mult') : 1.0;
             var reward = Math.floor(baseReward * DIFFICULTIES[difficulty].goldMult * Progression.getGoldMultiplier() * envGold * craftGold);
 
+            // Challenge: suppress kill gold for economy challenges
+            if (typeof Challenge !== 'undefined' && Challenge.isActive() && Challenge.isNoKillGold()) {
+                reward = 0;
+            }
+
             // Combo system
             comboCount++;
             comboTimer = COMBO_TIMEOUT;
@@ -261,6 +266,15 @@ var Game = (function () {
                 addLives(5);
                 Display.showMessage('Repair Drone!');
                 Sfx.play('powerup');
+            }
+
+            // Survival mode: auto-start next wave after delay
+            if (typeof Challenge !== 'undefined' && Challenge.isActive() && Challenge.isSurvivalMode() && !e.detail.isLastWave) {
+                setTimeout(function() {
+                    if (state === STATES.PLAYING) {
+                        startNextWave();
+                    }
+                }, 2000);
             }
 
             // Check for victory
@@ -350,11 +364,19 @@ var Game = (function () {
             Pool.clear();
         }
 
-        // Apply challenge wave override
+        // Inject challenge custom waves, lock season/weather
         if (typeof Challenge !== 'undefined' && Challenge.isActive()) {
-            var mods = Challenge.getStartModifiers();
-            if (mods.startWave && mods.startWave > 1) {
-                Wave.setCurrentWave(mods.startWave);
+            var challengeWaves = Challenge.getChallengeWaves();
+            if (challengeWaves) {
+                Wave.setWaveData(challengeWaves);
+            }
+            var fixedSeason = Challenge.getFixedSeason();
+            if (fixedSeason && typeof Seasons !== 'undefined' && Seasons.setSeason) {
+                Seasons.setSeason(fixedSeason);
+            }
+            var fixedWeather = Challenge.getFixedWeather();
+            if (fixedWeather && typeof Weather !== 'undefined' && Weather.setWeather) {
+                Weather.setWeather(fixedWeather);
             }
         }
 
@@ -397,6 +419,19 @@ var Game = (function () {
         Enemy.update(dt);
         Tower.update(dt, currentTime);
         Projectile.update(dt);
+
+        // Update challenge timer and check time limit
+        if (typeof Challenge !== 'undefined' && Challenge.isActive()) {
+            Challenge.updateTimer(dt);
+            var timeLimit = Challenge.getTimeLimit();
+            if (timeLimit && Challenge.getElapsedTime() >= timeLimit) {
+                gameOver();
+                return;
+            }
+            if (timeLimit && typeof Display !== 'undefined' && Display.updateChallengeTimer) {
+                Display.updateChallengeTimer(Challenge.getElapsedTime(), timeLimit);
+            }
+        }
 
         // Update combo timer
         if (comboCount > 0) {

@@ -1497,6 +1497,69 @@ body.blood-moon {
     pointer-events: none;
 }
 
+// Challenge Details (category badges, wave count, etc.)
+.challenge-details {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.challenge-category {
+    font-family: @font-title;
+    font-size: 0.8rem;
+    padding: 2px 10px;
+    border-radius: 10px;
+    color: @color-black;
+    text-transform: uppercase;
+    .comic-border(1px);
+}
+
+.challenge-waves,
+.challenge-time-limit,
+.challenge-multiplier {
+    font-family: @font-comic;
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 2px 10px;
+    border-radius: 10px;
+    background: rgba(255, 248, 240, 0.15);
+    color: @color-white;
+    border: 1px solid rgba(255, 248, 240, 0.25);
+}
+
+.challenge-multiplier {
+    color: @color-yellow;
+}
+
+// Challenge Timer (speed challenges)
+.challenge-timer {
+    position: fixed;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: @font-title;
+    font-size: 1.8rem;
+    color: @color-white;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 4px 20px;
+    border-radius: 6px;
+    z-index: 160;
+    pointer-events: none;
+    .comic-border(2px);
+
+    &.timer-warning {
+        color: @color-danger;
+        animation: timer-pulse 0.5s infinite alternate;
+    }
+}
+
+@keyframes timer-pulse {
+    0% { transform: translateX(-50%) scale(1); }
+    100% { transform: translateX(-50%) scale(1.1); }
+}
+
 // ===========================================
 // Toast Notifications
 // ===========================================
