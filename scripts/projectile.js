@@ -176,6 +176,13 @@ var Projectile = (function() {
         // Create impact effect
         this.createImpact();
 
+        // Emit projectileImpact event for splash sounds
+        if (this.splashRadius > 0) {
+            document.dispatchEvent(new CustomEvent('projectileImpact', {
+                detail: { type: this.type, x: this.x, y: this.y, splash: true }
+            }));
+        }
+
         // Apply damage
         if (this.splashRadius > 0) {
             // Area damage

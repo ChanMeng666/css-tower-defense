@@ -227,6 +227,12 @@ var Game = (function () {
             addScore(reward * 10);
             Sfx.play('kill');
 
+            // Play death sample for heavy enemies (toa/taniwha)
+            var enemyType = e.detail.type;
+            if (enemyType === 'toa' || enemyType === 'taniwha') {
+                Sfx.playEffect('death');
+            }
+
             // Emit combo event
             if (typeof emitGameEvent === 'function') {
                 emitGameEvent(EVENTS.COMBO_KILL, { count: comboCount, reward: reward });
@@ -309,13 +315,40 @@ var Game = (function () {
             Sfx.play('sell');
         });
 
-        // Boss phase changes
-        document.addEventListener('bossPhaseChange', function(e) {
-            if (e.detail.phase === 'enrage') {
-                Sfx.play('bossEnrage');
-            } else if (e.detail.phase === 'shield') {
+        // Boss skill used (karanga, kaitiaki, teRiri)
+        document.addEventListener('bossSkillUsed', function(e) {
+            var skill = e.detail.skill;
+            if (skill === 'karanga') {
+                Sfx.play('bossSkill');
+                Sfx.playEffect('warning');
+            } else if (skill === 'kaitiaki') {
                 Sfx.play('bossShield');
+            } else if (skill === 'teRiri') {
+                Sfx.play('bossEnrage');
             }
+        });
+
+        // Boss entrance
+        document.addEventListener('bossEntrance', function(e) {
+            Sfx.playEffect('warning');
+            Sfx.play('bossSpawn');
+        });
+
+        // Wave warnings (e.g., "Toa have high armor!")
+        document.addEventListener('warning', function(e) {
+            Sfx.playEffect('warning');
+        });
+
+        // Projectile splash impact
+        document.addEventListener('projectileImpact', function(e) {
+            if (e.detail.splash) {
+                Sfx.playEffect('blast');
+            }
+        });
+
+        // Weather changed
+        document.addEventListener('weatherChanged', function(e) {
+            Sfx.play('weatherChange');
         });
 
         // Combo kill sound
@@ -441,6 +474,7 @@ var Game = (function () {
                 if (comboCount >= COMBO_MIN_FOR_BONUS) {
                     var endBonus = comboCount * 5;
                     addGold(endBonus);
+                    Sfx.play('goldPickup');
                 }
                 comboCount = 0;
                 Display.hideCombo();

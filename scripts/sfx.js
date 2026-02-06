@@ -272,7 +272,8 @@ var Sfx = (function() {
             ]},
             place: { layers: [
                 { type: 'square', freq: 330, duration: 0.08, slide: 440, gain: 0.2 },
-                { type: 'noise', duration: 0.04, filter: 4000, gain: 0.1 }
+                { type: 'noise', duration: 0.04, filter: 4000, gain: 0.1 },
+                { type: 'sine', freq: 80, duration: 0.1, slide: 40, gain: 0.15 }
             ]},
             sell: { layers: [
                 { type: 'sine', freq: 550, duration: 0.12, slide: 330, gain: 0.25 }
@@ -283,39 +284,40 @@ var Sfx = (function() {
                 { type: 'triangle', freq: 220, duration: 0.2, gain: 0.1 }
             ]},
 
-            // Combat sounds - enhanced with layers
-            shoot_arrow: { layers: [
-                { type: 'sawtooth', freq: 600, duration: 0.06, slide: 300, gain: 0.15, filter: 2000 },
-                { type: 'noise', duration: 0.08, filter: 6000, gain: 0.1 }
+            // Combat sounds - Māori themed tower attacks
+            shoot_taiaha: { layers: [
+                { type: 'noise', duration: 0.08, filter: 8000, filterType: 'highpass', gain: 0.15 },
+                { type: 'sine', freq: 1200, duration: 0.05, slide: 600, gain: 0.2 }
             ]},
-            shoot_cannon: { layers: [
-                { type: 'noise', duration: 0.15, filter: 400, gain: 0.5 },
-                { type: 'sine', freq: 60, duration: 0.2, slide: 30, gain: 0.4 },
-                { type: 'noise', duration: 0.03, filter: 8000, gain: 0.15 }
+            shoot_mere: { layers: [
+                { type: 'sine', freq: 50, duration: 0.18, slide: 25, gain: 0.4 },
+                { type: 'noise', duration: 0.1, filter: 500, gain: 0.35 },
+                { type: 'noise', duration: 0.03, filter: 9000, gain: 0.15 }
             ]},
-            shoot_ice: { layers: [
-                { type: 'sine', freq: 1200, duration: 0.1, slide: 800, gain: 0.2 },
-                { type: 'sine', freq: 1205, duration: 0.12, slide: 795, gain: 0.1 },
-                { type: 'noise', duration: 0.06, filter: 8000, gain: 0.05 }
+            shoot_tangaroa: { layers: [
+                { type: 'sine', freq: 1100, duration: 0.12, slide: 800, gain: 0.2 },
+                { type: 'sine', freq: 1106, duration: 0.14, slide: 794, gain: 0.12 },
+                { type: 'noise', duration: 0.06, filter: 9000, gain: 0.06 }
             ]},
-            shoot_magic: { layers: [
-                { type: 'sine', freq: 600, duration: 0.2, slide: 1200, gain: 0.2, reverb: 0.4 },
-                { type: 'sine', freq: 300, duration: 0.25, slide: 150, gain: 0.1 },
-                { type: 'noise', duration: 0.15, filter: 3000, gain: 0.05 }
+            shoot_tohunga: { layers: [
+                { type: 'sine', freq: 500, duration: 0.25, slide: 1400, gain: 0.2, reverb: 0.5 },
+                { type: 'sine', freq: 1000, duration: 0.2, slide: 2800, gain: 0.08, delay: 0.03 }
             ]},
-            shoot_tesla: { layers: [
-                { type: 'sawtooth', freq: 800, duration: 0.06, slide: 2000, gain: 0.2 },
-                { type: 'square', freq: 100, duration: 0.04, gain: 0.1 },
-                { type: 'noise', duration: 0.05, filter: 5000, gain: 0.08 }
+            shoot_tawhiri: { layers: [
+                { type: 'sawtooth', freq: 600, duration: 0.05, slide: 2400, gain: 0.2, filter: 4000 },
+                { type: 'square', freq: 120, duration: 0.04, gain: 0.12 },
+                { type: 'noise', duration: 0.06, filter: 6000, gain: 0.1 }
             ]},
-            shoot_flame: { layers: [
-                { type: 'noise', duration: 0.12, filter: 600, filterType: 'bandpass', gain: 0.25 },
-                { type: 'sine', freq: 80, duration: 0.15, gain: 0.15 },
-                { type: 'noise', duration: 0.08, filter: 3000, gain: 0.06 }
+            shoot_mahuika: { layers: [
+                { type: 'noise', duration: 0.1, filter: 700, filterType: 'bandpass', gain: 0.25 },
+                { type: 'sine', freq: 60, duration: 0.12, gain: 0.15 },
+                { type: 'noise', duration: 0.06, filter: 4000, gain: 0.08 },
+                { type: 'sine', freq: 200, duration: 0.15, slide: 500, gain: 0.06, delay: 0.03 }
             ]},
             kill: { layers: [
-                { type: 'noise', duration: 0.08, filter: 2000, gain: 0.2 },
-                { type: 'sine', freq: 800, duration: 0.12, slide: 400, gain: 0.15 }
+                { type: 'noise', duration: 0.06, filter: 3000, gain: 0.25 },
+                { type: 'sine', freq: 900, duration: 0.1, slide: 350, gain: 0.18 },
+                { type: 'sine', freq: 1800, duration: 0.08, slide: 600, gain: 0.06, delay: 0.02 }
             ]},
             damage: { layers: [
                 { type: 'sawtooth', freq: 150, duration: 0.2, slide: 80, gain: 0.25 }
@@ -323,26 +325,28 @@ var Sfx = (function() {
 
             // Wave sounds
             waveStart: { layers: [
-                { type: 'square', freq: 330, duration: 0.1, gain: 0.2 },
-                { type: 'square', freq: 440, duration: 0.1, gain: 0.2, delay: 0.12 },
-                { type: 'square', freq: 550, duration: 0.15, gain: 0.2, delay: 0.24 }
+                { type: 'sawtooth', freq: 110, duration: 0.4, slide: 165, gain: 0.2, filter: 800 },
+                { type: 'sawtooth', freq: 165, duration: 0.3, slide: 220, gain: 0.15, delay: 0.15, filter: 1000 },
+                { type: 'noise', duration: 0.15, filter: 600, gain: 0.08, delay: 0.1 }
             ]},
             waveComplete: { layers: [
                 { type: 'sine', freq: 440, duration: 0.12, gain: 0.25 },
                 { type: 'sine', freq: 550, duration: 0.12, gain: 0.25, delay: 0.1 },
                 { type: 'sine', freq: 660, duration: 0.15, gain: 0.25, delay: 0.2 },
-                { type: 'sine', freq: 880, duration: 0.2, gain: 0.2, delay: 0.3 }
+                { type: 'sine', freq: 880, duration: 0.3, gain: 0.2, delay: 0.3, reverb: 0.4 }
             ]},
 
             // Boss sounds
             bossSpawn: { layers: [
-                { type: 'sawtooth', freq: 80, duration: 1.5, slide: 40, gain: 0.35 },
-                { type: 'sine', freq: 40, duration: 1.5, slide: 20, gain: 0.3 },
-                { type: 'noise', duration: 1.0, filter: 200, gain: 0.15 }
+                { type: 'sawtooth', freq: 60, duration: 2.0, slide: 30, gain: 0.35 },
+                { type: 'sine', freq: 30, duration: 2.0, slide: 15, gain: 0.3 },
+                { type: 'noise', duration: 1.5, filter: 200, gain: 0.15 },
+                { type: 'sine', freq: 100, duration: 1.0, slide: 300, gain: 0.12, delay: 0.5 }
             ]},
             bossSkill: { layers: [
-                { type: 'sine', freq: 200, duration: 0.3, slide: 600, gain: 0.25 },
-                { type: 'sine', freq: 400, duration: 0.3, slide: 1200, gain: 0.12 }
+                { type: 'sine', freq: 180, duration: 0.4, slide: 800, gain: 0.25, reverb: 0.5 },
+                { type: 'sine', freq: 360, duration: 0.35, slide: 1600, gain: 0.12, delay: 0.05 },
+                { type: 'noise', duration: 0.2, filter: 2000, gain: 0.08, delay: 0.1 }
             ]},
 
             // Game state sounds
@@ -392,6 +396,16 @@ var Sfx = (function() {
             powerup: { layers: [
                 { type: 'sine', freq: 440, duration: 0.15, slide: 880, gain: 0.2 },
                 { type: 'sine', freq: 660, duration: 0.15, slide: 1320, gain: 0.15, delay: 0.1 }
+            ]},
+            specialEvent: { layers: [
+                { type: 'sine', freq: 660, duration: 0.1, gain: 0.2 },
+                { type: 'sine', freq: 880, duration: 0.1, gain: 0.2, delay: 0.08 },
+                { type: 'sine', freq: 1100, duration: 0.12, gain: 0.18, delay: 0.16 },
+                { type: 'triangle', freq: 1320, duration: 0.2, gain: 0.12, delay: 0.24, reverb: 0.3 }
+            ]},
+            weatherChange: { layers: [
+                { type: 'noise', duration: 0.3, filter: 1500, gain: 0.08 },
+                { type: 'sine', freq: 300, duration: 0.4, slide: 250, gain: 0.06, reverb: 0.4 }
             ]}
         };
     }
@@ -667,6 +681,16 @@ var Sfx = (function() {
         if (masterGain) {
             masterGain.gain.value = volume;
         }
+        // Update Howler.js effect volumes
+        Object.keys(howlEffects).forEach(function(key) {
+            if (key === 'blasts' && Array.isArray(howlEffects.blasts)) {
+                howlEffects.blasts.forEach(function(b) { if (b) b.volume(volume * 0.6); });
+            } else if (key === 'death' && howlEffects.death) {
+                howlEffects.death.volume(volume * 0.5);
+            } else if (howlEffects[key] && howlEffects[key].volume) {
+                howlEffects[key].volume(volume);
+            }
+        });
     }
     
     /**
@@ -733,11 +757,29 @@ var Sfx = (function() {
             if (sound.layers) {
                 sound.layers.forEach(function(layer) {
                     if (layer.duration && layer.duration > 0) {
-                        playSpatialTone(layer, panner);
+                        if (activeSounds >= MAX_CONCURRENT) return;
+                        var delayTime = (layer.delay || 0) * 1000;
+                        if (delayTime > 0) {
+                            setTimeout(function() {
+                                if (activeSounds >= MAX_CONCURRENT) return;
+                                activeSounds++;
+                                // Use reverb send if layer specifies reverb
+                                var dest = (layer.reverb && reverbBuffer) ? createReverbSend(layer.reverb) : panner;
+                                playSpatialTone(layer, dest, panner);
+                                var dur = (layer.duration || 0.1) * 1000 + 50;
+                                setTimeout(function() { activeSounds = Math.max(0, activeSounds - 1); }, dur);
+                            }, delayTime);
+                        } else {
+                            activeSounds++;
+                            var dest = (layer.reverb && reverbBuffer) ? createReverbSend(layer.reverb) : panner;
+                            playSpatialTone(layer, dest, panner);
+                            var dur = (layer.duration || 0.1) * 1000 + 50;
+                            setTimeout(function() { activeSounds = Math.max(0, activeSounds - 1); }, dur);
+                        }
                     }
                 });
             } else if (sound.duration && sound.duration > 0) {
-                playSpatialTone(sound, panner);
+                playSpatialTone(sound, panner, panner);
             }
 
         } catch (e) {
@@ -786,69 +828,84 @@ var Sfx = (function() {
     /**
      * Play a tone through a panner node
      */
-    function playSpatialTone(sound, panner) {
+    function playSpatialTone(sound, destination, panner) {
+        // destination may be a reverb send or the panner directly
+        // panner is the spatial panner that reverb sends should also route through
+        var finalDest = destination || panner;
+
         if (sound.type === 'noise') {
-            playSpatialNoise(sound, panner);
+            playSpatialNoise(sound, finalDest);
         } else {
             var osc = audioContext.createOscillator();
             var gain = audioContext.createGain();
+            var now = audioContext.currentTime;
+            var dur = sound.duration || 0.1;
 
             osc.type = sound.type || 'sine';
-            osc.frequency.value = sound.freq || 440;
+            osc.frequency.setValueAtTime(sound.freq || 440, now);
 
             if (sound.slide) {
-                osc.frequency.linearRampToValueAtTime(
-                    sound.slide,
-                    audioContext.currentTime + sound.duration
-                );
+                osc.frequency.linearRampToValueAtTime(sound.slide, now + dur);
             }
 
-            gain.gain.value = sound.gain || 0.3;
-            gain.gain.exponentialRampToValueAtTime(
-                0.01,
-                audioContext.currentTime + sound.duration
-            );
+            var vol = sound.gain || 0.3;
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.linearRampToValueAtTime(vol, now + 0.005);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
 
-            osc.connect(gain);
-            gain.connect(panner);
+            // Optional filter
+            if (sound.filter) {
+                var filter = audioContext.createBiquadFilter();
+                filter.type = sound.filterType || 'lowpass';
+                filter.frequency.value = sound.filter;
+                osc.connect(filter);
+                filter.connect(gain);
+            } else {
+                osc.connect(gain);
+            }
 
-            osc.start();
-            osc.stop(audioContext.currentTime + sound.duration);
+            gain.connect(finalDest);
+
+            osc.start(now);
+            osc.stop(now + dur);
         }
     }
 
     /**
      * Play noise through a panner node
      */
-    function playSpatialNoise(sound, panner) {
-        var bufferSize = audioContext.sampleRate * sound.duration;
-        var buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-        var data = buffer.getChannelData(0);
-
-        for (var i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-        }
+    function playSpatialNoise(sound, destination) {
+        var now = audioContext.currentTime;
+        var dur = sound.duration || 0.1;
 
         var source = audioContext.createBufferSource();
-        source.buffer = buffer;
+        if (noiseBuffer) {
+            source.buffer = noiseBuffer;
+        } else {
+            var bufSize = audioContext.sampleRate * dur;
+            var buf = audioContext.createBuffer(1, bufSize, audioContext.sampleRate);
+            var data = buf.getChannelData(0);
+            for (var i = 0; i < bufSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            source.buffer = buf;
+        }
 
         var filter = audioContext.createBiquadFilter();
-        filter.type = 'lowpass';
+        filter.type = sound.filterType || 'lowpass';
         filter.frequency.value = sound.filter || 1000;
 
         var gain = audioContext.createGain();
-        gain.gain.value = sound.gain || 0.2;
-        gain.gain.exponentialRampToValueAtTime(
-            0.01,
-            audioContext.currentTime + sound.duration
-        );
+        var vol = sound.gain || 0.2;
+        gain.gain.setValueAtTime(vol, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
 
         source.connect(filter);
         filter.connect(gain);
-        gain.connect(panner);
+        gain.connect(destination);
 
-        source.start();
-        source.stop(audioContext.currentTime + sound.duration);
+        source.start(now);
+        source.stop(now + dur);
     }
 
     /**

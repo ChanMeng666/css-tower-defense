@@ -428,6 +428,11 @@ var Wave = (function() {
                 return;
         }
 
+        // Play special event sound
+        if (typeof Sfx !== 'undefined') {
+            Sfx.play('specialEvent');
+        }
+
         // Emit event
         if (typeof emitGameEvent === 'function') {
             emitGameEvent(EVENTS.SPECIAL_EVENT, data);
