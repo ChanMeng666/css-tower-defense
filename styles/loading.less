@@ -160,144 +160,6 @@
     display: none;
 }
 
-// Animated Waharoa (Gateway) Container
-.loading-tower {
-    position: relative;
-    width: 220px;
-    height: 220px;
-    margin: 20px 0;
-    .flex-center();
-    z-index: 2;
-
-    // Remove the speech bubble that was blocking subtitle
-    &::before {
-        display: none;
-    }
-}
-
-// Waharoa Base - Ground platform
-.loading-tower-base {
-    position: absolute;
-    bottom: 0;
-    width: 180px;
-    height: 20px;
-    background: @color-earth-brown;
-    .comic-border(3px, darken(@color-earth-brown, 20%));
-    .pop-shadow(4px, 4px, darken(@color-earth-brown, 30%));
-    transform: perspective(200px) rotateX(-15deg);
-
-    // Earth texture
-    background-image: linear-gradient(
-        90deg,
-        @color-earth-brown 0%,
-        lighten(@color-earth-brown, 10%) 50%,
-        @color-earth-brown 100%
-    );
-}
-
-// Waharoa Body - Gateway arch with pou (posts)
-.loading-tower-body {
-    position: absolute;
-    bottom: 20px;
-    width: 140px;
-    height: 130px;
-    background: transparent;
-
-    // Left Pou (post)
-    &::before {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 35px;
-        height: 130px;
-        background: linear-gradient(
-            90deg,
-            darken(@color-earth-brown, 5%) 0%,
-            @color-earth-brown 30%,
-            lighten(@color-earth-brown, 8%) 50%,
-            @color-earth-brown 70%,
-            darken(@color-earth-brown, 5%) 100%
-        );
-        border: 3px solid darken(@color-earth-brown, 20%);
-        border-radius: 5px 5px 0 0;
-        box-shadow: 3px 3px 0 darken(@color-earth-brown, 30%);
-    }
-
-    // Right Pou (post)
-    &::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 35px;
-        height: 130px;
-        background: linear-gradient(
-            90deg,
-            darken(@color-earth-brown, 5%) 0%,
-            @color-earth-brown 30%,
-            lighten(@color-earth-brown, 8%) 50%,
-            @color-earth-brown 70%,
-            darken(@color-earth-brown, 5%) 100%
-        );
-        border: 3px solid darken(@color-earth-brown, 20%);
-        border-radius: 5px 5px 0 0;
-        box-shadow: 3px 3px 0 darken(@color-earth-brown, 30%);
-    }
-}
-
-// Waharoa Top - Carved lintel (pare)
-.loading-tower-top {
-    position: absolute;
-    bottom: 150px;
-    width: 160px;
-    height: 35px;
-    background: linear-gradient(
-        180deg,
-        lighten(@color-earth-brown, 5%) 0%,
-        @color-earth-brown 40%,
-        darken(@color-earth-brown, 10%) 100%
-    );
-    .comic-border(3px, darken(@color-earth-brown, 20%));
-    .pop-shadow(4px, 4px, darken(@color-earth-brown, 30%));
-    border-radius: 8px 8px 0 0;
-
-    // Koru carving pattern
-    &::before {
-        content: '';
-        position: absolute;
-        top: 8px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100px;
-        height: 18px;
-        background:
-            radial-gradient(circle at 20% 50%, @color-pounamu-green 4px, transparent 4px),
-            radial-gradient(circle at 40% 50%, @color-pounamu-green 4px, transparent 4px),
-            radial-gradient(circle at 60% 50%, @color-pounamu-green 4px, transparent 4px),
-            radial-gradient(circle at 80% 50%, @color-pounamu-green 4px, transparent 4px);
-    }
-
-    // Pounamu (greenstone) eye decoration
-    &::after {
-        content: '';
-        position: absolute;
-        top: 5px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 20px;
-        height: 10px;
-        background: @color-pounamu-green;
-        border: 2px solid darken(@color-pounamu-green, 20%);
-        border-radius: 50%;
-        box-shadow: inset 2px 2px 4px rgba(255,255,255,0.4);
-    }
-}
-
-// Turret - Hidden (removed from HTML)
-.loading-tower-turret {
-    display: none;
-}
 
 // Loading Dots - Comic Style (hidden when ready)
 .loading-dots {
@@ -875,10 +737,6 @@
         font-size: 1.2rem;
     }
 
-    .loading-tower {
-        transform: scale(0.8);
-    }
-
     .loading-start {
         font-size: 1.5rem;
         padding: 12px 35px;
@@ -913,10 +771,6 @@
         font-size: 1rem;
     }
 
-    .loading-tower {
-        transform: scale(0.6);
-    }
-
     .loading-bg::before,
     .loading-bg::after {
         display: none;
@@ -926,7 +780,6 @@
 // Reduced Motion Support
 @media (prefers-reduced-motion: reduce) {
     .loading-logo,
-    .loading-tower-turret,
     .loading-dot,
     .loading-game-title {
         animation: none !important;
