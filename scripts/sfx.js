@@ -729,8 +729,16 @@ var Sfx = (function() {
                 ? createStereoPanner(normalizedX)
                 : createPanner3D(normalizedX, normalizedY);
 
-            // Play the sound through the panner
-            playSpatialTone(sound, panner);
+            // Handle layered sounds by playing each layer through the panner
+            if (sound.layers) {
+                sound.layers.forEach(function(layer) {
+                    if (layer.duration && layer.duration > 0) {
+                        playSpatialTone(layer, panner);
+                    }
+                });
+            } else if (sound.duration && sound.duration > 0) {
+                playSpatialTone(sound, panner);
+            }
 
         } catch (e) {
             console.warn('Error playing spatial sound:', e);

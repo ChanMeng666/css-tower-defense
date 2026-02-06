@@ -202,7 +202,6 @@ var Achievements = (function() {
         if (!achievement || achievement.unlocked) return;
 
         achievement.unlocked = true;
-        saveProgress();
 
         // Sync to server
         if (typeof API !== 'undefined' && API.unlockAchievement) {
