@@ -87,20 +87,11 @@
         // Start music on any click
         loadingScreen.addEventListener('click', startMenuMusic, { once: true });
 
-        // Difficulty selection
-        var difficultyBtns = document.querySelectorAll('.difficulty-btn');
-        difficultyBtns.forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                // Remove selected from all
-                difficultyBtns.forEach(function(b) { b.classList.remove('selected'); });
-                // Add selected to clicked
-                btn.classList.add('selected');
-                // Set difficulty in game
-                Game.setDifficulty(btn.dataset.difficulty);
-                Sfx.playEffect('button');
-            });
-        });
+        // Difficulty dropdown
+        setupDifficultyDropdown();
+
+        // More Options menu
+        setupMoreOptionsMenu();
 
         // Start game when clicking the button
         startBtn.addEventListener('click', function(e) {
@@ -111,6 +102,126 @@
                 Game.start();
             });
         });
+    }
+
+    /**
+     * Setup difficulty dropdown (compact replacement for 3 buttons)
+     */
+    function setupDifficultyDropdown() {
+        var toggle = document.getElementById('difficultyToggle');
+        var options = document.getElementById('difficultyOptions');
+        var label = document.getElementById('difficultyLabel');
+
+        if (!toggle || !options) return;
+
+        // Toggle dropdown
+        toggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var isOpen = !options.classList.contains('hidden');
+            options.classList.toggle('hidden');
+            toggle.classList.toggle('open', !isOpen);
+            Sfx.playEffect('button');
+        });
+
+        // Select difficulty option
+        options.querySelectorAll('button').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                // Update selection state
+                options.querySelectorAll('button').forEach(function(b) {
+                    b.classList.remove('selected');
+                });
+                btn.classList.add('selected');
+                // Update label
+                if (label) label.textContent = btn.textContent;
+                // Set difficulty in game
+                Game.setDifficulty(btn.dataset.difficulty);
+                // Close dropdown
+                options.classList.add('hidden');
+                toggle.classList.remove('open');
+                Sfx.playEffect('button');
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.difficulty-dropdown')) {
+                options.classList.add('hidden');
+                toggle.classList.remove('open');
+            }
+        });
+    }
+
+    /**
+     * Setup More Options menu (consolidated secondary buttons)
+     */
+    function setupMoreOptionsMenu() {
+        var moreBtn = document.getElementById('moreOptionsBtn');
+        var moreMenu = document.getElementById('moreOptionsMenu');
+
+        if (!moreBtn || !moreMenu) return;
+
+        // Toggle menu
+        moreBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var isOpen = !moreMenu.classList.contains('hidden');
+            moreMenu.classList.toggle('hidden');
+            moreBtn.classList.toggle('open', !isOpen);
+            Sfx.playEffect('button');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.more-options-container')) {
+                moreMenu.classList.add('hidden');
+                moreBtn.classList.remove('open');
+            }
+        });
+
+        // Wire up menu items
+        var leaderboardBtn = document.getElementById('leaderboardBtn');
+        var challengeBtn = document.getElementById('challengeBtn');
+        var saveLoadBtn = document.getElementById('saveLoadBtn');
+        var statsBtn = document.getElementById('statsBtn');
+        var achievementsBtn = document.getElementById('achievementsBtn');
+
+        if (leaderboardBtn) {
+            leaderboardBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                moreMenu.classList.add('hidden');
+                moreBtn.classList.remove('open');
+                showLeaderboardModal();
+            });
+        }
+
+        if (saveLoadBtn) {
+            saveLoadBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                moreMenu.classList.add('hidden');
+                moreBtn.classList.remove('open');
+                showSaveLoadModal();
+            });
+        }
+
+        if (statsBtn) {
+            statsBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                moreMenu.classList.add('hidden');
+                moreBtn.classList.remove('open');
+                showStatsModal();
+            });
+        }
+
+        if (achievementsBtn) {
+            achievementsBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                moreMenu.classList.add('hidden');
+                moreBtn.classList.remove('open');
+                showAchievementGallery();
+            });
+        }
+
+        // Challenge button is wired up separately by loadDailyChallenge()
     }
 
     /**
@@ -339,24 +450,21 @@
     
     /**
      * Wire leaderboard button on start screen
+     * Note: Now handled in setupMoreOptionsMenu() but kept for backwards compatibility
      */
     function loadLeaderboardPreview() {
-        var btn = document.getElementById('leaderboardBtn');
-        if (!btn) return;
-
-        btn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showLeaderboardModal();
-        });
+        // Leaderboard button is now in More Options menu, wired by setupMoreOptionsMenu()
     }
 
     /**
-     * Wire daily challenge button on start screen
+     * Wire daily challenge button on start screen (in More Options menu)
      */
     function loadDailyChallenge() {
         if (typeof API === 'undefined' || !API.getDailyChallenge) return;
 
         var btn = document.getElementById('challengeBtn');
+        var moreMenu = document.getElementById('moreOptionsMenu');
+        var moreBtn = document.getElementById('moreOptionsBtn');
         if (!btn) return;
 
         // Fetch challenge data in background
@@ -370,6 +478,9 @@
 
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
+            // Close More Options menu
+            if (moreMenu) moreMenu.classList.add('hidden');
+            if (moreBtn) moreBtn.classList.remove('open');
             if (challengeData) showChallengeModal(challengeData);
         });
     }
@@ -475,23 +586,7 @@
      * Setup save/load functionality
      */
     function setupSaveLoad() {
-        // Create save/load button on start screen
-        var loadingScreen = document.getElementById('loadingScreen');
-        if (!loadingScreen) return;
-
-        var saveLoadBtn = document.createElement('button');
-        saveLoadBtn.className = 'auth-btn hidden';
-        saveLoadBtn.id = 'saveLoadBtn';
-        saveLoadBtn.textContent = 'Load Game';
-        saveLoadBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showSaveLoadModal();
-        });
-
-        var authContainer = document.getElementById('authContainer');
-        if (authContainer) {
-            authContainer.appendChild(saveLoadBtn);
-        }
+        // Save/Load button is now in More Options menu HTML, wired by setupMoreOptionsMenu()
 
         // In-game save button
         var saveGameBtn = document.getElementById('saveGameBtn');
@@ -891,32 +986,11 @@
 
     /**
      * Setup buttons on start screen (stats, achievements, craft)
+     * Note: These buttons are now in the More Options menu HTML, wired by setupMoreOptionsMenu()
      */
     function setupStartScreenButtons() {
-        var authContainer = document.getElementById('authContainer');
-        if (!authContainer) return;
-
-        // Stats button (hidden until logged in)
-        var statsBtn = document.createElement('button');
-        statsBtn.className = 'auth-btn auth-btn-small hidden';
-        statsBtn.id = 'statsBtn';
-        statsBtn.textContent = 'My Stats';
-        statsBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showStatsModal();
-        });
-        authContainer.appendChild(statsBtn);
-
-        // Achievements button (always visible)
-        var achBtn = document.createElement('button');
-        achBtn.className = 'auth-btn auth-btn-small';
-        achBtn.id = 'achievementsBtn';
-        achBtn.textContent = 'Achievements';
-        achBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showAchievementGallery();
-        });
-        authContainer.appendChild(achBtn);
+        // Stats and Achievements buttons are now in More Options menu,
+        // wired by setupMoreOptionsMenu()
     }
 
     /**

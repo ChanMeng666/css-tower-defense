@@ -191,14 +191,14 @@ var Auth = (function() {
         var loadingScreen = document.getElementById('loadingScreen');
         if (!loadingScreen) return;
 
-        // Create auth button container
+        // Create simplified auth button container (just username + sign in/out)
         var authContainer = document.createElement('div');
         authContainer.className = 'auth-container';
         authContainer.id = 'authContainer';
         authContainer.innerHTML =
-            '<button class="auth-btn" id="authBtn">Sign In</button>' +
             '<span class="auth-user hidden" id="authUser"></span>' +
-            '<span class="auth-verify-badge hidden" id="authVerifyBadge" title="Click to verify email">Unverified</span>' +
+            '<span class="auth-verify-badge hidden" id="authVerifyBadge" title="Click to verify email">!</span>' +
+            '<button class="auth-btn" id="authBtn">Sign In</button>' +
             '<button class="auth-btn auth-btn-small hidden" id="authOutBtn">Sign Out</button>';
         loadingScreen.appendChild(authContainer);
 
@@ -482,7 +482,9 @@ var Auth = (function() {
         var authOutBtn = document.getElementById('authOutBtn');
         var authUser = document.getElementById('authUser');
         var authVerifyBadge = document.getElementById('authVerifyBadge');
+        // Buttons in More Options menu
         var saveLoadBtn = document.getElementById('saveLoadBtn');
+        var statsBtn = document.getElementById('statsBtn');
 
         if (currentUser) {
             if (authBtn) authBtn.classList.add('hidden');
@@ -491,7 +493,9 @@ var Auth = (function() {
                 authUser.classList.remove('hidden');
             }
             if (authOutBtn) authOutBtn.classList.remove('hidden');
+            // Show logged-in only buttons in More Options menu
             if (saveLoadBtn) saveLoadBtn.classList.remove('hidden');
+            if (statsBtn) statsBtn.classList.remove('hidden');
 
             // Show/hide verification badge
             if (authVerifyBadge) {
@@ -512,7 +516,9 @@ var Auth = (function() {
             if (authUser) authUser.classList.add('hidden');
             if (authVerifyBadge) authVerifyBadge.classList.add('hidden');
             if (authOutBtn) authOutBtn.classList.add('hidden');
+            // Hide logged-in only buttons in More Options menu
             if (saveLoadBtn) saveLoadBtn.classList.add('hidden');
+            if (statsBtn) statsBtn.classList.add('hidden');
         }
     }
 
