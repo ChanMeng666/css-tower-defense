@@ -4,7 +4,9 @@
  */
 
 // Max theoretical score per wave (generous upper bound)
-const MAX_SCORE_PER_WAVE = 5000;
+// Score = gold * 10 per kill, gold stacks: difficulty(1.5x) * progression(1.45x) *
+// bloodMoon(1.5x) * season(1.15x) * crafting(1.5x) * combo(up to 2.8x)
+const MAX_SCORE_PER_WAVE = 50000;
 
 // Minimum seconds per wave (average ~30s per wave)
 const MIN_SECONDS_PER_WAVE = 20;
