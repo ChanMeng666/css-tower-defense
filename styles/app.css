@@ -2469,7 +2469,6 @@ body.blood-moon .sky-cycle {
 .tower {
   position: absolute;
   transform-style: preserve-3d;
-  contain: layout style paint;
   transform-origin: center bottom;
   pointer-events: none;
   transform: translate(-50%, -100%) rotateX(-45deg);
@@ -3365,7 +3364,6 @@ body.blood-moon .sky-cycle {
 .enemy {
   position: absolute;
   transform-style: preserve-3d;
-  contain: layout style paint;
   transform-origin: center bottom;
   transform: translate(-50%, -100%) rotateX(-45deg);
   transition: all 0.2s;
