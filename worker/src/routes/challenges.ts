@@ -4,6 +4,7 @@ import { eq, and, desc, sql } from 'drizzle-orm';
 import { getDb } from '../db';
 import { dailyChallengeCompletions, profiles } from '../db/schema';
 import { requireAuth } from '../middleware/auth';
+import { MAX_SCORE_PER_WAVE } from '../services/anticheat';
 
 type Env = {
   Bindings: {
@@ -129,7 +130,7 @@ challengeRoutes.post('/complete', requireAuth, async (c) => {
 
   // Challenge-specific score validation
   const maxWaves = challenge.waveCount || 10;
-  const maxChallengeScore = maxWaves * 2000 * (challenge.scoreBonus || 1) * 2;
+  const maxChallengeScore = maxWaves * MAX_SCORE_PER_WAVE * (challenge.scoreBonus || 1) * 2;
   if (parsed.data.score > maxChallengeScore) {
     return c.json({ error: 'Invalid score' }, 400);
   }

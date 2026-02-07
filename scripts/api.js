@@ -74,9 +74,20 @@ var API = (function() {
         }
         lastScoreSubmission = { key: key, time: now };
 
-        return silentRequest('/leaderboard', {
+        // Check login/guest status before attempting
+        if (!Auth.isLoggedIn()) return Promise.resolve(null);
+        if (Auth.isGuestMode && Auth.isGuestMode()) {
+            console.log('[API] Skipping score submission in guest mode');
+            return Promise.resolve(null);
+        }
+
+        // Use request() directly to capture error details instead of silentRequest()
+        return request('/leaderboard', {
             method: 'POST',
             body: data
+        }).catch(function(err) {
+            console.warn('[API] Score submission rejected:', err.message);
+            return { error: true, message: err.message, reason: err.message };
         });
     }
 

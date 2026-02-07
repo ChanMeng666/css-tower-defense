@@ -61,6 +61,7 @@ var Game = (function () {
     // Timing
     var lastFrameTime = 0;
     var gameStartTime = 0;
+    var previousDuration = 0; // Accumulated duration from save/load
     var animationFrameId = null;
 
     // Stats tracking
@@ -382,6 +383,7 @@ var Game = (function () {
         totalEnemiesKilled = 0;
         totalTowersBuilt = 0;
         totalGoldEarned = 0;
+        previousDuration = 0;
         gameStartTime = performance.now();
 
         // Clear and reinitialize
@@ -554,6 +556,7 @@ var Game = (function () {
         totalEnemiesKilled = 0;
         totalTowersBuilt = 0;
         totalGoldEarned = 0;
+        previousDuration = 0;
         comboCount = 0;
 
         // UI transitions
@@ -583,7 +586,7 @@ var Game = (function () {
         }
 
         // Submit to backend
-        var durationSeconds = Math.floor((performance.now() - gameStartTime) / 1000);
+        var durationSeconds = Math.floor((performance.now() - gameStartTime) / 1000) + previousDuration;
         var gameData = {
             score: score,
             difficulty: difficulty,
@@ -594,11 +597,13 @@ var Game = (function () {
             goldEarned: totalGoldEarned,
             outcome: 'defeat'
         };
-        if (typeof API !== 'undefined') {
+        var isChallengeGame = typeof Challenge !== 'undefined' && Challenge.isActive();
+
+        // Only submit to regular leaderboard for non-challenge games
+        if (typeof API !== 'undefined' && !isChallengeGame) {
             API.submitScore(gameData).then(function(result) {
                 if (result && result.success) {
                     if (result.pending) {
-                        // Score saved but needs email verification
                         console.log('[Leaderboard] Score pending - awaiting email verification');
                         showVerificationPrompt();
                     } else {
@@ -606,7 +611,6 @@ var Game = (function () {
                         if (typeof Display !== 'undefined' && Display.showToast) {
                             Display.showToast('Score submitted!', 'success');
                         }
-                        // Fetch rank after successful submission
                         if (API.getMyRank) {
                             API.getMyRank(difficulty).then(function(data) {
                                 if (data && data.rank) {
@@ -615,6 +619,11 @@ var Game = (function () {
                                 }
                             });
                         }
+                    }
+                } else if (result && result.error) {
+                    console.warn('[Leaderboard] Score rejected:', result.reason || result.message);
+                    if (typeof Display !== 'undefined' && Display.showToast) {
+                        Display.showToast(result.reason || result.message || 'Score submission failed', 'error');
                     }
                 } else if (result === null && typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
                     console.warn('[Leaderboard] Submission failed silently');
@@ -627,7 +636,7 @@ var Game = (function () {
         }
 
         // Submit challenge if active
-        if (typeof Challenge !== 'undefined' && Challenge.isActive()) {
+        if (isChallengeGame) {
             var challengeScore = Math.floor(score * Challenge.getScoreBonus());
             if (typeof API !== 'undefined' && API.completeDailyChallenge) {
                 API.completeDailyChallenge({
@@ -671,7 +680,7 @@ var Game = (function () {
         }
 
         // Submit to backend
-        var durationSeconds = Math.floor((performance.now() - gameStartTime) / 1000);
+        var durationSeconds = Math.floor((performance.now() - gameStartTime) / 1000) + previousDuration;
         var gameData = {
             score: score,
             difficulty: difficulty,
@@ -682,11 +691,13 @@ var Game = (function () {
             goldEarned: totalGoldEarned,
             outcome: 'victory'
         };
-        if (typeof API !== 'undefined') {
+        var isChallengeGame = typeof Challenge !== 'undefined' && Challenge.isActive();
+
+        // Only submit to regular leaderboard for non-challenge games
+        if (typeof API !== 'undefined' && !isChallengeGame) {
             API.submitScore(gameData).then(function(result) {
                 if (result && result.success) {
                     if (result.pending) {
-                        // Score saved but needs email verification
                         console.log('[Leaderboard] Score pending - awaiting email verification');
                         showVerificationPrompt();
                     } else {
@@ -694,7 +705,6 @@ var Game = (function () {
                         if (typeof Display !== 'undefined' && Display.showToast) {
                             Display.showToast('Score submitted!', 'success');
                         }
-                        // Fetch rank after successful submission
                         if (API.getMyRank) {
                             API.getMyRank(difficulty).then(function(data) {
                                 if (data && data.rank) {
@@ -703,6 +713,11 @@ var Game = (function () {
                                 }
                             });
                         }
+                    }
+                } else if (result && result.error) {
+                    console.warn('[Leaderboard] Score rejected:', result.reason || result.message);
+                    if (typeof Display !== 'undefined' && Display.showToast) {
+                        Display.showToast(result.reason || result.message || 'Score submission failed', 'error');
                     }
                 } else if (result === null && typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
                     console.warn('[Leaderboard] Submission failed silently');
@@ -715,7 +730,7 @@ var Game = (function () {
         }
 
         // Submit challenge if active
-        if (typeof Challenge !== 'undefined' && Challenge.isActive()) {
+        if (isChallengeGame) {
             var challengeScore = Math.floor(score * Challenge.getScoreBonus());
             if (typeof API !== 'undefined' && API.completeDailyChallenge) {
                 API.completeDailyChallenge({
@@ -932,6 +947,13 @@ var Game = (function () {
      * Get current game state data for saving
      */
     function getGameStateForSave() {
+        var inv = typeof Inventory !== 'undefined' && Inventory.getState ? Inventory.getState() : {};
+        inv._gameStats = {
+            durationSeconds: Math.floor((performance.now() - gameStartTime) / 1000) + previousDuration,
+            totalEnemiesKilled: totalEnemiesKilled,
+            totalTowersBuilt: totalTowersBuilt,
+            totalGoldEarned: totalGoldEarned
+        };
         return {
             difficulty: difficulty,
             gold: gold,
@@ -941,7 +963,7 @@ var Game = (function () {
             towers: Tower.getAll ? Tower.getAll().map(function(t) {
                 return { type: t.type, gridX: t.gridX, gridY: t.gridY };
             }) : [],
-            inventory: typeof Inventory !== 'undefined' && Inventory.getState ? Inventory.getState() : {}
+            inventory: inv
         };
     }
 
@@ -970,16 +992,19 @@ var Game = (function () {
         lives = saveData.lives || 20;
         score = saveData.score || 0;
         selectedTowerType = null;
-        totalEnemiesKilled = 0;
-        totalTowersBuilt = 0;
-        totalGoldEarned = 0;
+
+        // Restore cumulative stats from save data
+        var savedStats = (saveData.inventory && saveData.inventory._gameStats) || {};
+        previousDuration = savedStats.durationSeconds || 0;
+        totalEnemiesKilled = savedStats.totalEnemiesKilled || 0;
+        totalTowersBuilt = savedStats.totalTowersBuilt || Math.max(saveData.towers ? saveData.towers.length : 0, 0);
+        totalGoldEarned = savedStats.totalGoldEarned || 0;
         gameStartTime = performance.now();
 
         // Restore towers
         if (saveData.towers && saveData.towers.length > 0) {
             saveData.towers.forEach(function(t) {
                 Tower.create(t.type, t.gridX, t.gridY);
-                totalTowersBuilt++;
             });
         }
 
