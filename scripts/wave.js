@@ -160,6 +160,8 @@ var Wave = (function() {
         spawnQueue = [];
         totalEnemiesSpawned = 0;
         totalEnemiesInWave = 0;
+        activeEvent = null;
+        eventTimer = 0;
 
         // Initialize Noise system if available
         if (typeof Noise !== 'undefined') {
@@ -177,6 +179,12 @@ var Wave = (function() {
             }
             return false;
         }
+
+        // In endless mode, generate the next wave dynamically
+        if (endlessMode && currentWave >= waveData.length) {
+            generateEndlessWave();
+        }
+
         if (currentWave >= waveData.length) {
             if (typeof Display !== 'undefined') {
                 Display.showMessage('All waves complete!');
@@ -252,7 +260,14 @@ var Wave = (function() {
         // Process spawn queue using the same timing source as events
         while (spawnQueue.length > 0 && spawnQueue[0].spawnTime <= waveElapsedTime) {
             var spawn = spawnQueue.shift();
-            Enemy.spawn(spawn.type, spawn.variant);
+            var enemy = Enemy.spawn(spawn.type, spawn.variant);
+            // Apply endless mode scaling
+            if (enemy && wave._endless && wave._healthScale) {
+                enemy.health = Math.floor(enemy.health * wave._healthScale);
+                enemy.maxHealth = enemy.health;
+                enemy.speed *= (wave._speedScale || 1);
+                enemy.baseSpeed = enemy.speed;
+            }
             totalEnemiesSpawned++;
         }
 
@@ -611,6 +626,8 @@ var Wave = (function() {
      * Check if all waves are complete
      */
     function isGameComplete() {
+        // Endless mode never completes naturally (only game over by losing all lives)
+        if (endlessMode) return false;
         return currentWave >= waveData.length && !waveInProgress && Enemy.count() === 0;
     }
 
@@ -625,6 +642,7 @@ var Wave = (function() {
      * Get total number of waves
      */
     function getTotalWaves() {
+        if (endlessMode) return '∞';
         return waveData.length;
     }
 
@@ -705,6 +723,186 @@ var Wave = (function() {
         waveData = defaultWaveData;
     }
 
+    // =========================================
+    // ENDLESS MODE
+    // =========================================
+
+    var endlessMode = false;
+    var endlessWaveNumber = 0; // Waves completed in endless mode (starts after wave 10)
+
+    // Enemy types available for endless generation
+    var ENDLESS_ENEMY_POOL = ['kehua', 'patupaiarehe', 'toa', 'wairua', 'tipua'];
+    var ENDLESS_VARIANT_POOL = [null, null, null, 'rangatira', 'pakanga', 'tere', 'mate'];
+
+    // Roguelike choices offered between waves
+    var ENDLESS_CHOICES = [
+        { id: 'damage', name: '+10% Global Damage', description: 'All towers deal 10% more damage', icon: '⚔' },
+        { id: 'lives', name: '+3 Lives', description: 'Heal 3 lives', icon: '❤' },
+        { id: 'gold', name: '+75 Gold', description: 'Receive 75 gold immediately', icon: '💰' },
+        { id: 'mana', name: '+30 Mana', description: 'Gain 30 mana instantly', icon: '✦' },
+        { id: 'range', name: '+10% Range', description: 'All towers get 10% more range', icon: '◎' }
+    ];
+
+    // Accumulated endless bonuses
+    var endlessBonuses = {
+        damageMult: 1.0,
+        rangeMult: 1.0
+    };
+
+    /**
+     * Start endless mode (called after regular wave 10 victory)
+     */
+    function startEndless() {
+        endlessMode = true;
+        endlessWaveNumber = 0;
+        endlessBonuses = { damageMult: 1.0, rangeMult: 1.0 };
+    }
+
+    /**
+     * Check if in endless mode
+     */
+    function isEndless() {
+        return endlessMode;
+    }
+
+    /**
+     * Get endless wave count
+     */
+    function getEndlessWave() {
+        return endlessWaveNumber;
+    }
+
+    /**
+     * Get endless bonuses
+     */
+    function getEndlessBonuses() {
+        return endlessBonuses;
+    }
+
+    /**
+     * Apply a roguelike choice
+     */
+    function applyEndlessChoice(choiceId) {
+        switch (choiceId) {
+            case 'damage':
+                endlessBonuses.damageMult *= 1.10;
+                if (typeof Display !== 'undefined') Display.showToast('+10% Damage!', 'success');
+                break;
+            case 'lives':
+                if (typeof Game !== 'undefined') Game.addLives(3);
+                if (typeof Display !== 'undefined') Display.showToast('+3 Lives!', 'success');
+                break;
+            case 'gold':
+                if (typeof Game !== 'undefined') Game.addGold(75);
+                if (typeof Display !== 'undefined') Display.showToast('+75 Gold!', 'success');
+                break;
+            case 'mana':
+                if (typeof Game !== 'undefined' && Game.addMana) Game.addMana(30);
+                if (typeof Display !== 'undefined') Display.showToast('+30 Mana!', 'success');
+                break;
+            case 'range':
+                endlessBonuses.rangeMult *= 1.10;
+                if (typeof Display !== 'undefined') Display.showToast('+10% Range!', 'success');
+                break;
+        }
+        if (typeof Sfx !== 'undefined') Sfx.play('powerup');
+    }
+
+    /**
+     * Get 3 random choices for the roguelike selection between endless waves
+     */
+    function getEndlessChoices() {
+        var pool = ENDLESS_CHOICES.slice();
+        var choices = [];
+        for (var i = 0; i < 3 && pool.length > 0; i++) {
+            var idx = Math.floor(Math.random() * pool.length);
+            choices.push(pool.splice(idx, 1)[0]);
+        }
+        return choices;
+    }
+
+    /**
+     * Generate and append the next endless wave
+     */
+    function generateEndlessWave() {
+        endlessWaveNumber++;
+        var wn = endlessWaveNumber;
+
+        // Difficulty scaling every 3 waves
+        var tier = Math.floor((wn - 1) / 3);
+        var healthScale = Math.pow(1.2, tier);
+        var speedScale = Math.pow(1.05, tier);
+
+        // Is this a boss wave? Every 10 endless waves
+        var isBossWave = (wn % 10 === 0);
+
+        var events = [];
+        var subtitle;
+
+        if (isBossWave) {
+            subtitle = 'Taniwha Returns! (Endless ' + wn + ')';
+            events.push({ time: 0, type: 'announcement', data: { title: 'Endless ' + wn, subtitle: subtitle } });
+            events.push({ time: 2000, type: 'warning', data: { message: 'TANIWHA INCOMING!' } });
+
+            // Some escorts
+            var escortCount = 3 + tier;
+            var escortType = ENDLESS_ENEMY_POOL[Math.floor(Math.random() * ENDLESS_ENEMY_POOL.length)];
+            events.push({ time: 3000, type: 'spawn', data: [
+                { type: escortType, count: escortCount, interval: 1500, variant: 'rangatira' }
+            ] });
+            events.push({ time: 8000, type: 'bossSpawn', data: { type: 'taniwha' } });
+        } else {
+            subtitle = 'The horde grows... (Endless ' + wn + ')';
+            events.push({ time: 0, type: 'announcement', data: { title: 'Endless ' + wn, subtitle: subtitle } });
+
+            // Generate enemy groups — more enemies as waves progress
+            var groups = [];
+            var numGroups = 2 + Math.min(tier, 3);
+            for (var g = 0; g < numGroups; g++) {
+                var typeIdx = Math.floor(Math.random() * ENDLESS_ENEMY_POOL.length);
+                var enemyType = ENDLESS_ENEMY_POOL[typeIdx];
+                var count = 3 + Math.floor(wn * 0.8) + Math.floor(Math.random() * 3);
+                var interval = Math.max(400, 1500 - tier * 100);
+                var variant = ENDLESS_VARIANT_POOL[Math.floor(Math.random() * ENDLESS_VARIANT_POOL.length)];
+                groups.push({
+                    type: enemyType,
+                    count: count,
+                    interval: interval,
+                    variant: variant
+                });
+            }
+
+            events.push({ time: 2000, type: 'spawn', data: groups });
+        }
+
+        // Random events in endless
+        if (wn % 5 === 0 && !isBossWave) {
+            events.splice(1, 0, { time: 1000, type: 'specialEvent', data: { type: 'teHaumi', bonus: 30 + tier * 10 } });
+        }
+
+        var reward = 50 + wn * 15;
+
+        // Append to waveData
+        waveData.push({
+            events: events,
+            reward: reward,
+            _endless: true,
+            _healthScale: healthScale,
+            _speedScale: speedScale
+        });
+    }
+
+    /**
+     * Reset endless mode
+     */
+    function resetEndless() {
+        endlessMode = false;
+        endlessWaveNumber = 0;
+        endlessBonuses = { damageMult: 1.0, rangeMult: 1.0 };
+        // Remove any generated endless waves
+        waveData = defaultWaveData.slice();
+    }
+
     // Public API
     return {
         init: init,
@@ -720,6 +918,15 @@ var Wave = (function() {
         setCurrentWave: setCurrentWave,
         setWaveData: setWaveData,
         resetWaveData: resetWaveData,
+        // Endless mode
+        startEndless: startEndless,
+        isEndless: isEndless,
+        getEndlessWave: getEndlessWave,
+        getEndlessBonuses: getEndlessBonuses,
+        getEndlessChoices: getEndlessChoices,
+        applyEndlessChoice: applyEndlessChoice,
+        generateEndlessWave: generateEndlessWave,
+        resetEndless: resetEndless,
         EVENT_TYPES: EVENT_TYPES
     };
 })();

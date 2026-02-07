@@ -18,6 +18,8 @@ var Inventory = (function() {
         kehua: { pipi: 0.10, koiwi: 0.01, pounamu: 0 },
         patupaiarehe: { pipi: 0.15, koiwi: 0.03, pounamu: 0 },
         toa: { pipi: 0.20, koiwi: 0.05, pounamu: 0.01 },
+        wairua: { pipi: 0.12, koiwi: 0.04, pounamu: 0.005 },
+        tipua: { pipi: 0.30, koiwi: 0.10, pounamu: 0.03 },
         taniwha: { pipi: 1.0, koiwi: 1.0, pounamu: 1.0 }
     };
 
@@ -74,7 +76,7 @@ var Inventory = (function() {
 
             if (Math.random() < baseChance) {
                 // Determine quantity (bosses drop more)
-                var qty = enemy.type === 'boss' ? Math.floor(Math.random() * 3) + 2 : 1;
+                var qty = enemy.type === 'taniwha' ? Math.floor(Math.random() * 3) + 2 : 1;
                 addMaterial(material, qty);
                 dropped.push({ type: material, qty: qty });
             }

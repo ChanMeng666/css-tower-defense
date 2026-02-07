@@ -584,6 +584,10 @@ var Enemy = (function() {
         if (typeof Crafting !== 'undefined' && Crafting.getMultiplier) {
             envSpeedMult *= Crafting.getMultiplier('slow_enemies');
         }
+        // Apply mana ability slow (Whakatau)
+        if (this.manaSlowed) {
+            envSpeedMult *= 0.5;
+        }
         moveDistance *= envSpeedMult;
 
         // Apply noise-based speed variation for speedy/boss

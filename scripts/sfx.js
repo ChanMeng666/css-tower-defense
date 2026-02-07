@@ -917,6 +917,121 @@ var Sfx = (function() {
     }
 
     // =========================================
+    // DYNAMIC MUSIC SYSTEM
+    // =========================================
+
+    // Music intensity state
+    var musicIntensity = 'normal'; // 'normal', 'boss', 'tension'
+    var musicFilterNode = null;
+    var musicGainBoost = null;
+    var ambientSources = {};
+
+    /**
+     * Set music intensity mode via Web Audio API filters on Howler output
+     * @param {string} mode - 'normal', 'boss', or 'tension'
+     */
+    function setMusicIntensity(mode) {
+        if (mode === musicIntensity) return;
+        musicIntensity = mode;
+
+        // Apply Howler rate change for boss intensity
+        if (currentMusic === 'playing' && music.playing) {
+            if (mode === 'boss') {
+                music.playing.rate(1.15); // Slightly faster for boss
+                music.playing.volume(musicVolume * 1.2);
+            } else if (mode === 'tension') {
+                music.playing.rate(0.9); // Slightly slower for tension
+                music.playing.volume(musicVolume * 0.8);
+            } else {
+                music.playing.rate(1.0);
+                music.playing.volume(musicVolume);
+            }
+        }
+    }
+
+    /**
+     * Start a synthesized ambient weather loop
+     * @param {string} type - 'rain', 'wind', 'snow'
+     */
+    function startAmbient(type) {
+        if (!audioContext || muted) return;
+        if (ambientSources[type]) return; // Already playing
+
+        try {
+            if (type === 'rain') {
+                // Filtered noise loop for rain
+                var rainSource = audioContext.createBufferSource();
+                rainSource.buffer = noiseBuffer || generateNoiseBuffer(1.0);
+                rainSource.loop = true;
+                var rainFilter = audioContext.createBiquadFilter();
+                rainFilter.type = 'bandpass';
+                rainFilter.frequency.value = 3000;
+                rainFilter.Q.value = 0.5;
+                var rainGain = audioContext.createGain();
+                rainGain.gain.value = 0.04;
+                rainSource.connect(rainFilter);
+                rainFilter.connect(rainGain);
+                rainGain.connect(masterGain);
+                rainSource.start();
+                ambientSources[type] = { source: rainSource, gain: rainGain };
+            } else if (type === 'wind') {
+                // Low-freq filtered noise for wind
+                var windSource = audioContext.createBufferSource();
+                windSource.buffer = noiseBuffer || generateNoiseBuffer(1.0);
+                windSource.loop = true;
+                var windFilter = audioContext.createBiquadFilter();
+                windFilter.type = 'lowpass';
+                windFilter.frequency.value = 400;
+                var windGain = audioContext.createGain();
+                windGain.gain.value = 0.05;
+                windSource.connect(windFilter);
+                windFilter.connect(windGain);
+                windGain.connect(masterGain);
+                windSource.start();
+                ambientSources[type] = { source: windSource, gain: windGain };
+            } else if (type === 'snow') {
+                // Very subtle high-freq shimmer
+                var snowSource = audioContext.createBufferSource();
+                snowSource.buffer = noiseBuffer || generateNoiseBuffer(1.0);
+                snowSource.loop = true;
+                var snowFilter = audioContext.createBiquadFilter();
+                snowFilter.type = 'highpass';
+                snowFilter.frequency.value = 6000;
+                var snowGain = audioContext.createGain();
+                snowGain.gain.value = 0.015;
+                snowSource.connect(snowFilter);
+                snowFilter.connect(snowGain);
+                snowGain.connect(masterGain);
+                snowSource.start();
+                ambientSources[type] = { source: snowSource, gain: snowGain };
+            }
+        } catch (e) {
+            console.warn('Error starting ambient:', e);
+        }
+    }
+
+    /**
+     * Stop an ambient weather loop
+     * @param {string} type - 'rain', 'wind', 'snow' or omit for all
+     */
+    function stopAmbient(type) {
+        if (type) {
+            if (ambientSources[type]) {
+                try {
+                    ambientSources[type].source.stop();
+                } catch (e) {}
+                delete ambientSources[type];
+            }
+        } else {
+            // Stop all
+            Object.keys(ambientSources).forEach(function(k) {
+                try { ambientSources[k].source.stop(); } catch (e) {}
+            });
+            ambientSources = {};
+        }
+    }
+
+    // =========================================
     // MUSIC CONTROL (Howler.js)
     // =========================================
 
@@ -931,6 +1046,8 @@ var Sfx = (function() {
         // Stop current music with fade
         stopMusic(function() {
             currentMusic = track;
+            musicIntensity = 'normal';
+            music[track].rate(1.0);
             music[track].play();
             music[track].fade(0, musicVolume, 500);
         });
@@ -941,8 +1058,13 @@ var Sfx = (function() {
      * @param {function} callback - Called after music stops
      */
     function stopMusic(callback) {
+        // Stop ambient sounds
+        stopAmbient();
+        musicIntensity = 'normal';
+
         if (currentMusic && music[currentMusic]) {
             var current = music[currentMusic];
+            current.rate(1.0); // Reset rate
             current.fade(musicVolume, 0, 300);
             current.once('fade', function() {
                 current.stop();
@@ -1047,6 +1169,9 @@ var Sfx = (function() {
         getMusicVolume: getMusicVolume,
         toggleMute: toggleMute,
         isMuted: isMuted,
-        setMapDimensions: setMapDimensions
+        setMapDimensions: setMapDimensions,
+        setMusicIntensity: setMusicIntensity,
+        startAmbient: startAmbient,
+        stopAmbient: stopAmbient
     };
 })();

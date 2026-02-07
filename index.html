@@ -170,6 +170,7 @@
                 <div class="post-stat"><span class="post-label">Rank</span><span class="post-value" id="goRank">-</span></div>
             </div>
         </div>
+        <button class="restart-btn endless-btn hidden" id="endlessBtn">Enter Endless Mode</button>
         <button class="restart-btn" id="restartBtn">Play Again</button>
         <button class="restart-btn return-menu-btn" id="returnMenuBtn">Return to Menu</button>
     </div>
@@ -296,6 +297,28 @@
                         <span class="tower-cost">250g</span>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Mana Bar + Abilities -->
+        <div class="mana-bar-container" id="manaBar">
+            <div class="mana-bar-track">
+                <div class="mana-bar-fill" id="manaFill"></div>
+                <span class="mana-bar-label">MANA <span id="manaValue">0</span></span>
+            </div>
+            <div class="mana-abilities">
+                <button class="mana-ability-btn" data-ability="whakatau" title="Whakatau — Slow all enemies 50% for 3s (30 mana)">
+                    <span class="ability-icon">❄</span>
+                    <span class="ability-name">Whakatau</span>
+                    <span class="ability-cost">30</span>
+                    <span class="ability-cd"></span>
+                </button>
+                <button class="mana-ability-btn" data-ability="tupuna" title="Tūpuna — All towers 2x speed for 5s (50 mana)">
+                    <span class="ability-icon">⚡</span>
+                    <span class="ability-name">Tūpuna</span>
+                    <span class="ability-cost">50</span>
+                    <span class="ability-cd"></span>
+                </button>
             </div>
         </div>
 

@@ -76,6 +76,121 @@ var Game = (function () {
     var dashboardUpdateTimer = 0;
     var DASHBOARD_UPDATE_INTERVAL = 0.5; // Update every 0.5s
 
+    // Mana system
+    var mana = 0;
+    var maxMana = 100;
+    var MANA_PER_KILL_BASE = 2;
+    var manaAbilityCooldowns = { whakatau: 0, tupuna: 0 };
+    var activeAbilities = {}; // { id: { remaining: seconds } }
+    var MANA_ABILITIES = {
+        whakatau: {
+            name: 'Whakatau',
+            description: 'Global slow — all enemies 50% slower for 3s',
+            cost: 30,
+            cooldown: 30,
+            duration: 3
+        },
+        tupuna: {
+            name: 'Tūpuna',
+            description: 'Ancestral power — all towers 2x attack speed for 5s',
+            cost: 50,
+            cooldown: 45,
+            duration: 5
+        }
+    };
+
+    /**
+     * Add mana (capped at maxMana)
+     */
+    function addMana(amount) {
+        mana = Math.min(mana + amount, maxMana);
+        Display.updateMana(mana, maxMana);
+    }
+
+    /**
+     * Spend mana if affordable
+     */
+    function spendMana(amount) {
+        if (mana >= amount) {
+            mana -= amount;
+            Display.updateMana(mana, maxMana);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Activate a mana ability
+     */
+    function activateAbility(abilityId) {
+        var ability = MANA_ABILITIES[abilityId];
+        if (!ability) return false;
+        if (state !== STATES.PLAYING) return false;
+        if (manaAbilityCooldowns[abilityId] > 0) {
+            Display.showToast(ability.name + ' is on cooldown!', 'warning');
+            return false;
+        }
+        if (mana < ability.cost) {
+            Display.showToast('Not enough mana!', 'error');
+            return false;
+        }
+
+        spendMana(ability.cost);
+        manaAbilityCooldowns[abilityId] = ability.cooldown;
+        activeAbilities[abilityId] = { remaining: ability.duration };
+
+        // Apply effect
+        if (abilityId === 'whakatau') {
+            // Global slow — set flag on all enemies
+            var enemies = Enemy.getAll();
+            for (var i = 0; i < enemies.length; i++) {
+                enemies[i].manaSlowed = true;
+            }
+            Display.showToast('Whakatau! Enemies slowed!', 'success');
+        } else if (abilityId === 'tupuna') {
+            // All towers 2x attack speed
+            Display.showToast('Tūpuna! Towers empowered!', 'success');
+        }
+
+        Sfx.play('powerup');
+        Display.updateManaButtons(manaAbilityCooldowns, mana, MANA_ABILITIES);
+        return true;
+    }
+
+    /**
+     * Update active ability timers and cooldowns
+     */
+    function updateAbilities(dt) {
+        // Update cooldowns
+        for (var id in manaAbilityCooldowns) {
+            if (manaAbilityCooldowns[id] > 0) {
+                manaAbilityCooldowns[id] = Math.max(0, manaAbilityCooldowns[id] - dt);
+            }
+        }
+
+        // Update active ability durations
+        for (var aid in activeAbilities) {
+            activeAbilities[aid].remaining -= dt;
+            if (activeAbilities[aid].remaining <= 0) {
+                // Ability expired — remove effects
+                if (aid === 'whakatau') {
+                    var enemies = Enemy.getAll();
+                    for (var j = 0; j < enemies.length; j++) {
+                        enemies[j].manaSlowed = false;
+                    }
+                }
+                delete activeAbilities[aid];
+            }
+        }
+    }
+
+    /**
+     * Check if a mana ability is currently active
+     */
+    function isAbilityActive(abilityId) {
+        return !!activeAbilities[abilityId];
+    }
+
     // Selected tower type for building
     var selectedTowerType = null;
 
@@ -241,6 +356,13 @@ var Game = (function () {
                 Sfx.playEffect('death');
             }
 
+            // Mana earned on kill
+            var manaGain = MANA_PER_KILL_BASE;
+            if (enemyType === 'taniwha') manaGain = 15; // Boss gives more mana
+            else if (enemyType === 'toa') manaGain = 5;
+            else if (enemyType === 'tipua') manaGain = 8;
+            addMana(manaGain);
+
             // Combo milestone effects (5/10/15/20+)
             if (comboCount === 5 || comboCount === 10 || comboCount === 15 || comboCount === 20) {
                 if (typeof Effects !== 'undefined' && Effects.comboMilestone) {
@@ -279,6 +401,11 @@ var Game = (function () {
             Display.showMessage('Wave Complete!');
             Sfx.play('waveComplete');
 
+            // Reset music intensity after wave (unless low lives)
+            if (lives > 5) {
+                Sfx.setMusicIntensity('normal');
+            }
+
             // Always update wave display and button
             Display.updateWave(Wave.getCurrentWave(), Wave.getTotalWaves());
 
@@ -298,9 +425,12 @@ var Game = (function () {
                 }, 2000);
             }
 
-            // Check for victory
-            if (e.detail.isLastWave) {
+            // Check for victory or endless continuation
+            if (e.detail.isLastWave && !Wave.isEndless()) {
                 victory();
+            } else if (Wave.isEndless()) {
+                // In endless mode, show roguelike choices between waves
+                showEndlessChoices();
             }
         });
 
@@ -351,10 +481,26 @@ var Game = (function () {
             }
         });
 
-        // Boss entrance
+        // Boss entrance — switch to boss intensity
         document.addEventListener('bossEntrance', function(e) {
             Sfx.playEffect('warning');
             Sfx.play('bossSpawn');
+            Sfx.setMusicIntensity('boss');
+        });
+
+        // Weather changed — manage ambient sounds
+        document.addEventListener('weatherChanged', function(e) {
+            var weather = e.detail.weather || (typeof Weather !== 'undefined' && Weather.getCurrentWeather ? Weather.getCurrentWeather() : 'clear');
+            // Stop all current ambients
+            Sfx.stopAmbient();
+            // Start new ambient based on weather
+            if (weather === 'rain') {
+                Sfx.startAmbient('rain');
+            } else if (weather === 'wind') {
+                Sfx.startAmbient('wind');
+            } else if (weather === 'snow') {
+                Sfx.startAmbient('snow');
+            }
         });
 
         // Wave warnings (e.g., "Toa have high armor!")
@@ -417,12 +563,18 @@ var Game = (function () {
         previousDuration = 0;
         gameStartTime = performance.now();
 
+        // Reset mana
+        mana = 0;
+        manaAbilityCooldowns = { whakatau: 0, tupuna: 0 };
+        activeAbilities = {};
+
         // Clear and reinitialize
         Enemy.clear();
         Tower.clear();
         Projectile.clear();
         Path.init();
         Path.render();
+        Wave.resetEndless();
         Wave.init();
 
         // Clear object pool in-use items
@@ -450,6 +602,7 @@ var Game = (function () {
         Display.updateGold(gold);
         Display.updateLives(lives);
         Display.updateScore(score);
+        Display.updateMana(mana, maxMana);
         Display.updateWave(Wave.getCurrentWave(), Wave.getTotalWaves());
         Display.hideStartScreen();
         Display.hideGameOverScreen();
@@ -499,11 +652,15 @@ var Game = (function () {
             }
         }
 
+        // Update mana abilities and cooldowns
+        updateAbilities(dt);
+
         // Update battle dashboard
         dashboardUpdateTimer += dt;
         if (dashboardUpdateTimer >= DASHBOARD_UPDATE_INTERVAL) {
             dashboardUpdateTimer = 0;
             updateBattleDashboard();
+            Display.updateManaButtons(manaAbilityCooldowns, mana, MANA_ABILITIES);
         }
 
         // Update combo timer
@@ -576,6 +733,7 @@ var Game = (function () {
         Projectile.clear();
         Path.init();
         Path.render();
+        Wave.resetEndless();
         Wave.init();
         if (typeof Pool !== 'undefined') Pool.clear();
 
@@ -590,6 +748,9 @@ var Game = (function () {
         gold = 100;
         lives = 20;
         score = 0;
+        mana = 0;
+        manaAbilityCooldowns = { whakatau: 0, tupuna: 0 };
+        activeAbilities = {};
         selectedTowerType = null;
         totalEnemiesKilled = 0;
         totalTowersBuilt = 0;
@@ -837,9 +998,10 @@ var Game = (function () {
         if (lives < 0) lives = 0;
         Display.updateLives(lives);
 
-        // Low lives warning toast
+        // Low lives warning toast + tension music
         if (lives > 0 && lives <= 5) {
             Display.showToast('Low lives! (' + lives + ' remaining)', 'warning');
+            Sfx.setMusicIntensity('tension');
         }
     }
 
@@ -1002,6 +1164,7 @@ var Game = (function () {
             gold: gold,
             lives: lives,
             score: score,
+            mana: mana,
             currentWave: Wave.getCurrentWave(),
             towers: Tower.getAll ? Tower.getAll().map(function(t) {
                 return { type: t.type, gridX: t.gridX, gridY: t.gridY };
@@ -1034,6 +1197,9 @@ var Game = (function () {
         gold = saveData.gold || 100;
         lives = saveData.lives || 20;
         score = saveData.score || 0;
+        mana = saveData.mana || 0;
+        manaAbilityCooldowns = { whakatau: 0, tupuna: 0 };
+        activeAbilities = {};
         selectedTowerType = null;
 
         // Restore cumulative stats from save data
@@ -1060,6 +1226,7 @@ var Game = (function () {
         Display.updateGold(gold);
         Display.updateLives(lives);
         Display.updateScore(score);
+        Display.updateMana(mana, maxMana);
         Display.updateWave(Wave.getCurrentWave(), Wave.getTotalWaves());
         Display.hideStartScreen();
         Display.hideGameOverScreen();
@@ -1111,6 +1278,58 @@ var Game = (function () {
         dashTowers.textContent = towerCount;
     }
 
+    /**
+     * Show roguelike choices between endless waves
+     */
+    function showEndlessChoices() {
+        var choices = Wave.getEndlessChoices();
+        if (!choices || choices.length === 0) return;
+
+        var modal = document.createElement('div');
+        modal.className = 'endless-choice-modal';
+        modal.innerHTML = '<div class="endless-choice-content">' +
+            '<h2 class="endless-choice-title">Choose Your Blessing</h2>' +
+            '<p class="endless-choice-sub">Endless Wave ' + Wave.getEndlessWave() + ' Complete</p>' +
+            '<div class="endless-choice-options">' +
+            choices.map(function(c) {
+                return '<button class="endless-choice-btn" data-choice="' + c.id + '">' +
+                    '<span class="choice-icon">' + c.icon + '</span>' +
+                    '<span class="choice-name">' + c.name + '</span>' +
+                    '<span class="choice-desc">' + c.description + '</span>' +
+                '</button>';
+            }).join('') +
+            '</div></div>';
+
+        document.body.appendChild(modal);
+
+        // Handle choice selection
+        modal.querySelectorAll('.endless-choice-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var choiceId = btn.dataset.choice;
+                Wave.applyEndlessChoice(choiceId);
+                modal.remove();
+            });
+        });
+    }
+
+    /**
+     * Enter endless mode (called from victory screen)
+     */
+    function enterEndlessMode() {
+        Wave.startEndless();
+        Display.updateWave(Wave.getCurrentWave(), Wave.getTotalWaves());
+        Display.updateWaveButton();
+        Display.hideGameOverScreen();
+
+        // Resume game
+        state = STATES.PLAYING;
+        lastFrameTime = performance.now();
+        gameLoop();
+
+        Sfx.playMusic('playing');
+        Display.showToast('Endless Mode activated!', 'info');
+    }
+
     function getScore() { return score; }
     function getLives() { return lives; }
 
@@ -1128,11 +1347,19 @@ var Game = (function () {
         getGold: getGold,
         getScore: getScore,
         getLives: getLives,
+        getMana: function() { return mana; },
+        getMaxMana: function() { return maxMana; },
+        getManaAbilities: function() { return MANA_ABILITIES; },
+        activateAbility: activateAbility,
+        isAbilityActive: isAbilityActive,
         getSelectedTowerType: getSelectedTowerType,
         canAfford: canAfford,
         addGold: addGold,
         spendGold: spendGold,
+        addMana: addMana,
+        spendMana: spendMana,
         addLives: addLives,
+        enterEndlessMode: enterEndlessMode,
         setDifficulty: setDifficulty,
         getDifficulty: getDifficulty,
         getDifficultyName: getDifficultyName,

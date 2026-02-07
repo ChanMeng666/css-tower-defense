@@ -332,6 +332,16 @@ var Display = (function() {
                 elements.finalScore.textContent = score;
             }
 
+            // Show endless mode button on victory (not in challenge mode, not already in endless)
+            var endlessBtn = document.getElementById('endlessBtn');
+            if (endlessBtn) {
+                if (isVictory && !isChallenge && !(typeof Wave !== 'undefined' && Wave.isEndless())) {
+                    endlessBtn.classList.remove('hidden');
+                } else {
+                    endlessBtn.classList.add('hidden');
+                }
+            }
+
             // Populate post-game stats grid
             if (stats) {
                 var goStats = document.getElementById('gameOverStats');
@@ -719,6 +729,50 @@ var Display = (function() {
         }
     }
 
+    /**
+     * Update mana bar display
+     */
+    function updateMana(current, max) {
+        var manaFill = document.getElementById('manaFill');
+        var manaValue = document.getElementById('manaValue');
+        if (manaFill) {
+            var pct = max > 0 ? (current / max) * 100 : 0;
+            manaFill.style.width = pct + '%';
+        }
+        if (manaValue) {
+            manaValue.textContent = Math.floor(current);
+        }
+    }
+
+    /**
+     * Update mana ability button states (cooldowns, affordability)
+     */
+    function updateManaButtons(cooldowns, currentMana, abilities) {
+        var btns = document.querySelectorAll('.mana-ability-btn');
+        btns.forEach(function(btn) {
+            var id = btn.dataset.ability;
+            if (!id || !abilities[id]) return;
+            var cd = cooldowns[id] || 0;
+            var cost = abilities[id].cost;
+            var cdOverlay = btn.querySelector('.ability-cd');
+
+            if (cd > 0) {
+                btn.classList.add('on-cooldown');
+                btn.disabled = true;
+                if (cdOverlay) cdOverlay.textContent = Math.ceil(cd) + 's';
+            } else if (currentMana < cost) {
+                btn.classList.remove('on-cooldown');
+                btn.classList.add('no-mana');
+                btn.disabled = true;
+                if (cdOverlay) cdOverlay.textContent = '';
+            } else {
+                btn.classList.remove('on-cooldown', 'no-mana');
+                btn.disabled = false;
+                if (cdOverlay) cdOverlay.textContent = '';
+            }
+        });
+    }
+
     // Listen for environment change events
     document.addEventListener('waveStarted', function () {
         setTimeout(updateEnvironment, 100); // Small delay to let systems update
@@ -758,6 +812,8 @@ var Display = (function() {
         showCombo: showCombo,
         hideCombo: hideCombo,
         showToast: showToast,
+        updateMana: updateMana,
+        updateManaButtons: updateManaButtons,
         updateEnvironment: updateEnvironment,
         updateChallengeTimer: updateChallengeTimer
     };

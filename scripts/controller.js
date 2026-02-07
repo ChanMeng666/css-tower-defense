@@ -403,6 +403,14 @@
                 Game.returnToMenu();
             });
         }
+
+        var endlessBtn = document.getElementById('endlessBtn');
+        if (endlessBtn) {
+            endlessBtn.addEventListener('click', function() {
+                Sfx.playEffect('button');
+                Game.enterEndlessMode();
+            });
+        }
     }
     
     /**
@@ -1214,6 +1222,18 @@
                 showCraftingModal();
             });
         }
+
+        // Mana ability buttons
+        var manaAbilityBtns = document.querySelectorAll('.mana-ability-btn');
+        manaAbilityBtns.forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var abilityId = btn.dataset.ability;
+                if (abilityId && typeof Game !== 'undefined') {
+                    Game.activateAbility(abilityId);
+                }
+            });
+        });
     }
 
     /**

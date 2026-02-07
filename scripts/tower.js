@@ -387,6 +387,11 @@ var Tower = (function () {
         if (Path.isCenterIsland && Path.isCenterIsland(this.gridX, this.gridY)) {
             envRange *= 1.2; // +20% range on center island
         }
+        // Apply endless mode range bonus
+        if (typeof Wave !== 'undefined' && Wave.isEndless && Wave.isEndless()) {
+            var eb = Wave.getEndlessBonuses();
+            if (eb && eb.rangeMult) envRange *= eb.rangeMult;
+        }
         return this.range * envRange;
     };
 
@@ -480,6 +485,10 @@ var Tower = (function () {
         if (this._synergyBonuses) {
             envFireRate *= this._synergyBonuses.fireRateMult;
         }
+        // Apply mana ability boost (Tūpuna)
+        if (typeof Game !== 'undefined' && Game.isAbilityActive && Game.isAbilityActive('tupuna')) {
+            envFireRate *= 2.0;
+        }
         // Higher fire rate multiplier = shorter cooldown
         return this.fireCooldown / envFireRate;
     };
@@ -528,6 +537,11 @@ var Tower = (function () {
         // Apply synergy damage bonus
         if (this._synergyBonuses) {
             envDamage *= this._synergyBonuses.damageMult;
+        }
+        // Apply endless mode damage bonus
+        if (typeof Wave !== 'undefined' && Wave.isEndless && Wave.isEndless()) {
+            var eb = Wave.getEndlessBonuses();
+            if (eb && eb.damageMult) envDamage *= eb.damageMult;
         }
         this.damage = Math.floor(baseDamage * envDamage);
 
