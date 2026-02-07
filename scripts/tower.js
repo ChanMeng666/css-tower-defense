@@ -95,6 +95,10 @@ var Tower = (function () {
     var towers = [];
     var towerIdCounter = 0;
 
+    // Status indicator update throttle
+    var statusUpdateTimer = 0;
+    var STATUS_UPDATE_INTERVAL = 1.0; // Update indicators every 1 second
+
     // Tower prefix/modifier system (Terraria-inspired reforging)
     var PREFIXES = {
         // Common prefixes
@@ -118,6 +122,47 @@ var Tower = (function () {
         rare: 25,
         epic: 12,
         legendary: 3
+    };
+
+    // Synergy definitions - adjacent tower combos
+    var SYNERGIES = {
+        freezeLightning: {
+            name: 'Freeze Lightning',
+            icon: '\u26A1\u2744', // ⚡❄
+            requires: ['tangaroa', 'tawhiri'],
+            effect: { target: 'tawhiri', damageMult: 1.25 },
+            description: 'Tesla deals +25% damage to slowed enemies'
+        },
+        fireBlast: {
+            name: 'Fire Blast',
+            icon: '\uD83D\uDD25\uD83D\uDCA5', // 🔥💥
+            requires: ['mere', 'mahuika'],
+            effect: { target: 'mere', splashMult: 1.3 },
+            description: 'Cannon splash triggers burning'
+        },
+        blessing: {
+            name: 'Blessing',
+            icon: '\u2728', // ✨
+            requires: ['tohunga'],
+            effectAll: true,
+            effect: { fireRateMult: 1.15 },
+            description: 'Adjacent towers +15% attack speed'
+        },
+        array: {
+            name: 'Array',
+            icon: '\u25C6', // ◆
+            requires: 'same',
+            minCount: 2,
+            effect: { rangeMult: 1.10 },
+            description: 'Same-type towers +10% range (max 3x)'
+        },
+        pierceIce: {
+            name: 'Pierce Ice',
+            icon: '\u27B3\u2744', // ➳❄
+            requires: ['taiaha', 'tangaroa'],
+            effect: { target: 'taiaha', damageMult: 1.20 },
+            description: 'Arrow deals +20% damage to slowed targets'
+        }
     };
 
     // Tower cost/stats helpers
@@ -209,6 +254,9 @@ var Tower = (function () {
         this.range = config.range;
         this.fireRate = config.fireRate;
 
+        // Synergies (populated by synergy system)
+        this.activeSynergies = [];
+
         // Targeting
         this.target = null;
         this.lastFireTime = 0;
@@ -283,6 +331,16 @@ var Tower = (function () {
      * Update tower (targeting and firing)
      */
     TowerEntity.prototype.update = function (dt, currentTime) {
+        // Check stun state
+        if (this.stunned) {
+            this.stunTimer -= dt;
+            if (this.stunTimer <= 0) {
+                this.stunned = false;
+                this.element.classList.remove('stunned');
+            }
+            return; // Can't target or fire while stunned
+        }
+
         // Find target
         this.findTarget();
 
@@ -298,7 +356,17 @@ var Tower = (function () {
     };
 
     /**
-     * Get effective range including environmental modifiers
+     * Apply stun effect (from Tipua trample)
+     */
+    TowerEntity.prototype.applyStun = function (duration) {
+        this.stunned = true;
+        this.stunTimer = duration;
+        this.target = null; // Lose current target
+        this.element.classList.add('stunned');
+    };
+
+    /**
+     * Get effective range including environmental and synergy modifiers
      */
     TowerEntity.prototype.getEffectiveRange = function () {
         var envRange = 1.0;
@@ -310,6 +378,14 @@ var Tower = (function () {
         }
         if (typeof Weather !== 'undefined' && Weather.getTowerModifier) {
             envRange *= Weather.getTowerModifier(this.type, 'range');
+        }
+        // Apply synergy range bonus
+        if (this._synergyBonuses) {
+            envRange *= this._synergyBonuses.rangeMult;
+        }
+        // Center island bonus (Te Moana map)
+        if (Path.isCenterIsland && Path.isCenterIsland(this.gridX, this.gridY)) {
+            envRange *= 1.2; // +20% range on center island
         }
         return this.range * envRange;
     };
@@ -325,6 +401,12 @@ var Tower = (function () {
 
         for (var i = 0; i < enemies.length; i++) {
             var enemy = enemies[i];
+
+            // Skip stealthed enemies unless this is a tohunga (magic) tower
+            if (enemy.stealthed && this.type !== 'tohunga') {
+                continue;
+            }
+
             var dx = enemy.x - this.x;
             var dy = enemy.y - this.y;
             var distance = Math.sqrt(dx * dx + dy * dy);
@@ -380,7 +462,7 @@ var Tower = (function () {
     };
 
     /**
-     * Get effective fire cooldown including environmental modifiers
+     * Get effective fire cooldown including environmental and synergy modifiers
      */
     TowerEntity.prototype.getEffectiveCooldown = function () {
         var envFireRate = 1.0;
@@ -393,6 +475,10 @@ var Tower = (function () {
         // Apply crafting attack speed
         if (typeof Crafting !== 'undefined' && Crafting.getMultiplier) {
             envFireRate *= Crafting.getMultiplier('attack_speed_mult');
+        }
+        // Apply synergy fire rate bonus
+        if (this._synergyBonuses) {
+            envFireRate *= this._synergyBonuses.fireRateMult;
         }
         // Higher fire rate multiplier = shorter cooldown
         return this.fireCooldown / envFireRate;
@@ -427,7 +513,7 @@ var Tower = (function () {
             self.element.classList.remove('firing');
         }, animationDuration);
 
-        // Apply environmental + crafting damage modifier before spawning projectile
+        // Apply environmental + crafting + synergy damage modifier before spawning projectile
         var baseDamage = this.damage;
         var envDamage = 1.0;
         if (typeof Weather !== 'undefined' && Weather.getTowerModifier) {
@@ -438,6 +524,10 @@ var Tower = (function () {
         }
         if (typeof Crafting !== 'undefined' && Crafting.getMultiplier) {
             envDamage *= Crafting.getMultiplier('damage_mult');
+        }
+        // Apply synergy damage bonus
+        if (this._synergyBonuses) {
+            envDamage *= this._synergyBonuses.damageMult;
         }
         this.damage = Math.floor(baseDamage * envDamage);
 
@@ -666,6 +756,140 @@ var Tower = (function () {
     };
 
     /**
+     * Get adjacent towers (within 1 grid cell in 4 cardinal + 4 diagonal directions)
+     */
+    TowerEntity.prototype.getAdjacentTowers = function () {
+        var adjacent = [];
+        var offsets = [
+            { dx: -1, dy: 0 }, { dx: 1, dy: 0 },
+            { dx: 0, dy: -1 }, { dx: 0, dy: 1 },
+            { dx: -1, dy: -1 }, { dx: 1, dy: -1 },
+            { dx: -1, dy: 1 }, { dx: 1, dy: 1 }
+        ];
+
+        for (var i = 0; i < offsets.length; i++) {
+            var nx = this.gridX + offsets[i].dx;
+            var ny = this.gridY + offsets[i].dy;
+            var neighbor = getAt(nx, ny);
+            if (neighbor) {
+                adjacent.push(neighbor);
+            }
+        }
+        return adjacent;
+    };
+
+    /**
+     * Get synergy bonuses for this tower based on adjacent towers
+     * Returns { damageMult, fireRateMult, rangeMult, splashMult, synergies[] }
+     */
+    TowerEntity.prototype.getSynergyBonuses = function () {
+        var bonuses = { damageMult: 1, fireRateMult: 1, rangeMult: 1, splashMult: 1, synergies: [] };
+        var adjacent = this.getAdjacentTowers();
+        if (adjacent.length === 0) return bonuses;
+
+        var adjacentTypes = {};
+        for (var i = 0; i < adjacent.length; i++) {
+            adjacentTypes[adjacent[i].type] = (adjacentTypes[adjacent[i].type] || 0) + 1;
+        }
+
+        for (var synergyId in SYNERGIES) {
+            var syn = SYNERGIES[synergyId];
+
+            // Array synergy: same-type adjacent
+            if (syn.requires === 'same') {
+                var sameCount = adjacentTypes[this.type] || 0;
+                if (sameCount >= syn.minCount) {
+                    var stacks = Math.min(sameCount, 3);
+                    var arrayRangeMult = 1 + (syn.effect.rangeMult - 1) * stacks;
+                    bonuses.rangeMult *= arrayRangeMult;
+                    bonuses.synergies.push({ id: synergyId, name: syn.name, icon: syn.icon, stacks: stacks });
+                }
+                continue;
+            }
+
+            // Blessing synergy: tohunga buffs all adjacent
+            if (syn.effectAll) {
+                if (this.type !== 'tohunga' && adjacentTypes['tohunga']) {
+                    bonuses.fireRateMult *= syn.effect.fireRateMult;
+                    bonuses.synergies.push({ id: synergyId, name: syn.name, icon: syn.icon });
+                }
+                continue;
+            }
+
+            // Pair synergies: check if this tower is the target and the partner is adjacent
+            if (syn.requires && Array.isArray(syn.requires) && syn.effect.target) {
+                if (this.type === syn.effect.target) {
+                    var partnerType = syn.requires[0] === syn.effect.target ? syn.requires[1] : syn.requires[0];
+                    if (adjacentTypes[partnerType]) {
+                        if (syn.effect.damageMult) bonuses.damageMult *= syn.effect.damageMult;
+                        if (syn.effect.fireRateMult) bonuses.fireRateMult *= syn.effect.fireRateMult;
+                        if (syn.effect.rangeMult) bonuses.rangeMult *= syn.effect.rangeMult;
+                        if (syn.effect.splashMult) bonuses.splashMult *= syn.effect.splashMult;
+                        bonuses.synergies.push({ id: synergyId, name: syn.name, icon: syn.icon });
+                    }
+                }
+            }
+        }
+
+        return bonuses;
+    };
+
+    /**
+     * Update floating status indicators above the tower
+     */
+    TowerEntity.prototype.updateStatusIndicators = function () {
+        // Remove existing status container
+        var existing = this.element.querySelector('.tower-status');
+        if (existing) existing.remove();
+
+        var indicators = [];
+
+        // Upgrade available indicator
+        if (this.level < 3 && Game.getGold() >= this.getUpgradeCost()) {
+            indicators.push('upgrade');
+        }
+
+        // Weather/season buff/debuff indicators
+        var envDamage = 1.0;
+        var envRange = 1.0;
+        var envFireRate = 1.0;
+        if (typeof Weather !== 'undefined' && Weather.getTowerModifier) {
+            envDamage *= Weather.getTowerModifier(this.type, 'damage');
+            envRange *= Weather.getTowerModifier(this.type, 'range');
+            envFireRate *= Weather.getTowerModifier(this.type, 'fireRate');
+        }
+        if (typeof Seasons !== 'undefined' && Seasons.getTowerModifier) {
+            envDamage *= Seasons.getTowerModifier(this.type, 'damage');
+            envRange *= Seasons.getTowerModifier(this.type, 'range');
+            envFireRate *= Seasons.getTowerModifier(this.type, 'fireRate');
+        }
+
+        var totalEnv = envDamage * envRange * envFireRate;
+        if (totalEnv > 1.05) {
+            indicators.push('buff');
+        } else if (totalEnv < 0.95) {
+            indicators.push('debuff');
+        }
+
+        // Synergy indicator (check if tower has active synergies)
+        if (this.activeSynergies && this.activeSynergies.length > 0) {
+            indicators.push('synergy');
+        }
+
+        // Only show if there are indicators
+        if (indicators.length === 0) return;
+
+        var container = document.createElement('div');
+        container.className = 'tower-status';
+        for (var i = 0; i < indicators.length; i++) {
+            var icon = document.createElement('div');
+            icon.className = 'status-icon status-' + indicators[i];
+            container.appendChild(icon);
+        }
+        this.element.appendChild(container);
+    };
+
+    /**
      * Destroy the tower
      */
     TowerEntity.prototype.destroy = function () {
@@ -686,6 +910,17 @@ var Tower = (function () {
     };
 
     /**
+     * Recalculate synergy bonuses for all towers
+     */
+    function recalculateAllSynergies() {
+        for (var i = 0; i < towers.length; i++) {
+            var bonuses = towers[i].getSynergyBonuses();
+            towers[i]._synergyBonuses = bonuses;
+            towers[i].activeSynergies = bonuses.synergies;
+        }
+    }
+
+    /**
      * Create a new tower
      */
     function create(type, gridX, gridY) {
@@ -699,6 +934,19 @@ var Tower = (function () {
 
         var tower = new TowerEntity(type, gridX, gridY);
         towers.push(tower);
+
+        // Recalculate synergies for all towers
+        recalculateAllSynergies();
+
+        // Trigger synergy flash effects for newly activated synergies
+        if (tower.activeSynergies && tower.activeSynergies.length > 0 && typeof Effects !== 'undefined' && Effects.synergyFlash) {
+            var adjacent = tower.getAdjacentTowers();
+            for (var a = 0; a < adjacent.length; a++) {
+                if (adjacent[a].activeSynergies && adjacent[a].activeSynergies.length > 0) {
+                    Effects.synergyFlash(tower, adjacent[a]);
+                }
+            }
+        }
 
         // Dispatch event
         var event = new CustomEvent('towerPlaced', {
@@ -715,6 +963,16 @@ var Tower = (function () {
     function update(dt, currentTime) {
         for (var i = 0; i < towers.length; i++) {
             towers[i].update(dt, currentTime);
+        }
+
+        // Periodically update synergies and status indicators
+        statusUpdateTimer += dt;
+        if (statusUpdateTimer >= STATUS_UPDATE_INTERVAL) {
+            statusUpdateTimer = 0;
+            recalculateAllSynergies();
+            for (var j = 0; j < towers.length; j++) {
+                towers[j].updateStatusIndicators();
+            }
         }
     }
 
@@ -743,6 +1001,9 @@ var Tower = (function () {
     function sell(tower) {
         var value = tower.getSellValue();
         tower.destroy();
+
+        // Recalculate synergies after tower removal
+        recalculateAllSynergies();
 
         // Dispatch event
         var event = new CustomEvent('towerSold', {
@@ -773,7 +1034,9 @@ var Tower = (function () {
         sell: sell,
         clear: clear,
         getType: getType,
+        recalculateSynergies: recalculateAllSynergies,
         TYPES: TOWER_TYPES,
-        PREFIXES: PREFIXES
+        PREFIXES: PREFIXES,
+        SYNERGIES: SYNERGIES
     };
 })();

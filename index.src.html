@@ -41,8 +41,19 @@
             <div class="loading-progress-fill"></div>
         </div>
 
-        <!-- Main action row: Difficulty dropdown + START -->
+        <!-- Main action row: Map + Difficulty dropdowns + START -->
         <div class="loading-main-row">
+            <div class="difficulty-dropdown" id="mapDropdown">
+                <button class="difficulty-toggle" id="mapToggle">
+                    <span id="mapLabel">Te Awa</span>
+                    <span class="dropdown-arrow">▾</span>
+                </button>
+                <div class="difficulty-options hidden" id="mapOptions">
+                    <button data-map="teAwa" class="selected">Te Awa <small>The River</small></button>
+                    <button data-map="teMaunga">Te Maunga <small>The Mountain</small></button>
+                    <button data-map="teMoana">Te Moana <small>The Ocean</small></button>
+                </div>
+            </div>
             <div class="difficulty-dropdown" id="difficultyDropdown">
                 <button class="difficulty-toggle" id="difficultyToggle">
                     <span id="difficultyLabel">Normal</span>
@@ -210,6 +221,30 @@
             </div>
             <div class="env-pill env-event hidden" id="envEvent" title="Special Event">
                 <span class="env-label" id="envEventLabel"></span>
+            </div>
+        </div>
+
+        <!-- Battle Dashboard -->
+        <div class="battle-dashboard" id="battleDashboard">
+            <div class="dash-stat" title="Damage Per Second">
+                <span class="dash-label">DPS</span>
+                <span class="dash-value" id="dashDps">0</span>
+            </div>
+            <div class="dash-stat" title="Total Kills">
+                <span class="dash-label">Kills</span>
+                <span class="dash-value" id="dashKills">0</span>
+            </div>
+            <div class="dash-stat" title="Current Combo">
+                <span class="dash-label">Combo</span>
+                <span class="dash-value" id="dashCombo">0x</span>
+            </div>
+            <div class="dash-stat" title="Shot Accuracy">
+                <span class="dash-label">Accuracy</span>
+                <span class="dash-value" id="dashAccuracy">-</span>
+            </div>
+            <div class="dash-stat" title="Towers Built / Max Buildable">
+                <span class="dash-label">Towers</span>
+                <span class="dash-value" id="dashTowers">0</span>
             </div>
         </div>
 

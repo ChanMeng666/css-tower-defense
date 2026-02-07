@@ -1188,3 +1188,109 @@
     from { transform: translateX(-50%) scaleY(0.3) rotate(0deg); }
     to { transform: translateX(-50%) scaleY(0.3) rotate(360deg); }
 }
+
+// ===========================================
+// Tower Status Indicators (floating above tower)
+// ===========================================
+.tower-status {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 3px;
+    pointer-events: none;
+    z-index: 20;
+    animation: status-float 2s infinite ease-in-out;
+}
+
+.status-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    line-height: 1;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+// Upgrade available indicator
+.status-upgrade {
+    background: @color-success;
+    color: @color-white;
+
+    &::after {
+        content: '\2191'; // Up arrow ↑
+        font-weight: bold;
+    }
+}
+
+// Weather buff indicator
+.status-buff {
+    background: @color-cyan;
+    color: @color-black;
+
+    &::after {
+        content: '\2B06'; // Up arrow
+        font-size: 8px;
+    }
+}
+
+// Weather debuff indicator
+.status-debuff {
+    background: @color-danger;
+    color: @color-white;
+
+    &::after {
+        content: '\2B07'; // Down arrow
+        font-size: 8px;
+    }
+}
+
+// Synergy active indicator
+.status-synergy {
+    background: @color-magenta;
+    color: @color-white;
+
+    &::after {
+        content: '\2726'; // Four-pointed star ✦
+        font-size: 9px;
+    }
+}
+
+// Stunned state (from Tipua trample)
+.tower.stunned {
+    filter: grayscale(70%) brightness(0.7);
+    animation: tower-stun-shake 0.15s infinite alternate;
+
+    &::after {
+        content: '\2606'; // Star ☆
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 14px;
+        color: @color-yellow;
+        text-shadow: 0 0 4px @color-yellow;
+        animation: stun-stars 0.4s linear infinite;
+        z-index: 25;
+    }
+}
+
+@keyframes tower-stun-shake {
+    0% { transform: translateX(-1px); }
+    100% { transform: translateX(1px); }
+}
+
+@keyframes stun-stars {
+    0% { transform: translateX(-50%) rotate(0deg); }
+    100% { transform: translateX(-50%) rotate(360deg); }
+}
+
+@keyframes status-float {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-4px); }
+}

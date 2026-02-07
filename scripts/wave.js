@@ -80,31 +80,35 @@ var Wave = (function() {
             ],
             reward: 80
         },
-        // Wave 7 - Special event: Te Haumi (Abundance)
+        // Wave 7 - Special event: Te Haumi (Abundance) + Wairua introduction
         {
             events: [
                 { time: 0, type: 'announcement', data: { title: 'Wave 7', subtitle: 'Te Haumi! (Abundance)' } },
                 { time: 1000, type: 'specialEvent', data: { type: 'teHaumi', bonus: 50 } },
+                { time: 1500, type: 'warning', data: { message: 'Wairua spirits phase in and out!' } },
                 { time: 2500, type: 'spawn', data: [
                     { type: 'kehua', count: 10, interval: 800, variant: 'tere' },
                     { type: 'patupaiarehe', count: 6, interval: 1200 },
-                    { type: 'toa', count: 5, interval: 2000 }
+                    { type: 'toa', count: 5, interval: 2000 },
+                    { type: 'wairua', count: 4, interval: 2500 }
                 ] }
             ],
             reward: 100
         },
-        // Wave 8 - Rangatira forces
+        // Wave 8 - Rangatira forces + Tipua introduction
         {
             events: [
                 { time: 0, type: 'announcement', data: { title: 'Wave 8', subtitle: 'Rangatira forces!' } },
+                { time: 1500, type: 'warning', data: { message: 'Tipua giants can stun your towers!' } },
                 { time: 2000, type: 'spawn', data: [
                     { type: 'toa', count: 8, interval: 1500 },
-                    { type: 'patupaiarehe', count: 10, interval: 1000, variant: 'rangatira' }
+                    { type: 'patupaiarehe', count: 10, interval: 1000, variant: 'rangatira' },
+                    { type: 'tipua', count: 2, interval: 4000 }
                 ] }
             ],
             reward: 120
         },
-        // Wave 9 - Pre-boss: Te Taua (War Party)
+        // Wave 9 - Pre-boss: Te Taua (War Party) + mixed new enemies
         {
             events: [
                 { time: 0, type: 'announcement', data: { title: 'Wave 9', subtitle: 'Te Taua approaches!' } },
@@ -112,7 +116,9 @@ var Wave = (function() {
                 { time: 3000, type: 'spawn', data: [
                     { type: 'kehua', count: 15, interval: 600 },
                     { type: 'patupaiarehe', count: 10, interval: 800 },
-                    { type: 'toa', count: 6, interval: 1800 }
+                    { type: 'toa', count: 6, interval: 1800 },
+                    { type: 'wairua', count: 5, interval: 2000 },
+                    { type: 'tipua', count: 3, interval: 3500 }
                 ] }
             ],
             reward: 150

@@ -339,6 +339,10 @@
     .enemy.armored::after { display: none !important; }
     .enemy.speedy::after { display: none !important; }
     .enemy.toxic::after { display: none !important; }
+
+    // Simplify ghost wisps
+    .enemy-ghost .ghost-wisps .wisp { animation: none !important; }
+    .enemy-giant .enemy-body::after { animation: none !important; }
 }
 
 // Low performance mode — keep only colors and basic shapes
@@ -540,5 +544,145 @@
     }
     100% {
         opacity: 0;
+    }
+}
+
+// ===========================================
+// COMBO MILESTONE EFFECTS
+// ===========================================
+
+.screen-flash.flash-combo {
+    background: @color-yellow;
+    animation: screen-flash-anim 0.4s ease-out;
+}
+
+.combo-milestone {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    font-family: @font-title;
+    font-size: 3rem;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 600;
+    animation: combo-text-pop 1.5s ease-out forwards;
+    .text-outline(@color-black, 3px);
+
+    &.combo-nice {
+        color: @color-yellow;
+        font-size: 2.5rem;
+    }
+    &.combo-great {
+        color: #E87C3A;
+        font-size: 3rem;
+    }
+    &.combo-epic {
+        color: @color-magenta;
+        font-size: 3.5rem;
+        text-shadow: 0 0 20px @color-magenta, 0 0 40px fade(@color-magenta, 50%);
+    }
+    &.combo-legendary {
+        color: @color-cyan;
+        font-size: 4rem;
+        text-shadow: 0 0 30px @color-cyan, 0 0 60px fade(@color-cyan, 50%);
+    }
+}
+
+@keyframes combo-text-pop {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3);
+    }
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    40% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    80% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) translateY(-20px);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1) translateY(-40px);
+    }
+}
+
+// ===========================================
+// BOSS RAGE RED PULSE
+// ===========================================
+
+.boss-rage-pulse {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 499;
+    opacity: 0;
+
+    &.active {
+        animation: boss-rage-anim 3s ease-out forwards;
+    }
+
+    // Red vignette around edges
+    background: radial-gradient(
+        ellipse at center,
+        transparent 50%,
+        rgba(200, 0, 0, 0.3) 80%,
+        rgba(200, 0, 0, 0.5) 100%
+    );
+}
+
+@keyframes boss-rage-anim {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    20% { opacity: 0.6; }
+    30% { opacity: 1; }
+    40% { opacity: 0.5; }
+    50% { opacity: 0.9; }
+    60% { opacity: 0.4; }
+    80% { opacity: 0.3; }
+    100% { opacity: 0; }
+}
+
+// ===========================================
+// SYNERGY FLASH LINE
+// ===========================================
+
+.synergy-flash-line {
+    position: absolute;
+    height: 3px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        @color-magenta 20%,
+        @color-cyan 50%,
+        @color-magenta 80%,
+        transparent 100%
+    );
+    transform-origin: 0 50%;
+    pointer-events: none;
+    z-index: 15;
+    animation: synergy-line-flash 0.6s ease-out forwards;
+    box-shadow: 0 0 6px @color-magenta, 0 0 12px fade(@color-cyan, 40%);
+}
+
+@keyframes synergy-line-flash {
+    0% {
+        opacity: 0;
+        transform: rotate(var(--angle, 0deg)) scaleX(0);
+    }
+    30% {
+        opacity: 1;
+        transform: rotate(var(--angle, 0deg)) scaleX(1);
+    }
+    100% {
+        opacity: 0;
+        transform: rotate(var(--angle, 0deg)) scaleX(1);
     }
 }

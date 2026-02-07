@@ -100,7 +100,8 @@
         // Start music on any click
         loadingScreen.addEventListener('click', startMenuMusic, { once: true });
 
-        // Difficulty dropdown
+        // Map and difficulty dropdowns
+        setupMapDropdown();
         setupDifficultyDropdown();
 
         // More Options menu
@@ -159,6 +160,50 @@
         // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.difficulty-dropdown')) {
+                options.classList.add('hidden');
+                toggle.classList.remove('open');
+            }
+        });
+    }
+
+    /**
+     * Setup map selection dropdown
+     */
+    function setupMapDropdown() {
+        var toggle = document.getElementById('mapToggle');
+        var options = document.getElementById('mapOptions');
+        var label = document.getElementById('mapLabel');
+
+        if (!toggle || !options) return;
+
+        toggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var isOpen = !options.classList.contains('hidden');
+            options.classList.toggle('hidden');
+            toggle.classList.toggle('open', !isOpen);
+            Sfx.playEffect('button');
+        });
+
+        options.querySelectorAll('button').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                options.querySelectorAll('button').forEach(function(b) {
+                    b.classList.remove('selected');
+                });
+                btn.classList.add('selected');
+                // Extract just the map name (not the subtitle)
+                var mapName = btn.childNodes[0].textContent.trim();
+                if (label) label.textContent = mapName;
+                // Set map in Path system
+                Path.setMap(btn.dataset.map);
+                options.classList.add('hidden');
+                toggle.classList.remove('open');
+                Sfx.playEffect('button');
+            });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#mapDropdown')) {
                 options.classList.add('hidden');
                 toggle.classList.remove('open');
             }
@@ -1553,7 +1598,7 @@
         if (Game.getState() === Game.STATES.PLAYING) {
             autoPaused = true;
             Game.pause();
-            Display.showMessage('Paused');
+            showAutoPauseOverlay();
         }
     });
 
@@ -1563,9 +1608,60 @@
     window.addEventListener('focus', function() {
         if (Game.getState() === Game.STATES.PAUSED && autoPaused && !pauseMenuOpen) {
             autoPaused = false;
+            hideAutoPauseOverlay();
             Game.resume();
         }
     });
+
+    /**
+     * Handle visibility change (auto-pause when tab is hidden)
+     */
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            if (Game.getState() === Game.STATES.PLAYING) {
+                autoPaused = true;
+                Game.pause();
+                showAutoPauseOverlay();
+            }
+        } else {
+            if (Game.getState() === Game.STATES.PAUSED && autoPaused && !pauseMenuOpen) {
+                autoPaused = false;
+                hideAutoPauseOverlay();
+                Game.resume();
+            }
+        }
+    });
+
+    /**
+     * Show auto-pause overlay (semi-transparent with PAUSED text)
+     */
+    function showAutoPauseOverlay() {
+        var existing = document.getElementById('autoPauseOverlay');
+        if (existing) return;
+
+        var overlay = document.createElement('div');
+        overlay.id = 'autoPauseOverlay';
+        overlay.className = 'auto-pause-overlay';
+        overlay.innerHTML = '<div class="auto-pause-text">PAUSED</div>';
+        document.body.appendChild(overlay);
+
+        // Click to resume
+        overlay.addEventListener('click', function() {
+            if (autoPaused && !pauseMenuOpen) {
+                autoPaused = false;
+                hideAutoPauseOverlay();
+                Game.resume();
+            }
+        });
+    }
+
+    /**
+     * Hide auto-pause overlay
+     */
+    function hideAutoPauseOverlay() {
+        var overlay = document.getElementById('autoPauseOverlay');
+        if (overlay) overlay.remove();
+    }
     
     /**
      * Prevent context menu on game area

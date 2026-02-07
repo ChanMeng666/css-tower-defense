@@ -36,6 +36,37 @@ var Enemy = (function() {
             className: 'enemy-knight',
             lore: 'Toa are fierce Māori warriors, skilled in combat and protected by their mana.'
         },
+        wairua: {
+            name: 'Wairua',
+            health: 40,
+            speed: 50,
+            reward: 20,
+            damage: 1,
+            className: 'enemy-ghost',
+            lore: 'Wairua are ethereal spirits that phase between worlds, visible only to those with spiritual sight.',
+            // Stealth configuration
+            stealth: {
+                visibleDuration: 5,   // seconds visible
+                stealthDuration: 2,   // seconds stealthed
+                onlyHitBy: 'tohunga'  // only magic towers can target during stealth
+            }
+        },
+        tipua: {
+            name: 'Tipua',
+            health: 500,
+            speed: 15,
+            reward: 50,
+            damage: 3,
+            armor: 8,
+            className: 'enemy-giant',
+            lore: 'Tipua are supernatural giants of immense power, their footsteps shake the very earth.',
+            // Trample configuration
+            trample: {
+                chance: 0.10,        // 10% chance per tower passed
+                stunDuration: 1.0,   // seconds
+                checkRadius: 70      // pixels - how close to a tower to trigger check
+            }
+        },
         taniwha: {
             name: 'Taniwha',
             health: 1000,
@@ -164,6 +195,25 @@ var Enemy = (function() {
         this.slowed = false;
         this.slowTimer = 0;
 
+        // Wairua (Ghost) stealth state
+        if (config.stealth) {
+            this.hasStealth = true;
+            this.stealthed = false;
+            this.stealthCycleTimer = config.stealth.visibleDuration;
+            this.stealthVisible = true; // starts visible
+        } else {
+            this.hasStealth = false;
+            this.stealthed = false;
+        }
+
+        // Tipua (Giant) trample state
+        if (config.trample) {
+            this.hasTrample = true;
+            this.trampleCheckedTowers = {}; // tower IDs already checked
+        } else {
+            this.hasTrample = false;
+        }
+
         // Noise-based movement (for tere variant and taniwha boss)
         this.useNoiseMovement = (type === 'taniwha' || variant === 'tere');
         this.noiseTime = Math.random() * 1000; // Random start offset
@@ -218,6 +268,12 @@ var Enemy = (function() {
                 break;
             case 'toa':
                 this.createKnightElements(el);
+                break;
+            case 'wairua':
+                this.createGhostElements(el);
+                break;
+            case 'tipua':
+                this.createGiantElements(el);
                 break;
             case 'taniwha':
                 this.createBossElements(el);
@@ -319,6 +375,52 @@ var Enemy = (function() {
     };
 
     /**
+     * Create Ghost (Wairua) enemy elements - ethereal spirit
+     */
+    EnemyEntity.prototype.createGhostElements = function(el) {
+        var body = document.createElement('div');
+        body.className = 'enemy-body';
+        el.appendChild(body);
+
+        var face = document.createElement('div');
+        face.className = 'enemy-face';
+        el.appendChild(face);
+
+        // Wispy tail fragments
+        var wisps = document.createElement('div');
+        wisps.className = 'ghost-wisps';
+        for (var i = 1; i <= 3; i++) {
+            var wisp = document.createElement('div');
+            wisp.className = 'wisp w' + i;
+            wisps.appendChild(wisp);
+        }
+        el.appendChild(wisps);
+    };
+
+    /**
+     * Create Giant (Tipua) enemy elements - massive supernatural giant
+     */
+    EnemyEntity.prototype.createGiantElements = function(el) {
+        var body = document.createElement('div');
+        body.className = 'enemy-body';
+        el.appendChild(body);
+
+        var face = document.createElement('div');
+        face.className = 'enemy-face';
+        el.appendChild(face);
+
+        // Giant's club weapon
+        var club = document.createElement('div');
+        club.className = 'giant-club';
+        el.appendChild(club);
+
+        // Ground crack effect (for trample)
+        var trampleFx = document.createElement('div');
+        trampleFx.className = 'trample-fx';
+        el.appendChild(trampleFx);
+    };
+
+    /**
      * Create Boss enemy elements with rotating energy rings
      */
     EnemyEntity.prototype.createBossElements = function(el) {
@@ -398,6 +500,16 @@ var Enemy = (function() {
         // Update Boss-specific logic
         if (this.isBoss) {
             this.updateBoss(dt);
+        }
+
+        // Update Wairua stealth cycle
+        if (this.hasStealth) {
+            this.updateStealth(dt);
+        }
+
+        // Update Tipua trample check
+        if (this.hasTrample) {
+            this.updateTrample();
         }
 
         // Update slow effect
@@ -558,6 +670,68 @@ var Enemy = (function() {
         if (this.shieldCooldown <= 0 && !this.shieldActive && this.health < this.maxHealth * 0.7) {
             this.useShieldSkill();
             this.shieldCooldown = skills.kaitiaki.cooldown;
+        }
+    };
+
+    /**
+     * Update Wairua stealth cycle - phases between visible and invisible
+     */
+    EnemyEntity.prototype.updateStealth = function(dt) {
+        this.stealthCycleTimer -= dt;
+
+        if (this.stealthCycleTimer <= 0) {
+            if (this.stealthVisible) {
+                // Become stealthed
+                this.stealthVisible = false;
+                this.stealthed = true;
+                this.stealthCycleTimer = this.config.stealth.stealthDuration;
+                this.element.classList.add('stealthed');
+            } else {
+                // Become visible
+                this.stealthVisible = true;
+                this.stealthed = false;
+                this.stealthCycleTimer = this.config.stealth.visibleDuration;
+                this.element.classList.remove('stealthed');
+            }
+        }
+    };
+
+    /**
+     * Update Tipua trample - check nearby towers for stun
+     */
+    EnemyEntity.prototype.updateTrample = function() {
+        if (typeof Tower === 'undefined') return;
+
+        var allTowers = Tower.getAll();
+        var trampleConfig = this.config.trample;
+
+        for (var i = 0; i < allTowers.length; i++) {
+            var tower = allTowers[i];
+            // Skip towers already checked by this enemy
+            if (this.trampleCheckedTowers[tower.id]) continue;
+
+            var dx = tower.x - this.x;
+            var dy = tower.y - this.y;
+            var dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist <= trampleConfig.checkRadius) {
+                // Mark as checked so we don't re-roll
+                this.trampleCheckedTowers[tower.id] = true;
+
+                // Roll for trample stun
+                if (Math.random() < trampleConfig.chance) {
+                    tower.applyStun(trampleConfig.stunDuration);
+
+                    // Visual feedback on the giant
+                    this.element.classList.add('trampling');
+                    var self = this;
+                    setTimeout(function() {
+                        if (self.element) {
+                            self.element.classList.remove('trampling');
+                        }
+                    }, 300);
+                }
+            }
         }
     };
 

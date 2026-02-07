@@ -276,6 +276,97 @@ var Effects = (function() {
         }, 600);
     }
 
+    /**
+     * Combo milestone effect — screen flash + floating text at 5/10/15/20+ kills
+     * @param {number} comboCount - current combo count
+     */
+    function comboMilestone(comboCount) {
+        if (!shouldShowEffects()) return;
+
+        // Determine milestone tier
+        var tier = '';
+        if (comboCount >= 20) tier = 'legendary';
+        else if (comboCount >= 15) tier = 'epic';
+        else if (comboCount >= 10) tier = 'great';
+        else if (comboCount >= 5) tier = 'nice';
+        else return; // Not a milestone
+
+        // Screen flash
+        screenFlash('combo');
+
+        // Floating milestone text
+        var text = document.createElement('div');
+        text.className = 'combo-milestone combo-' + tier;
+        text.textContent = comboCount + 'x COMBO!';
+        document.body.appendChild(text);
+
+        setTimeout(function() {
+            if (text.parentNode) {
+                text.parentNode.removeChild(text);
+            }
+        }, 1500);
+    }
+
+    /**
+     * Boss phase change red pulse — screen edge pulsing red glow
+     */
+    function bossPhaseRedPulse() {
+        if (!shouldShowEffects()) return;
+
+        var pulse = document.querySelector('.boss-rage-pulse');
+        if (!pulse) {
+            pulse = document.createElement('div');
+            pulse.className = 'boss-rage-pulse';
+            document.body.appendChild(pulse);
+        }
+
+        pulse.classList.add('active');
+
+        setTimeout(function() {
+            pulse.classList.remove('active');
+        }, 3000);
+    }
+
+    /**
+     * Synergy activation flash between two towers
+     * @param {object} tower1 - first tower {x, y}
+     * @param {object} tower2 - second tower {x, y}
+     */
+    function synergyFlash(tower1, tower2) {
+        if (!shouldShowComplexEffects()) return;
+
+        var mapEl = document.getElementById('map');
+        if (!mapEl) return;
+
+        var mapWidth = Path.GRID_COLS * Path.CELL_SIZE;
+        var mapHeight = Path.GRID_ROWS * Path.CELL_SIZE;
+
+        // Convert world coords to map-local
+        var x1 = tower1.x + (mapWidth / 2);
+        var y1 = tower1.y + (mapHeight / 2);
+        var x2 = tower2.x + (mapWidth / 2);
+        var y2 = tower2.y + (mapHeight / 2);
+
+        var dx = x2 - x1;
+        var dy = y2 - y1;
+        var length = Math.sqrt(dx * dx + dy * dy);
+        var angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+        var line = document.createElement('div');
+        line.className = 'synergy-flash-line';
+        line.style.left = x1 + 'px';
+        line.style.top = y1 + 'px';
+        line.style.width = length + 'px';
+        line.style.transform = 'rotate(' + angle + 'deg)';
+        mapEl.appendChild(line);
+
+        setTimeout(function() {
+            if (line.parentNode) {
+                line.parentNode.removeChild(line);
+            }
+        }, 600);
+    }
+
     // Public API
     return {
         init: init,
@@ -289,6 +380,9 @@ var Effects = (function() {
         applyBurningEffect: applyBurningEffect,
         removeBurningEffect: removeBurningEffect,
         triggerWarpEffect: triggerWarpEffect,
+        comboMilestone: comboMilestone,
+        bossPhaseRedPulse: bossPhaseRedPulse,
+        synergyFlash: synergyFlash,
         LEVELS: PERFORMANCE_LEVELS
     };
 })();

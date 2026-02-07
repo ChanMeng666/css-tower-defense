@@ -558,6 +558,286 @@
 }
 
 // ===========================================
+// 5. WAIRUA (Ghost / Spirit) — Ethereal Phase-Shifter
+// ===========================================
+
+.enemy-ghost {
+    .enemy-body {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 34px;
+        height: 38px;
+        background: radial-gradient(
+            ellipse at 50% 30%,
+            rgba(180, 200, 255, 0.7) 0%,
+            rgba(140, 170, 230, 0.4) 50%,
+            rgba(100, 140, 200, 0.1) 80%,
+            transparent 100%
+        );
+        transform: translateX(-50%);
+        border-radius: 50% 50% 30% 30%;
+        border: 2px solid rgba(150, 180, 240, 0.5);
+        box-shadow: 0 0 12px rgba(150, 180, 240, 0.4);
+        animation: ghost-hover 1.5s ease-in-out infinite;
+    }
+
+    .enemy-face {
+        position: absolute;
+        bottom: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 18px;
+        display: flex;
+        justify-content: space-between;
+
+        // Hollow glowing eyes
+        &::before,
+        &::after {
+            content: '';
+            width: 6px;
+            height: 8px;
+            background: rgba(200, 220, 255, 0.9);
+            border-radius: 50%;
+            box-shadow: 0 0 6px rgba(200, 220, 255, 0.8);
+        }
+    }
+
+    // Wispy tail fragments
+    .ghost-wisps {
+        position: absolute;
+        bottom: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 30px;
+
+        .wisp {
+            position: absolute;
+            bottom: 0;
+            width: 8px;
+            height: 14px;
+            background: linear-gradient(
+                to bottom,
+                rgba(150, 180, 240, 0.4) 0%,
+                transparent 100%
+            );
+            border-radius: 0 0 50% 50%;
+
+            &.w1 {
+                left: 2px;
+                animation: wisp-sway 1.2s ease-in-out infinite;
+            }
+            &.w2 {
+                left: 11px;
+                animation: wisp-sway 1.4s ease-in-out infinite 0.3s;
+            }
+            &.w3 {
+                left: 20px;
+                animation: wisp-sway 1.1s ease-in-out infinite 0.6s;
+            }
+        }
+    }
+
+    // Stealth state — fade to near-invisible
+    &.stealthed {
+        .enemy-body {
+            opacity: 0.15;
+            box-shadow: none;
+            border-color: transparent;
+        }
+        .enemy-face::before,
+        .enemy-face::after {
+            opacity: 0.2;
+            box-shadow: none;
+        }
+        .ghost-wisps .wisp {
+            opacity: 0.1;
+        }
+        .health-bar {
+            opacity: 0.2;
+        }
+    }
+
+    // Low health
+    &.low-health {
+        .enemy-body {
+            animation: ghost-flicker 0.6s infinite;
+            filter: saturate(0.4);
+        }
+    }
+}
+
+.enemy-ghost > .health-bar { top: -46px; }
+
+@keyframes ghost-hover {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-6px); }
+}
+
+@keyframes ghost-flicker {
+    0%, 100% { opacity: 0.8; }
+    25% { opacity: 0.3; }
+    50% { opacity: 0.7; }
+    75% { opacity: 0.2; }
+}
+
+@keyframes wisp-sway {
+    0%, 100% { transform: translateX(0) scaleY(1); }
+    50% { transform: translateX(3px) scaleY(1.2); }
+}
+
+// ===========================================
+// 6. TIPUA (Giant / Supernatural Being)
+// ===========================================
+
+.enemy-giant {
+    transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.3);
+
+    .enemy-body {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 44px;
+        height: 56px;
+        background: @color-obsidian;
+        transform: translateX(-50%);
+        clip-path: polygon(25% 0%, 75% 0%, 90% 15%, 85% 50%, 80% 100%, 20% 100%, 15% 50%, 10% 15%);
+        filter: drop-shadow(3px 0 0 @color-black) drop-shadow(-3px 0 0 @color-black) drop-shadow(0 3px 0 @color-black) drop-shadow(0 -3px 0 @color-black);
+
+        // Rocky texture
+        background-image: radial-gradient(
+            circle, rgba(120, 100, 80, 0.3) 1px, transparent 1px
+        );
+        background-size: 5px 5px;
+
+        // Glowing rune on chest
+        &::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background: @color-danger;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 8px @color-danger, 0 0 16px fade(@color-danger, 40%);
+            animation: rune-pulse 2s ease-in-out infinite;
+        }
+    }
+
+    .enemy-face {
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        display: flex;
+        justify-content: space-between;
+
+        // Small angry eyes
+        &::before,
+        &::after {
+            content: '';
+            width: 5px;
+            height: 3px;
+            background: @color-danger;
+            box-shadow: 0 0 4px @color-danger;
+        }
+    }
+
+    // Giant club weapon
+    .giant-club {
+        position: absolute;
+        top: 12px;
+        right: -10px;
+        width: 6px;
+        height: 36px;
+        background: darken(@color-obsidian, 10%);
+        border: 1px solid @color-black;
+        border-radius: 2px;
+        transform: rotate(20deg);
+
+        // Club head
+        &::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            width: 12px;
+            height: 14px;
+            background: darken(@color-obsidian, 5%);
+            border: 2px solid @color-black;
+            border-radius: 3px;
+            transform: translateX(-50%);
+        }
+    }
+
+    // Ground crack on trample
+    .trample-fx {
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        width: 0;
+        height: 0;
+        transform: translateX(-50%);
+        pointer-events: none;
+        opacity: 0;
+    }
+
+    // Trampling animation
+    &.trampling {
+        animation: giant-stomp 0.3s ease-out;
+
+        .trample-fx {
+            width: 50px;
+            height: 20px;
+            background: radial-gradient(
+                ellipse at center,
+                rgba(180, 150, 100, 0.5) 0%,
+                rgba(180, 150, 100, 0.2) 50%,
+                transparent 70%
+            );
+            opacity: 1;
+            animation: trample-crack 0.3s ease-out;
+        }
+    }
+
+    // Low health — cracks appear, glow intensifies
+    &.low-health {
+        .enemy-body {
+            filter: drop-shadow(3px 0 0 @color-black) drop-shadow(-3px 0 0 @color-black) drop-shadow(0 3px 0 @color-black) drop-shadow(0 -3px 0 @color-black) brightness(0.7);
+        }
+        .enemy-body::after {
+            box-shadow: 0 0 12px @color-danger, 0 0 24px fade(@color-danger, 60%);
+        }
+    }
+}
+
+.enemy-giant > .health-bar {
+    top: -64px;
+    width: 50px;
+    height: 12px;
+}
+
+@keyframes rune-pulse {
+    0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+}
+
+@keyframes giant-stomp {
+    0% { transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.3); }
+    50% { transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.35) translateY(3px); }
+    100% { transform: translate(-50%, -100%) rotateX(-@map-rotation) scale(1.3); }
+}
+
+@keyframes trample-crack {
+    0% { width: 0; opacity: 0; }
+    50% { width: 50px; opacity: 1; }
+    100% { width: 60px; opacity: 0; }
+}
+
+// ===========================================
 // ENEMY VARIANT STYLES
 // ===========================================
 

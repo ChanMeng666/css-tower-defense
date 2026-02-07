@@ -557,18 +557,34 @@ var Display = (function() {
         }
     }
 
+    // Toast notification state
+    var activeToasts = [];
+    var MAX_TOASTS = 3;
+
     /**
-     * Show a toast notification
+     * Show a toast notification (stacking, right-side, 4 types)
      * @param {string} message - Toast message
-     * @param {string} type - Toast type: 'info', 'success', 'error'
+     * @param {string} type - Toast type: 'info', 'success', 'error', 'warning'
      */
     function showToast(message, type) {
+        type = type || 'info';
+
+        // Remove oldest toast if at max
+        if (activeToasts.length >= MAX_TOASTS) {
+            var oldest = activeToasts.shift();
+            if (oldest && oldest.parentNode) oldest.remove();
+        }
+
         var toast = document.createElement('div');
-        toast.className = 'toast toast-' + (type || 'info');
+        toast.className = 'toast toast-' + type;
         toast.textContent = message;
         document.body.appendChild(toast);
+        activeToasts.push(toast);
 
-        // Trigger animation
+        // Reposition all toasts (stack from top-right)
+        repositionToasts();
+
+        // Trigger slide-in animation
         setTimeout(function() {
             toast.classList.add('show');
         }, 10);
@@ -577,9 +593,21 @@ var Display = (function() {
         setTimeout(function() {
             toast.classList.remove('show');
             setTimeout(function() {
+                var idx = activeToasts.indexOf(toast);
+                if (idx > -1) activeToasts.splice(idx, 1);
                 if (toast.parentNode) toast.remove();
+                repositionToasts();
             }, 300);
         }, 3000);
+    }
+
+    /**
+     * Reposition stacked toasts from top-right
+     */
+    function repositionToasts() {
+        for (var i = 0; i < activeToasts.length; i++) {
+            activeToasts[i].style.top = (80 + i * 50) + 'px';
+        }
     }
 
     // =========================================

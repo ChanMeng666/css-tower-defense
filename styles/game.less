@@ -1569,34 +1569,46 @@ body.blood-moon {
 }
 
 // ===========================================
-// Toast Notifications
+// Toast Notifications (stacking, right-side)
 // ===========================================
 .toast {
     position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    padding: 10px 24px;
+    right: -300px;
+    top: 80px;
+    padding: 10px 20px;
     border-radius: 4px;
     background: @color-dark;
     color: @color-white;
     font-family: @font-comic;
     font-weight: bold;
+    font-size: 0.85rem;
     z-index: 9999;
     opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: right 0.3s cubic-bezier(0.68, -0.15, 0.265, 1.15), opacity 0.3s ease, top 0.2s ease;
     .comic-border(2px);
-    .pop-shadow(4px, 4px);
+    .pop-shadow(3px, 3px);
+    max-width: 260px;
+    white-space: nowrap;
 
     &.show {
         opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        right: 20px;
     }
+}
+
+.toast-info {
+    background: @color-cyan;
+    color: @color-black;
 }
 
 .toast-success {
     background: @color-success;
     color: @color-white;
+}
+
+.toast-warning {
+    background: @color-yellow;
+    color: @color-black;
 }
 
 .toast-error {
@@ -1766,4 +1778,81 @@ body.blood-moon {
     font-size: 1.3rem;
     padding: 10px 30px;
     margin-top: 10px;
+}
+
+// ===========================================
+// Auto-Pause Overlay
+// ===========================================
+.auto-pause-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 22, 20, 0.6);
+    z-index: 1800;
+    .flex-center();
+    cursor: pointer;
+    animation: pause-fade-in 0.2s ease-out;
+}
+
+.auto-pause-text {
+    font-family: @font-title;
+    font-size: 6rem;
+    color: @color-white;
+    .text-outline(@color-black, 5px);
+    animation: pause-pulse 2s infinite ease-in-out;
+    pointer-events: none;
+}
+
+@keyframes pause-fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes pause-pulse {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+}
+
+// ===========================================
+// Battle Dashboard
+// ===========================================
+.battle-dashboard {
+    position: absolute;
+    top: 64px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    pointer-events: auto;
+    z-index: 101;
+    background: rgba(26, 22, 20, 0.6);
+    padding: 3px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 248, 240, 0.1);
+}
+
+.dash-stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 6px;
+    cursor: default;
+}
+
+.dash-label {
+    font-family: @font-comic;
+    font-size: 0.65rem;
+    font-weight: bold;
+    color: rgba(255, 248, 240, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dash-value {
+    font-family: @font-title;
+    font-size: 0.85rem;
+    color: @color-yellow;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
 }

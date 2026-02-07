@@ -131,10 +131,24 @@ var Shop = (function() {
             prefixColor = p.color;
         }
 
+        var synergyHtml = '';
+        if (tower.activeSynergies && tower.activeSynergies.length > 0) {
+            synergyHtml = '<div style="margin-top: 5px; border-top: 1px solid #444; padding-top: 4px;">';
+            for (var si = 0; si < tower.activeSynergies.length; si++) {
+                var syn = tower.activeSynergies[si];
+                synergyHtml += '<div style="font-size: 0.7rem; color: #D4A8E8;">' +
+                    syn.icon + ' ' + syn.name +
+                    (syn.stacks ? ' x' + syn.stacks : '') +
+                    '</div>';
+            }
+            synergyHtml += '</div>';
+        }
+
         info.innerHTML = '<div style="font-weight: bold; color: ' + prefixColor + ';">' + towerName + '</div>' +
                         '<div style="font-size: 0.8rem; margin-top: 5px;">Level ' + tower.level + '</div>' +
                         '<div style="font-size: 0.8rem;">Damage: ' + tower.damage + '</div>' +
-                        '<div style="font-size: 0.8rem;">Range: ' + Math.round(tower.range) + '</div>';
+                        '<div style="font-size: 0.8rem;">Range: ' + Math.round(tower.range) + '</div>' +
+                        synergyHtml;
         panel.appendChild(info);
         
         // Upgrade button

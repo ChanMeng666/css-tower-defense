@@ -69,6 +69,13 @@ var Game = (function () {
     var totalTowersBuilt = 0;
     var totalGoldEarned = 0;
 
+    // Battle dashboard tracking
+    var totalDamageDealt = 0;
+    var totalShotsFired = 0;
+    var totalShotsHit = 0;
+    var dashboardUpdateTimer = 0;
+    var DASHBOARD_UPDATE_INTERVAL = 0.5; // Update every 0.5s
+
     // Selected tower type for building
     var selectedTowerType = null;
 
@@ -234,6 +241,13 @@ var Game = (function () {
                 Sfx.playEffect('death');
             }
 
+            // Combo milestone effects (5/10/15/20+)
+            if (comboCount === 5 || comboCount === 10 || comboCount === 15 || comboCount === 20) {
+                if (typeof Effects !== 'undefined' && Effects.comboMilestone) {
+                    Effects.comboMilestone(comboCount);
+                }
+            }
+
             // Emit combo event
             if (typeof emitGameEvent === 'function') {
                 emitGameEvent(EVENTS.COMBO_KILL, { count: comboCount, reward: reward });
@@ -296,8 +310,9 @@ var Game = (function () {
             Sfx.play('place');
         });
 
-        // Tower fired - use spatial audio
+        // Tower fired - use spatial audio + track shots
         document.addEventListener('towerFired', function (e) {
+            totalShotsFired++;
             var type = e.detail.tower.type;
             var x = e.detail.x || 0;
             var y = e.detail.y || 0;
@@ -329,6 +344,13 @@ var Game = (function () {
             }
         });
 
+        // Boss phase change — red pulse effect
+        document.addEventListener('bossPhaseChange', function(e) {
+            if (typeof Effects !== 'undefined' && Effects.bossPhaseRedPulse) {
+                Effects.bossPhaseRedPulse();
+            }
+        });
+
         // Boss entrance
         document.addEventListener('bossEntrance', function(e) {
             Sfx.playEffect('warning');
@@ -345,6 +367,11 @@ var Game = (function () {
             if (e.detail.splash) {
                 Sfx.playEffect('blast');
             }
+            // Track damage for dashboard
+            if (e.detail.damage) {
+                totalDamageDealt += e.detail.damage;
+            }
+            totalShotsHit++;
         });
 
         // Weather changed
@@ -383,6 +410,10 @@ var Game = (function () {
         totalEnemiesKilled = 0;
         totalTowersBuilt = 0;
         totalGoldEarned = 0;
+        totalDamageDealt = 0;
+        totalShotsFired = 0;
+        totalShotsHit = 0;
+        dashboardUpdateTimer = 0;
         previousDuration = 0;
         gameStartTime = performance.now();
 
@@ -466,6 +497,13 @@ var Game = (function () {
             if (timeLimit && typeof Display !== 'undefined' && Display.updateChallengeTimer) {
                 Display.updateChallengeTimer(Challenge.getElapsedTime(), timeLimit);
             }
+        }
+
+        // Update battle dashboard
+        dashboardUpdateTimer += dt;
+        if (dashboardUpdateTimer >= DASHBOARD_UPDATE_INTERVAL) {
+            dashboardUpdateTimer = 0;
+            updateBattleDashboard();
         }
 
         // Update combo timer
@@ -798,6 +836,11 @@ var Game = (function () {
         lives -= amount;
         if (lives < 0) lives = 0;
         Display.updateLives(lives);
+
+        // Low lives warning toast
+        if (lives > 0 && lives <= 5) {
+            Display.showToast('Low lives! (' + lives + ' remaining)', 'warning');
+        }
     }
 
     /**
@@ -1029,6 +1072,43 @@ var Game = (function () {
 
         Sfx.play('start');
         Sfx.playMusic('playing');
+    }
+
+    /**
+     * Update battle dashboard display
+     */
+    function updateBattleDashboard() {
+        var dashDps = document.getElementById('dashDps');
+        var dashKills = document.getElementById('dashKills');
+        var dashCombo = document.getElementById('dashCombo');
+        var dashAccuracy = document.getElementById('dashAccuracy');
+        var dashTowers = document.getElementById('dashTowers');
+
+        if (!dashDps) return;
+
+        // Calculate DPS (damage dealt / elapsed seconds)
+        var elapsed = (performance.now() - gameStartTime) / 1000;
+        var dps = elapsed > 0 ? Math.round(totalDamageDealt / elapsed) : 0;
+        dashDps.textContent = dps;
+
+        // Kills
+        dashKills.textContent = totalEnemiesKilled;
+
+        // Combo
+        dashCombo.textContent = comboCount > 0 ? comboCount + 'x' : '0x';
+
+        // Accuracy
+        if (totalShotsFired > 0) {
+            var accuracy = Math.round((totalShotsHit / totalShotsFired) * 100);
+            dashAccuracy.textContent = accuracy + '%';
+        } else {
+            dashAccuracy.textContent = '-';
+        }
+
+        // Tower count
+        var towerCount = Tower.getAll().length;
+        var maxBuildable = Path.GRID_COLS * Path.GRID_ROWS; // approximate
+        dashTowers.textContent = towerCount;
     }
 
     function getScore() { return score; }
