@@ -190,8 +190,10 @@ var Projectile = (function() {
         } else {
             // Single target damage
             if (this.target && this.target.alive) {
+                var actualDmg;
                 if (this.ignoreArmor) {
                     // Bypass armor - deal full damage
+                    actualDmg = this.damage;
                     this.target.health -= this.damage;
                     var healthPercent = Math.max(0, (this.target.health / this.target.maxHealth) * 100);
                     var healthFill = this.target.element.querySelector('.health-fill');
@@ -202,7 +204,18 @@ var Projectile = (function() {
                         this.target.die();
                     }
                 } else {
+                    actualDmg = Math.max(1, this.damage - (this.target.armor || 0));
                     this.target.takeDamage(this.damage);
+                }
+
+                // Show damage number
+                if (typeof Effects !== 'undefined' && Effects.showDamageNumber) {
+                    var mapWidth = Path.GRID_COLS * Path.CELL_SIZE;
+                    var mapHeight = Path.GRID_ROWS * Path.CELL_SIZE;
+                    var dmgX = this.target.x + (mapWidth / 2);
+                    var dmgY = this.target.y + (mapHeight / 2);
+                    var dmgType = (this.target.type === 'boss' || this.target.type === 'taniwha') ? 'boss' : 'normal';
+                    Effects.showDamageNumber(dmgX, dmgY, actualDmg, dmgType);
                 }
 
                 // Apply slow effect
@@ -260,8 +273,21 @@ var Projectile = (function() {
 
             if (nearestEnemy) {
                 // Apply chain damage
+                var chainActualDmg = Math.max(1, chainDamage - (nearestEnemy.armor || 0));
                 nearestEnemy.takeDamage(chainDamage);
                 hitEnemies.push(nearestEnemy);
+
+                // Show damage number for chain hit
+                if (typeof Effects !== 'undefined' && Effects.showDamageNumber) {
+                    var chainMapW = Path.GRID_COLS * Path.CELL_SIZE;
+                    var chainMapH = Path.GRID_ROWS * Path.CELL_SIZE;
+                    Effects.showDamageNumber(
+                        nearestEnemy.x + (chainMapW / 2),
+                        nearestEnemy.y + (chainMapH / 2),
+                        chainActualDmg,
+                        'normal'
+                    );
+                }
 
                 // Create chain lightning visual
                 this.createChainLightningEffect(currentTarget, nearestEnemy);
@@ -327,8 +353,10 @@ var Projectile = (function() {
                 // Damage falls off with distance
                 var falloff = 1 - (distance / this.splashRadius) * 0.5;
                 var actualDamage = Math.floor(this.damage * falloff);
-                
+                var splashActualDmg;
+
                 if (this.ignoreArmor) {
+                    splashActualDmg = actualDamage;
                     enemy.health -= actualDamage;
                     var healthPercent = Math.max(0, (enemy.health / enemy.maxHealth) * 100);
                     var healthFill = enemy.element.querySelector('.health-fill');
@@ -339,9 +367,20 @@ var Projectile = (function() {
                         enemy.die();
                     }
                 } else {
+                    splashActualDmg = Math.max(1, actualDamage - (enemy.armor || 0));
                     enemy.takeDamage(actualDamage);
                 }
-                
+
+                // Show damage number for splash
+                if (typeof Effects !== 'undefined' && Effects.showDamageNumber) {
+                    var splashMapW = Path.GRID_COLS * Path.CELL_SIZE;
+                    var splashMapH = Path.GRID_ROWS * Path.CELL_SIZE;
+                    var splashDmgX = enemy.x + (splashMapW / 2);
+                    var splashDmgY = enemy.y + (splashMapH / 2);
+                    var splashDmgType = (enemy.type === 'boss' || enemy.type === 'taniwha') ? 'boss' : 'normal';
+                    Effects.showDamageNumber(splashDmgX, splashDmgY, splashActualDmg, splashDmgType);
+                }
+
                 // Apply slow effect
                 if (this.slowEffect > 0) {
                     enemy.applySlow(this.slowEffect, this.slowDuration);

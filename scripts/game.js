@@ -401,6 +401,9 @@ var Game = (function () {
             Display.showMessage('Wave Complete!');
             Sfx.play('waveComplete');
 
+            // Wave completion visual effect
+            if (typeof Effects !== 'undefined') Effects.triggerWarpEffect();
+
             // Reset music intensity after wave (unless low lives)
             if (lives > 5) {
                 Sfx.setMusicIntensity('normal');
@@ -997,6 +1000,12 @@ var Game = (function () {
         lives -= amount;
         if (lives < 0) lives = 0;
         Display.updateLives(lives);
+
+        // Damage feedback effects
+        if (typeof Effects !== 'undefined') {
+            Effects.screenFlash('damage');
+            Effects.cameraShake(amount >= 3 ? 2 : 1);
+        }
 
         // Low lives warning toast + tension music
         if (lives > 0 && lives <= 5) {

@@ -275,3 +275,90 @@
     0%, 100% { filter: hue-rotate(0deg) brightness(1.2); }
     50% { filter: hue-rotate(15deg) brightness(1.5); }
 }
+
+// ===========================================
+// P0 GAME FEEL KEYFRAMES
+// ===========================================
+
+// Damage number float-up-and-fade
+@keyframes damage-number-float {
+    0% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(0.8);
+    }
+    20% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-8px) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-35px) scale(0.9);
+    }
+}
+
+// Death burst particle outward
+@keyframes death-burst-fly {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--burst-x, 20px), var(--burst-y, -20px)) scale(0.3);
+    }
+}
+
+// Camera shake — light
+@keyframes shake-light {
+    0%, 100% { transform: translate(0, 0); }
+    15% { transform: translate(-2px, 1px); }
+    30% { transform: translate(2px, -1px); }
+    45% { transform: translate(-1px, 2px); }
+    60% { transform: translate(1px, -1px); }
+    75% { transform: translate(-1px, 0); }
+}
+
+// Camera shake — heavy
+@keyframes shake-heavy {
+    0%, 100% { transform: translate(0, 0); }
+    10% { transform: translate(-4px, 2px); }
+    20% { transform: translate(4px, -3px); }
+    30% { transform: translate(-3px, 4px); }
+    40% { transform: translate(3px, -2px); }
+    50% { transform: translate(-2px, 3px); }
+    60% { transform: translate(2px, -2px); }
+    70% { transform: translate(-1px, 1px); }
+    80% { transform: translate(1px, -1px); }
+}
+
+// Tower per-type firing animations
+@keyframes arrow-turret-recoil {
+    0% { transform: translateX(-50%) translateY(0); }
+    30% { transform: translateX(-50%) translateY(3px); }
+    100% { transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes cannon-barrel-kickback {
+    0% { transform: translateX(-50%) translateY(0); }
+    20% { transform: translateX(-50%) translateY(6px) scaleY(0.92); }
+    100% { transform: translateX(-50%) translateY(0) scaleY(1); }
+}
+
+@keyframes ice-crystal-pulse {
+    0% { filter: brightness(1) drop-shadow(2px 0 0 @color-black) drop-shadow(-2px 0 0 @color-black) drop-shadow(0 2px 0 @color-black) drop-shadow(0 -2px 0 @color-black); }
+    30% { filter: brightness(1.6) drop-shadow(2px 0 0 @color-black) drop-shadow(-2px 0 0 @color-black) drop-shadow(0 2px 0 @color-black) drop-shadow(0 -2px 0 @color-black) drop-shadow(0 0 8px @color-tower-ice); }
+    100% { filter: brightness(1) drop-shadow(2px 0 0 @color-black) drop-shadow(-2px 0 0 @color-black) drop-shadow(0 2px 0 @color-black) drop-shadow(0 -2px 0 @color-black); }
+}
+
+@keyframes magic-orb-flare {
+    0% { transform: translateX(-50%) scale(1); box-shadow: 4px 4px 0 @color-black, 0 0 8px fade(@color-tower-magic-glow, 50%); }
+    30% { transform: translateX(-50%) scale(1.3); box-shadow: 4px 4px 0 @color-black, 0 0 20px @color-tower-magic-glow, 0 0 40px fade(@color-tower-magic-glow, 40%); }
+    100% { transform: translateX(-50%) scale(1); box-shadow: 4px 4px 0 @color-black, 0 0 8px fade(@color-tower-magic-glow, 50%); }
+}
+
+@keyframes tesla-coil-discharge {
+    0% { transform: translateX(-50%) scale(1); opacity: 0.8; box-shadow: 0 0 10px @color-tower-tesla; }
+    20% { transform: translateX(-50%) scale(1.4); opacity: 1; box-shadow: 0 0 25px @color-tower-tesla, 0 0 50px fade(@color-tower-tesla, 50%); }
+    100% { transform: translateX(-50%) scale(1); opacity: 0.8; box-shadow: 0 0 10px @color-tower-tesla; }
+}
+

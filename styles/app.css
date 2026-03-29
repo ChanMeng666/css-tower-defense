@@ -67,6 +67,145 @@
     filter: hue-rotate(15deg) brightness(1.5);
   }
 }
+@keyframes damage-number-float {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(0.8);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-8px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-35px) scale(0.9);
+  }
+}
+@keyframes death-burst-fly {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--burst-x, 20px), var(--burst-y, -20px)) scale(0.3);
+  }
+}
+@keyframes shake-light {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  15% {
+    transform: translate(-2px, 1px);
+  }
+  30% {
+    transform: translate(2px, -1px);
+  }
+  45% {
+    transform: translate(-1px, 2px);
+  }
+  60% {
+    transform: translate(1px, -1px);
+  }
+  75% {
+    transform: translate(-1px, 0);
+  }
+}
+@keyframes shake-heavy {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-4px, 2px);
+  }
+  20% {
+    transform: translate(4px, -3px);
+  }
+  30% {
+    transform: translate(-3px, 4px);
+  }
+  40% {
+    transform: translate(3px, -2px);
+  }
+  50% {
+    transform: translate(-2px, 3px);
+  }
+  60% {
+    transform: translate(2px, -2px);
+  }
+  70% {
+    transform: translate(-1px, 1px);
+  }
+  80% {
+    transform: translate(1px, -1px);
+  }
+}
+@keyframes arrow-turret-recoil {
+  0% {
+    transform: translateX(-50%) translateY(0);
+  }
+  30% {
+    transform: translateX(-50%) translateY(3px);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+@keyframes cannon-barrel-kickback {
+  0% {
+    transform: translateX(-50%) translateY(0);
+  }
+  20% {
+    transform: translateX(-50%) translateY(6px) scaleY(0.92);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) scaleY(1);
+  }
+}
+@keyframes ice-crystal-pulse {
+  0% {
+    filter: brightness(1) drop-shadow(2px 0 0 #1A1614) drop-shadow(-2px 0 0 #1A1614) drop-shadow(0 2px 0 #1A1614) drop-shadow(0 -2px 0 #1A1614);
+  }
+  30% {
+    filter: brightness(1.6) drop-shadow(2px 0 0 #1A1614) drop-shadow(-2px 0 0 #1A1614) drop-shadow(0 2px 0 #1A1614) drop-shadow(0 -2px 0 #1A1614) drop-shadow(0 0 8px #1E90FF);
+  }
+  100% {
+    filter: brightness(1) drop-shadow(2px 0 0 #1A1614) drop-shadow(-2px 0 0 #1A1614) drop-shadow(0 2px 0 #1A1614) drop-shadow(0 -2px 0 #1A1614);
+  }
+}
+@keyframes magic-orb-flare {
+  0% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 4px 4px 0 #1A1614, 0 0 8px rgba(155, 123, 184, 0.5);
+  }
+  30% {
+    transform: translateX(-50%) scale(1.3);
+    box-shadow: 4px 4px 0 #1A1614, 0 0 20px #9B7BB8, 0 0 40px rgba(155, 123, 184, 0.4);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 4px 4px 0 #1A1614, 0 0 8px rgba(155, 123, 184, 0.5);
+  }
+}
+@keyframes tesla-coil-discharge {
+  0% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.8;
+    box-shadow: 0 0 10px #708090;
+  }
+  20% {
+    transform: translateX(-50%) scale(1.4);
+    opacity: 1;
+    box-shadow: 0 0 25px #708090, 0 0 50px rgba(112, 128, 144, 0.5);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.8;
+    box-shadow: 0 0 10px #708090;
+  }
+}
 .loading-screen {
   position: fixed;
   top: 0;
@@ -2917,6 +3056,21 @@ body.blood-moon .sky-cycle {
 .tower.firing {
   animation: tower-recoil 0.15s ease-out;
 }
+.tower.tower-arrow.firing .tower-turret {
+  animation: arrow-turret-recoil 0.15s ease-out;
+}
+.tower.tower-cannon.firing .tower-barrel {
+  animation: cannon-barrel-kickback 0.2s ease-out;
+}
+.tower.tower-ice.firing .tower-crystal {
+  animation: ice-crystal-pulse 0.25s ease-out;
+}
+.tower.tower-magic.firing .tower-orb {
+  animation: magic-orb-flare 0.25s ease-out;
+}
+.tower.tower-tesla.firing .tower-spark {
+  animation: tesla-coil-discharge 0.15s ease-out;
+}
 @keyframes tower-targeting {
   0% {
     transform: translate(-50%, -100%) rotateX(-45deg) scale(1);
@@ -5762,6 +5916,64 @@ body.blood-moon .sky-cycle {
     opacity: 0.7;
   }
 }
+.damage-number {
+  position: absolute;
+  pointer-events: none;
+  z-index: 50;
+  font-family: 'Bangers', 'Impact', cursive;
+  font-size: 1rem;
+  color: #FFF8F0;
+  -webkit-text-stroke: 2px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
+  animation: damage-number-float 0.8s ease-out forwards;
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+.damage-number.dmg-boss {
+  font-size: 1.4rem;
+  color: #E8635A;
+  -webkit-text-stroke: 2px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
+}
+.damage-number.dmg-crit {
+  font-size: 1.4rem;
+  color: #F2D864;
+  -webkit-text-stroke: 2px #1A1614;
+  text-shadow: 1px 1px 0 #1A1614, -1px -1px 0 #1A1614, 1px -1px 0 #1A1614, -1px 1px 0 #1A1614;
+}
+.death-burst {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 40;
+  background: #FFF8F0;
+  animation: death-burst-fly 0.6s ease-out forwards;
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+.death-burst.burst-slime {
+  background: #C8E8C8;
+}
+.death-burst.burst-goblin {
+  background: #A8D8F0;
+}
+.death-burst.burst-knight {
+  background: #8B4513;
+}
+.death-burst.burst-boss,
+.death-burst.burst-taniwha {
+  background: #1A5276;
+}
+.shake-light {
+  animation: shake-light 0.25s ease-out !important;
+}
+.shake-heavy {
+  animation: shake-heavy 0.4s ease-out !important;
+}
 .performance-medium .ice-particles::before,
 .performance-medium .magic-energy::before,
 .performance-medium .flame-particles::before,
@@ -5792,6 +6004,10 @@ body.blood-moon .sky-cycle {
 }
 .performance-medium .enemy-giant .enemy-body::after {
   animation: none !important;
+}
+.performance-low .damage-number,
+.performance-low .death-burst {
+  display: none !important;
 }
 .performance-low .aurora-sky,
 .performance-low .aurora-particles,
@@ -5862,6 +6078,15 @@ body.blood-moon .sky-cycle {
   background-image: none !important;
 }
 @media (prefers-reduced-motion: reduce) {
+  .damage-number,
+  .death-burst {
+    animation: none !important;
+    display: none !important;
+  }
+  .shake-light,
+  .shake-heavy {
+    animation: none !important;
+  }
   .aurora-sky,
   .aurora-particles,
   .boss-entrance-overlay,

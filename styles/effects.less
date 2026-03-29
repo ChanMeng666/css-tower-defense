@@ -313,6 +313,69 @@
 }
 
 // ===========================================
+// DAMAGE NUMBER POPUPS
+// ===========================================
+
+.damage-number {
+    position: absolute;
+    pointer-events: none;
+    z-index: 50;
+    font-family: @font-title;
+    font-size: 1rem;
+    color: @color-white;
+    .text-outline(@color-black, 2px);
+    animation: damage-number-float 0.8s ease-out forwards;
+    .gpu-accelerate();
+
+    &.dmg-boss {
+        font-size: 1.4rem;
+        color: @color-danger;
+        .text-outline(@color-black, 2px);
+    }
+
+    &.dmg-crit {
+        font-size: 1.4rem;
+        color: @color-yellow;
+        .text-outline(@color-black, 2px);
+    }
+}
+
+// ===========================================
+// DEATH BURST PARTICLES
+// ===========================================
+
+.death-burst {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 40;
+    background: @color-white;
+    animation: death-burst-fly 0.6s ease-out forwards;
+    .gpu-accelerate();
+
+    // Enemy type colors
+    &.burst-slime { background: @color-enemy-slime; }
+    &.burst-goblin { background: @color-enemy-goblin; }
+    &.burst-knight { background: @color-enemy-knight; }
+    &.burst-boss,
+    &.burst-taniwha { background: @color-enemy-boss; }
+}
+
+// ===========================================
+// CAMERA SHAKE
+// ===========================================
+
+.shake-light {
+    animation: shake-light 0.25s ease-out !important;
+}
+
+.shake-heavy {
+    animation: shake-heavy 0.4s ease-out !important;
+}
+
+// ===========================================
 // PERFORMANCE & ACCESSIBILITY
 // ===========================================
 
@@ -347,6 +410,11 @@
 
 // Low performance mode — keep only colors and basic shapes
 .performance-low {
+    .damage-number,
+    .death-burst {
+        display: none !important;
+    }
+
     .aurora-sky,
     .aurora-particles,
     .palette-aura,
@@ -429,6 +497,17 @@
 
 // Respect user motion preferences
 @media (prefers-reduced-motion: reduce) {
+    .damage-number,
+    .death-burst {
+        animation: none !important;
+        display: none !important;
+    }
+
+    .shake-light,
+    .shake-heavy {
+        animation: none !important;
+    }
+
     // Disable all complex animations
     .aurora-sky,
     .aurora-particles,

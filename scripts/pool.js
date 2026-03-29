@@ -30,6 +30,11 @@ var Pool = (function() {
             initialSize: 100,
             maxSize: 200,
             createElement: createParticleElement
+        },
+        damageNumber: {
+            initialSize: 30,
+            maxSize: 60,
+            createElement: createDamageNumberElement
         }
     };
 
@@ -174,8 +179,9 @@ var Pool = (function() {
         }
 
         // Clear innerHTML for types that need it
-        if (type === 'impact' || type === 'particle') {
+        if (type === 'impact' || type === 'particle' || type === 'damageNumber') {
             element.innerHTML = '';
+            element.textContent = '';
         }
 
         // Remove custom data attributes (except pool ones)
@@ -198,6 +204,7 @@ var Pool = (function() {
             case 'projectile': return 'projectile';
             case 'impact': return 'impact';
             case 'particle': return 'death-particles';
+            case 'damageNumber': return 'damage-number';
             default: return '';
         }
     }
@@ -235,6 +242,15 @@ var Pool = (function() {
     function createParticleElement() {
         var el = document.createElement('div');
         el.className = 'death-particles';
+        return el;
+    }
+
+    /**
+     * Create base damage number element
+     */
+    function createDamageNumberElement() {
+        var el = document.createElement('div');
+        el.className = 'damage-number';
         return el;
     }
 

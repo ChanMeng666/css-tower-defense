@@ -45,6 +45,29 @@
     &.firing {
         animation: tower-recoil 0.15s ease-out;
     }
+
+    // Per-type firing animations
+    &.tower-arrow.firing .tower-turret {
+        animation: arrow-turret-recoil 0.15s ease-out;
+    }
+
+    &.tower-cannon.firing .tower-barrel {
+        animation: cannon-barrel-kickback 0.2s ease-out;
+    }
+
+    &.tower-ice.firing .tower-crystal {
+        animation: ice-crystal-pulse 0.25s ease-out;
+    }
+
+    &.tower-magic.firing .tower-orb {
+        animation: magic-orb-flare 0.25s ease-out;
+    }
+
+    &.tower-tesla.firing .tower-spark {
+        animation: tesla-coil-discharge 0.15s ease-out;
+    }
+
+    // Flame nozzle burst is already handled via &.firing .tower-nozzle::after
 }
 
 // Base keyframes

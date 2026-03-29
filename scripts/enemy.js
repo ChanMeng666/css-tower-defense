@@ -912,13 +912,22 @@ var Enemy = (function() {
         var particles = document.createElement('div');
         particles.className = 'death-particles ' + this.type;
         this.element.appendChild(particles);
-        
+
         // Remove particles after animation
         setTimeout(function() {
             if (particles.parentNode) {
                 particles.parentNode.removeChild(particles);
             }
         }, 500);
+
+        // Enhanced directional death burst via Effects
+        if (typeof Effects !== 'undefined' && Effects.createDeathBurst) {
+            var mapWidth = Path.GRID_COLS * Path.CELL_SIZE;
+            var mapHeight = Path.GRID_ROWS * Path.CELL_SIZE;
+            var localX = this.x + (mapWidth / 2);
+            var localY = this.y + (mapHeight / 2);
+            Effects.createDeathBurst(localX, localY, this.type);
+        }
     };
     
     /**

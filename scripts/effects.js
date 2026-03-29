@@ -328,6 +328,131 @@ var Effects = (function() {
     }
 
     /**
+     * Show floating damage number at a position
+     * @param {number} x - Map-local X position
+     * @param {number} y - Map-local Y position
+     * @param {number} amount - Damage amount to display
+     * @param {string} type - 'normal', 'boss', or 'crit'
+     */
+    function showDamageNumber(x, y, amount, type) {
+        if (!shouldShowEffects()) return;
+
+        var mapEl = document.getElementById('map');
+        if (!mapEl) return;
+
+        type = type || 'normal';
+
+        var el;
+        if (typeof Pool !== 'undefined') {
+            el = Pool.acquire('damageNumber', 'dmg-' + type);
+        } else {
+            el = document.createElement('div');
+            el.className = 'damage-number dmg-' + type;
+        }
+
+        el.textContent = Math.round(amount);
+
+        // Small random horizontal offset to prevent stacking
+        var offsetX = (Math.random() - 0.5) * 20;
+        el.style.left = (x + offsetX) + 'px';
+        el.style.top = y + 'px';
+
+        mapEl.appendChild(el);
+
+        // Remove after animation
+        setTimeout(function() {
+            if (typeof Pool !== 'undefined' && el.dataset.poolType) {
+                Pool.release(el);
+            } else if (el.parentNode) {
+                el.parentNode.removeChild(el);
+            }
+        }, 800);
+    }
+
+    /**
+     * Create directional death burst particles
+     * @param {number} x - Map-local X position
+     * @param {number} y - Map-local Y position
+     * @param {string} enemyType - Enemy type for color matching
+     * @param {number} count - Number of particles (optional)
+     */
+    function createDeathBurst(x, y, enemyType, count) {
+        if (!shouldShowEffects()) return;
+
+        var mapEl = document.getElementById('map');
+        if (!mapEl) return;
+
+        // Determine particle count based on performance and enemy type
+        if (!count) {
+            if (enemyType === 'boss' || enemyType === 'taniwha') {
+                count = 16;
+            } else {
+                count = 8;
+            }
+        }
+
+        // Reduce on medium performance
+        if (performanceLevel === PERFORMANCE_LEVELS.MEDIUM) {
+            count = Math.max(2, Math.floor(count / 2));
+        }
+
+        for (var i = 0; i < count; i++) {
+            var particle;
+            if (typeof Pool !== 'undefined') {
+                particle = Pool.acquire('particle', 'death-burst burst-' + enemyType);
+            } else {
+                particle = document.createElement('div');
+                particle.className = 'death-particles death-burst burst-' + enemyType;
+            }
+
+            // Calculate direction for this particle (evenly distributed + some randomness)
+            var angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+            var distance = 20 + Math.random() * 30;
+            var burstX = Math.cos(angle) * distance;
+            var burstY = Math.sin(angle) * distance;
+
+            particle.style.cssText = '';
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            particle.style.setProperty('--burst-x', burstX + 'px');
+            particle.style.setProperty('--burst-y', burstY + 'px');
+
+            mapEl.appendChild(particle);
+
+            // Remove after animation
+            (function(p) {
+                setTimeout(function() {
+                    if (typeof Pool !== 'undefined' && p.dataset.poolType) {
+                        Pool.release(p);
+                    } else if (p.parentNode) {
+                        p.parentNode.removeChild(p);
+                    }
+                }, 600);
+            })(particle);
+        }
+    }
+
+    /**
+     * Camera shake effect on the outer game container
+     * @param {number} intensity - Shake intensity (1-3)
+     */
+    function cameraShake(intensity) {
+        if (!shouldShowEffects()) return;
+
+        var gameArea = document.getElementById('gameArea') || document.body;
+        intensity = intensity || 1;
+
+        var shakeClass = intensity >= 2 ? 'shake-heavy' : 'shake-light';
+        var duration = intensity >= 2 ? 400 : 250;
+
+        gameArea.classList.add(shakeClass);
+
+        setTimeout(function() {
+            gameArea.classList.remove(shakeClass);
+        }, duration);
+    }
+
+    /**
      * Synergy activation flash between two towers
      * @param {object} tower1 - first tower {x, y}
      * @param {object} tower2 - second tower {x, y}
@@ -383,6 +508,9 @@ var Effects = (function() {
         comboMilestone: comboMilestone,
         bossPhaseRedPulse: bossPhaseRedPulse,
         synergyFlash: synergyFlash,
+        showDamageNumber: showDamageNumber,
+        createDeathBurst: createDeathBurst,
+        cameraShake: cameraShake,
         LEVELS: PERFORMANCE_LEVELS
     };
 })();
