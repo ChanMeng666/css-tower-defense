@@ -58,6 +58,9 @@ var Game = (function () {
     var COMBO_TIMEOUT = 1.5; // seconds
     var COMBO_MIN_FOR_BONUS = 3; // Minimum kills for combo bonus
 
+    // Perfect wave tracking
+    var livesAtWaveStart = 0;
+
     // Timing
     var lastFrameTime = 0;
     var gameStartTime = 0;
@@ -374,6 +377,14 @@ var Game = (function () {
             if (typeof emitGameEvent === 'function') {
                 emitGameEvent(EVENTS.COMBO_KILL, { count: comboCount, reward: reward });
             }
+
+            // Boss kill dramatic sequence
+            if (e.detail.type === 'taniwha') {
+                Sfx.play('bossKill');
+                if (typeof Effects !== 'undefined' && Effects.bossKillSequence) {
+                    Effects.bossKillSequence();
+                }
+            }
         });
 
         // Enemy reached end
@@ -387,6 +398,7 @@ var Game = (function () {
         document.addEventListener('waveStarted', function (e) {
             Display.updateWave(e.detail.wave, e.detail.totalWaves);
             Sfx.play('waveStart');
+            livesAtWaveStart = lives;
         });
 
         // Wave complete
@@ -403,6 +415,19 @@ var Game = (function () {
 
             // Wave completion visual effect
             if (typeof Effects !== 'undefined') Effects.triggerWarpEffect();
+
+            // Perfect wave celebration (no damage taken)
+            if (lives >= livesAtWaveStart && livesAtWaveStart > 0) {
+                Display.showAnnouncement('PERFECT!', 'No damage taken!', 3000);
+                Sfx.play('perfectWave');
+                if (typeof Effects !== 'undefined') {
+                    Effects.screenFlash('gold');
+                    Effects.perfectWaveCelebration();
+                }
+                var perfBonus = 25 * e.detail.wave;
+                addGold(perfBonus);
+                Display.showToast('Perfect Wave! +' + perfBonus + ' gold', 'success');
+            }
 
             // Reset music intensity after wave (unless low lives)
             if (lives > 5) {

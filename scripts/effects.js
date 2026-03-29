@@ -492,6 +492,53 @@ var Effects = (function() {
         }, 600);
     }
 
+    /**
+     * Boss kill dramatic sequence - slowmo + zoom + flash
+     */
+    function bossKillSequence() {
+        if (!shouldShowEffects()) return;
+
+        document.body.classList.add('boss-kill-slowmo');
+        var gameArea = document.getElementById('gameArea');
+        if (gameArea) {
+            gameArea.classList.add('boss-kill-zoom');
+        }
+
+        screenFlash('gold');
+
+        setTimeout(function() {
+            document.body.classList.remove('boss-kill-slowmo');
+            if (gameArea) {
+                gameArea.classList.remove('boss-kill-zoom');
+            }
+        }, 1500);
+    }
+
+    /**
+     * Perfect wave celebration - golden confetti particles
+     */
+    function perfectWaveCelebration() {
+        if (!shouldShowComplexEffects()) return;
+
+        for (var i = 0; i < 12; i++) {
+            (function(index) {
+                setTimeout(function() {
+                    var particle = document.createElement('div');
+                    particle.className = 'perfect-particle';
+                    particle.style.left = (Math.random() * 100) + 'vw';
+                    particle.style.top = '0px';
+                    document.body.appendChild(particle);
+
+                    setTimeout(function() {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 1500);
+                }, index * 100);
+            })(i);
+        }
+    }
+
     // Public API
     return {
         init: init,
@@ -511,6 +558,8 @@ var Effects = (function() {
         showDamageNumber: showDamageNumber,
         createDeathBurst: createDeathBurst,
         cameraShake: cameraShake,
+        bossKillSequence: bossKillSequence,
+        perfectWaveCelebration: perfectWaveCelebration,
         LEVELS: PERFORMANCE_LEVELS
     };
 })();

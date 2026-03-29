@@ -6077,6 +6077,47 @@ body.blood-moon .sky-cycle {
 .performance-low .tower-flame.level-3 .tower-tank::before {
   background-image: none !important;
 }
+.performance-low .perfect-particle {
+  display: none !important;
+}
+.boss-kill-slowmo .enemy,
+.boss-kill-slowmo .projectile,
+.boss-kill-slowmo .impact,
+.boss-kill-slowmo .death-particles,
+.boss-kill-slowmo .death-burst {
+  animation-duration: 3s !important;
+}
+.boss-kill-zoom {
+  transition: transform 0.3s ease-out;
+  transform: scale(1.05);
+}
+.perfect-particle {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background: #F2D864;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1001;
+  animation: confetti-fall 1.5s ease-in forwards;
+}
+@keyframes confetti-fall {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100vh) rotate(720deg);
+  }
+}
+.damage-number.dmg-crit {
+  color: #F2D864;
+  font-size: 18px;
+  font-weight: bold;
+  -webkit-text-stroke: 2px #000;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
 @media (prefers-reduced-motion: reduce) {
   .damage-number,
   .death-burst {

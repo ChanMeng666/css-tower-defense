@@ -25,11 +25,12 @@ var Projectile = (function() {
     /**
      * Projectile constructor
      */
-    function ProjectileEntity(tower, target) {
+    function ProjectileEntity(tower, target, isCrit) {
         this.id = ++projectileIdCounter;
         this.tower = tower;
         this.target = target;
         this.type = tower.config.projectileType;
+        this.isCrit = isCrit || false;
         
         // Position
         this.x = tower.x;
@@ -214,8 +215,18 @@ var Projectile = (function() {
                     var mapHeight = Path.GRID_ROWS * Path.CELL_SIZE;
                     var dmgX = this.target.x + (mapWidth / 2);
                     var dmgY = this.target.y + (mapHeight / 2);
-                    var dmgType = (this.target.type === 'boss' || this.target.type === 'taniwha') ? 'boss' : 'normal';
+                    var dmgType = this.isCrit ? 'crit' : (this.target.type === 'boss' || this.target.type === 'taniwha') ? 'boss' : 'normal';
                     Effects.showDamageNumber(dmgX, dmgY, actualDmg, dmgType);
+                }
+
+                // Critical hit effects
+                if (this.isCrit) {
+                    if (typeof Effects !== 'undefined' && Effects.screenFlash) {
+                        Effects.screenFlash('gold');
+                    }
+                    if (typeof Sfx !== 'undefined' && Sfx.play) {
+                        Sfx.play('critHit');
+                    }
                 }
 
                 // Apply slow effect
@@ -585,8 +596,8 @@ var Projectile = (function() {
     /**
      * Spawn a new projectile
      */
-    function spawn(tower, target) {
-        var projectile = new ProjectileEntity(tower, target);
+    function spawn(tower, target, isCrit) {
+        var projectile = new ProjectileEntity(tower, target, isCrit);
         projectiles.push(projectile);
         return projectile;
     }

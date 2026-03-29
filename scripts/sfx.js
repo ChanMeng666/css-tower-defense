@@ -406,6 +406,23 @@ var Sfx = (function() {
             weatherChange: { layers: [
                 { type: 'noise', duration: 0.3, filter: 1500, gain: 0.08 },
                 { type: 'sine', freq: 300, duration: 0.4, slide: 250, gain: 0.06, reverb: 0.4 }
+            ]},
+            critHit: { layers: [
+                { type: 'sine', freq: 1200, duration: 0.1, slide: 1800, gain: 0.2 },
+                { type: 'noise', duration: 0.05, filter: 8000, gain: 0.12 },
+                { type: 'sine', freq: 2400, duration: 0.08, gain: 0.08, delay: 0.03 }
+            ]},
+            bossKill: { layers: [
+                { type: 'sine', freq: 440, duration: 0.2, gain: 0.25 },
+                { type: 'sine', freq: 660, duration: 0.2, gain: 0.2, delay: 0.15 },
+                { type: 'sine', freq: 880, duration: 0.3, gain: 0.2, delay: 0.3 },
+                { type: 'sine', freq: 1320, duration: 0.4, gain: 0.15, delay: 0.45, reverb: 0.5 }
+            ]},
+            perfectWave: { layers: [
+                { type: 'sine', freq: 523, duration: 0.15, gain: 0.2 },
+                { type: 'sine', freq: 659, duration: 0.15, gain: 0.2, delay: 0.1 },
+                { type: 'sine', freq: 784, duration: 0.15, gain: 0.2, delay: 0.2 },
+                { type: 'sine', freq: 1047, duration: 0.3, gain: 0.15, delay: 0.3, reverb: 0.3 }
             ]}
         };
     }

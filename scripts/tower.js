@@ -545,8 +545,18 @@ var Tower = (function () {
         }
         this.damage = Math.floor(baseDamage * envDamage);
 
+        // Roll for critical hit
+        var critChance = 0.10;
+        if (typeof Progression !== 'undefined' && Progression.getCritChance) {
+            critChance += Progression.getCritChance();
+        }
+        var isCrit = Math.random() < critChance;
+        if (isCrit) {
+            this.damage = Math.floor(this.damage * 1.5);
+        }
+
         // Create projectile
-        Projectile.spawn(this, this.target);
+        Projectile.spawn(this, this.target, isCrit);
 
         // Restore base damage after projectile captures it
         this.damage = baseDamage;

@@ -493,6 +493,61 @@
     .tower-flame.level-3 .tower-tank::before {
         background-image: none !important;
     }
+
+    .perfect-particle {
+        display: none !important;
+    }
+}
+
+// ===========================================
+// BOSS KILL DRAMATIC SEQUENCE
+// ===========================================
+.boss-kill-slowmo .enemy,
+.boss-kill-slowmo .projectile,
+.boss-kill-slowmo .impact,
+.boss-kill-slowmo .death-particles,
+.boss-kill-slowmo .death-burst {
+    animation-duration: 3s !important;
+}
+
+.boss-kill-zoom {
+    transition: transform 0.3s ease-out;
+    transform: scale(1.05);
+}
+
+// ===========================================
+// PERFECT WAVE CELEBRATION
+// ===========================================
+.perfect-particle {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: @color-yellow;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1001;
+    animation: confetti-fall 1.5s ease-in forwards;
+}
+
+@keyframes confetti-fall {
+    0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(100vh) rotate(720deg);
+    }
+}
+
+// ===========================================
+// CRITICAL HIT DAMAGE NUMBER
+// ===========================================
+.damage-number.dmg-crit {
+    color: @color-yellow;
+    font-size: 18px;
+    font-weight: bold;
+    .text-outline(#000, 2px);
 }
 
 // Respect user motion preferences
