@@ -1,4 +1,5 @@
 name = "css-tower-defense"
+account_id = "c87dca24333f7ed5d643f731f6308fec"
 main = "src/index.ts"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
