@@ -53,10 +53,13 @@ var API = (function() {
 
     // ── Leaderboard ──
 
-    function getLeaderboard(difficulty, limit, offset) {
+    function getLeaderboard(difficulty, limit, offset, period) {
         var params = '?difficulty=' + (difficulty || 'normal') +
                      '&limit=' + (limit || 50) +
                      '&offset=' + (offset || 0);
+        if (period && period !== 'all') {
+            params += '&period=' + period;
+        }
         return request('/leaderboard' + params);
     }
 

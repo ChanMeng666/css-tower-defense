@@ -1114,7 +1114,13 @@ body.blood-moon {
 
     &.show {
         right: 20px;
+        animation: achievement-glow 1s ease-in-out 0.5s;
     }
+}
+
+@keyframes achievement-glow {
+    0%, 100% { box-shadow: 4px 4px 0 #1A1614; }
+    50% { box-shadow: 4px 4px 0 #1A1614, 0 0 20px rgba(242, 216, 100, 0.6); }
 }
 
 .achievement-icon {
@@ -1273,6 +1279,36 @@ body.blood-moon {
 // ===========================================
 // Achievement Gallery
 // ===========================================
+.ach-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    justify-content: center;
+}
+
+.ach-tab {
+    background: rgba(26,22,20,0.6);
+    color: #FFF8F0;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-family: @font-comic;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+
+    &:hover {
+        border-color: @color-yellow;
+    }
+
+    &.active {
+        background: @color-yellow;
+        color: @color-dark;
+        border-color: @color-yellow;
+        font-weight: bold;
+    }
+}
+
 .ach-content {
     max-width: 600px;
     max-height: 85vh;

@@ -37,13 +37,22 @@ leaderboardRoutes.get('/', async (c) => {
   const difficulty = c.req.query('difficulty') || 'normal';
   const limit = Math.min(parseInt(c.req.query('limit') || '50'), 100);
   const offset = parseInt(c.req.query('offset') || '0');
+  const period = c.req.query('period'); // 'weekly' | 'monthly' | undefined
 
   const db = getDb(c.env.DATABASE_URL);
+
+  // Build where conditions
+  const conditions = [eq(leaderboardEntries.difficulty, difficulty)];
+  if (period === 'weekly') {
+    conditions.push(sql`${leaderboardEntries.createdAt} > NOW() - INTERVAL '7 days'`);
+  } else if (period === 'monthly') {
+    conditions.push(sql`${leaderboardEntries.createdAt} > NOW() - INTERVAL '30 days'`);
+  }
 
   const entries = await db
     .select()
     .from(leaderboardEntries)
-    .where(eq(leaderboardEntries.difficulty, difficulty))
+    .where(and(...conditions))
     .orderBy(desc(leaderboardEntries.score))
     .limit(limit)
     .offset(offset);

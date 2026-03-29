@@ -27,77 +27,110 @@ var Achievements = (function() {
             description: 'Defeat your first enemy',
             reward: 10,
             icon: 'achievement-icon-blood',
-            unlocked: false
+            unlocked: false,
+            category: 'combat'
         },
         wave_5: {
             name: 'Toa Tawhito',  // Experienced Warrior
             description: 'Reach wave 5',
             reward: 25,
             icon: 'achievement-icon-medal',
-            unlocked: false
+            unlocked: false,
+            category: 'progression'
         },
         survivor: {
             name: 'Kaitiaki',  // Guardian
             description: 'Complete all 10 waves',
             reward: 100,
             icon: 'achievement-icon-trophy',
-            unlocked: false
+            unlocked: false,
+            category: 'progression'
         },
         perfect_wave: {
             name: 'Tino Pai',  // Very Good/Perfect
             description: 'Complete a wave without taking damage',
             reward: 50,
             icon: 'achievement-icon-star',
-            unlocked: false
+            unlocked: false,
+            category: 'challenge'
         },
         combo_5: {
             name: 'Kaiwhakatū',  // Combo Master
             description: 'Achieve a 5x combo',
             reward: 30,
             icon: 'achievement-icon-fire',
-            unlocked: false
+            unlocked: false,
+            category: 'combat'
         },
         combo_10: {
             name: 'Kaiwero Nui',  // Great Striker
             description: 'Achieve a 10x combo',
             reward: 75,
             icon: 'achievement-icon-explosion',
-            unlocked: false
+            unlocked: false,
+            category: 'combat'
         },
         taniwha_slayer: {
             name: 'Taniwha Slayer',
             description: 'Defeat the Taniwha',
             reward: 50,
             icon: 'achievement-icon-crown',
-            unlocked: false
+            unlocked: false,
+            category: 'combat'
         },
         pā_master: {
             name: 'Rangatira Pā',  // Pā Master
             description: 'Place 10 defenders in one game',
             reward: 25,
             icon: 'achievement-icon-castle',
-            unlocked: false
+            unlocked: false,
+            category: 'progression'
         },
         reforger: {
             name: 'Mahi Whakahou',  // Lucky Reforge
             description: 'Get a Legendary prefix',
             reward: 50,
             icon: 'achievement-icon-sparkle',
-            unlocked: false
+            unlocked: false,
+            category: 'progression'
         },
         rich: {
             name: 'Rangatira Koura',  // Gold Chief
             description: 'Have 500 gold at once',
             reward: 25,
             icon: 'achievement-icon-gold',
-            unlocked: false
-        }
+            unlocked: false,
+            category: 'progression'
+        },
+        // --- New achievements ---
+        // Combat category
+        combo_20: { name: 'Toa Whakamana', description: 'Achieve a 20x combo', reward: 100, icon: 'achievement-icon-fire', unlocked: false, category: 'combat' },
+        speed_clear: { name: 'Te Tere', description: 'Clear a wave in under 30 seconds', reward: 40, icon: 'achievement-icon-star', unlocked: false, category: 'combat' },
+        // Progression category
+        all_towers: { name: 'Te Whānau', description: 'Place all 6 tower types in one game', reward: 50, icon: 'achievement-icon-castle', unlocked: false, category: 'progression' },
+        synergy_master: { name: 'Hononga', description: 'Activate 3 different synergies', reward: 60, icon: 'achievement-icon-sparkle', unlocked: false, category: 'progression' },
+        max_tower: { name: 'Tino Toa', description: 'Upgrade a tower to level 3', reward: 30, icon: 'achievement-icon-star', unlocked: false, category: 'progression' },
+        gold_hoarder: { name: 'Taonga Nui', description: 'Have 1000 gold at once', reward: 50, icon: 'achievement-icon-gold', unlocked: false, category: 'progression' },
+        big_spender: { name: 'Tuku Koura', description: 'Spend 2000 total gold in one game', reward: 40, icon: 'achievement-icon-gold', unlocked: false, category: 'progression' },
+        craft_master: { name: 'Tohunga Auaha', description: 'Craft 5 items in one game', reward: 40, icon: 'achievement-icon-sparkle', unlocked: false, category: 'progression' },
+        // Challenge category
+        zero_leak_5: { name: 'Kaitiaki Toa', description: 'Complete 5 waves without taking damage', reward: 75, icon: 'achievement-icon-trophy', unlocked: false, category: 'challenge' },
+        endless_5: { name: 'Kaitiaki Mutunga', description: 'Survive 5 endless waves', reward: 75, icon: 'achievement-icon-trophy', unlocked: false, category: 'challenge' },
+        challenge_win: { name: 'Wero Toa', description: 'Complete a daily challenge', reward: 50, icon: 'achievement-icon-medal', unlocked: false, category: 'challenge' },
+        blood_moon_survive: { name: 'Marama Toto', description: 'Survive a Blood Moon wave', reward: 60, icon: 'achievement-icon-blood', unlocked: false, category: 'challenge' }
     };
 
     // Tracking variables
     var livesAtWaveStart = 0;
     var towersPlaced = 0;
     var killCount = 0;
+    var perfectWaveStreak = 0;
+    var endlessWavesCompleted = 0;
+    var towerTypesUsed = {};
+    var synergiesActivated = {};
+    var totalGoldSpent = 0;
+    var craftCount = 0;
+    var waveStartTime = 0;
 
     /**
      * Initialize the achievement system
@@ -107,6 +140,13 @@ var Achievements = (function() {
         livesAtWaveStart = 0;
         towersPlaced = 0;
         killCount = 0;
+        perfectWaveStreak = 0;
+        endlessWavesCompleted = 0;
+        towerTypesUsed = {};
+        synergiesActivated = {};
+        totalGoldSpent = 0;
+        craftCount = 0;
+        waveStartTime = 0;
 
         // Reset achievements - will load from server when user logs in
         resetAll();
@@ -140,6 +180,9 @@ var Achievements = (function() {
             if (e.detail.count >= 10) {
                 unlock('combo_10');
             }
+            if (e.detail.count >= 20) {
+                unlock('combo_20');
+            }
         });
 
         // Wave tracking
@@ -148,6 +191,7 @@ var Achievements = (function() {
             if (typeof Game !== 'undefined' && Game.getLives) {
                 livesAtWaveStart = Game.getLives();
             }
+            waveStartTime = Date.now();
         });
 
         document.addEventListener('waveComplete', function(e) {
@@ -157,13 +201,42 @@ var Achievements = (function() {
             }
 
             // Perfect wave - no damage taken
-            if (typeof Game !== 'undefined' && Game.getLives && Game.getLives() >= livesAtWaveStart && livesAtWaveStart > 0) {
+            var isPerfect = typeof Game !== 'undefined' && Game.getLives && Game.getLives() >= livesAtWaveStart && livesAtWaveStart > 0;
+            if (isPerfect) {
                 unlock('perfect_wave');
+                perfectWaveStreak++;
+                if (perfectWaveStreak >= 5) {
+                    unlock('zero_leak_5');
+                }
+            } else {
+                perfectWaveStreak = 0;
+            }
+
+            // Speed clear check
+            if (waveStartTime > 0 && (Date.now() - waveStartTime < 30000)) {
+                unlock('speed_clear');
+            }
+
+            // Endless wave tracking
+            if (e.detail.wave > 10) {
+                endlessWavesCompleted++;
+                if (endlessWavesCompleted >= 5) {
+                    unlock('endless_5');
+                }
+            }
+
+            // Blood moon survive check
+            if (typeof Weather !== 'undefined' && Weather.isBloodMoon && Weather.isBloodMoon()) {
+                unlock('blood_moon_survive');
             }
 
             // Survivor achievement
             if (e.detail.isLastWave) {
                 unlock('survivor');
+                // Challenge win check
+                if (typeof Challenge !== 'undefined' && Challenge.isActive && Challenge.isActive()) {
+                    unlock('challenge_win');
+                }
             }
         });
 
@@ -172,6 +245,37 @@ var Achievements = (function() {
             towersPlaced++;
             if (towersPlaced >= 10) {
                 unlock('pā_master');
+            }
+            // Track tower types for all_towers achievement
+            if (e.detail && e.detail.type) {
+                towerTypesUsed[e.detail.type] = true;
+                if (Object.keys(towerTypesUsed).length >= 6) {
+                    unlock('all_towers');
+                }
+            }
+        });
+
+        // Tower upgraded tracking
+        document.addEventListener('towerUpgraded', function(e) {
+            if (e.detail && e.detail.level >= 3) {
+                unlock('max_tower');
+            }
+        });
+
+        // Synergy activation tracking
+        document.addEventListener('synergyActivated', function(e) {
+            if (e.detail && e.detail.synergy) {
+                synergiesActivated[e.detail.synergy] = true;
+                if (Object.keys(synergiesActivated).length >= 3) {
+                    unlock('synergy_master');
+                }
+            }
+        });
+
+        // Victory with challenge check
+        document.addEventListener('gameVictory', function() {
+            if (typeof Challenge !== 'undefined' && Challenge.isActive && Challenge.isActive()) {
+                unlock('challenge_win');
             }
         });
     }
@@ -182,6 +286,29 @@ var Achievements = (function() {
     function checkGoldAchievements(gold) {
         if (gold >= 500) {
             unlock('rich');
+        }
+        if (gold >= 1000) {
+            unlock('gold_hoarder');
+        }
+    }
+
+    /**
+     * Track gold spent for big_spender achievement
+     */
+    function checkGoldSpent(amount) {
+        totalGoldSpent += amount;
+        if (totalGoldSpent >= 2000) {
+            unlock('big_spender');
+        }
+    }
+
+    /**
+     * Track crafting for craft_master achievement
+     */
+    function checkCraftCount() {
+        craftCount++;
+        if (craftCount >= 5) {
+            unlock('craft_master');
         }
     }
 
@@ -238,6 +365,11 @@ var Achievements = (function() {
             '</div>';
 
         document.body.appendChild(notification);
+
+        // Screen flash celebration
+        if (typeof Effects !== 'undefined' && Effects.screenFlash) {
+            Effects.screenFlash('gold');
+        }
 
         // Trigger animation
         setTimeout(function() {
@@ -316,6 +448,8 @@ var Achievements = (function() {
         init: init,
         unlock: unlock,
         checkGoldAchievements: checkGoldAchievements,
+        checkGoldSpent: checkGoldSpent,
+        checkCraftCount: checkCraftCount,
         checkReforgeAchievement: checkReforgeAchievement,
         getAll: getAll,
         getUnlockedCount: getUnlockedCount,

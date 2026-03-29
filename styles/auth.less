@@ -330,9 +330,11 @@
         border-bottom: none;
     }
 
-    &.my-row {
+    &.my-row,
+    &.leaderboard-row-self {
         background: rgba(45, 138, 138, 0.2);
         font-weight: bold;
+        border-left: 3px solid @color-cyan;
     }
 }
 
@@ -382,6 +384,38 @@
     &:hover:not(.selected) {
         border-color: @color-cyan;
         color: @color-white;
+    }
+}
+
+// ── Leaderboard Period Tabs ──
+.lb-period-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+    justify-content: center;
+}
+
+.lb-period-tab {
+    font-family: @font-comic;
+    font-size: 0.8rem;
+    padding: 3px 10px;
+    background: rgba(26,22,20,0.6);
+    color: #888;
+    border: 1px solid #444;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        border-color: @color-yellow;
+        color: @color-white;
+    }
+
+    &.active {
+        background: @color-yellow;
+        color: @color-dark;
+        border-color: @color-yellow;
+        font-weight: bold;
     }
 }
 

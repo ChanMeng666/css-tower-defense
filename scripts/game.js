@@ -76,6 +76,9 @@ var Game = (function () {
     var totalDamageDealt = 0;
     var totalShotsFired = 0;
     var totalShotsHit = 0;
+    var longestCombo = 0;
+    var towerTypeCounts = {};
+    var totalGoldSpentStat = 0;
     var dashboardUpdateTimer = 0;
     var DASHBOARD_UPDATE_INTERVAL = 0.5; // Update every 0.5s
 
@@ -339,6 +342,7 @@ var Game = (function () {
             // Combo system
             comboCount++;
             comboTimer = COMBO_TIMEOUT;
+            longestCombo = Math.max(longestCombo, comboCount);
 
             // Apply combo bonus (10% extra per kill in combo, starting at 3 kills)
             if (comboCount >= COMBO_MIN_FOR_BONUS) {
@@ -465,6 +469,9 @@ var Game = (function () {
         // Tower placed
         document.addEventListener('towerPlaced', function (e) {
             totalTowersBuilt++;
+            if (e.detail && e.detail.type) {
+                towerTypeCounts[e.detail.type] = (towerTypeCounts[e.detail.type] || 0) + 1;
+            }
             Sfx.play('place');
         });
 
@@ -587,6 +594,9 @@ var Game = (function () {
         totalDamageDealt = 0;
         totalShotsFired = 0;
         totalShotsHit = 0;
+        longestCombo = 0;
+        towerTypeCounts = {};
+        totalGoldSpentStat = 0;
         dashboardUpdateTimer = 0;
         previousDuration = 0;
         gameStartTime = performance.now();
@@ -786,6 +796,9 @@ var Game = (function () {
         totalEnemiesKilled = 0;
         totalTowersBuilt = 0;
         totalGoldEarned = 0;
+        longestCombo = 0;
+        towerTypeCounts = {};
+        totalGoldSpentStat = 0;
         previousDuration = 0;
         comboCount = 0;
 
@@ -1002,7 +1015,11 @@ var Game = (function () {
     function spendGold(amount) {
         if (gold >= amount) {
             gold -= amount;
+            totalGoldSpentStat += amount;
             Display.updateGold(gold);
+            if (typeof Achievements !== 'undefined' && Achievements.checkGoldSpent) {
+                Achievements.checkGoldSpent(amount);
+            }
             return true;
         }
         return false;
@@ -1370,6 +1387,23 @@ var Game = (function () {
     function getScore() { return score; }
     function getLives() { return lives; }
 
+    /**
+     * Get detailed session stats for the stats panel
+     */
+    function getDetailedStats() {
+        return {
+            longestCombo: longestCombo,
+            towerTypeCounts: towerTypeCounts,
+            totalGoldSpent: totalGoldSpentStat,
+            totalDamageDealt: totalDamageDealt,
+            totalEnemiesKilled: totalEnemiesKilled,
+            totalTowersBuilt: totalTowersBuilt,
+            totalGoldEarned: totalGoldEarned,
+            totalShotsFired: totalShotsFired,
+            totalShotsHit: totalShotsHit
+        };
+    }
+
     // Public API
     return {
         init: init,
@@ -1402,6 +1436,7 @@ var Game = (function () {
         getDifficultyName: getDifficultyName,
         getGameStateForSave: getGameStateForSave,
         loadFromSave: loadFromSave,
+        getDetailedStats: getDetailedStats,
         STATES: STATES,
         DIFFICULTIES: DIFFICULTIES
     };

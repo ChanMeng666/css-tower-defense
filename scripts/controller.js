@@ -934,6 +934,11 @@
                     '<button class="lb-tab" data-diff="expert">Expert</button>' +
                     '<button class="lb-tab" data-diff="challenge">Challenge</button>' +
                 '</div>' +
+                '<div class="lb-period-tabs">' +
+                    '<button class="lb-period-tab active" data-period="all">All Time</button>' +
+                    '<button class="lb-period-tab" data-period="monthly">Monthly</button>' +
+                    '<button class="lb-period-tab" data-period="weekly">Weekly</button>' +
+                '</div>' +
                 '<div class="leaderboard-list lb-full-list" id="lbFullList">' +
                     '<div class="leaderboard-loading">Loading...</div>' +
                 '</div>' +
@@ -946,6 +951,8 @@
             modal.parentNode.removeChild(modal);
         });
 
+        var currentPeriod = 'all';
+
         var tabs = modal.querySelectorAll('.lb-tab');
         tabs.forEach(function(tab) {
             tab.addEventListener('click', function() {
@@ -954,15 +961,29 @@
                 if (tab.dataset.diff === 'challenge') {
                     loadChallengeLeaderboard();
                 } else {
-                    loadLeaderboardData(tab.dataset.diff);
+                    loadLeaderboardData(tab.dataset.diff, currentPeriod);
                 }
             });
         });
 
-        loadLeaderboardData('normal');
+        var periodTabs = modal.querySelectorAll('.lb-period-tab');
+        periodTabs.forEach(function(ptab) {
+            ptab.addEventListener('click', function() {
+                periodTabs.forEach(function(t) { t.classList.remove('active'); });
+                ptab.classList.add('active');
+                currentPeriod = ptab.dataset.period;
+                var activeDiffTab = modal.querySelector('.lb-tab.selected');
+                var diff = activeDiffTab ? activeDiffTab.dataset.diff : 'normal';
+                if (diff !== 'challenge') {
+                    loadLeaderboardData(diff, currentPeriod);
+                }
+            });
+        });
+
+        loadLeaderboardData('normal', 'all');
     }
 
-    function loadLeaderboardData(difficulty) {
+    function loadLeaderboardData(difficulty, period) {
         var listEl = document.getElementById('lbFullList');
         var rankEl = document.getElementById('lbMyRank');
         if (!listEl) return;
@@ -970,7 +991,7 @@
         listEl.innerHTML = '<div class="leaderboard-loading">Loading...</div>';
         if (rankEl) rankEl.innerHTML = '';
 
-        API.getLeaderboard(difficulty, 50, 0)
+        API.getLeaderboard(difficulty, 50, 0, period)
             .then(function(data) {
                 if (!data || !data.entries || data.entries.length === 0) {
                     listEl.innerHTML = '<div class="leaderboard-loading">No scores yet</div>';
@@ -978,9 +999,13 @@
                 }
 
                 listEl.innerHTML = '';
+                var currentUserId = (typeof Auth !== 'undefined' && Auth.getUser && Auth.getUser()) ? Auth.getUser().id : null;
                 data.entries.forEach(function(entry) {
                     var row = document.createElement('div');
                     row.className = 'leaderboard-row';
+                    if (currentUserId && entry.userId === currentUserId) {
+                        row.classList.add('leaderboard-row-self');
+                    }
                     if (entry.userId) {
                         row.style.cursor = 'pointer';
                         row.addEventListener('click', function() {
@@ -1197,6 +1222,19 @@
                         '<div class="stat-card-value">' + s.avgScore + '</div>' +
                     '</div>' +
                 '</div>';
+
+            // Add local session stats if in a game
+            if (typeof Game !== 'undefined' && Game.getDetailedStats) {
+                var ls = Game.getDetailedStats();
+                content.innerHTML +=
+                    '<h3 style="color:#F2D864;font-family:Bangers;margin:15px 0 8px;">Current Session</h3>' +
+                    '<div class="stats-grid">' +
+                        '<div class="stat-card"><div class="stat-card-label">Damage Dealt</div><div class="stat-card-value">' + ls.totalDamageDealt + '</div></div>' +
+                        '<div class="stat-card"><div class="stat-card-label">Enemies Killed</div><div class="stat-card-value">' + ls.totalEnemiesKilled + '</div></div>' +
+                        '<div class="stat-card"><div class="stat-card-label">Longest Combo</div><div class="stat-card-value">' + ls.longestCombo + '</div></div>' +
+                        '<div class="stat-card"><div class="stat-card-label">Accuracy</div><div class="stat-card-value">' + (ls.totalShotsFired > 0 ? Math.round(ls.totalShotsHit / ls.totalShotsFired * 100) : 0) + '%</div></div>' +
+                    '</div>';
+            }
 
             // Recent games
             if (data.recentGames && data.recentGames.length > 0) {
@@ -1534,13 +1572,22 @@
         var allAch = Achievements.getAll();
         var svgs = Achievements.ACHIEVEMENT_SVGS || {};
 
+        // Build category tabs
+        var tabsHtml = '<div class="ach-tabs">' +
+            '<button class="ach-tab active" data-cat="all">All</button>' +
+            '<button class="ach-tab" data-cat="combat">Combat</button>' +
+            '<button class="ach-tab" data-cat="progression">Progression</button>' +
+            '<button class="ach-tab" data-cat="challenge">Challenge</button>' +
+        '</div>';
+
         var cardsHtml = '';
         for (var id in allAch) {
             var a = allAch[id];
             var iconSvg = svgs[a.icon] || '';
             var lockedClass = a.unlocked ? '' : ' ach-locked';
+            var cat = a.category || 'progression';
             cardsHtml +=
-                '<div class="ach-card' + lockedClass + '" data-id="' + id + '">' +
+                '<div class="ach-card' + lockedClass + '" data-id="' + id + '" data-category="' + cat + '">' +
                     '<div class="ach-icon">' + iconSvg + '</div>' +
                     '<div class="ach-name">' + a.name + '</div>' +
                     '<div class="ach-desc">' + a.description + '</div>' +
@@ -1552,6 +1599,7 @@
         modal.innerHTML =
             '<div class="auth-modal-content ach-content">' +
                 '<h2 class="auth-modal-title">Achievements</h2>' +
+                tabsHtml +
                 '<div class="ach-grid">' + cardsHtml + '</div>' +
                 '<button class="auth-close" id="achGalleryClose">&times;</button>' +
             '</div>';
@@ -1559,6 +1607,18 @@
 
         document.getElementById('achGalleryClose').addEventListener('click', function() {
             modal.parentNode.removeChild(modal);
+        });
+
+        // Tab click handlers for category filtering
+        modal.querySelectorAll('.ach-tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                modal.querySelectorAll('.ach-tab').forEach(function(t) { t.classList.remove('active'); });
+                this.classList.add('active');
+                var cat = this.dataset.cat;
+                modal.querySelectorAll('.ach-card').forEach(function(card) {
+                    card.style.display = (cat === 'all' || card.dataset.category === cat) ? '' : 'none';
+                });
+            });
         });
 
         // Fetch global percentages

@@ -1820,6 +1820,16 @@ body.blood-moon .sky-cycle {
 }
 .achievement-notification.show {
   right: 20px;
+  animation: achievement-glow 1s ease-in-out 0.5s;
+}
+@keyframes achievement-glow {
+  0%,
+  100% {
+    box-shadow: 4px 4px 0 #1A1614;
+  }
+  50% {
+    box-shadow: 4px 4px 0 #1A1614, 0 0 20px rgba(242, 216, 100, 0.6);
+  }
 }
 .achievement-icon {
   font-size: 2.5rem;
@@ -1944,6 +1954,32 @@ body.blood-moon .sky-cycle {
   font-family: 'Bangers', 'Impact', cursive;
   font-size: 2rem;
   color: #F2D864;
+}
+.ach-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  justify-content: center;
+}
+.ach-tab {
+  background: rgba(26, 22, 20, 0.6);
+  color: #FFF8F0;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+.ach-tab:hover {
+  border-color: #F2D864;
+}
+.ach-tab.active {
+  background: #F2D864;
+  color: #1A1614;
+  border-color: #F2D864;
+  font-weight: bold;
 }
 .ach-content {
   max-width: 600px;
@@ -6764,9 +6800,11 @@ body.blood-moon .sky-cycle {
 .leaderboard-row:last-child {
   border-bottom: none;
 }
-.leaderboard-row.my-row {
+.leaderboard-row.my-row,
+.leaderboard-row.leaderboard-row-self {
   background: rgba(45, 138, 138, 0.2);
   font-weight: bold;
+  border-left: 3px solid #2D8A8A;
 }
 .leaderboard-rank {
   width: 30px;
@@ -6808,6 +6846,33 @@ body.blood-moon .sky-cycle {
 .lb-tab:hover:not(.selected) {
   border-color: #2D8A8A;
   color: #FFF8F0;
+}
+.lb-period-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+.lb-period-tab {
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.8rem;
+  padding: 3px 10px;
+  background: rgba(26, 22, 20, 0.6);
+  color: #888;
+  border: 1px solid #444;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.lb-period-tab:hover {
+  border-color: #F2D864;
+  color: #FFF8F0;
+}
+.lb-period-tab.active {
+  background: #F2D864;
+  color: #1A1614;
+  border-color: #F2D864;
+  font-weight: bold;
 }
 .lb-full-list {
   max-height: 300px;
