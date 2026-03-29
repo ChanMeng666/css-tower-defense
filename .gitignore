@@ -26,3 +26,6 @@ worker/.dev.vars
 
 # Worker build output
 worker/dist/
+
+# Superpowers brainstorming sessions
+.superpowers/
