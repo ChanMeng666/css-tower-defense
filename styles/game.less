@@ -1936,6 +1936,20 @@ body.blood-moon {
 
     &.on-cooldown {
         background: rgba(80, 60, 60, 0.7);
+        overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            clip-path: inset(calc(100% - var(--cd-pct, 0%)) 0 0 0);
+            z-index: 1;
+            pointer-events: none;
+        }
     }
 
     &.no-mana {
@@ -2067,4 +2081,137 @@ body.blood-moon {
     font-family: @font-comic;
     font-size: 0.7rem;
     color: rgba(255, 248, 240, 0.6);
+}
+
+// ===========================================
+// Active Buff Indicators (P1.4)
+// ===========================================
+.buff-bar {
+    display: flex;
+    gap: 6px;
+    padding: 4px 0;
+    flex-wrap: wrap;
+}
+
+.buff-icon {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(26, 22, 20, 0.8);
+    border: 1px solid @color-yellow;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-family: @font-comic;
+    font-size: 0.8rem;
+    color: @color-white;
+
+    .buff-name {
+        text-transform: capitalize;
+    }
+
+    .buff-timer {
+        color: @color-yellow;
+        font-weight: bold;
+    }
+
+    &.buff-mana {
+        border-color: @color-cyan;
+    }
+
+    &.buff-craft {
+        border-color: @color-magenta;
+    }
+}
+
+// ===========================================
+// Interactive Tutorial (P1.1)
+// ===========================================
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 900;
+    pointer-events: none;
+}
+
+.tutorial-highlight {
+    position: relative;
+    z-index: 901;
+    pointer-events: auto;
+    box-shadow: 0 0 0 4px @color-yellow, 0 0 20px rgba(242, 216, 100, 0.5);
+    animation: tutorial-pulse 1.5s infinite;
+}
+
+.tutorial-tooltip {
+    position: fixed;
+    z-index: 902;
+    background: @color-dark;
+    color: @color-white;
+    font-family: @font-comic;
+    font-size: 1.1rem;
+    padding: 12px 20px;
+    border-radius: 8px;
+    .comic-border(2px, @color-yellow);
+    .pop-shadow(4px, 4px, @color-black);
+    pointer-events: auto;
+    max-width: 320px;
+    text-align: center;
+
+    p {
+        margin: 0 0 8px;
+    }
+
+    .tutorial-skip {
+        background: none;
+        border: 1px solid @color-white;
+        color: @color-white;
+        padding: 4px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: @font-comic;
+        font-size: 0.9rem;
+        transition: background 0.2s;
+
+        &:hover {
+            background: rgba(255, 248, 240, 0.15);
+        }
+    }
+}
+
+@keyframes tutorial-pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 4px @color-yellow, 0 0 20px rgba(242, 216, 100, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 0 6px @color-yellow, 0 0 30px rgba(242, 216, 100, 0.7);
+    }
+}
+
+// ===========================================
+// Keyboard Shortcut Hints (P1.2)
+// ===========================================
+.key-hint {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(26, 22, 20, 0.9);
+    color: @color-white;
+    font-family: @font-comic;
+    font-size: 0.95rem;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid @color-yellow;
+    z-index: 800;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+
+    &.visible {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
 }

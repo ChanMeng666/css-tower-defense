@@ -2519,6 +2519,19 @@ body.blood-moon .sky-cycle {
 }
 .mana-ability-btn.on-cooldown {
   background: rgba(80, 60, 60, 0.7);
+  overflow: hidden;
+}
+.mana-ability-btn.on-cooldown::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  clip-path: inset(calc(100% - var(--cd-pct, 0%)) 0 0 0);
+  z-index: 1;
+  pointer-events: none;
 }
 .mana-ability-btn.no-mana {
   background: rgba(60, 50, 50, 0.7);
@@ -2631,6 +2644,116 @@ body.blood-moon .sky-cycle {
   font-family: 'Comic Neue', cursive;
   font-size: 0.7rem;
   color: rgba(255, 248, 240, 0.6);
+}
+.buff-bar {
+  display: flex;
+  gap: 6px;
+  padding: 4px 0;
+  flex-wrap: wrap;
+}
+.buff-icon {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(26, 22, 20, 0.8);
+  border: 1px solid #F2D864;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.8rem;
+  color: #FFF8F0;
+}
+.buff-icon .buff-name {
+  text-transform: capitalize;
+}
+.buff-icon .buff-timer {
+  color: #F2D864;
+  font-weight: bold;
+}
+.buff-icon.buff-mana {
+  border-color: #2D8A8A;
+}
+.buff-icon.buff-craft {
+  border-color: #D4738A;
+}
+.tutorial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 900;
+  pointer-events: none;
+}
+.tutorial-highlight {
+  position: relative;
+  z-index: 901;
+  pointer-events: auto;
+  box-shadow: 0 0 0 4px #F2D864, 0 0 20px rgba(242, 216, 100, 0.5);
+  animation: tutorial-pulse 1.5s infinite;
+}
+.tutorial-tooltip {
+  position: fixed;
+  z-index: 902;
+  background: #1A1614;
+  color: #FFF8F0;
+  font-family: 'Comic Neue', cursive;
+  font-size: 1.1rem;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 2px solid #F2D864;
+  box-shadow: 4px 4px 0 #1A1614;
+  pointer-events: auto;
+  max-width: 320px;
+  text-align: center;
+}
+.tutorial-tooltip p {
+  margin: 0 0 8px;
+}
+.tutorial-tooltip .tutorial-skip {
+  background: none;
+  border: 1px solid #FFF8F0;
+  color: #FFF8F0;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+.tutorial-tooltip .tutorial-skip:hover {
+  background: rgba(255, 248, 240, 0.15);
+}
+@keyframes tutorial-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px #F2D864, 0 0 20px rgba(242, 216, 100, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 6px #F2D864, 0 0 30px rgba(242, 216, 100, 0.7);
+  }
+}
+.key-hint {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: rgba(26, 22, 20, 0.9);
+  color: #FFF8F0;
+  font-family: 'Comic Neue', cursive;
+  font-size: 0.95rem;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #F2D864;
+  z-index: 800;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
+.key-hint.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 .scene {
   position: fixed;
@@ -3863,10 +3986,10 @@ body.blood-moon .sky-cycle {
   filter: drop-shadow(1px 1px 0 #1A1614);
 }
 .tower.level-2 {
-  filter: brightness(1.05) saturate(1.05);
+  filter: brightness(1.05);
 }
 .tower.level-3 {
-  filter: brightness(1.1) saturate(1.1);
+  filter: brightness(1.1) drop-shadow(0 0 4px rgba(242, 216, 100, 0.4));
 }
 .tower.upgrading {
   animation: upgrade-pulse 0.6s ease-out;

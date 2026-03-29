@@ -689,6 +689,9 @@ var Game = (function () {
             dashboardUpdateTimer = 0;
             updateBattleDashboard();
             Display.updateManaButtons(manaAbilityCooldowns, mana, MANA_ABILITIES);
+            if (Display.updateBuffBar) {
+                Display.updateBuffBar(activeAbilities, typeof Crafting !== 'undefined' && Crafting.getActiveBuffs ? Crafting.getActiveBuffs() : []);
+            }
         }
 
         // Update combo timer

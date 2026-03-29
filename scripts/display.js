@@ -760,17 +760,66 @@ var Display = (function() {
                 btn.classList.add('on-cooldown');
                 btn.disabled = true;
                 if (cdOverlay) cdOverlay.textContent = Math.ceil(cd) + 's';
+                btn.style.setProperty('--cd-pct', ((cd / abilities[id].cooldown) * 100) + '%');
             } else if (currentMana < cost) {
                 btn.classList.remove('on-cooldown');
                 btn.classList.add('no-mana');
                 btn.disabled = true;
                 if (cdOverlay) cdOverlay.textContent = '';
+                btn.style.removeProperty('--cd-pct');
             } else {
                 btn.classList.remove('on-cooldown', 'no-mana');
                 btn.disabled = false;
                 if (cdOverlay) cdOverlay.textContent = '';
+                btn.style.removeProperty('--cd-pct');
             }
         });
+    }
+
+    // Keyboard shortcut hints (shown once per hint)
+    var shownHints = JSON.parse(localStorage.getItem('td_hints_shown') || '{}');
+
+    function showKeyHint(hintId, text) {
+        if (shownHints[hintId]) return;
+        shownHints[hintId] = true;
+        localStorage.setItem('td_hints_shown', JSON.stringify(shownHints));
+        var hint = document.createElement('div');
+        hint.className = 'key-hint';
+        hint.textContent = text;
+        document.body.appendChild(hint);
+        setTimeout(function() { hint.classList.add('visible'); }, 10);
+        setTimeout(function() {
+            hint.classList.remove('visible');
+            setTimeout(function() { if (hint.parentNode) hint.remove(); }, 300);
+        }, 4000);
+    }
+
+    /**
+     * Update active buff indicators bar
+     */
+    function updateBuffBar(activeAbilities, craftingBuffs) {
+        var bar = document.getElementById('buffBar');
+        if (!bar) return;
+        bar.innerHTML = '';
+        for (var id in activeAbilities) {
+            if (activeAbilities.hasOwnProperty(id)) {
+                var remaining = activeAbilities[id].remaining;
+                if (remaining > 0) {
+                    var icon = document.createElement('div');
+                    icon.className = 'buff-icon buff-mana';
+                    icon.innerHTML = '<span class="buff-name">' + id + '</span><span class="buff-timer">' + remaining.toFixed(1) + 's</span>';
+                    bar.appendChild(icon);
+                }
+            }
+        }
+        if (craftingBuffs && craftingBuffs.length) {
+            craftingBuffs.forEach(function(buff) {
+                var icon = document.createElement('div');
+                icon.className = 'buff-icon buff-craft';
+                icon.innerHTML = '<span class="buff-name">' + buff.name + '</span><span class="buff-timer">' + Math.ceil(buff.remaining) + 's</span>';
+                bar.appendChild(icon);
+            });
+        }
     }
 
     // Listen for environment change events
@@ -815,6 +864,8 @@ var Display = (function() {
         updateMana: updateMana,
         updateManaButtons: updateManaButtons,
         updateEnvironment: updateEnvironment,
-        updateChallengeTimer: updateChallengeTimer
+        updateChallengeTimer: updateChallengeTimer,
+        showKeyHint: showKeyHint,
+        updateBuffBar: updateBuffBar
     };
 })();

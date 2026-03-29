@@ -114,6 +114,7 @@
             requireLogin(function() {
                 loadingScreen.classList.add('hidden');
                 Game.start();
+                startTutorial();
             });
         });
     }
@@ -514,6 +515,7 @@
                 // Tower hotkeys (Māori weapons)
                 case '1':
                     Game.selectTowerType('taiaha');
+                    Display.showKeyHint('tower_hotkey', 'Tip: Press 1-6 to quickly select towers');
                     break;
                 case '2':
                     Game.selectTowerType('mere');
@@ -540,6 +542,7 @@
                             Display.clearHighlights();
                         } else {
                             showPauseMenu();
+                            Display.showKeyHint('pause_key', 'Tip: Press Esc or P to pause');
                         }
                     } else if (Game.getState() === Game.STATES.PAUSED && pauseMenuOpen) {
                         closePauseMenu();
@@ -554,6 +557,7 @@
                         Game.start();
                     } else if (Game.getState() === Game.STATES.PLAYING) {
                         Game.startNextWave();
+                        Display.showKeyHint('wave_start', 'Tip: Press Space to start the next wave');
                     }
                     break;
                     
@@ -1343,6 +1347,7 @@
                 '<h2 class="auth-modal-title">Paused</h2>' +
                 '<div class="pause-menu-buttons">' +
                     '<button class="pause-menu-btn" id="pauseResumeBtn">Resume</button>' +
+                    '<button class="pause-menu-btn" id="pauseRestartBtn">Restart</button>' +
                     '<button class="pause-menu-btn" id="pauseSettingsBtn">Settings</button>' +
                     '<button class="pause-menu-btn pause-menu-btn-danger" id="pauseQuitBtn">Return to Menu</button>' +
                 '</div>' +
@@ -1353,6 +1358,14 @@
         document.getElementById('pauseResumeBtn').addEventListener('click', function() {
             Sfx.playEffect('button');
             closePauseMenu();
+        });
+
+        // Restart button
+        document.getElementById('pauseRestartBtn').addEventListener('click', function() {
+            Sfx.playEffect('button');
+            closePauseMenu();
+            Game.returnToMenu();
+            setTimeout(function() { Game.start(); }, 100);
         });
 
         // Settings button
@@ -1424,12 +1437,14 @@
         document.getElementById('sfxSlider').addEventListener('input', function() {
             Sfx.setVolume(this.value / 100);
             document.getElementById('sfxValue').textContent = this.value + '%';
+            localStorage.setItem('td_sfx_volume', (this.value / 100).toString());
         });
 
         // Music slider
         document.getElementById('musicSlider').addEventListener('input', function() {
             Sfx.setMusicVolume(this.value / 100);
             document.getElementById('musicValue').textContent = this.value + '%';
+            localStorage.setItem('td_music_volume', (this.value / 100).toString());
         });
 
         // Mute toggle
@@ -1683,6 +1698,144 @@
         if (overlay) overlay.remove();
     }
     
+    // =========================================
+    // Interactive Tutorial System (P1.1)
+    // =========================================
+    var tutorialActive = false;
+    var tutorialStep = 0;
+    var tutorialOverlay = null;
+    var tutorialTooltip = null;
+    var tutorialListeners = [];
+
+    var TUTORIAL_STEPS = [
+        { target: '#shopPanel', text: 'Press 1-6 or click a tower to select it', event: 'towerPlaced', waitFor: 'selectTower' },
+        { target: '#map', text: 'Click a green cell to place your tower', event: 'towerPlaced', waitFor: 'towerPlaced' },
+        { target: '#startWaveBtn', text: 'Press Space or click Start Wave', event: 'waveStarted', waitFor: 'waveStarted' },
+        { target: null, text: 'Watch your towers defend!', event: null, waitFor: null, autoDismiss: 4000 }
+    ];
+
+    function startTutorial() {
+        if (localStorage.getItem('td_tutorial_complete')) return;
+        tutorialActive = true;
+        tutorialStep = 0;
+
+        // Create overlay
+        tutorialOverlay = document.createElement('div');
+        tutorialOverlay.className = 'tutorial-overlay';
+        document.body.appendChild(tutorialOverlay);
+
+        // Create tooltip
+        tutorialTooltip = document.createElement('div');
+        tutorialTooltip.className = 'tutorial-tooltip';
+        document.body.appendChild(tutorialTooltip);
+
+        showTutorialStep(0);
+    }
+
+    function showTutorialStep(stepIndex) {
+        if (stepIndex >= TUTORIAL_STEPS.length) {
+            endTutorial();
+            return;
+        }
+        tutorialStep = stepIndex;
+        var step = TUTORIAL_STEPS[stepIndex];
+
+        // Clear previous highlight
+        var prevHighlight = document.querySelector('.tutorial-highlight');
+        if (prevHighlight) prevHighlight.classList.remove('tutorial-highlight');
+
+        // Highlight target
+        if (step.target) {
+            var el = document.querySelector(step.target);
+            if (el) el.classList.add('tutorial-highlight');
+        }
+
+        // Update tooltip
+        tutorialTooltip.innerHTML = '<p>' + step.text + '</p><button class="tutorial-skip">Skip Tutorial</button>';
+        tutorialTooltip.querySelector('.tutorial-skip').addEventListener('click', function() {
+            endTutorial();
+        });
+
+        // Position tooltip near target or center
+        if (step.target) {
+            var el = document.querySelector(step.target);
+            if (el) {
+                var rect = el.getBoundingClientRect();
+                tutorialTooltip.style.top = (rect.bottom + 12) + 'px';
+                tutorialTooltip.style.left = (rect.left + rect.width / 2) + 'px';
+                tutorialTooltip.style.transform = 'translateX(-50%)';
+            }
+        } else {
+            tutorialTooltip.style.top = '50%';
+            tutorialTooltip.style.left = '50%';
+            tutorialTooltip.style.transform = 'translate(-50%, -50%)';
+        }
+
+        // Clean up old listeners
+        tutorialListeners.forEach(function(l) { document.removeEventListener(l.event, l.fn); });
+        tutorialListeners = [];
+
+        // Set up advancement
+        if (step.waitFor === 'selectTower') {
+            // Step 1: advance when a tower is selected (selectTowerType dispatches this indirectly via shop click or key)
+            var fn = function() { if (tutorialActive && tutorialStep === stepIndex) showTutorialStep(stepIndex + 1); };
+            document.addEventListener('towerPlaced', fn);
+            // Also listen for any tower selection as fallback — advance on towerPlaced covers both select+place
+            // But spec says step 1 advances on "towerSelected" — we use a custom approach: listen for shop click
+            var shopFn = function() { if (tutorialActive && tutorialStep === stepIndex) showTutorialStep(stepIndex + 1); };
+            var shopPanel = document.getElementById('shopPanel');
+            if (shopPanel) {
+                shopPanel.addEventListener('click', shopFn, { once: true });
+                tutorialListeners.push({ event: 'click', fn: shopFn, el: shopPanel });
+            }
+            // Also advance on key 1-6 press
+            var keyFn = function(e) {
+                if ('123456'.indexOf(e.key) !== -1 && tutorialActive && tutorialStep === stepIndex) {
+                    showTutorialStep(stepIndex + 1);
+                }
+            };
+            document.addEventListener('keydown', keyFn);
+            tutorialListeners.push({ event: 'keydown', fn: keyFn });
+        } else if (step.waitFor) {
+            var advanceFn = function() { if (tutorialActive && tutorialStep === stepIndex) showTutorialStep(stepIndex + 1); };
+            document.addEventListener(step.waitFor, advanceFn);
+            tutorialListeners.push({ event: step.waitFor, fn: advanceFn });
+        }
+
+        if (step.autoDismiss) {
+            setTimeout(function() {
+                if (tutorialActive && tutorialStep === stepIndex) {
+                    endTutorial();
+                }
+            }, step.autoDismiss);
+        }
+    }
+
+    function endTutorial() {
+        tutorialActive = false;
+        localStorage.setItem('td_tutorial_complete', 'true');
+
+        // Clean up listeners
+        tutorialListeners.forEach(function(l) {
+            if (l.el) {
+                l.el.removeEventListener(l.event, l.fn);
+            } else {
+                document.removeEventListener(l.event, l.fn);
+            }
+        });
+        tutorialListeners = [];
+
+        // Remove highlight
+        var highlighted = document.querySelector('.tutorial-highlight');
+        if (highlighted) highlighted.classList.remove('tutorial-highlight');
+
+        // Remove overlay and tooltip
+        if (tutorialOverlay && tutorialOverlay.parentNode) tutorialOverlay.remove();
+        if (tutorialTooltip && tutorialTooltip.parentNode) tutorialTooltip.remove();
+        tutorialOverlay = null;
+        tutorialTooltip = null;
+    }
+
     /**
      * Prevent context menu on game area
      */

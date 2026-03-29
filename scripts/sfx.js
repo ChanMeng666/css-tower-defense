@@ -84,6 +84,12 @@ var Sfx = (function() {
             // Pre-generate sounds
             generateSounds();
 
+            // Load saved volume settings
+            var savedSfx = localStorage.getItem('td_sfx_volume');
+            var savedMusic = localStorage.getItem('td_music_volume');
+            if (savedSfx !== null) { volume = parseFloat(savedSfx); masterGain.gain.value = volume; }
+            if (savedMusic !== null) { musicVolume = parseFloat(savedMusic); }
+
             // Initialize Howler.js music and effects
             initHowlerAudio();
         } catch (e) {
