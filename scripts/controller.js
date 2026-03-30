@@ -1763,7 +1763,7 @@
     // =========================================
     var tutorialActive = false;
     var tutorialStep = 0;
-    var tutorialOverlay = null;
+    var tutorialSpotlight = null;
     var tutorialTooltip = null;
     var tutorialListeners = [];
 
@@ -1774,15 +1774,86 @@
         { target: null, text: 'Watch your towers defend!', event: null, waitFor: null, autoDismiss: 4000 }
     ];
 
+    function positionSpotlight(targetSelector) {
+        if (!tutorialSpotlight) return;
+        if (!targetSelector) {
+            tutorialSpotlight.style.top = '50%';
+            tutorialSpotlight.style.left = '50%';
+            tutorialSpotlight.style.width = '0px';
+            tutorialSpotlight.style.height = '0px';
+            return;
+        }
+        var el = document.querySelector(targetSelector);
+        if (!el) return;
+        var rect = el.getBoundingClientRect();
+        var padding = 8;
+        tutorialSpotlight.style.top = (rect.top - padding) + 'px';
+        tutorialSpotlight.style.left = (rect.left - padding) + 'px';
+        tutorialSpotlight.style.width = (rect.width + padding * 2) + 'px';
+        tutorialSpotlight.style.height = (rect.height + padding * 2) + 'px';
+    }
+
+    function positionTooltip(targetSelector) {
+        if (!tutorialTooltip) return;
+        if (!targetSelector) {
+            tutorialTooltip.style.top = '50%';
+            tutorialTooltip.style.left = '50%';
+            tutorialTooltip.style.transform = 'translate(-50%, -50%)';
+            return;
+        }
+        var el = document.querySelector(targetSelector);
+        if (!el) return;
+
+        var rect = el.getBoundingClientRect();
+        var tooltipRect = tutorialTooltip.getBoundingClientRect();
+        var gap = 12;
+        var edgePadding = 12;
+        var vw = window.innerWidth;
+        var vh = window.innerHeight;
+
+        // Vertical: prefer below, flip to above if not enough space
+        var top;
+        var spaceBelow = vh - rect.bottom - gap;
+        var spaceAbove = rect.top - gap;
+
+        if (spaceBelow >= tooltipRect.height || spaceBelow >= spaceAbove) {
+            top = rect.bottom + gap;
+            if (top + tooltipRect.height > vh - edgePadding) {
+                top = vh - edgePadding - tooltipRect.height;
+            }
+        } else {
+            top = rect.top - gap - tooltipRect.height;
+            if (top < edgePadding) {
+                top = edgePadding;
+            }
+        }
+
+        // Horizontal: center on target, clamp within viewport
+        var left = rect.left + rect.width / 2 - tooltipRect.width / 2;
+        if (left < edgePadding) {
+            left = edgePadding;
+        } else if (left + tooltipRect.width > vw - edgePadding) {
+            left = vw - edgePadding - tooltipRect.width;
+        }
+
+        tutorialTooltip.style.top = top + 'px';
+        tutorialTooltip.style.left = left + 'px';
+        tutorialTooltip.style.transform = 'none';
+    }
+
     function startTutorial() {
         if (localStorage.getItem('td_tutorial_complete')) return;
         tutorialActive = true;
         tutorialStep = 0;
 
-        // Create overlay
-        tutorialOverlay = document.createElement('div');
-        tutorialOverlay.className = 'tutorial-overlay';
-        document.body.appendChild(tutorialOverlay);
+        // Create spotlight (replaces full overlay)
+        tutorialSpotlight = document.createElement('div');
+        tutorialSpotlight.className = 'tutorial-spotlight';
+        tutorialSpotlight.style.top = '50%';
+        tutorialSpotlight.style.left = '50%';
+        tutorialSpotlight.style.width = '0px';
+        tutorialSpotlight.style.height = '0px';
+        document.body.appendChild(tutorialSpotlight);
 
         // Create tooltip
         tutorialTooltip = document.createElement('div');
@@ -1810,26 +1881,19 @@
             if (el) el.classList.add('tutorial-highlight');
         }
 
-        // Update tooltip
+        // Update tooltip content
         tutorialTooltip.innerHTML = '<p>' + step.text + '</p><button class="tutorial-skip">Skip Tutorial</button>';
         tutorialTooltip.querySelector('.tutorial-skip').addEventListener('click', function() {
             endTutorial();
         });
 
-        // Position tooltip near target or center
-        if (step.target) {
-            var el = document.querySelector(step.target);
-            if (el) {
-                var rect = el.getBoundingClientRect();
-                tutorialTooltip.style.top = (rect.bottom + 12) + 'px';
-                tutorialTooltip.style.left = (rect.left + rect.width / 2) + 'px';
-                tutorialTooltip.style.transform = 'translateX(-50%)';
-            }
-        } else {
-            tutorialTooltip.style.top = '50%';
-            tutorialTooltip.style.left = '50%';
-            tutorialTooltip.style.transform = 'translate(-50%, -50%)';
-        }
+        // Position spotlight around target
+        positionSpotlight(step.target);
+
+        // Position tooltip with smart viewport clamping
+        requestAnimationFrame(function() {
+            positionTooltip(step.target);
+        });
 
         // Clean up old listeners
         tutorialListeners.forEach(function(l) { document.removeEventListener(l.event, l.fn); });
@@ -1889,10 +1953,10 @@
         var highlighted = document.querySelector('.tutorial-highlight');
         if (highlighted) highlighted.classList.remove('tutorial-highlight');
 
-        // Remove overlay and tooltip
-        if (tutorialOverlay && tutorialOverlay.parentNode) tutorialOverlay.remove();
+        // Remove spotlight and tooltip
+        if (tutorialSpotlight && tutorialSpotlight.parentNode) tutorialSpotlight.remove();
         if (tutorialTooltip && tutorialTooltip.parentNode) tutorialTooltip.remove();
-        tutorialOverlay = null;
+        tutorialSpotlight = null;
         tutorialTooltip = null;
     }
 

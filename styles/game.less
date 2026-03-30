@@ -2162,15 +2162,13 @@ body.blood-moon {
 // ===========================================
 // Interactive Tutorial (P1.1)
 // ===========================================
-.tutorial-overlay {
+.tutorial-spotlight {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
     z-index: 900;
     pointer-events: none;
+    border-radius: 8px;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+    transition: top 0.3s ease, left 0.3s ease, width 0.3s ease, height 0.3s ease;
 }
 
 .tutorial-highlight {
@@ -2195,6 +2193,7 @@ body.blood-moon {
     pointer-events: auto;
     max-width: 320px;
     text-align: center;
+    transition: top 0.3s ease, left 0.3s ease, opacity 0.3s ease;
 
     p {
         margin: 0 0 8px;
