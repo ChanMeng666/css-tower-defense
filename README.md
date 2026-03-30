@@ -11,14 +11,14 @@ Themed around Maori mythology with cloud saves, leaderboards, and daily challeng
 <br/>
 
 <p align="center">
-  <a href="https://chanmeng666.github.io/css-tower-defense/">
+  <a href="https://towerdefense.chanmeng.org/">
     <img src="https://img.shields.io/badge/%E2%96%B6_PLAY_NOW-Visit_Live_Demo-2ea44f?style=for-the-badge&logoColor=white" alt="Play Now"/>
   </a>
 </p>
 
 <br/>
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Play%20Now-brightgreen?style=for-the-badge&logo=github)](https://chanmeng666.github.io/css-tower-defense/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Play%20Now-brightgreen?style=for-the-badge&logo=github)](https://towerdefense.chanmeng.org/)
 ![CSS 3D](https://img.shields.io/badge/CSS-3D%20Transforms-blue?style=for-the-badge&logo=css3)
 ![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla%20ES6-yellow?style=for-the-badge&logo=javascript)
 ![LESS](https://img.shields.io/badge/LESS-Preprocessor-1d365d?style=for-the-badge&logo=less)
