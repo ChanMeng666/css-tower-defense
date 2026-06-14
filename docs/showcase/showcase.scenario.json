@@ -1,0 +1,74 @@
+{
+  "project": "css-tower-defense",
+  "baseUrl": "https://towerdefense.chanmeng.org",
+  "outDir": "docs/showcase",
+
+  "viewports": {
+    "desktop": { "width": 1280, "height": 800, "deviceScaleFactor": 2 },
+    "mobile":  { "width": 390,  "height": 844, "deviceScaleFactor": 3, "isMobile": true }
+  },
+
+  "reducedMotion": "no-preference",
+
+  "pages": [
+    {
+      "label": "hero",
+      "url": "/",
+      "viewport": "desktop",
+      "fullPage": false,
+      "before": [
+        { "action": "wait", "ms": 2500 }
+      ]
+    },
+    {
+      "label": "map-select",
+      "url": "/",
+      "viewport": "desktop",
+      "fullPage": false,
+      "before": [
+        { "action": "wait", "ms": 2000 },
+        { "action": "click", "selector": "#mapToggle" },
+        { "action": "wait", "ms": 1200 }
+      ]
+    },
+    {
+      "label": "more-panel",
+      "url": "/",
+      "viewport": "desktop",
+      "fullPage": false,
+      "before": [
+        { "action": "wait", "ms": 2000 },
+        { "action": "click", "selector": "#moreOptionsBtn" },
+        { "action": "wait", "ms": 1200 }
+      ]
+    },
+    {
+      "label": "mobile-hero",
+      "url": "/",
+      "viewport": "mobile",
+      "fullPage": false,
+      "before": [
+        { "action": "wait", "ms": 2500 }
+      ]
+    }
+  ],
+
+  "demo": {
+    "size": { "width": 1280, "height": 720 },
+    "stepPauseMs": 500,
+    "steps": [
+      { "action": "goto", "url": "/", "timeoutMs": 15000 },
+      { "action": "wait", "ms": 2000 },
+      { "action": "click", "selector": "#mapToggle" },
+      { "action": "wait", "ms": 1200 },
+      { "action": "click", "selector": "#mapToggle" },
+      { "action": "wait", "ms": 600 },
+      { "action": "click", "selector": "#difficultyToggle" },
+      { "action": "wait", "ms": 1200 },
+      { "action": "click", "selector": "#difficultyToggle" },
+      { "action": "wait", "ms": 600 },
+      { "action": "click", "selector": "#moreOptionsBtn" },
+      { "action": "wait", "ms": 1500 }
+    ]
+  }
+}
